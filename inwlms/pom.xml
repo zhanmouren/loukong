@@ -100,6 +100,12 @@
             <groupId>com.koron</groupId>
             <artifactId>ebs-log</artifactId>
             <version>[1.0.5,)</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.koron</groupId>
+                    <artifactId>ebs-mybatis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.koron</groupId>
