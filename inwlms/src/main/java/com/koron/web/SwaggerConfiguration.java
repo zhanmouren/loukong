@@ -1,5 +1,6 @@
 package com.koron.web;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -15,19 +16,21 @@ public class SwaggerConfiguration {
     @Bean
     public Docket createRestApi() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("API接口文档")
                 .apiInfo(apiInfo())
+                .pathMapping("/")
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.koron.web"))
+                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 .paths(PathSelectors.any())
                 .build();
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("springboot利用swagger构建api文档")
-                .description("简单优雅的restfun风格，http://www.krrj.cn")
-                .termsOfServiceUrl("http://www.krrj.cn")
-                .version("1.0.1")
+                .title("SpringBoot脚手架")
+                .description("SpringBoot脚手架")
+                .termsOfServiceUrl("http://www.koronsoft.com/")
+                .version("1.0")
                 .build();
     }
 }
