@@ -1,0 +1,129 @@
+@import 'math';
+
+@function color-luminance($color) {
+  // Adapted from: https://github.com/LeaVerou/contrast-ratio/blob/gh-pages/color.js
+  // Formula: http://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef
+  $rgba: red($color), green($color), blue($color);
+  $rgba2: ();
+
+  @for $i from 1 through 3 {
+    $rgb: nth($rgba, $i);
+    $rgb: $rgb / 255;
+
+    $rgb: if($rgb < 0.03928, $rgb / 12.92, pow(($rgb + 0.055) / 1.055, 2.4));
+
+    $rgba2: append($rgba2, $rgb);
+  }
+
+  @return 0.2126 * nth($rgba2, 1) + 0.7152 * nth($rgba2, 2) + 0.0722 * nth($rgba2, 3);
+}
+
+/// Checks the contrast ratio of two colors.
+///
+/// @param {Color} $color1 - First color to compare.
+/// @param {Color} $color2 - Second color to compare.
+///
+/// @returns {Number} The contrast ratio of the compared colors.
+@function color-contrast($color1, $color2) {
+  // Adapted from: https://github.com/LeaVerou/contrast-ratio/blob/gh-pages/color.js
+  // Formula: http://www.w3.org/TR/2008/REC-WCAG20-20081211/#contrast-ratiodef
+  $luminance1: color-luminance($color1) + 0.05;
+  $luminance2: color-luminance($color2) + 0.05;
+  $ratio: $luminance1 / $luminance2;
+
+  @if $luminance2 > $luminance1 {
+    $ratio: 1 / $ratio;
+  }
+
+  $ratio: round($ratio * 10) / 10;
+
+  @return $ratio;
+}
+
+/// Checks the luminance of `$base`, and returns the color from `$colors` (list of colors) that has the most contrast.
+///
+/// @param {Color} $base - Color to check luminance.
+/// @param {List} $colors [($white, $black)] - Colors to compare.
+/// @param {Number} $tolerance [$global-color-pick-contrast-tolerance] - Contrast tolerance.
+///
+/// @returns {Color} the color from `$colors` (list of colors) that has the most contrast.
+@function color-pick-contrast($base, $colors: ($white, $black)) {
+  $contrast: color-contrast($base, nth($colors, 1));
+  $best: nth($colors, 1);
+
+  @for $i from 2 through length($colors) {
+    $current-contrast: color-contrast($base, nth($colors, $i));
+    @if ($current-contrast - $contrast > 0) {
+      $contrast: color-contrast($base, nth($colors, $i));
+      $best: nth($colors, $i);
+    }
+  }
+  @return $best;
+}
+
+@mixin button_no_base($header,$color) {
+    .button-#{$header} {
+        background: $color;
+        color: color-pick-contrast($color);
+    }
+    .button-#{$header}:hover {
+        background: lighten($color, 10%);
+    }
+    .button-#{$header}.blur{
+        animation-duration: 3s;
+    	animation-name: glowing-#{$header};
+    	animation-iteration-count: infinite;
+    }
+    @-webkit-keyframes glowing-#{$header}{
+	  from {-webkit-box-shadow: 0 0 0 rgba($color,0.3); }
+	  50% {-webkit-box-shadow: 0 0 20px rgba($color,0.8); }
+	  to {-webkit-box-shadow: 0 0 0 rgba($color,0.3); }
+	  }
+  	@keyframes glowing-#{$header} {
+	    from {box-shadow: 0 0 0 rgba($color,0.3); }
+	    50% {box-shadow: 0 0 20px rgba($color,0.8); }
+	    to {box-shadow: 0 0 0 rgba($color,0.3); }  
+	 }
+	 .button-#{$header}.threed{
+	 	-webkit-box-shadow: 0 7px 0 darken($color,10%), 0 8px 3px rgba(0, 0, 0, 0.3); 
+    	 box-shadow: 0 7px 0 darken($color,10%), 0 8px 3px rgba(0, 0, 0, 0.3); 
+	 }
+	 .button-#{$header}.raised{
+  		background: -webkit-gradient(linear, left top, left bottom, from(lighten($color,10%)), to($color));
+  		background: linear-gradient(lighten($color,10%),$color); 
+    	border: 1px solid $color;
+	    box-shadow: inset 0px 1px 0px rgba($color,.2), 0 1px 2px rgba($color, .15);
+	}
+  	.button-#{$header}.raised:hover{
+  		background: -webkit-gradient(linear, left top, left bottom, from($color), to(lighten($color,10%)));
+  		background: linear-gradient($color,lighten($color,10%)); 
+  	}
+  	.button-#{$header}.cutting-line{
+  		border-right:1px solid lighten($color,10%);
+  	}
+}
+
+@mixin button-base() {
+    color: #fff;
+    font-weight: 300;
+    font-size: 1em;
+    text-decoration: none;
+    text-align: center;
+    	height: 2em;
+	line-height: 2em;
+	padding: 0 1em;
+	margin: 0 1em;
+    margin: 0 4px;
+    display: inline-block;
+    appearance: none;
+    cursor: pointer;
+    border: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition-property: all;
+    transition-property: all;
+    -webkit-transition-duration: .3s;
+    transition-duration: .3s;
+    vertical-align: middle;
+}
