@@ -1,0 +1,17 @@
+@charset "UTF-8";
+.s-tree > li, .s-tree > li > ul > li { display: block; width: 100%; float: left; text-decoration: none; color: #929292; font-size: 0.7em; font-family: "微软雅黑"; white-space: nowrap; position: relative; overflow: hidden; border-top: #ebebeb 0.5px solid; border-collapse: collapse; }
+.s-tree > li > span, .s-tree > li > ul > li > span { display: block; line-height: 2; height: 100%; padding-left: 0.8em; border-left: solid 4px #3f98e4; }
+.s-tree li > span { display: none; }
+.s-tree li > span.focus { background-color: white; color: #3f98e4; }
+.s-tree li > span:hover { background-color: white; color: #3f98e4; transition: color .5s linear, background .5s linear; -o-transition: color .5s linear, background .5s linear; -moz-transition: color .5s linear, background .5s linear; -webkit-transition: color .5s linear, background .5s linear; -ms-transition: color .5s linear, background .5s linear; }
+.s-tree > li > ul > li ul { transition: height .5s linear; -o-transition: height .5s linear; -moz-transition: height .5s linear; -webkit-transition: height .5s linear; -ms-transition: height .5s linear; height: 0; overflow: hidden; }
+.s-tree > li > ul > li ul > li > span { display: block; height: 42px; line-height: 2; height: 100%; font-size: 0.7em; }
+.s-tree > li > ul > li ul.open { height: auto; overflow: hidden; }
+.s-tree > li > ul > li ul span.levelopen:before { transofrm: rotate(90deg); -o-transofrm: rotate(90deg); -moz-transofrm: rotate(90deg); -webkit-transofrm: rotate(90deg); -ms-transofrm: rotate(90deg); }
+.s-tree span.branch:before { content: '\e804'; font-family: "fontello"; font-size: 0.6em; padding-right: 0.5em; display: inline-block; transform-origin: 25% 50%; transition: transform .5s linear; -o-transition: transform .5s linear; -moz-transition: transform .5s linear; -webkit-transition: transform .5s linear; -ms-transition: transform .5s linear; }
+.s-tree span.level3 { padding-left: 2em; }
+.s-tree span.level4 { padding-left: 3em; }
+.s-tree span.level5 { padding-left: 4em; }
+.s-tree span.level6 { padding-left: 5em; }
+
+/*# sourceMappingURL=basetree.css.map */

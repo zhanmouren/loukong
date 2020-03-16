@@ -1,0 +1,7 @@
+@import "tree";
+@import "variable";
+
+.s-tree {
+	@include tree();
+	
+}
