@@ -1,4 +1,4 @@
-package com.koron.inwlms.mapper;
+package com.koron.inwlms.mapper.master;
 
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.koron.inwlms.servise;
+package com.koron.inwlms.service;
 
 import com.koron.inwlms.bean.DTO.TestBean;
 import org.koron.ebs.mybatis.SessionFactory;

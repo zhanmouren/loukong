@@ -19,6 +19,10 @@ public static final String USER = "_user";
 	 */
 	public static final int MESSAGE_INT_SUCCESS = 0;
 	/**
+	 * 操作失败
+	 */
+	public static final int MESSAGE_INT_Failed = -1;
+	/**
 	 * 未登录
 	 */
 	public static final int MESSAGE_INT_NOLOGIN = 10000;

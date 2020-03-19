@@ -1,8 +1,9 @@
-package com.koron.inwlms.servise.impl;
+package com.koron.inwlms.service.impl;
 
 import com.koron.inwlms.bean.DTO.TestBean;
-import com.koron.inwlms.mapper.TestMapper;
-import com.koron.inwlms.servise.TestService;
+import com.koron.inwlms.mapper.master.TestMapper;
+import com.koron.inwlms.service.TestService;
+
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;

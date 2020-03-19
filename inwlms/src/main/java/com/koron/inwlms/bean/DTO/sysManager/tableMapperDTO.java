@@ -2,7 +2,6 @@ package com.koron.inwlms.bean.DTO.sysManager;
 
 import java.util.List;
 
-import lombok.Data;
 
 /**
  * 表格映射明细bean
@@ -10,7 +9,7 @@ import lombok.Data;
 * @Author xiaozhan
 * @Date 2020.03.17
 */
-@Data
+
 public class tableMapperDTO {
     //集成表格映射明细
 	private Integer tableMapperId;
@@ -27,5 +26,61 @@ public class tableMapperDTO {
 	
 	//表格字段映射明细列表
 	private List<fieldMapperDTO> fieldMapperList;
+
+	public Integer getTableMapperId() {
+		return tableMapperId;
+	}
+
+	public void setTableMapperId(Integer tableMapperId) {
+		this.tableMapperId = tableMapperId;
+	}
+
+	public Integer getConfigID() {
+		return configID;
+	}
+
+	public void setConfigID(Integer configID) {
+		this.configID = configID;
+	}
+
+	public String getOtherTabName() {
+		return otherTabName;
+	}
+
+	public void setOtherTabName(String otherTabName) {
+		this.otherTabName = otherTabName;
+	}
+
+	public String getOtherTabCode() {
+		return otherTabCode;
+	}
+
+	public void setOtherTabCode(String otherTabCode) {
+		this.otherTabCode = otherTabCode;
+	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public String getTableCode() {
+		return tableCode;
+	}
+
+	public void setTableCode(String tableCode) {
+		this.tableCode = tableCode;
+	}
+
+	public List<fieldMapperDTO> getFieldMapperList() {
+		return fieldMapperList;
+	}
+
+	public void setFieldMapperList(List<fieldMapperDTO> fieldMapperList) {
+		this.fieldMapperList = fieldMapperList;
+	}
 
 }

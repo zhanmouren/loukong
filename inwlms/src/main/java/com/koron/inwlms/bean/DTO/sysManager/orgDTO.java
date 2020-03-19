@@ -1,6 +1,5 @@
 package com.koron.inwlms.bean.DTO.sysManager;
 
-import lombok.Data;
 
 /**
  * 1 组织bean
@@ -9,7 +8,6 @@ import lombok.Data;
 * @Date 2020.03.17
 */
 
-@Data
 public class orgDTO {
 	//组织Id
 	private Integer orgId;
@@ -21,5 +19,35 @@ public class orgDTO {
 	private String orgAddr;
 	//组织类型
 	private String orgType;
+	public Integer getOrgId() {
+		return orgId;
+	}
+	public void setOrgId(Integer orgId) {
+		this.orgId = orgId;
+	}
+	public String getOrgCode() {
+		return orgCode;
+	}
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
+	}
+	public String getOrgName() {
+		return orgName;
+	}
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
+	public String getOrgAddr() {
+		return orgAddr;
+	}
+	public void setOrgAddr(String orgAddr) {
+		this.orgAddr = orgAddr;
+	}
+	public String getOrgType() {
+		return orgType;
+	}
+	public void setOrgType(String orgType) {
+		this.orgType = orgType;
+	}
    
 }

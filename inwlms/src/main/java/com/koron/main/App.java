@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import org.mybatis.spring.annotation.MapperScan;
 /**
  * 该注解指定项目为springboot，由此类当作程序入口 自动装配 web 依赖的环境
  **/

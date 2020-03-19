@@ -3,7 +3,6 @@ package com.koron.inwlms.bean.DTO.sysManager;
 
 import java.util.List;
 
-import lombok.Data;
 
 /**
  * 集成bean
@@ -11,7 +10,7 @@ import lombok.Data;
 * @Author xiaozhan
 * @Date 2020.03.17
 */
-@Data
+
 public class integrationConfDTO {
    //集成配置Id
 	private Integer inteConfId;
@@ -24,5 +23,45 @@ public class integrationConfDTO {
 	
 	//表格映射明细列表
 	private List<tableMapperDTO> tableMappeList;
+
+	public Integer getInteConfId() {
+		return inteConfId;
+	}
+
+	public void setInteConfId(Integer inteConfId) {
+		this.inteConfId = inteConfId;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getSysName() {
+		return sysName;
+	}
+
+	public void setSysName(String sysName) {
+		this.sysName = sysName;
+	}
+
+	public String getOtherJDBC() {
+		return otherJDBC;
+	}
+
+	public void setOtherJDBC(String otherJDBC) {
+		this.otherJDBC = otherJDBC;
+	}
+
+	public List<tableMapperDTO> getTableMappeList() {
+		return tableMappeList;
+	}
+
+	public void setTableMappeList(List<tableMapperDTO> tableMappeList) {
+		this.tableMappeList = tableMappeList;
+	}
 	
 }

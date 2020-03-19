@@ -1,6 +1,6 @@
 package com.koron.inwlms.bean.DTO.sysManager;
 
-import lombok.Data;
+
 
 /**
  * 1 添加部门bean
@@ -9,7 +9,6 @@ import lombok.Data;
 * @Date 2020.03.17
 */
 
-@Data
 public class deptDTO {
 	//部门Id
 	private Integer depId;
@@ -19,5 +18,29 @@ public class deptDTO {
 	private String depCode;
 	//部门状态
 	private Integer status;
+	public Integer getDepId() {
+		return depId;
+	}
+	public void setDepId(Integer depId) {
+		this.depId = depId;
+	}
+	public String getDepName() {
+		return depName;
+	}
+	public void setDepName(String depName) {
+		this.depName = depName;
+	}
+	public String getDepCode() {
+		return depCode;
+	}
+	public void setDepCode(String depCode) {
+		this.depCode = depCode;
+	}
+	public Integer getStatus() {
+		return status;
+	}
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 
 }

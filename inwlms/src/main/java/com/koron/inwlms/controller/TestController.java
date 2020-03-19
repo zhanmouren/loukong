@@ -1,7 +1,7 @@
 package com.koron.inwlms.controller;
 
 import com.koron.inwlms.bean.DTO.TestBean;
-import com.koron.inwlms.servise.impl.TestServiceImpl;
+import com.koron.inwlms.service.impl.TestServiceImpl;
 import com.koron.util.Constant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
