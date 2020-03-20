@@ -2,8 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.master.UserMapper">
 
-    <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.userDTO">  
-        insert into "SM_user"(id,"loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime")
-        values(#{userId},#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime})     
+   <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.userDTO">  
+        insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime")
+        values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime})     
     </insert>
+    
+    <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.queryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.userVO">
+      select "user".id as "userId","user"."loginName","user".passWord,"user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+	  from "SM_user" as "user"       
+	  left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
+	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"       
+       <trim prefix="where" prefixOverrides="and|or">
+		<if test="name != null  and name !='' "> and "user".name like '%${name}%'</if>  
+   	    <if test="depName != null  and depName !='' "> and "dept" like '%${depName}%'</if>  
+	  </trim>
+    </select>
 </mapper>

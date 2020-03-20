@@ -1,5 +1,7 @@
 package com.koron.inwlms.controller;
 
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.swan.bean.MessageBean;
 
 import com.koron.inwlms.bean.DTO.TestBean;
+import com.koron.inwlms.bean.DTO.sysManager.queryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.userDTO;
+import com.koron.inwlms.bean.VO.sysManager.userVO;
 import com.koron.inwlms.service.UserService;
 import com.koron.inwlms.service.impl.TestServiceImpl;
 import com.koron.inwlms.service.impl.UserServiceImpl;
@@ -78,5 +82,36 @@ public class SystemManagerController {
 	        }
 		
 	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-19
+     * funtion:查询职员接口，通过此接口可以通过职员名或部门称查询职员的基本信息
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询职员接口", notes = "查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryUser(@RequestBody queryUserDTO userDTO) {
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 //执行查询职员
+		 try {
+			 List<userVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryUser", List.class, userDTO);
+			 if(userList.size()>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到相关职员的信息"); 
+			     msg.setData(userList);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("没有查询到相关职员的信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_Failed);
+	        msg.setDescription("查询职员失败");
+	     }
+		 return msg.toJson();
+		 
 	}
 }
