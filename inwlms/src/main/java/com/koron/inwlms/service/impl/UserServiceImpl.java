@@ -31,8 +31,7 @@ public class UserServiceImpl implements UserService{
 		return addResult;
 	}
 	
-	//查询职员 2020/03/19
-	
+	//查询职员 2020/03/19	
 	@TaskAnnotation("queryUser")
 	@Override
 	public List<userVO> queryUser(SessionFactory factory,queryUserDTO userDTO) {
@@ -40,5 +39,17 @@ public class UserServiceImpl implements UserService{
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<userVO> userList=userMapper.queryUser(userDTO);
 		return userList;
+	}
+	//修改职员 2020/03/20
+	@TaskAnnotation("editUser")
+	@Override
+	public Integer editUser(SessionFactory factory, userDTO userDTO) {
+		// TODO Auto-generated method stub
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+		userDTO.setUpdateBy("xiaozhan");
+		userDTO.setUpdateTime(timeNow);
+		Integer editResult=userMapper.editUser(userDTO);
+		return editResult;
 	}
 }

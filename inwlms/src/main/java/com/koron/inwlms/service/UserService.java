@@ -15,4 +15,7 @@ public interface UserService {
 	Integer addUser(SessionFactory factory, userDTO userDTO);
 	//查询职员（名称或部门）
 	List<userVO> queryUser(SessionFactory factory, queryUserDTO userDTO);
+	//修改职员
+    Integer  editUser(SessionFactory factory, userDTO userDTO);
+	
 }

@@ -16,9 +16,12 @@ import com.koron.inwlms.bean.VO.sysManager.userVO;
 @Repository
 @EnvSource("_default")
 public interface UserMapper {
-	//添加职员
+   //添加职员
 	public Integer addUser(userDTO userDTO);
 	
 	//查询职员
 	public List<userVO> queryUser(queryUserDTO userDTO);
+	
+	//修改职员
+    public Integer editUser(userDTO userDTO);
 }

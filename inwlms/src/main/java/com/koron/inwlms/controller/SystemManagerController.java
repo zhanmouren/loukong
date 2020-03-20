@@ -86,7 +86,7 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-19
-     * funtion:查询职员接口，通过此接口可以通过职员名或部门称查询职员的基本信息
+     * funtion:查询职员接口，通过此接口可以通过职员名或部门或者Id称查询职员的基本信息
      * author:xiaozhan
      */
 	@RequestMapping(value = "/queryUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -113,5 +113,50 @@ public class SystemManagerController {
 	     }
 		 return msg.toJson();
 		 
+	}
+	
+	 /*
+     * date:2020-03-20
+     * funtion:修改新职员接口(包含删除职员)
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/editUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改职员信息接口", notes = "修改职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String editUser(@RequestBody userDTO userDTO) {
+		if(userDTO.getUserId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的Id不能为空", Integer.class).toJson();
+		}
+		if(userDTO.getName()==null || StringUtils.isBlank(userDTO.getName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员名不能为空", Integer.class).toJson();
+		}
+		if(userDTO.getLoginName()==null || StringUtils.isBlank(userDTO.getLoginName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "登录名称不能为空", Integer.class).toJson();
+		}
+		if(userDTO.getPassword()==null || StringUtils.isBlank(userDTO.getPassword())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "密码不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行修改职员的操作
+		  try{
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "editUser", Integer.class, userDTO);		 
+			  if(updateRes!=null) {
+				  if(updateRes==1) {
+					//修改用户成功
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("修改用户成功");
+				  }else {
+				    //修改用户失败
+			        msg.setCode(Constant.MESSAGE_INT_Failed);
+			        msg.setDescription("修改用户失败");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//修改用户失败
+	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	            msg.setDescription("修改用户失败");
+	        }
+		
+	     return msg.toJson();
 	}
 }
