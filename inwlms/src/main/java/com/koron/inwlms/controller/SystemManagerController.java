@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.swan.bean.MessageBean;
 
 import com.koron.inwlms.bean.DTO.TestBean;
-import com.koron.inwlms.bean.DTO.sysManager.queryUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.userDTO;
-import com.koron.inwlms.bean.VO.sysManager.userVO;
+import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.UserService;
 import com.koron.inwlms.service.impl.TestServiceImpl;
 import com.koron.inwlms.service.impl.UserServiceImpl;
@@ -47,7 +47,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "管理员添加新职员接口", notes = "管理员添加新职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addUser(@RequestBody userDTO userDTO) {
+	public String addUser(@RequestBody UserDTO userDTO) {
 		if(userDTO.getName()==null || StringUtils.isBlank(userDTO.getName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员名不能为空", Integer.class).toJson();
 		}
@@ -92,11 +92,11 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询职员接口", notes = "查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryUser(@RequestBody queryUserDTO userDTO) {
+	public String queryUser(@RequestBody QueryUserDTO userDTO) {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		 //执行查询职员
 		 try {
-			 List<userVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryUser", List.class, userDTO);
+			 List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryUser", List.class, userDTO);
 			 if(userList.size()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关职员的信息"); 
@@ -117,13 +117,13 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-20
-     * funtion:修改新职员接口(包含删除职员)
+     * funtion:修改新职员接口
      * author:xiaozhan
      */  	
 	@RequestMapping(value = "/editUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改职员信息接口", notes = "修改职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String editUser(@RequestBody userDTO userDTO) {
+	public String editUser(@RequestBody UserDTO userDTO) {
 		if(userDTO.getUserId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的Id不能为空", Integer.class).toJson();
 		}
@@ -159,4 +159,43 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	
+	 /*
+     * date:2020-03-23
+     * funtion:删除新职员接口
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/delUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除职员信息接口", notes = "删除职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String  delUser(@RequestBody UserDTO userDTO) {
+		if(userDTO.getUserId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的Id不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行删除职员的操作
+		  try{
+			  Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "delUser", Integer.class, userDTO);		 
+			  if(delRes!=null) {
+				  if(delRes==1) {
+					//删除用户成功
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("删除用户成功");
+				  }else {
+				    //删除用户失败
+			        msg.setCode(Constant.MESSAGE_INT_Failed);
+			        msg.setDescription("删除用户失败");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//删除用户失败
+	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	            msg.setDescription("删除用户失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	
+
 }

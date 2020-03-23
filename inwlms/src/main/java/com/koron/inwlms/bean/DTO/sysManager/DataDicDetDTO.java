@@ -9,7 +9,7 @@ package com.koron.inwlms.bean.DTO.sysManager;
 * @Date 2020.03.18
 */
 
-public class dataDicDetDTO {
+public class DataDicDetDTO {
 	
 	//数据字典明细主键
 	private Integer dicDetId;

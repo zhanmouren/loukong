@@ -8,7 +8,7 @@ package com.koron.inwlms.bean.DTO.sysManager;
 * @Date 2020.03.17
 */
 
-public class orgDTO {
+public class OrgDTO {
 	//组织Id
 	private Integer orgId;
 	//组织Code

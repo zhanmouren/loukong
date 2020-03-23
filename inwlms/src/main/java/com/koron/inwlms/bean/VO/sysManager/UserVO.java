@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 * @Date 2020.03.17
 */
 
-public class userVO {
+public class UserVO {
 	 //职员id
 	  private Integer userId;
 	  //职员名称

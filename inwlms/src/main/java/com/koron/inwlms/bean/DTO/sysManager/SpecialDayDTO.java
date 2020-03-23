@@ -6,7 +6,7 @@ package com.koron.inwlms.bean.DTO.sysManager;
 * @Author xiaozhan
 * @Date 2020.03.17
 */
-public class specialDayDTO {
+public class SpecialDayDTO {
 	//特征日Id
 	private Integer spId;
 	//特征日名称

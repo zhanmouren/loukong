@@ -10,7 +10,7 @@ import java.sql.Timestamp;
  */
 
 
-public class userDTO {
+public class UserDTO {
   //职员id
   private Integer userId;
   //职员名称
@@ -41,7 +41,23 @@ public class userDTO {
   private String updateBy;
   //修改时间
   private Timestamp updateTime;
+  //是否停用(0 启用，-1 停用)
+  private Integer whetUse;
+  //状态（0 在职，-1 离职）
+  private Integer status;
   
+public Integer getWhetUse() {
+	return whetUse;
+}
+public void setWhetUse(Integer whetUse) {
+	this.whetUse = whetUse;
+}
+public Integer getStatus() {
+	return status;
+}
+public void setStatus(Integer status) {
+	this.status = status;
+}
 public String getCreateBy() {
 	return createBy;
 }

@@ -11,7 +11,7 @@ import java.util.List;
 * @Date 2020.03.18
 */
 
-public class dataDicDTO {
+public class DataDicDTO {
 	//数据字典Id
 	private Integer dicId;
 	//数据字典标识
@@ -21,7 +21,7 @@ public class dataDicDTO {
 	//数据字典备注
 	private String dicRemark;
 	//数据字典List明细
-	private List<dataDicDetDTO> dictionaryDetList;
+	private List<DataDicDetDTO> dictionaryDetList;
 	public Integer getDicId() {
 		return dicId;
 	}
@@ -46,10 +46,10 @@ public class dataDicDTO {
 	public void setDicRemark(String dicRemark) {
 		this.dicRemark = dicRemark;
 	}
-	public List<dataDicDetDTO> getDictionaryDetList() {
+	public List<DataDicDetDTO> getDictionaryDetList() {
 		return dictionaryDetList;
 	}
-	public void setDictionaryDetList(List<dataDicDetDTO> dictionaryDetList) {
+	public void setDictionaryDetList(List<DataDicDetDTO> dictionaryDetList) {
 		this.dictionaryDetList = dictionaryDetList;
 	}
 }

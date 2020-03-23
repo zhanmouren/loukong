@@ -11,7 +11,7 @@ import java.util.List;
 * @Date 2020.03.17
 */
 
-public class integrationConfDTO {
+public class IntegrationConfDTO {
    //集成配置Id
 	private Integer inteConfId;
 	//集成配置状态
@@ -22,7 +22,7 @@ public class integrationConfDTO {
 	private String otherJDBC;
 	
 	//表格映射明细列表
-	private List<tableMapperDTO> tableMappeList;
+	private List<TableMapperDTO> tableMappeList;
 
 	public Integer getInteConfId() {
 		return inteConfId;
@@ -56,11 +56,11 @@ public class integrationConfDTO {
 		this.otherJDBC = otherJDBC;
 	}
 
-	public List<tableMapperDTO> getTableMappeList() {
+	public List<TableMapperDTO> getTableMappeList() {
 		return tableMappeList;
 	}
 
-	public void setTableMappeList(List<tableMapperDTO> tableMappeList) {
+	public void setTableMappeList(List<TableMapperDTO> tableMappeList) {
 		this.tableMappeList = tableMappeList;
 	}
 	

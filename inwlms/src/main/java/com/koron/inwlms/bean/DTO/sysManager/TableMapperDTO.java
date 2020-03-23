@@ -10,7 +10,7 @@ import java.util.List;
 * @Date 2020.03.17
 */
 
-public class tableMapperDTO {
+public class TableMapperDTO {
     //集成表格映射明细
 	private Integer tableMapperId;
 	//集成配置主表Id
@@ -25,7 +25,7 @@ public class tableMapperDTO {
 	private String tableCode;
 	
 	//表格字段映射明细列表
-	private List<fieldMapperDTO> fieldMapperList;
+	private List<FieldMapperDTO> fieldMapperList;
 
 	public Integer getTableMapperId() {
 		return tableMapperId;
@@ -75,11 +75,11 @@ public class tableMapperDTO {
 		this.tableCode = tableCode;
 	}
 
-	public List<fieldMapperDTO> getFieldMapperList() {
+	public List<FieldMapperDTO> getFieldMapperList() {
 		return fieldMapperList;
 	}
 
-	public void setFieldMapperList(List<fieldMapperDTO> fieldMapperList) {
+	public void setFieldMapperList(List<FieldMapperDTO> fieldMapperList) {
 		this.fieldMapperList = fieldMapperList;
 	}
 

@@ -7,9 +7,9 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
-import com.koron.inwlms.bean.DTO.sysManager.queryUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.userDTO;
-import com.koron.inwlms.bean.VO.sysManager.userVO;
+import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.master.UserMapper;
 import com.koron.inwlms.service.UserService;
 
@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService{
 	
 	@TaskAnnotation("addUser")
 	@Override
-	public Integer addUser(SessionFactory factory,userDTO userDTO) {
+	public Integer addUser(SessionFactory factory,UserDTO userDTO) {
 		// TODO Auto-generated method stub	
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		userDTO.setCreateBy("xiaozhan");
@@ -34,16 +34,16 @@ public class UserServiceImpl implements UserService{
 	//查询职员 2020/03/19	
 	@TaskAnnotation("queryUser")
 	@Override
-	public List<userVO> queryUser(SessionFactory factory,queryUserDTO userDTO) {
+	public List<UserVO> queryUser(SessionFactory factory,QueryUserDTO userDTO) {
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		List<userVO> userList=userMapper.queryUser(userDTO);
+		List<UserVO> userList=userMapper.queryUser(userDTO);
 		return userList;
 	}
 	//修改职员 2020/03/20
 	@TaskAnnotation("editUser")
 	@Override
-	public Integer editUser(SessionFactory factory, userDTO userDTO) {
+	public Integer editUser(SessionFactory factory, UserDTO userDTO) {
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
@@ -51,5 +51,16 @@ public class UserServiceImpl implements UserService{
 		userDTO.setUpdateTime(timeNow);
 		Integer editResult=userMapper.editUser(userDTO);
 		return editResult;
+	}
+   
+	//删除职员 2020/03/23
+	@TaskAnnotation("delUser")
+	@Override
+	public Integer delUser(SessionFactory factory, UserDTO userDTO) {
+		// TODO Auto-generated method stub
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		userDTO.setWhetUse(-1);
+		Integer delResult=userMapper.delUser(userDTO);
+		return delResult;
 	}
 }

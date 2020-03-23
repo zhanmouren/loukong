@@ -7,7 +7,7 @@ package com.koron.inwlms.bean.DTO.sysManager;
 * @Date 2020.03.17
 */
 
-public class fieldMapperDTO {
+public class FieldMapperDTO {
 	//表格映射明细id
 	private Integer tableId;
 	//对方字段code

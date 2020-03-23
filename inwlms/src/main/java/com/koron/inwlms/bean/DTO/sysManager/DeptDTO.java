@@ -9,7 +9,7 @@ package com.koron.inwlms.bean.DTO.sysManager;
 * @Date 2020.03.17
 */
 
-public class deptDTO {
+public class DeptDTO {
 	//部门Id
 	private Integer depId;
 	//部门名称
