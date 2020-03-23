@@ -1,0 +1,191 @@
+<style>
+body {
+	color: #fff;
+	height: 100%;
+	width: 100%; 
+}
+.menuicon , .left li
+{background:transparent url(${ctxPath}/images/iconbg.gif) no-repeat scroll 1000px 1000px ;}
+
+.top {
+	height: 75px;
+	width: 100%;
+	position: relative;
+	top: 0px;
+	background-color: #5a416d;
+	margin: 0;
+	padding: 0
+}
+
+.top ul {
+	display: block;
+	position:absolute;
+	height: 85px;
+	margin: 0px 0px 0px 200px;
+	padding: 0
+}
+.top li {}
+.logo {
+	display: block;
+	width: 200px;
+	height: 60px;
+	margin: 10px 8px 0px 30px;
+	float: left;
+	background-image: url("${ctxPath}/images/logo.png");
+	background-size: contain;
+	background-repeat: no-repeat; color:#5a416d; text-indent:999px;
+}
+.top li.logo {font-size:1px; }
+
+.menuicon {
+	display: block;
+	min-width: 100px;
+	height: 80px;
+	margin: 0px 1px 0px;
+	float: left;
+	text-align: center;
+	font: normal 15px 微软雅黑;
+	padding: 17px 0 0px;
+	cursor: pointer;line-height: 1.4em;
+	white-space: pre;background-position: right -5px;
+}
+
+.menuicon.select {
+	background-color: #fc651f;border-radius: 0 0 5px 5px;-webkit-border-radius: 0 0 5px 5px;-moz-border-radius: 0 0 5px 5px;height:80px;white-space: pre;background-position: 1000px 1000px;
+}
+.userrig {float:right; color:#7e6e8c;margin:46px 30px 0px 0px}
+.userrig a:link,.userrig a:visited {color:#eee;text-decoration: none;}
+.userrig em { font-style: normal;color:#f6d200; font: bold 15px 微软雅黑; }
+
+.content {
+	width: auto;
+	height: auto;
+	position: absolute;
+	top:80px;
+	left: 0px;
+	right: 0px;
+	bottom: 0;
+}
+
+.left {
+	height: 100%;
+	position: absolute;top:-5px;
+	left: 0px;
+	width: 170px;
+	background-color: #e9e6eb;
+	padding: 20px 0 30px 0;
+	margin:0px;
+	display: block
+}
+
+.left li {
+	background-position: 0 33px;background-repeat: repeat-x;
+	list-style: none;
+	padding: 8px 0 0 5px;
+	margin: 1px auto;
+	border: 0px;
+	display: block;
+	width:80%;
+	height: 35px;
+	cursor: pointer; color:#333;font: normal 14px 微软雅黑;
+}
+.left li:hover {background-color: #c7b5d4;width:100%;padding-left:26px}
+
+.left li:before {
+	content: "\e60c  ";
+	font-family: icon
+}
+
+.left li.select {
+	background-color: #c7b5d4;width:100%;padding-left:30px
+}
+
+.right {
+	width: auto;
+	height: auto;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	left: 190px;
+	bottom: 0px;
+	
+	padding: 0 0 30px 0;
+}
+
+.right iframe {
+	border: 0;
+	width: 100%;
+	height: 100%;
+	display: block
+}
+
+.footer {
+	width: 100%;
+	height: 30px;
+	position: absolute;
+	bottom: 0;
+	background-color: #d4ced8;
+}
+
+.footer span {
+	width:auto;
+	display:block;
+	float:right;
+	background-color: #D4E7C7;
+	height:30px;
+	color:black;
+	margin:0 4px
+}
+
+.newwin:before {
+	content: "\e925\A";
+	font-family: icon;
+	font-size: 24px
+}
+
+.parameter:before {
+	content: "\e62c\A";
+	font-family: icon;
+	font-size: 24px
+}
+
+.system:before {
+	content: "\e60a\A";
+	font-family: icon;
+	font-size: 24px;
+}
+.info:before {
+	content: "\e904\A";
+	font-family: icon;
+	font-size: 24px
+}
+
+.logout:before{
+   content: "\eadd\A";
+	font-family: icon;
+	font-size: 24px
+}
+.finance:before {
+	content: "\e93b\A";
+	font-family: icon;
+	font-size: 24px
+}
+
+.idcard:before {
+	content: "\e61b\A";
+	font-family: icon;
+	font-size: 24px
+}
+
+.user:before {
+	content: "\e607\A";
+	font-family: icon;
+	font-size: 24px
+}
+
+.package:before {
+	content: "\e61c\A";
+	font-family: icon;
+	font-size: 24px
+}
+</style>

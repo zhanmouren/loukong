@@ -11,5 +11,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class Constant {
 	
+	/**
+	 * 在windown服务器的文件存储路径
+	 */
+	public final static String WIN_FILE_PATH = "C:/inwlms_file";
+	
+	/**
+	 * 在linux服务器的文件存储路径
+	 */
+	public final static String LINUX_FILE_PATH = "/usr/inms_file";
+	
 }
 

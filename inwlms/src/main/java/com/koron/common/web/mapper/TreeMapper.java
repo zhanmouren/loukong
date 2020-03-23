@@ -12,7 +12,7 @@ public interface TreeMapper {
 	 * @param type 类型
 	 * @return 对应的节点
 	 */
-	@Select("select * from tbltree where type = #{type} and seq = #{seq}")
+	@Select("select * from `tbltree` where `type` = #{type} and `seq` = #{seq}")
 	public LongTreeBean getBySeq(@Param("seq") long seq, @Param("type") int type);
 
 	/**
@@ -21,7 +21,7 @@ public interface TreeMapper {
 	 * @param id ID
 	 * @return 对应的节点
 	 */
-	@Select("select * from tbltree where id = #{id}")
+	@Select("select * from `tbltree` where `id` = #{id}")
 	public LongTreeBean getById(int id);
 
 	/**
@@ -30,7 +30,7 @@ public interface TreeMapper {
 	 * @param id ID
 	 * @return 对应的节点
 	 */
-	@Select("select * from tbltree where foreignkey = #{foreignkey}")
+	@Select("select * from `tbltree` where `foreignkey` = #{foreignkey}")
 	public LongTreeBean getByForeignkey(int foreignkey);
 
 	/**
@@ -39,8 +39,8 @@ public interface TreeMapper {
 	 * @param bean 节点
 	 * @return 节点集合
 	 */
-	@Select("select * from tbltree where bitand(seq,bitnot((bitlmv(1,(62 - #{parentMask}-#{mask}))-1))) = #{seq} "
-			+ "and bitand(seq,(bitlmv(1,(62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
+	@Select("select * from `tbltree` where (`seq` & ~((1 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
+			+ "and (`seq` & ((1 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
 	public List<LongTreeBean> getChildren(LongTreeBean bean);
 
 	/**
@@ -49,7 +49,7 @@ public interface TreeMapper {
 	 * @param bean 节点
 	 * @return 节点集合
 	 */
-	@Select("select * from tbltree where bitand(seq,bitnot(bitlmv(1,(62 - #{parentMask}-#{mask}))-1)) = #{seq} and type = #{type} order by seq")
+	@Select("select * from `tbltree` where (`seq` & ~((1 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and `type` = #{type} order by `seq`")
 	public List<LongTreeBean> getDescendant(@Param("seq") long seq, @Param("type") int type, @Param("mask") int mask, @Param("parentMask") int parentMask);
 
 	/**
@@ -58,9 +58,9 @@ public interface TreeMapper {
 	 * @param bean 节点
 	 * @return 节点集合
 	 */
-	@Select("select * from tbltree where bitand(seq,bitnot(bitlmv(1,(62 - parentmask))-1)) = bitand(#{bean.seq},bitnot(bitlmv(1,(62 - #{bean.parentMask}))-1))"
-			+ " and type=#{bean.type} order by seq")
-	public List<LongTreeBean> getSibling(@Param("bean") LongTreeBean bean);
+	@Select("select * from `tbltree` " + "where (`seq` & ~((1 << (62 - #{bean.parentMask}))-1)) = (#{bean.seq} & ~((1 << (62 - #{bean.parentMask}))-1))"
+			+ " and (`seq` & ((1 << (62 - #{bean.parentMask}+#{bean.mask}))-1)) = 0")
+	public List<LongTreeBean> getSibling(LongTreeBean bean);
 
 	/**
 	 * 获取节点的路径，从最上一级到当前级
@@ -68,8 +68,8 @@ public interface TreeMapper {
 	 * @param bean 节点
 	 * @return 节点集合
 	 */
-	@Select("select * from tbltree where bitand(#{seq},bitnot(bitlmv(1,(62 - parentmask-mask))-1)) = seq and type = #{type} order by seq")
-	public List<LongTreeBean> getPath(@Param("type") int type, @Param("seq") long seq);
+	@Select("select * from `tbltree` where (#{seq} & ~((1 << (62 - parentmask-mask))-1)) = seq and type = #{type} order by `seq`")
+	public List<LongTreeBean> getPath(@Param("type")int type,@Param("seq")long seq);
 
 	/**
 	 * 添加一个节点
@@ -77,9 +77,8 @@ public interface TreeMapper {
 	 * @param bean
 	 * @return
 	 */
-	@Insert("insert into tbltree(id,seq,parentmask,mask,childmask,type,foreignkey) "
-			+ "values (#{id},#{node.seq},#{parent.parentMask}+#{parent.mask},#{parent.childMask}," + "0,#{node.type},#{node.foreignkey})")
-	@SelectKey(keyProperty="id", before = true, resultType = Integer.class, statement = { "SELECT SEQ_TBLAPP.Nextval as ID from DUAL" })
+	@Insert("insert into `tbltree`	(`seq`,`parentmask`,`mask`,`childmask`,`type`,`foreignkey`) "
+			+ "values (#{node.seq},#{parent.parentMask}+#{parent.mask},#{parent.childMask}," + "0,#{node.type},#{node.foreignkey})")
 	public Integer add(@Param("parent") LongTreeBean parent, @Param("node") LongTreeBean node);
 
 	/**
@@ -90,7 +89,7 @@ public interface TreeMapper {
 	 */
 	@Update("update tbltree set parentmask = parentmask + #{sign} * #{offset} , seq = ((seq & #{mask}) ${shift} #{offset}) | #{parentSeq} where foreignkey = #{root} and seq > #{min} and seq < #{max}")
 	public Integer moveNode(@Param("parentSeq") long parentSeq, @Param("mask") long mask, @Param("shift") String shift, @Param("sign") int sign,
-                            @Param("offset") int offset, @Param("root") String root, @Param("min") long min, @Param("max") long max);
+			@Param("offset") int offset, @Param("root") String root, @Param("min") long min, @Param("max") long max);
 
 	/**
 	 * 删除一个节点
@@ -98,7 +97,7 @@ public interface TreeMapper {
 	 * @param bean
 	 * @return
 	 */
-	@Delete("delete from tbltree where seq = #{seq} and type = #{type}")
+	@Delete("delete from `tbltree` where `seq` = #{seq} and `type` = #{type}")
 	public Integer delete(@Param("type") int type, @Param("seq") long seq);
 
 	/**
@@ -110,7 +109,7 @@ public interface TreeMapper {
 	 * @param type 类型
 	 * @return
 	 */
-	@Select("select count(0) from tbltree where type = #{type} and seq >= #{lower} and seq < #{upper} and bitand(seq,bitlmv(1,#{mask})-1) = 0")
+	@Select("select count(0) from `tbltree` where `type` = #{type} and `seq` >= #{lower} and `seq` < #{upper} and `seq` & ((1 << #{mask}) -1) = 0")
 	public int getCount(@Param("lower") long lower, @Param("upper") long upper, @Param("mask") int mask, @Param("type") int type);
 
 	/**
@@ -121,13 +120,13 @@ public interface TreeMapper {
 	 * @param seq seq
 	 * @return
 	 */
-	@Update("update tbltree set childmask = childmask + #{extendMask} where type = #{type} and seq = #{seq}")
+	@Update("update `tbltree` set childmask = childmask + #{extendMask} where `type` = #{type} and `seq` = #{seq}")
 	public int updateChildMask(@Param("extendMask") int extendMask, @Param("type") int type, @Param("seq") long seq);
 
-	@Update("update tbltree set childmask = #{childmask} where foreignkey = #{foreignkey}")
+	@Update("update `tbltree` set childmask = #{childmask} where `foreignkey` = #{foreignkey}")
 	public int setChildMask(@Param("childmask") int childmask, @Param("foreignkey") String foreignkey);
 
-	@Select("update tbltree set mask = #{bean.mask},parentmask = #{bean.parentMask},seq = #{bean.seq} where id = #{bean.id}")
+	@Select("update `tbltree` set mask = #{bean.mask},parentmask = #{bean.parentMask},seq = #{bean.seq} where `id` = #{bean.id}")
 	public Integer updateMask(@Param("bean") LongTreeBean bean);
 
 	/**
@@ -138,15 +137,14 @@ public interface TreeMapper {
 	 * @param type 类型
 	 * @return
 	 */
-	@Select("select max(parentmask + mask + childmask) from tbltree where type = #{type} and seq between #{lower} and #{upper}")
+	@Select("select max(parentmask + mask + childmask) from `tbltree` where `type` = #{type} and `seq` between #{lower} and #{upper}")
 	public Integer getMaxMask(@Param("lower") long lower, @Param("upper") long upper, @Param("type") int type);
 
 	/**
 	 * 
 	 * @return
 	 */
-	@Select("select nvl(max(key),0) from (select rownum as key,value from"
-			+ "(select rownum as key,bitand(bitrmv(a.seq , (62-parentmask-mask)),bitlmv(1,mask)-1) as value from tbltree a where a.type = #{type} and seq > #{lower} and seq < #{upper} and bitand(seq,bitlmv(1,#{mask}) -1) = 0 order by seq asc) b) t where t.key = t.value")
+	@Select("select ifnull(max(`key`),0) from (	select @a:=@a+1 as `key`,a.seq >> (62-parentmask-mask)  & (1 << mask )-1 as `value` from tbltree a,(select @a:=0) as r where a.type = #{type} and `seq` > #{lower} and `seq` < #{upper} and (`seq` & ((1 << #{mask}) -1)) = 0) as t where t.`key` = t.value")
 	public int getAvailable(@Param("lower") long lower, @Param("upper") long upper, @Param("mask") int mask, @Param("type") int type);
 	/**
 	 * 获取一定范围的数据. 不包含上下限
@@ -156,18 +154,16 @@ public interface TreeMapper {
 	 * @param type
 	 * @return
 	 */
-	@Select("select id,seq,parentmask,mask,childmask,type,foreignkey from tbltree where type = #{type} and seq > #{lower} and seq < #{upper} order by seq asc")
+	@Select("select `id`,`seq`,`parentmask`,`mask`,`childmask`,`type`,`foreignkey` from `tbltree` where `type` = #{type} and `seq` > #{lower} and `seq` < #{upper}")
 	public List<LongTreeBean> getRange(@Param("lower") long lower, @Param("upper") long upper, @Param("type") int type);
 
-	@Select("select * from tbltree where type = #{type} and foreignkey = #{foreign}")
+	@Select("select * from `tbltree` where `type` = #{type} and `foreignkey` = #{foreign}")
 	public LongTreeBean getBeanByForeignIdType(@Param("type") int type, @Param("foreign") String foreignKey);
 
-	@Select("select * from"+
-			"(select rownum num,t.* from"+
-			"(select * from tbltree where bitand(#{seq},bitnot(bitlmv(1,62 - parentmask - mask)-1)) = seq and type = #{type} order by seq desc) t) where num=1" )
+	@Select("select * from `tbltree` where (#{seq} & ~((1 << (62 - parentmask - mask))-1)) = seq and type = #{type} order by `seq` desc limit 1,1")
 	public LongTreeBean getParant(LongTreeBean bean);
 
 	@Select("select tbltree.seq,tbltree.parentmask from tbltree " + "inner join (" + "	select tbltree.* from tbltree "
-			+ "where type = #{type} and seq =#{seq}) a on bitand(tbltree.seq,bitnot(bitlmv(1,62 - a.parentMask-a.mask)-1)) = a.seq")
+			+ "where type = #{type} and seq =#{seq}) a on (tbltree.`seq` & ~((1 << (62 - a.`parentMask`-a.`mask`))-1)) = a.`seq`")
 	public List<LongTreeBean> getDescendantByParentId(@Param("seq") Long seq, @Param("type") String type);
 }

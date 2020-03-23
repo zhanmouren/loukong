@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koron.common.mapper.PrivilegeMapper">
+	<select resultType="com.koron.common.bean.OperationBean" parameterType="com.koron.common.bean.query.OperationQueryBean" id="listOperation">
+		select * from tbloperation
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="name!=null and name!=''">and name=#{name}</if>
+			<if test="key!=null and key!=''">and `key`=#{key}</if>
+		</trim>
+		limit #{offset},#{pageCount}
+	</select>
+	<select resultType="com.koron.common.bean.RoleOperationBean" parameterType="com.koron.common.bean.query.RoleOperationQueryBean" id="listRoleOperation">
+		SELECT d.id as operationid,d.`key` as operationkey,d.`name` as operatename,
+		c.id as roleid,c.param as param
+		FROM tbloperation d
+		LEFT JOIN (SELECT a.id as id,b.operationid as operationid,b.param as param
+		FROM tblrole a LEFT JOIN tblroleoperation b on b.roleid=a.id
+		WHERE a.id=#{roleId}) as c
+		on d.id=c.operationid
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="operatename!=null and operatename!=''">and `name` like concat('%',#{operatename},'%')</if>
+			<if test="operationkey!=null and operationkey!=''">and `key` like concat('%',#{operationkey},'%')</if>
+		</trim>
+		order by c.id desc,d.id
+		limit #{offset},#{pageCount}
+	</select>
+
+	<select resultType="java.lang.Integer" parameterType="com.koron.common.bean.query.RoleOperationQueryBean" id="listRoleOperationCount">
+		SELECT count(*)
+		FROM tbloperation d
+		LEFT JOIN
+		(SELECT a.id as id,b.operationid as operationid,b.param as param
+		FROM tblrole a
+		LEFT JOIN tblroleoperation b on
+		b.roleid=a.id
+		WHERE a.id=#{roleId}) as c on d.id=c.operationid
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="operatename!=null and operatename!=''">and `name` like concat('%',#{operatename},'%')</if>
+			<if test="operationkey!=null and operationkey!=''">and `key` like concat('%',#{operationkey},'%')</if>
+		</trim>
+	</select>
+
+	<insert id="addRoleOperation" parameterType="com.koron.common.bean.RoleOperationModifyBean">
+		insert into `tblroleoperation`(roleid,operationid,param) values
+		<foreach item="item" index="index" collection="adds" open="" separator="," close="">
+			(#{roleid},#{item.opid},#{item.param})
+		</foreach>
+		on duplicate key update param=values(param);
+	</insert>
+
+	<delete id="delRoleOperation" parameterType="com.koron.common.bean.RoleOperationModifyBean">
+		delete from `tblroleoperation`
+		where roleid=#{roleid} and operationid in
+		<foreach item="item" index="index" collection="delopids" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+	<update id="updateUserPassword">
+		update `tbluser` set
+		`password`=#{password}
+		where `id`=#{id}
+	</update>
+	<update id="updateUserPassword2">
+		update `tbluser` set
+		`password`=#{password}
+		where `id`=#{id} and `password` = #{oldPwd}
+	</update>
+</mapper>

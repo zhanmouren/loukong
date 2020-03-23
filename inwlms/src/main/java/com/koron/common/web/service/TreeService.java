@@ -18,15 +18,6 @@ import com.koron.common.web.mapper.TreeMapper;
  */
 public class TreeService {
 	/**
-	 * 根据序号获取对应的层级数据
-	 */
-	@TaskAnnotation("getBySeq")
-	public LongTreeBean getBySeq(SessionFactory factory,Long seq,int type){
-		TreeMapper mapper = factory.getMapper(TreeMapper.class);
-		LongTreeBean node = mapper.getBySeq(seq, type);
-		return node;
-	}
-	/**
 	 * <pre>
 	 * 在某节点下增加一个节点.
 	 * 如果扩展成功子节点里的seq会设置成对应的值并返回.

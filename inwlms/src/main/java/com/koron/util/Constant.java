@@ -1,5 +1,12 @@
 package com.koron.util;
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.koron.ebs.util.field.EnumElement;
+
+import com.koron.common.bean.DefineFieldBean;
+
 public class Constant {
 	/**
 	 * 登录用户在SESSION里的储存KEY
@@ -34,6 +41,40 @@ public static final String USER = "_user";
 	 * 密码错误
 	 */
 	public static final int MESSAGE_INT_PWDERROR = 10002;
+	public static final int MESSAGE_INT_NOPARAM = 10002;
+	/**
+	 * 传参为空(没有获取到参数)
+	 */
+	public static final int MESSAGE_INT_NULL = 10003;
+	/**
+	 * 添加操作失败
+	 */
+	public static final int MESSAGE_INT_ADDERROR = 10004;
+	/**
+	 * 修改操作失败
+	 */
+	public static final int MESSAGE_INT_EDITERROR = 10005;
+	/**
+	 * 删除操作失败
+	 */
+	public static final int MESSAGE_INT_DELERROR = 10006;
+	/**
+	 * 登录失败
+	 */
+	public static final int MESSAGE_INT_LOGINERROR = 10007;
+	/**
+	 * 更新失败
+	 */
+	public static final int MESSAGE_INT_UPDATERROR = 10008;
+	
+	/**
+	 * 上传失败
+	 */
+	public static final int MESSAGE_INT_UPLOADERROR = 10009;
+	/**
+	 * 查询失败
+	 */
+	public static final int MESSAGE_INT_SELECTERROR = 10010;
 	/**
 	 * 参数校验异常
 	 */
@@ -244,4 +285,22 @@ public static final String USER = "_user";
 	 */
 	public static final String MESSAGE_STRING_FACILITY_NOTEXIST = "message_facility_notexist";
 
+	/**
+	 * 自定义字段缓存
+	 */
+	public final static HashMap<String, DefineFieldBean> fieldCache = new HashMap<>();
+	
+	/**
+	 * 自定义层别缓存
+	 */
+	public static final HashMap<String, Integer> layerCache = new HashMap<>();
+	/**
+	 * 自定义层别下的所有字段
+	 */
+	public static final HashMap<Integer, List<DefineFieldBean>> layerFieldCache = new HashMap<>();
+	/**
+	 * 枚举缓存
+	 */
+	public final static HashMap<String, EnumElement<Object>> enumCache = new HashMap<>();
+	
 }

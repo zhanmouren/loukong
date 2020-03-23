@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koron.ebs.permission.mybatis.SPIMapper">
+	<insert id="addEntity">
+		insert into `tblspientity` (`key`,name,type) values (#{id.id},#{id.name},#{type})
+	</insert>
+	<delete id="removeEntity">
+		delete from `tblspientity` where `key` = #{id} and type = #{type}
+	</delete>
+	<insert id="addRelation">
+		insert into `tblspirelation` (source,target,type) value (#{source},#{target},#{type})
+	</insert>
+	<delete id="removeRelation">
+		delete from `tblspirelation`  
+		<where>
+		<if test="source == null and target == null">and 1=2 </if>
+		<if test="source != null">and `source` = #{source}</if>
+		<if test="target != null">and `target` = #{target} </if>
+		<if test="type != null and type != -1">and `type` = #{type}</if>
+		</where>
+	</delete>
+	<select id="list" resultType="java.lang.String">
+		select `target` from `tblspirelation` where `source` = #{id} and `type` = #{type}
+	</select>
+	<select id="listSource" resultType="java.lang.String">
+		select `source` from `tblspirelation` where `target` = #{id} and `type` = #{type}
+	</select>
+	<select id="getRelation" resultType="com.koron.ebs.permission.mybatis.SPIrelationBean">
+		select * from `tblspirelation` where `source` = #{source} and `target` = #{target} and `type` = #{type}
+	</select>
+</mapper>

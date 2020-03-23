@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koron.inms.mapper.commom.FileMapper">
+	<insert id="insertFileData" parameterType="com.koron.inwlms.bean.DTO.common.UploadFileDTO"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO
+		"APP_file"
+		("fileName","filePath","fileType","fileSize","storageTime",
+		"tId","moduleType","storeName","createBy","createTime","updateBy","updateTime")
+		VALUES
+		(#{fileName,jdbcType=VARCHAR},
+		 #{filePath,jdbcType=VARCHAR},
+		 #{fileType,jdbcType=INTEGER},
+		 #{fileSize,jdbcType=DOUBLE},
+		 #{storageTime,jdbcType=TIMESTAMP},
+		 #{tId,jdbcType=INTEGER},
+		 #{moduleType,jdbcType=INTEGER},
+		 #{storeName,jdbcType=VARCHAR},
+		 #{createBy,jdbcType=VARCHAR},
+		 #{createTime,jdbcType=TIMESTAMP},
+		 #{updateBy,jdbcType=VARCHAR},
+		 #{updateTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<select id="queryFilePath" parameterType="java.lang.Integer"
+		resultType="java.lang.String">
+		SELECT PATH FROM GDHK_SYS_FILE
+		WHERE ID = #{fileId} AND STATUS = 1
+	</select>
+	<select id="getAttachmentInfoById" parameterType="java.lang.Integer"
+		resultType="com.koron.inwlms.bean.DTO.common.UploadFileDTO">
+		SELECT * FROM GDHK_SYS_FILE WHERE ID = #{fileId} AND STATUS
+		= '1'
+	</select>
+	<delete id="deleteFileById" parameterType="java.lang.Integer">
+		UPDATE GDHK_SYS_FILE
+		SET STATUS = 0
+		where ID = #{fileId}
+	</delete>
+
+	<select id="getAttachmentInfoByTid" parameterType="java.lang.fileId"
+		resultType="com.koron.inwlms.bean.DTO.common.UploadFileDTO">
+		SELECT * FROM GDHK_SYS_FILE WHERE T_ID = #{tId} AND STATUS
+		= 1
+	</select>
+</mapper>

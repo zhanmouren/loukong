@@ -20,8 +20,8 @@ import io.swagger.annotations.ApiOperation;
  * @Date 2020.03.09
  */
 @Controller
-@Api(value = "ApparentLossController", description = "表观漏损Controller")
-@RequestMapping(value = "/ApparentLossController")
+@Api(value = "apparentLossController", description = "表观漏损Controller")
+@RequestMapping(value = "/apparentLossController")
 public class ApparentLossController {
 
 	@RequestMapping(value = "/queryALOverviewData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })

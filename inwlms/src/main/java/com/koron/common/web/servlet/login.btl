@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>登录界面</title>
+<link rel="icon" href="${ctxPath}/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="${ctxPath}/images/favicon.ico" type="image/x-icon" />
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<link href="${ctxPath}/css/common.css" rel="stylesheet">
+<link href="${ctxPath}/css/bootstrap.min.css" rel="stylesheet">
+<link href="${ctxPath}/css/fontello.css" rel="stylesheet">
+<script src="${ctxPath}/js/jquery.js"></script>
+<script src="${ctxPath}/js/jquery.placeholder.min.js"></script>
+<script src="${ctxPath}/js/common.js"></script>
+<script>
+	$(function(){
+    		$('input[placeholder]').placeholder();
+	});
+	if(window.top != window.self)top.location.href="${ctxPath}/login.htm";
+	function login() {
+		commitData('${ctxPath}/login/login.htm', {
+			name : $("#name").val(),
+			password : $("#password").val()
+		}, {
+			success : function(data) {
+				if (data.code != 0)
+					$("#msg").html(data.description);
+				else
+					top.location.href = '${ctxPath}/index.htm';
+			}
+		});
+	}
+</script>
+<style>
+.animating {
+	background: white;
+	border-radius: 4px;
+	width: 320px;
+	height: 250px;
+	position: relative;
+	overflow: hidden;
+	margin: 50px 40px;
+	float: right;
+}
+
+.animating ul {
+	padding-left: 30px;
+	padding-top: 20px;
+}
+
+.banner {
+	background: url("./images/banner.jpg");
+	transition-property: all;
+	transition-duration: 0.5s;
+	transition-timing-function: ease-in;
+}
+
+.banner:hover {
+	background: url("./images/banner2.jpg");
+}
+
+.login_u>li {
+	position: relative;
+	overflow: hidden;
+	margin: 0 0 20px 0;
+	display: block;
+}
+
+.login_u input {
+	width: 230px;
+	height: 32px;
+	line-height: 32px;
+	padding: 0 5px 0 26px;
+	font-size: 14px;
+	border: 1px #cacaca solid;
+	box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
+	-ms-box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
+	-o-box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-ms-border-radius: 4px;
+	-o-border-radius: 4px;
+	transition: box-shadow 1s, border-color 0.5s ease-in-out;
+	-moz-transition: box-shadow 1s, border-color 0.5s ease-in-out;
+	-ms-transition: box-shadow 1s, border-color 0.5s ease-in-out;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	position:relative;
+	z-index:12;
+	behavior: url("ie-css3.htc");
+}
+
+.login_u input:focus {
+	outline: none;
+	box-shadow: 0 0 5px #cacaca;
+	border-radius: 4;
+	border: 1px solid #8a8a8a;
+	transition: box-shadow 1s, border-color 0.5s ease-in-out;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+.login_u .intext {
+	position: absolute;
+	color: gray;
+	left: 6px;
+	top: 8px;
+	z-index: 20;
+	font-size: 14px;
+	font-family: 'fontello';
+}
+input:-webkit-autofill {
+background-color: #fff !important;
+background-image: none !important;
+color: #000 !important;
+}
+.banner{
+	position: relative;
+    width: 100%;
+    height: 350px;
+}
+.animating{
+	height:270px;
+	position: absolute;
+    right: 0;
+    top: 0;
+    background: rgba(255,255,255,.3);
+}
+.animating>div{
+	background: rgba(255,255,255,.8);
+    border-radius: 4px;
+    width: 300px;
+    height: 250px;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+.login_u{
+	padding-left: 35px;
+}
+.login_u li:first-child{
+	color:#634f73;
+}
+.login_u input,.login_u span.myButton{
+	background: transparent;
+}
+.myButton{
+    padding: 0 102px;
+    margin: 0;
+}
+
+</style>
+</head>
+<body>
+	<div class="header">
+		<a href="http://www.krrj.cn" target="_blank" id="fir_header"><img
+			src="${ctxPath}/images/logo.png" alt="" height="80px"/></a>
+	</div>
+	<div class="banner">
+		<div class="animating">
+		<div>
+			<ul id="comLogin" class="login_u">
+				<li style="font-family: Microsoft Yahei; font-size: 24px">账号登录
+				</li>
+				<li><span class="intext">&#xf2c0;</span> <input id="name"
+					name="name" placeholder="用户名" type="text"
+					disableautocomplete="disableautocomplete" autofocus autocomplete="off">
+				</li>
+				<li><span class="intext">&#xe81c;</span> <input id="password"
+					name="password" placeholder="登录密码" class="txt_inp loginInp"
+					type="password" onkeydown="if(event.keyCode==13){login();}"
+					disableautocomplete="disableautocomplete" autocomplete="off">
+				</li>
+				<li><span id="msg" style="color: red"></span></li>
+				<li><span onclick="login();" id="login" class="myButton">登录</span>
+			</ul>
+			</div>
+		</div>
+		<div style="clear: both"></div>
+	</div>
+</body>
+
+</html>
