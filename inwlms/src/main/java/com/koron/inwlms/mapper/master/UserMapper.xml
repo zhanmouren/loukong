@@ -17,7 +17,7 @@
    	    <if test="depName != null  and depName !='' "> and "dept" like '%${depName}%'</if>
    	    <if test="userId != null"> and "user".id ='${userId}'</if>  
    	    <if test="status != null"> and "user".status ='${status}'</if>
-   	    <if test="whetUse != null"> and "user".whetUse ='${whetUse}'</if>          
+   	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>          
 	  </trim>
     </select>
     
