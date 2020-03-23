@@ -2,7 +2,6 @@ package com.koron.inwlms.bean.VO.common;
 
 
 import com.github.pagehelper.Page;
-import com.koron.common.bean.query.BaseQueryBean;
 
 import java.util.List;
 

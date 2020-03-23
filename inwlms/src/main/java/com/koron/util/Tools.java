@@ -25,10 +25,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.koron.common.bean.EnumDBBean;
-import com.koron.common.bean.EnumDetailDBBean;
-import com.koron.common.mapper.UserDefineMapper;
-import com.koron.ebs.permission.StaffAccount;
 
 public class Tools {
 	public static final ServletContext context = ContextLoader.getCurrentWebApplicationContext().getServletContext();
@@ -133,7 +129,8 @@ public class Tools {
 		bean.setIp(request.getHeader("X-Real-IP"));
 		bean.setMacaddress(request.getRemoteHost());
 		if (request.getSession().getAttribute(Constant.USER) != null)
-			bean.setUsername(((StaffAccount) request.getSession().getAttribute(Constant.USER)).getStaff().getName());
+//			bean.setUsername(((StaffAccount) request.getSession().getAttribute(Constant.USER)).getStaff().getName());
+			bean.setUsername("");
 		return bean;
 	}
 
@@ -156,52 +153,52 @@ public class Tools {
 	 * @param key
 	 * @return
 	 */
-	@TaskAnnotation("getEnum")
-	private EnumElement<Object> getEnumByKey(SessionFactory factory, String key, Object... parameter) {
-		EnumElement<Object> ret = Constant.enumCache.get(key);
-		if (parameter == null || parameter.length == 0) {
-			if (ret != null)
-				return ret;
-		}
-		Logger.getLogger(this.getClass()).debug("获取指定的枚举值：" + key);
-		UserDefineMapper mapper = factory.getMapper(UserDefineMapper.class);
-		EnumDBBean bean = mapper.getEnumByKey(key);
-		ret = new EnumElement<>();
-		ret.setBit(bean.getIsbit());
-		ret.setType(bean.getType());
-		if (bean.getParam() != null && !bean.getParam().isEmpty()) {
-			Map<String, String> map = getDyn(bean.getParam(), parameter);
-			for (Entry<String, String> item : map.entrySet()) {
-				switch (bean.getType()) {
-				case 0:
-					ret.put(item.getKey(), item.getValue());
-					break;
-				case 1:
-					ret.put(Integer.parseInt(item.getKey()), item.getValue());
-					break;
-				case 2:
-					ret.put(Long.parseLong(item.getKey()), item.getValue());
-				}
-			}
-		} else {
-			List<EnumDetailDBBean> list = mapper.getEnumDetailByEnumId(bean.getId());
-			for (EnumDetailDBBean enumDetailDBBean : list) {
-				switch (bean.getType()) {
-				case 0:
-					ret.put(enumDetailDBBean.getKey(), enumDetailDBBean.getValue());
-					break;
-				case 1:
-					ret.put(Integer.parseInt(enumDetailDBBean.getKey()), enumDetailDBBean.getValue());
-					break;
-				case 2:
-					ret.put(Long.parseLong(enumDetailDBBean.getKey()), enumDetailDBBean.getValue());
-				}
-			}
-		}
-		if (parameter == null || parameter.length == 0)
-			Constant.enumCache.put(key, ret);
-		return ret;
-	}
+//	@TaskAnnotation("getEnum")
+//	private EnumElement<Object> getEnumByKey(SessionFactory factory, String key, Object... parameter) {
+//		EnumElement<Object> ret = Constant.enumCache.get(key);
+//		if (parameter == null || parameter.length == 0) {
+//			if (ret != null)
+//				return ret;
+//		}
+//		Logger.getLogger(this.getClass()).debug("获取指定的枚举值：" + key);
+//		UserDefineMapper mapper = factory.getMapper(UserDefineMapper.class);
+//		EnumDBBean bean = mapper.getEnumByKey(key);
+//		ret = new EnumElement<>();
+//		ret.setBit(bean.getIsbit());
+//		ret.setType(bean.getType());
+//		if (bean.getParam() != null && !bean.getParam().isEmpty()) {
+//			Map<String, String> map = getDyn(bean.getParam(), parameter);
+//			for (Entry<String, String> item : map.entrySet()) {
+//				switch (bean.getType()) {
+//				case 0:
+//					ret.put(item.getKey(), item.getValue());
+//					break;
+//				case 1:
+//					ret.put(Integer.parseInt(item.getKey()), item.getValue());
+//					break;
+//				case 2:
+//					ret.put(Long.parseLong(item.getKey()), item.getValue());
+//				}
+//			}
+//		} else {
+//			List<EnumDetailDBBean> list = mapper.getEnumDetailByEnumId(bean.getId());
+//			for (EnumDetailDBBean enumDetailDBBean : list) {
+//				switch (bean.getType()) {
+//				case 0:
+//					ret.put(enumDetailDBBean.getKey(), enumDetailDBBean.getValue());
+//					break;
+//				case 1:
+//					ret.put(Integer.parseInt(enumDetailDBBean.getKey()), enumDetailDBBean.getValue());
+//					break;
+//				case 2:
+//					ret.put(Long.parseLong(enumDetailDBBean.getKey()), enumDetailDBBean.getValue());
+//				}
+//			}
+//		}
+//		if (parameter == null || parameter.length == 0)
+//			Constant.enumCache.put(key, ret);
+//		return ret;
+//	}
 
 	/**
 	 * 根据类名#方法的方式获取得KVBean数组，然后转换成map

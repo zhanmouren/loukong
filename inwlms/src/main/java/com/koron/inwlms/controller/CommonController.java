@@ -1,6 +1,6 @@
 package com.koron.inwlms.controller;
 
-import com.koron.common.web.util.StaffAttribute;
+import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;

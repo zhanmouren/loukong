@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.koron.ebs.util.field.EnumElement;
 
-import com.koron.common.bean.DefineFieldBean;
 
 public class Constant {
 	/**
@@ -284,20 +283,11 @@ public static final String USER = "_user";
 	 * facility数据不存在
 	 */
 	public static final String MESSAGE_STRING_FACILITY_NOTEXIST = "message_facility_notexist";
-
-	/**
-	 * 自定义字段缓存
-	 */
-	public final static HashMap<String, DefineFieldBean> fieldCache = new HashMap<>();
 	
 	/**
 	 * 自定义层别缓存
 	 */
 	public static final HashMap<String, Integer> layerCache = new HashMap<>();
-	/**
-	 * 自定义层别下的所有字段
-	 */
-	public static final HashMap<Integer, List<DefineFieldBean>> layerFieldCache = new HashMap<>();
 	/**
 	 * 枚举缓存
 	 */

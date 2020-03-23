@@ -29,8 +29,8 @@ import org.springframework.http.*;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.koron.beetl.BeetlErrorHandler;
-import com.koron.beetl.BeetlTool;
+import com.koron.common.beetl.BeetlErrorHandler;
+import com.koron.common.beetl.BeetlTool;
 import com.koron.util.Constant;
 import com.koron.util.Tools;
 /**
