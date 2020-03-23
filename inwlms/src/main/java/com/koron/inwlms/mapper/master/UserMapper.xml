@@ -60,17 +60,17 @@
 		where id=#{roleId}
      </update>
      
-     <select id="queryUserRole"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleMsgVO">
-       select "userRole".name as roleName,
+     <select id="queryRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleMsgVO">
+       select "userRole".name as roleName
        from  "SM_userRoleRelation" as "userRela"
        left join  "SM_userRole" as "userRole" on "userRole".id="userRela"."roleID"
-       where "userRela"."roleID"=#{roleID}
+       where "userRela"."roleID"=#{roleId}
     </select>
     
     <!-- 批量删除员工信息 -->
     <delete id="delRole" parameterType="int">
-        delete from userRole where id in
-        <foreach item="roleItem" collection="array" open="(" separator="," close=")">
+        delete from "SM_userRole" where id in
+        <foreach item="roleItem" collection="list" open="(" separator="," close=")">
             #{roleItem}
         </foreach>
     </delete>

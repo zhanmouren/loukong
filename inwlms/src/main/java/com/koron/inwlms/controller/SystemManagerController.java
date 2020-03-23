@@ -291,15 +291,15 @@ public class SystemManagerController {
 		  try{
 			  RoleMsgVO roleMsgVO=ADOConnection.runTask(new UserServiceImpl(), "delRoleAttr", RoleMsgVO.class, roleDTO);		 
 			  if(roleMsgVO!=null) {
-				  if(roleMsgVO.getResult()==1) {
-					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				  if(roleMsgVO.getResult()==-1) {
+					 msg.setCode(Constant.MESSAGE_INT_Failed);
 					 msg.setDescription(roleMsgVO.getMessage()); 
 				  }else {
-					  msg.setCode(Constant.MESSAGE_INT_Failed);
+					  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				      msg.setDescription(roleMsgVO.getMessage());  
 				  }
 				   
-				 			  }
+			 }
 	        }catch(Exception e){
 	        	//删除角色失败
 	        	msg.setCode(Constant.MESSAGE_INT_Failed);
