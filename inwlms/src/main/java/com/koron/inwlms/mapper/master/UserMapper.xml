@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.master.UserMapper">
-   <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.userDTO">  
+   <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">  
         insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime")
         values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime})     
     </insert>
     
-    <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.queryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.userVO">
+    <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
       select "user".id as "userId","user"."loginName","user".passWord,"user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
 	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
 	  from "SM_user" as "user"       
@@ -21,7 +21,7 @@
 	  </trim>
     </select>
     
-    <update id="editUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.userDTO">   
+    <update id="editUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
 		update "SM_user" 
 		<set>	    
              <if test="name != null  and name !=''" > name = #{name},  </if>                       
@@ -36,11 +36,43 @@
 		where id=#{userId}
      </update>
      
-    <update id="delUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.userDTO">   
+    <update id="delUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
 		update "SM_user" 
 		<set>	                                 
              <if test="whetUse != null" > "whetUse" = #{whetUse},</if> 
         </set>
 		where id=#{userId}
      </update>
+     
+      <insert id="addNewRole" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">  
+        insert into "SM_userRole"(name,remark,"createBy","createTime","updateBy","updateTime")
+        values(#{roleName},#{roleRemark},#{createBy},#{createTime},#{updateBy},#{updateTime})     
+    </insert>
+    
+    <update id="editRoleAttr" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">   
+		update "SM_userRole" 
+		<set>	                                 
+             <if test="roleName != null" > name= #{roleName},</if>            
+             <if test="roleRemark != null" > remark= #{roleName},</if>
+             <if test="updateBy != null and updateBy!=''" > "updateBy" = #{updateBy},</if>                        
+             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+        </set>
+		where id=#{roleId}
+     </update>
+     
+     <select id="queryUserRole"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleMsgVO">
+       select "userRole".name as roleName,
+       from  "SM_userRoleRelation" as "userRela"
+       left join  "SM_userRole" as "userRole" on "userRole".id="userRela"."roleID"
+       where "userRela"."roleID"=#{roleID}
+    </select>
+    
+    <!-- 批量删除员工信息 -->
+    <delete id="delRole" parameterType="int">
+        delete from userRole where id in
+        <foreach item="roleItem" collection="array" open="(" separator="," close=")">
+            #{roleItem}
+        </foreach>
+    </delete>
+    
 </mapper>

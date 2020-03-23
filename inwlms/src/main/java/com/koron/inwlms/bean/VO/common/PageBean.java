@@ -2,6 +2,7 @@ package com.koron.inwlms.bean.VO.common;
 
 
 import com.github.pagehelper.Page;
+import com.koron.common.bean.BaseQueryBean;
 
 import java.util.List;
 
@@ -45,9 +46,9 @@ public class PageBean<T> extends BaseQueryBean{
     private void init(Page<T> page) {
         this.dataList = page.getResult();
         super.setPage(page.getPageNum());
-        super.setPageCount(page.getPageSize());
+        super.setPage(page.getPageSize());
         super.setTotalPage(page.getPages());
-        super.setRowNumber(Integer.parseInt(String.valueOf(page.getTotal())));
+        super.setTotalNumber(Integer.parseInt(String.valueOf(page.getTotal())));
     }
 
 

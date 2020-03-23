@@ -15,7 +15,9 @@ import org.swan.bean.MessageBean;
 
 import com.koron.inwlms.bean.DTO.TestBean;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.UserService;
 import com.koron.inwlms.service.impl.TestServiceImpl;
@@ -196,6 +198,116 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
+	 /*
+     * date:2020-03-23
+     * funtion:添加新角色接口
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/addNewRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "添加新角色接口", notes = "添加新角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addNewRole(@RequestBody RoleDTO roleDTO) {
+		if(roleDTO.getRoleName()==null || StringUtils.isBlank(roleDTO.getRoleName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色名称不能为空", Integer.class).toJson();
+		}	
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行插入职员的操作
+		  try{
+			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addNewRole", Integer.class, roleDTO);		 
+			  if(insertRes!=null) {
+				  if(insertRes==1) {
+					//添加用户成功
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("添加新角色成功");
+				  }else {
+				    //插入失败
+			        msg.setCode(Constant.MESSAGE_INT_Failed);
+			        msg.setDescription("添加新角色失败");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//插入失败
+	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	            msg.setDescription("添加新角色失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-20
+     * funtion:修改角色属性接口
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/editRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改角色属性接口", notes = "修改角色属性接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String editRoleAttr(@RequestBody RoleDTO roleDTO) {
+		if(roleDTO.getRoleId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		}
+		if(roleDTO.getRoleName()==null || StringUtils.isBlank(roleDTO.getRoleName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色名称不能为空", Integer.class).toJson();
+		}	
+		
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行修改职员的操作
+		  try{
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "editRoleAttr", Integer.class, roleDTO);		 
+			  if(updateRes!=null) {
+				  if(updateRes==1) {
+					//修改用户成功
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("修改角色属性成功");
+				  }else {
+				    //修改用户失败
+			        msg.setCode(Constant.MESSAGE_INT_Failed);
+			        msg.setDescription("修改角色属性失败");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//修改用户失败
+	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	            msg.setDescription("修改角色属性失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-20
+     * funtion:批量删除删除角色接口
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/delRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "批量删除角色接口", notes = "批量删除角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String delRoleAttr(@RequestBody RoleDTO roleDTO) {
+		if(roleDTO.getRoleIdList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色列表Id不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行删除角色的操作
+		  try{
+			  RoleMsgVO roleMsgVO=ADOConnection.runTask(new UserServiceImpl(), "delRoleAttr", RoleMsgVO.class, roleDTO);		 
+			  if(roleMsgVO!=null) {
+				  if(roleMsgVO.getResult()==1) {
+					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					 msg.setDescription(roleMsgVO.getMessage()); 
+				  }else {
+					  msg.setCode(Constant.MESSAGE_INT_Failed);
+				      msg.setDescription(roleMsgVO.getMessage());  
+				  }
+				   
+				 			  }
+	        }catch(Exception e){
+	        	//删除角色失败
+	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	            msg.setDescription("删除角色失败");
+	        }
+		
+	     return msg.toJson();
+	}
 	
 
 }

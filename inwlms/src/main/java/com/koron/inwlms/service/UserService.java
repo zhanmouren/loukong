@@ -5,7 +5,9 @@ import java.util.List;
 import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 
@@ -19,5 +21,10 @@ public interface UserService {
     Integer  editUser(SessionFactory factory, UserDTO userDTO);
     //删除职员（不物理删除）
     Integer  delUser(SessionFactory factory, UserDTO userDTO);
-	
+    //新建新角色
+	Integer addNewRole(SessionFactory factory, RoleDTO roleDTO);
+	 //修改角色属性
+	Integer editRoleAttr(SessionFactory factory, RoleDTO roleDTO);
+	 //修改角色属性(物理删除)
+	RoleMsgVO delRoleAttr(SessionFactory factory, RoleDTO roleDTO);
 }

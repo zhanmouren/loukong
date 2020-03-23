@@ -3,10 +3,13 @@ package com.koron.inwlms.mapper.master;
 import java.util.List;
 
 import org.koron.ebs.mybatis.EnvSource;
+import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 /*
@@ -27,5 +30,16 @@ public interface UserMapper {
     
     //删除职员
     public Integer delUser(UserDTO userDTO);
+    
+    //新建新角色
+    public Integer addNewRole(RoleDTO roleDTO);
+  	 //修改角色属性
+    public Integer editRoleAttr(RoleDTO roleDTO);
+    
+    //删除角色
+    public Integer  delRole(List<Integer> roleList);
+    
+    //查询该角色是否存在职员
+    public List<RoleMsgVO>  queryRoleUser(RoleDTO roleDTO);
      
 }
