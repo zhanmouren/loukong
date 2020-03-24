@@ -2,6 +2,7 @@ package com.koron.inwlms.mapper.master;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.koron.ebs.mybatis.EnvSource;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
@@ -50,7 +51,10 @@ public interface UserMapper {
   	//加载所有角色
 	public List<RoleVO> queryAllRole();
 	
-	//插入角色与职员的关系
+	//插入角色与职员(批量)的关系
 	public Integer addRoleUser(List<RoleAndUserDTO> roleAndUserDTOList);
+	
+	//删除角色中职员(批量)
+	public Integer  delRoleUser(@Param("roleId") Integer roleId,@Param("list") List<Integer> userList);
      
 }

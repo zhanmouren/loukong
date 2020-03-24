@@ -33,6 +33,8 @@ public interface UserService {
 	List<UserVO> queryUserByRoleId(SessionFactory factory, RoleDTO roleDTO);
 	//查询所有角色接口以及相关职员(默认第一次进入角色的时候)
 	RoleAndUserVO queryAllRoleUser(SessionFactory factory, RoleDTO roleDTO);
-	//添加用户和角色关系的操作
+	//添加用户(批量)和角色关系的操作
 	Integer addRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
+	//删除角色中职员(批量)接口
+	Integer delRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
 }

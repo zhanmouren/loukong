@@ -67,7 +67,7 @@
        where "userRela"."roleID"=#{roleId}
     </select>
     
-    <!-- 批量删除员工信息 -->
+    <!-- 批量删除角色信息 -->
     <delete id="delRole" parameterType="int">
         delete from "SM_userRole" where id in
         <foreach item="roleItem" collection="list" open="(" separator="," close=")">
@@ -99,5 +99,14 @@
 			(${roleuser.userId}, ${roleuser.roleId}, #{roleuser.createBy}, #{roleuser.createTime}, #{roleuser.updateBy}, #{roleuser.updateTime})
 		</foreach>
     </insert>
+    
+     <!-- 批量删除角色中员工信息 -->
+    <delete id="delRoleUser">
+        delete from "SM_userRoleRelation" where "roleID"=#{roleId} 
+        and "userID" in
+        <foreach item="userItem" collection="list" open="(" separator="," close=")">
+            #{userItem}
+        </foreach>
+    </delete>
     
 </mapper>

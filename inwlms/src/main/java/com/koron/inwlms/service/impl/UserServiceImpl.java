@@ -156,7 +156,7 @@ public class UserServiceImpl implements UserService{
 		return roleAndUser;
 	}
 
-	//遍历插入职员和角色的关系
+	//遍历插入职员和角色的关系 2020/03/24
 	@TaskAnnotation("addRoleUser")
 	@Override
 	public Integer addRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
@@ -177,5 +177,16 @@ public class UserServiceImpl implements UserService{
 		}
 		Integer addResult=userMapper.addRoleUser(roleAndUserDTOList);
 		return addResult;
+	}
+
+	//删除角色中职员(批量)接口 2020/03/24
+	@TaskAnnotation("delRoleUser")
+	@Override
+	public Integer delRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
+		// TODO Auto-generated method stub
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		//执行批量删除角色职员的操作
+		Integer delResult=userMapper.delRoleUser(roleUserDTO.getRoleId(),roleUserDTO.getUserList());
+		return delResult;
 	}
 }
