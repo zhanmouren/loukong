@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.master.ApparentLossMapper">
+
+	<select id="queryMALOverviewData" parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO"
+		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO">
+		select
+		sum(case when b.code='WNMAL' then value/b.precision else 0 end)
+		as "AL",
+		sum(case when b.code='WNMALCA' then value/b.precision else 0 end) as
+		"perCustomerAccAL",
+		sum(case when b.code='WNMALR' then value/b.precision else 0
+		end) as "percentAL",
+		sum(case when b.code='WNMALI' then value/b.precision else 0
+		end) as "ALI",
+		sum(case when b.code='WNMNMRR' then value/b.precision else 0 end) as
+		"percentNonMeterRead",
+		sum(case when b.code='WNMTROMR' then value/b.precision else
+		0 end) as "meterReadRate",
+		sum(case when b.code='WNMIMRTR' then value/b.precision
+		else 0 end) as
+		"nonMeterReadTimeRate",
+		sum(case when b.code='WNMOSMR'
+		then value/b.precision else 0 end) as "overdueMetersRate",
+		sum(case when
+		b.code='WNMIBIOMR' then value/b.precision else 0 end) as
+		"nonBasicInfoMeterRate",
+		b."yearMonth" as time
+		from
+		(select a.id,a."yearMonth",a.code,a.value,ind.precision as precision from
+		"ANA_apparent_month" a
+		 left join "LC_APP_dim_indicator" ind on
+		 ind.code = a.code 
+		left
+		join "APP_dim_month" m on m."yearMonth" =
+		a."yearMonth" and
+		m."yearMonth" &gt;= #{startTime} and m."yearMonth"
+		&lt;= #{endTime}) b
+		group by b."yearMonth"
+	</select>
+
+	<select id="queryYALOverviewData" parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO"
+		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO">
+		select
+		sum(case when b.code='WNYAL' then value/b.precisio else 0 end)
+		as "AL",
+		sum(case when b.code='WNYALCA' then value/b.precisio else 0 end) as
+		"perCustomerAccAL",
+		sum(case when b.code='WNYALR' then value/b.precisio else 0
+		end) as "percentAL",
+		sum(case when b.code='WNYALI' then value/b.precisio else 0
+		end) as "ALI",
+		sum(case when b.code='WNYNMRR' then value/b.precisio else 0 end) as
+		"percentNonMeterRead",
+		sum(case when b.code='WNYTROMR' then value/b.precisio else
+		0 end) as "meterReadRate",
+		sum(case when b.code='WNYIMRTR' then value/b.precisio
+		else 0 end) as
+		"nonMeterReadTimeRate",
+		sum(case when b.code='WNYOSMR'
+		then value/b.precisio else 0 end) as "overdueMetersRate",
+		sum(case when
+		b.code='WNYIBIOMR' then value/b.precisio else 0 end) as
+		"nonBasicInfoMeterRate",
+		b.year as time
+		from
+		(select a.id,a.year,a.code,a.value,ind.precision from
+		"ANA_apparent_year" a left join "LC_APP_dim_indicator" ind on
+		 ind.code = a.code where
+		a.year &gt;= #{startTime} and a.year
+		&lt;= #{endTime}) b
+		group by b.year;
+	</select>
+
+	<select id="queryALList"
+		parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO"
+		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALListVO">
+		select * from "ANA_apparent_month";
+	</select>
+
+</mapper>
