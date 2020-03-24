@@ -1,5 +1,14 @@
 package com.koron.inwlms.controller;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.koron.ebs.mybatis.ADOConnection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,9 +16,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.swan.bean.MessageBean;
 
-import com.koron.inwlms.bean.DTO.TestBean;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
+import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.common.PageBean;
+import com.koron.inwlms.service.ApparentLossService;
+import com.koron.inwlms.util.ExportDataUtil;
+import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,11 +39,30 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/apparentLossController")
 public class ApparentLossController {
 
+	@Autowired
+    private ApparentLossService als;
+	
+	/**
+	 * 查询表观漏损数据总览接口
+	 * @param queryALDTO 表观漏损数据总览参数
+	 * @return String 字符串返回值
+	 */
 	@RequestMapping(value = "/queryALOverviewData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询表观漏损数据总览接口", notes = "查询表观漏损数据总览接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryALOverviewData(@RequestBody QueryALDTO queryALDTO) {
-		return null;
+		MessageBean<ALOverviewDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, ALOverviewDataVO.class);
+		Integer timeType = queryALDTO.getTimeType();
+		Integer startTime = queryALDTO.getStartTime();
+		Integer endTime = queryALDTO.getEndTime();
+		if(timeType == null || startTime == null || endTime == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription(Constant.MESSAGE_STRING_NULL);
+		}
+		ALOverviewDataVO data = ADOConnection.runTask(als, "queryALOverviewData", ALOverviewDataVO.class,queryALDTO);
+		msg.setData(data);
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/queryALList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -48,7 +82,32 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadALList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载表观漏损列表数据", notes = "下载表观漏损列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String downloadALList(@RequestBody QueryALDTO queryALDTO) {
+	public HttpEntity<?> downloadALList(HttpServletResponse response, HttpServletRequest request) {
+		try{
+			String objValue = request.getParameter("objValue"); // 获取导出数据查询条件bean
+			String titleInfos = request.getParameter("titleInfos"); // 获取导出列表数据表头
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryALListDTO queryALListDTO = jsonValue.fromJson(objValue, QueryALListDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryALListDTO == null) {
+				queryALListDTO = new QueryALListDTO();
+			}
+			queryALListDTO.setPage(1);
+			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			PageBean pageBean = ADOConnection.runTask(als, "queryALList", PageBean.class,queryALListDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+//			return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+			//导出分页
+			return ExportDataUtil.getExcelDataFileInfo(pageBean, jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	

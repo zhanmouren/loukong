@@ -15,7 +15,7 @@ public class QueryALListDTO extends BaseDTO{
 	public String firstLevelZone;
 	
 	/**
-	 * 二级分许
+	 * 二级分区
 	 */
 	public String secondeLevelZone;
 	

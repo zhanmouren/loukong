@@ -2,7 +2,7 @@ package com.koron.inwlms.bean.DTO.common;
 
 import org.springframework.stereotype.Component;
 
-import com.koron.inwlms.constant.Constant;
+import com.koron.util.Constant;
 
 
 /**
