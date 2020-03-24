@@ -9,6 +9,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -153,5 +154,28 @@ public class UserServiceImpl implements UserService{
 		roleAndUser.setRoleList(roleList);
 		roleAndUser.setUserList(userList);		
 		return roleAndUser;
+	}
+
+	//遍历插入职员和角色的关系
+	@TaskAnnotation("addRoleUser")
+	@Override
+	public Integer addRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
+		// TODO Auto-generated method stub
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
+		List<RoleAndUserDTO> roleAndUserDTOList=new ArrayList<RoleAndUserDTO>();
+		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+		for(int i=0;i<roleUserDTO.getUserList().size();i++) {
+			RoleAndUserDTO roleUserDTONew=new RoleAndUserDTO();
+			roleUserDTONew.setRoleId(roleUserDTO.getRoleId());
+			roleUserDTONew.setUserId(roleUserDTO.getUserList().get(i));
+			roleUserDTONew.setCreateTime(timeNow);
+			roleUserDTONew.setUpdateTime(timeNow);
+			roleUserDTONew.setCreateBy("小詹");
+			roleUserDTONew.setUpdateBy("小詹");
+			roleAndUserDTOList.add(roleUserDTONew);
+		}
+		Integer addResult=userMapper.addRoleUser(roleAndUserDTOList);
+		return addResult;
 	}
 }

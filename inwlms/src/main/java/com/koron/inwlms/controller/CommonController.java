@@ -185,7 +185,7 @@ public class CommonController {
     @ApiOperation(value = "删除附件",notes = "删除附件",httpMethod = "GET",response = MessageBean.class,consumes = "application/json;charset=UTF-8",produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String deleteFile(String fileId){
-    	MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_DELSUCCESS, String.class);
+    	MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
     	try{
 	    	int result = ADOConnection.runTask(new FileServiceImpl(),"deleteFileById",Integer.class,fileId);
 			if(result == Constant.EXECUTE_SQL_ERROR) {

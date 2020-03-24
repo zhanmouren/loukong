@@ -7,6 +7,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -48,5 +49,8 @@ public interface UserMapper {
   	
   	//加载所有角色
 	public List<RoleVO> queryAllRole();
+	
+	//插入角色与职员的关系
+	public Integer addRoleUser(List<RoleAndUserDTO> roleAndUserDTOList);
      
 }

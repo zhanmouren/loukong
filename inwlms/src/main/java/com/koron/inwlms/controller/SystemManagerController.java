@@ -15,6 +15,7 @@ import org.swan.bean.MessageBean;
 
 import com.koron.inwlms.bean.DTO.TestBean;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -74,13 +75,13 @@ public class SystemManagerController {
 				    msg.setDescription("添加用户成功");
 				  }else {
 				    //插入失败
-			        msg.setCode(Constant.MESSAGE_INT_Failed);
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 			        msg.setDescription("添加用户失败");
 				  }
 			  }
 	        }catch(Exception e){
 	        	//插入失败
-	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("添加用户失败");
 	        }
 		
@@ -111,7 +112,7 @@ public class SystemManagerController {
 			 }
 		 }catch(Exception e){
 	     	//查询失败
-	     	msg.setCode(Constant.MESSAGE_INT_Failed);
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询职员失败");
 	     }
 		 return msg.toJson();
@@ -150,13 +151,13 @@ public class SystemManagerController {
 				    msg.setDescription("修改用户成功");
 				  }else {
 				    //修改用户失败
-			        msg.setCode(Constant.MESSAGE_INT_Failed);
+			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 			        msg.setDescription("修改用户失败");
 				  }
 			  }
 	        }catch(Exception e){
 	        	//修改用户失败
-	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("修改用户失败");
 	        }
 		
@@ -186,13 +187,13 @@ public class SystemManagerController {
 				    msg.setDescription("删除用户成功");
 				  }else {
 				    //删除用户失败
-			        msg.setCode(Constant.MESSAGE_INT_Failed);
+			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 			        msg.setDescription("删除用户失败");
 				  }
 			  }
 	        }catch(Exception e){
 	        	//删除用户失败
-	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("删除用户失败");
 	        }
 		
@@ -222,13 +223,13 @@ public class SystemManagerController {
 				    msg.setDescription("添加新角色成功");
 				  }else {
 				    //插入失败
-			        msg.setCode(Constant.MESSAGE_INT_Failed);
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 			        msg.setDescription("添加新角色失败");
 				  }
 			  }
 	        }catch(Exception e){
 	        	//插入失败
-	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("添加新角色失败");
 	        }
 		
@@ -262,13 +263,13 @@ public class SystemManagerController {
 				    msg.setDescription("修改角色属性成功");
 				  }else {
 				    //修改用户失败
-			        msg.setCode(Constant.MESSAGE_INT_Failed);
+			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 			        msg.setDescription("修改角色属性失败");
 				  }
 			  }
 	        }catch(Exception e){
 	        	//修改用户失败
-	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("修改角色属性失败");
 	        }
 		
@@ -293,7 +294,7 @@ public class SystemManagerController {
 			  RoleMsgVO roleMsgVO=ADOConnection.runTask(new UserServiceImpl(), "delRoleAttr", RoleMsgVO.class, roleDTO);		 
 			  if(roleMsgVO!=null) {
 				  if(roleMsgVO.getResult()==-1) {
-					 msg.setCode(Constant.MESSAGE_INT_Failed);
+					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
 					 msg.setDescription(roleMsgVO.getMessage()); 
 				  }else {
 					  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -303,7 +304,7 @@ public class SystemManagerController {
 			 }
 	        }catch(Exception e){
 	        	//删除角色失败
-	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("删除角色失败");
 	        }
 		
@@ -338,7 +339,7 @@ public class SystemManagerController {
 			 }
 	        }catch(Exception e){
 	        	//查询角色职员失败
-	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("查询角色职员失败");
 	        }
 		
@@ -355,7 +356,6 @@ public class SystemManagerController {
     @ResponseBody
 	public String queryAllRoleUser(@RequestBody RoleDTO roleDTO) {		
 		 MessageBean<RoleAndUserVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, RoleAndUserVO.class);	       
-		//执行删除角色的操作
 		  try{
 			  RoleAndUserVO roleAndUserVO=ADOConnection.runTask(new UserServiceImpl(), "queryAllRoleUser", RoleAndUserVO.class, roleDTO);		 
 			  if(roleAndUserVO!=null) {				 
@@ -367,8 +367,43 @@ public class SystemManagerController {
 				     msg.setDescription("没有查询到所有角色和相关职员信息列表"); 
 			 }
 	        }catch(Exception e){
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询角色职员失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-24
+     * funtion:插入职员和角色的关系
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/addRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "插入职员和角色的关系", notes = "插入职员和角色的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
+		if(roleUserDTO.getRoleId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		}
+		if(roleUserDTO.getUserList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户列表不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行添加用户和角色关系的操作
+		  try{
+			  Integer addResult=ADOConnection.runTask(new UserServiceImpl(), "addRoleUser", Integer.class, roleUserDTO);		 
+			  if(addResult==-1) {				 
+					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+					 msg.setDescription("插入职员和角色的关系失败"); 
+					
+			 }else {
+				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				     msg.setDescription("插入职员和角色的关系成功"); 
+			 }
+	        }catch(Exception e){
 	        	//删除角色失败
-	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("查询角色职员失败");
 	        }
 		
