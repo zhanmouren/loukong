@@ -380,7 +380,7 @@ public class SystemManagerController {
      * author:xiaozhan
      */  	
 	@RequestMapping(value = "/addRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "插入职员和角色的关系", notes = "插入职员和角色的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "插入职员(批量)和角色的关系", notes = "插入职员(批量)和角色的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
 		if(roleUserDTO.getRoleId()==null) {
@@ -444,6 +444,40 @@ public class SystemManagerController {
 	        }
 		
 	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-24
+     * funtion:给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryExceptRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询角色其他职员接口", notes = "查询角色其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryExceptRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {
+		if(roleUserDTO.getRoleId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		}
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 //执行查询职员
+		 try {
+			 List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryExceptRoleUser", List.class, roleUserDTO);
+			 if(userList.size()>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("该角色查询到其他相关职员的信息"); 
+			     msg.setData(userList);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("该角色没有查询到相关职员的信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询职员失败");
+	     }
+		 return msg.toJson();
+		 
 	}
 	
 }

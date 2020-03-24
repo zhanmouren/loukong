@@ -189,4 +189,14 @@ public class UserServiceImpl implements UserService{
 		Integer delResult=userMapper.delRoleUser(roleUserDTO.getRoleId(),roleUserDTO.getUserList());
 		return delResult;
 	}
+
+	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员) 2020/03/24
+	@TaskAnnotation("queryExceptRoleUser")
+	@Override
+	public List<UserVO> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
+		// TODO Auto-generated method stub
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		List<UserVO> userList=userMapper.queryExceptRoleUser(roleUserDTO);
+		return userList;
+	}
 }

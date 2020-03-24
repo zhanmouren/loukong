@@ -56,5 +56,8 @@ public interface UserMapper {
 	
 	//删除角色中职员(批量)
 	public Integer  delRoleUser(@Param("roleId") Integer roleId,@Param("list") List<Integer> userList);
+	
+	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
+	public List<UserVO> queryExceptRoleUser(RoleAndUserDTO roleUserDTO);
      
 }

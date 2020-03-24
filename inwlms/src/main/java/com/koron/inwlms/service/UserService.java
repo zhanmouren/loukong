@@ -37,4 +37,6 @@ public interface UserService {
 	Integer addRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
 	//删除角色中职员(批量)接口
 	Integer delRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
+	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
+	List<UserVO> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
 }
