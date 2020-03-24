@@ -41,5 +41,8 @@ public interface UserMapper {
     
     //查询该角色是否存在职员
     public List<RoleMsgVO>  queryRoleUser(RoleDTO roleDTO);
+    
+   //根据角色Id加载角色人员接口
+  	public List<UserVO> queryUserByRoleId(RoleDTO roleDTO);
      
 }

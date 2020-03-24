@@ -276,7 +276,7 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-20
-     * funtion:批量删除删除角色接口
+     * funtion:批量删除删除角色接口（超级管理员角色不允许删除，代码待写）
      * author:xiaozhan
      */  	
 	@RequestMapping(value = "/delRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -309,5 +309,38 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
-
+	 /*
+     * date:2020-03-24
+     * funtion:根据角色ID加载角色人员接口
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/queryUserByRoleId.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据角色ID加载角色人员接口", notes = "根据角色ID加载角色人员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryUserByRoleId(@RequestBody RoleDTO roleDTO) {
+		//可以不传角色Id,默认为超级管理员
+		 if(roleDTO.getRoleId()==null) {
+			 //测试中暂时设定id为3的为超级管理员
+			 roleDTO.setRoleId(3);
+		 }
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		//执行删除角色的操作
+		  try{
+			  List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryUserByRoleId", List.class, roleDTO);		 
+			  if(userList.size()>0) {				 
+					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					 msg.setDescription("根据角色Id查询到相关职员信息列表"); 
+					 msg.setData(userList);
+			 }else {
+				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				     msg.setDescription("该角色未查询到相关职员信息列表"); 
+			 }
+	        }catch(Exception e){
+	        	//删除角色失败
+	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	            msg.setDescription("查询角色职员失败");
+	        }
+		
+	     return msg.toJson();
+	}
 }

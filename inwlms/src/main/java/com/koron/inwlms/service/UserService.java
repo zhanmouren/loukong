@@ -27,4 +27,7 @@ public interface UserService {
 	Integer editRoleAttr(SessionFactory factory, RoleDTO roleDTO);
 	 //修改角色属性(物理删除)
 	RoleMsgVO delRoleAttr(SessionFactory factory, RoleDTO roleDTO);
+	
+	//根据角色Id加载角色人员接口
+	List<UserVO> queryUserByRoleId(SessionFactory factory, RoleDTO roleDTO);
 }

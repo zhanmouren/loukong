@@ -120,4 +120,14 @@ public class UserServiceImpl implements UserService{
 		  return roleMsgVO;
 		  
 	}
+
+	//根据角色Id加载角色人员接口 2020/03/24
+	@TaskAnnotation("queryUserByRoleId")
+	@Override
+	public List<UserVO> queryUserByRoleId(SessionFactory factory, RoleDTO roleDTO) {	
+		// TODO Auto-generated method stub
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		List<UserVO> userList=userMapper.queryUserByRoleId(roleDTO);
+		return userList;
+	}
 }
