@@ -402,12 +402,14 @@ public class SystemManagerController {
 				     msg.setDescription("插入职员和角色的关系成功"); 
 			 }
 	        }catch(Exception e){
-	        	//删除角色失败
+	        	//插入职员和角色的关系失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("查询角色职员失败");
+	            msg.setDescription("插入职员和角色的关系失败");
 	        }
 		
 	     return msg.toJson();
 	}
+	
+	
 	
 }

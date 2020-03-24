@@ -94,9 +94,9 @@
     
     <!--遍历插入职员与角色的关系 -->
     <insert id="addRoleUser" parameterType="java.util.List">  
-        insert into "SM_userRoleRelation"("userID", "roleID","createBy","createTime","updateBy","updateTime")
+        insert into "SM_userRoleRelation"("userID", "roleID","createBy","createTime","updateBy","updateTime")values
 		<foreach collection="list" item="roleuser"  index="index" separator=",">
-			(#{roleuser.userId}, #{roleuser.roleId}, #{roleuser.createBy}, #{roleuser.createTime}, #{roleuser.updateBy}, #{roleuser.updateTime})
+			(${roleuser.userId}, ${roleuser.roleId}, #{roleuser.createBy}, #{roleuser.createTime}, #{roleuser.updateBy}, #{roleuser.updateTime})
 		</foreach>
     </insert>
     
