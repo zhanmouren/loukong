@@ -86,4 +86,11 @@
        where "userRela"."roleID"=#{roleId}
     </select>
     
+    <!--查询所有角色列表 -->
+    <select id="queryAllRole"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
+       select id as "roleId",name as "roleName",remark as "roleRemark","createBy","createTime","updateBy","updateTime" 
+       from "SM_userRole" 
+    </select>
+    
+    
 </mapper>

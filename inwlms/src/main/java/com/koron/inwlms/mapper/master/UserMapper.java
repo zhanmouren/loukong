@@ -10,6 +10,7 @@ import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 /*
@@ -44,5 +45,8 @@ public interface UserMapper {
     
    //根据角色Id加载角色人员接口
   	public List<UserVO> queryUserByRoleId(RoleDTO roleDTO);
+  	
+  	//加载所有角色
+	public List<RoleVO> queryAllRole();
      
 }

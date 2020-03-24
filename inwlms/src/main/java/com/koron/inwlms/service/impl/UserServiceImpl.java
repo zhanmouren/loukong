@@ -1,6 +1,7 @@
 package com.koron.inwlms.service.impl;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Service;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.master.UserMapper;
 import com.koron.inwlms.service.UserService;
@@ -129,5 +132,26 @@ public class UserServiceImpl implements UserService{
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<UserVO> userList=userMapper.queryUserByRoleId(roleDTO);
 		return userList;
+	}
+
+	//根据角色Id加载角色人员接口 2020/03/24
+	@TaskAnnotation("queryAllRoleUser")
+	@Override
+	public RoleAndUserVO queryAllRoleUser(SessionFactory factory, RoleDTO roleDTO) {
+		// TODO Auto-generated method stub
+		//先查询所有的角色
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		List<RoleVO> roleList=userMapper.queryAllRole();
+		//查询第一个角色的角色人员接口
+		if(roleDTO.getRoleId()==null) {
+			//测试用，先默认为3
+		   roleDTO.setRoleId(3);
+		}
+		List<UserVO> userList=userMapper.queryUserByRoleId(roleDTO);
+		//拼接在一个List中
+		RoleAndUserVO roleAndUser=new RoleAndUserVO();
+		roleAndUser.setRoleList(roleList);
+		roleAndUser.setUserList(userList);		
+		return roleAndUser;
 	}
 }

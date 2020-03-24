@@ -17,6 +17,7 @@ import com.koron.inwlms.bean.DTO.TestBean;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.UserService;
@@ -336,6 +337,36 @@ public class SystemManagerController {
 				     msg.setDescription("该角色未查询到相关职员信息列表"); 
 			 }
 	        }catch(Exception e){
+	        	//查询角色职员失败
+	        	msg.setCode(Constant.MESSAGE_INT_Failed);
+	            msg.setDescription("查询角色职员失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-24
+     * funtion:查询所有角色接口以及相关职员(默认第一次进入角色的时候)
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/queryAllRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询所有角色接口以及相关职员", notes = "查询所有角色接口以及相关职员", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryAllRoleUser(@RequestBody RoleDTO roleDTO) {		
+		 MessageBean<RoleAndUserVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, RoleAndUserVO.class);	       
+		//执行删除角色的操作
+		  try{
+			  RoleAndUserVO roleAndUserVO=ADOConnection.runTask(new UserServiceImpl(), "queryAllRoleUser", RoleAndUserVO.class, roleDTO);		 
+			  if(roleAndUserVO!=null) {				 
+					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					 msg.setDescription("查询到所有角色和相关职员信息列表"); 
+					 msg.setData(roleAndUserVO);
+			 }else {
+				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				     msg.setDescription("没有查询到所有角色和相关职员信息列表"); 
+			 }
+	        }catch(Exception e){
 	        	//删除角色失败
 	        	msg.setCode(Constant.MESSAGE_INT_Failed);
 	            msg.setDescription("查询角色职员失败");
@@ -343,4 +374,5 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	
 }

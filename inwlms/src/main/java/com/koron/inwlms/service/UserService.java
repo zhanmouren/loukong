@@ -7,6 +7,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
@@ -26,8 +27,9 @@ public interface UserService {
 	 //修改角色属性
 	Integer editRoleAttr(SessionFactory factory, RoleDTO roleDTO);
 	 //修改角色属性(物理删除)
-	RoleMsgVO delRoleAttr(SessionFactory factory, RoleDTO roleDTO);
-	
+	RoleMsgVO delRoleAttr(SessionFactory factory, RoleDTO roleDTO);	
 	//根据角色Id加载角色人员接口
 	List<UserVO> queryUserByRoleId(SessionFactory factory, RoleDTO roleDTO);
+	//查询所有角色接口以及相关职员(默认第一次进入角色的时候)
+	RoleAndUserVO queryAllRoleUser(SessionFactory factory, RoleDTO roleDTO);
 }
