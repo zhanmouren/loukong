@@ -9,6 +9,7 @@ import org.springframework.boot.ansi.AnsiColor;
 import org.springframework.boot.ansi.AnsiOutput;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -31,6 +32,7 @@ import java.util.List;
  **/
 @SpringBootApplication
 @ComponentScan(value = {"org.swan", "com.koron", "com.koron.main"})
+@ServletComponentScan
 public class App extends WebMvcConfigurationSupport {
     public static void main(String[] args) throws IOException {
         SpringApplication app = new SpringApplication(App.class);
