@@ -7,7 +7,7 @@
     </insert>
     
     <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-      select "user".id as "userId","user"."loginName","user".passWord,"user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+      select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
 	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
@@ -111,13 +111,22 @@
     
      <!-- 角色弹窗选择职员 -->
      <select id="queryExceptRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-       select "user".id as "userId","user"."loginName","user".passWord,"user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+       select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
 	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
 	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
-	   where "user".id not in(select "userrela"."userID" from "SM_userRoleRelation" as "userrela" where "userrela"."roleID" =#{roleId})
-	 
+	   where "user".id not in(select "userrela"."userID" from "SM_userRoleRelation" as "userrela" where "userrela"."roleID" =#{roleId})	 
+     </select>
+     
+      <!-- 部门弹窗选择职员 -->
+     <select id="queryExceptDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+       select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+	   from "SM_user" as "user"       
+	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
+	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
+	   where "user".id not in(select "deptuser"."userID" from "SM_userDept" as "deptuser" where "deptuser"."deptID" =#{depId})	 
      </select>
     
 </mapper>

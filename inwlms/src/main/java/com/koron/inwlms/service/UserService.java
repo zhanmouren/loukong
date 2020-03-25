@@ -3,7 +3,9 @@ package com.koron.inwlms.service;
 import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
+import org.koron.ebs.mybatis.TaskAnnotation;
 
+import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -39,4 +41,6 @@ public interface UserService {
 	Integer delRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
 	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
 	List<UserVO> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
+	//给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员) 2020/03/25			
+	public List<UserVO> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO);
 }

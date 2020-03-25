@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.swan.bean.MessageBean;
 
 import com.koron.inwlms.bean.DTO.TestBean;
+import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -479,5 +480,40 @@ public class SystemManagerController {
 		 return msg.toJson();
 		 
 	}
+	
+	/*
+     * date:2020-03-25
+     * funtion:给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryExceptDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询部门其他职员接口", notes = "查询部门其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryExceptDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {
+		if(deptUserDTO.getDepId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门Id不能为空", Integer.class).toJson();
+		}
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 //执行查询职员
+		 try {
+			 List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryExceptDeptUser", List.class, deptUserDTO);
+			 if(userList.size()>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("该部门查询到其他相关职员的信息"); 
+			     msg.setData(userList);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("该部门没有查询到相关职员的信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询职员失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
 	
 }

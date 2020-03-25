@@ -8,6 +8,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -199,4 +200,14 @@ public class UserServiceImpl implements UserService{
 		List<UserVO> userList=userMapper.queryExceptRoleUser(roleUserDTO);
 		return userList;
 	}
+	
+	//给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员) 2020/03/25
+		@TaskAnnotation("queryExceptDeptUser")
+		@Override
+		public List<UserVO> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {
+			// TODO Auto-generated method stub
+			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			List<UserVO> userList=userMapper.queryExceptDeptUser(deptUserDTO);
+			return userList;
+		}
 }
