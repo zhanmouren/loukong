@@ -137,4 +137,13 @@
 		</foreach>
     </insert>
     
+     <!-- 批量删除部门中员工信息 -->
+    <delete id="delDeptUser">
+        delete from "SM_userDept" where "deptID"=#{depId} 
+        and "userID" in
+        <foreach item="userItem" collection="list" open="(" separator="," close=")">
+            #{userItem}
+        </foreach>
+    </delete>
+    
 </mapper>

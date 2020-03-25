@@ -45,6 +45,8 @@ public interface UserService {
     List<UserVO> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO);
 	//添加用户(批量)和部门关系的操作
 	Integer addDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO);
+	//删除部门中职员(批量)接口
+	Integer delDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO);
 	
 	
 }

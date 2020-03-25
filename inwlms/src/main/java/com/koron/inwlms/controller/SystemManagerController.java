@@ -551,5 +551,41 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
+	/*
+     * date:2020-03-24
+     * funtion:删除部门中职员(批量)接口
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/delDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除部门中职员接口", notes = "删除部门中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String delDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
+		if(deptUserDTO.getDepId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门Id不能为空", Integer.class).toJson();
+		}
+		if(deptUserDTO.getUserList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户列表不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行删除部门中职员(批量)操作
+		  try{
+			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "delDeptUser", Integer.class, deptUserDTO);		 
+			  if(delResult==-1) {				 
+					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
+					 msg.setDescription("删除部门中职员(批量)失败"); 
+					
+			 }else {
+				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				     msg.setDescription("删除部门中职员(批量)成功"); 
+			 }
+	        }catch(Exception e){
+	        	//删除角色中职员(批量)失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("删除部门中职员(批量)失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
 	
 }

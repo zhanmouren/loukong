@@ -67,4 +67,7 @@ public interface UserMapper {
 	
 	//添加用户(批量)和部门关系的操作
 	public Integer addDeptUser(List<DeptAndUserDTO> deptUserDTOList);
+	
+	//删除部门中职员(批量)
+	public Integer delDeptUser(@Param("depId") Integer depId,@Param("list") List<Integer> userList);
 }

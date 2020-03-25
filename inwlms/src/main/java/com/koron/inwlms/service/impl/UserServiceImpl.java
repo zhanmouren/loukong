@@ -231,4 +231,15 @@ public class UserServiceImpl implements UserService{
 			Integer addResult=userMapper.addDeptUser(deptUserDTOList);
 			return addResult;
 		}
+
+		//删除部门中职员(批量)接口 2020/03/25
+		@TaskAnnotation("delDeptUser")
+		@Override
+		public Integer delDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {
+			// TODO Auto-generated method stub
+			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			//执行批量删除角色职员的操作
+			Integer delResult=userMapper.delDeptUser(deptUserDTO.getDepId(),deptUserDTO.getUserList());
+			return delResult;
+		}
 }
