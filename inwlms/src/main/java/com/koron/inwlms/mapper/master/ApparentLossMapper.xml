@@ -5,77 +5,303 @@
 	<select id="queryMALOverviewData" parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO"
 		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO">
 		select
-		sum(case when b.code='WNMAL' then value/b.precision else 0 end)
-		as "AL",
-		sum(case when b.code='WNMALCA' then value/b.precision else 0 end) as
-		"perCustomerAccAL",
-		sum(case when b.code='WNMALR' then value/b.precision else 0
-		end) as "percentAL",
-		sum(case when b.code='WNMALI' then value/b.precision else 0
-		end) as "ALI",
-		sum(case when b.code='WNMNMRR' then value/b.precision else 0 end) as
-		"percentNonMeterRead",
-		sum(case when b.code='WNMTROMR' then value/b.precision else
-		0 end) as "meterReadRate",
-		sum(case when b.code='WNMIMRTR' then value/b.precision
-		else 0 end) as
-		"nonMeterReadTimeRate",
-		sum(case when b.code='WNMOSMR'
-		then value/b.precision else 0 end) as "overdueMetersRate",
-		sum(case when
-		b.code='WNMIBIOMR' then value/b.precision else 0 end) as
-		"nonBasicInfoMeterRate",
-		b."yearMonth" as time
+		<!-- 全网 -->
+		<if test="(firstLevelZone == null or firstLevelZone == '') and (secondeLevelZone == null or secondeLevelZone == '') 
+		and (dmaNo == null or dmaNo == '')">
+			sum(case when b.code='WNMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='WNMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='WNMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='WNMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='WNMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='WNMTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='WNMIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='WNMOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='WNMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b."yearMonth" as time
+		</if>
+		<if test="dmaNo != null and dmaNo != ''">
+			<!-- DMA/PMA -->
+			sum(case when b.code='DMMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='DMMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='DMMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='DMMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='DMMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='DMMTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='DMMIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='DMMOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='DMMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b."yearMonth" as time
+		</if>
+		<if test="secondeLevelZone != null and secondeLevelZone != ''">
+			<!-- 二级分区 -->
+			sum(case when b.code='SLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='SLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='SLMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='SLMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='SLMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='SLMTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='SLMIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='SLMOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='SLMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b."yearMonth" as time
+		</if>
+		<if test="firstLevelZone != null and firstLevelZone != ''">
+			<!-- 一级分区 -->
+			sum(case when b.code='FLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='FLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='FLMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='FLMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='FLMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='FLMTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='FLMIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='FLMOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='FLMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b."yearMonth" as time
+		</if>
 		from
-		(select a.id,a."yearMonth",a.code,a.value,ind.precision as precision from
-		"ANA_apparent_month" a
-		 left join "LC_APP_dim_indicator" ind on
-		 ind.code = a.code 
-		left
-		join "APP_dim_month" m on m."yearMonth" =
-		a."yearMonth" and
-		m."yearMonth" &gt;= #{startTime} and m."yearMonth"
-		&lt;= #{endTime}) b
+		(select a.id,a."yearMonth",a.code,a.value,ind.precision as precision 
+		from (
+			select id,"yearMonth",code,value from "ANA_apparent_month"
+			where 1= 1
+			<if test="dmaNo != null and dmaNo != ''">
+			and "zoneNo" = #{dmaNo}
+			</if>
+			<if test="secondeLevelZone != null and secondeLevelZone != ''">
+			and "zoneNo" = #{secondeLevelZone}
+			</if>
+			<if test="firstLevelZone != null and firstLevelZone != ''">
+			and "zoneNo" = #{firstLevelZone}
+			</if>
+		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
+		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{startTime} 
+		and m."yearMonth" &lt;= #{endTime}) b
 		group by b."yearMonth"
 	</select>
 
 	<select id="queryYALOverviewData" parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO"
 		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO">
 		select
-		sum(case when b.code='WNYAL' then value/b.precisio else 0 end)
-		as "AL",
-		sum(case when b.code='WNYALCA' then value/b.precisio else 0 end) as
-		"perCustomerAccAL",
-		sum(case when b.code='WNYALR' then value/b.precisio else 0
-		end) as "percentAL",
-		sum(case when b.code='WNYALI' then value/b.precisio else 0
-		end) as "ALI",
-		sum(case when b.code='WNYNMRR' then value/b.precisio else 0 end) as
-		"percentNonMeterRead",
-		sum(case when b.code='WNYTROMR' then value/b.precisio else
-		0 end) as "meterReadRate",
-		sum(case when b.code='WNYIMRTR' then value/b.precisio
-		else 0 end) as
-		"nonMeterReadTimeRate",
-		sum(case when b.code='WNYOSMR'
-		then value/b.precisio else 0 end) as "overdueMetersRate",
-		sum(case when
-		b.code='WNYIBIOMR' then value/b.precisio else 0 end) as
-		"nonBasicInfoMeterRate",
-		b.year as time
+		<if test="(firstLevelZone == null or firstLevelZone == '') and (secondeLevelZone == null or secondeLevelZone == '') 
+		and (dmaNo == null or dmaNo == '')">
+			<!-- 全网 -->
+			sum(case when b.code='WNYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='WNYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='WNYALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='WNYALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='WNYNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='WNYTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='WNYIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='WNYOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='WNYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b.year as time
+		</if>
+		<if test="dmaNo != null and dmaNo != ''">
+			<!-- DMA/PMA -->
+			sum(case when b.code='DMYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='DMYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='DMYALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='DMYALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='DMYNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='DMYTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='DMYIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='DMYOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='DMYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b.year as time
+		</if>
+		<if test="secondeLevelZone != null and secondeLevelZone != ''">
+			<!-- 二级分区 -->
+			sum(case when b.code='SLYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='SLYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='SLYALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='SLYALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='SLYNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='SLYTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='SLYIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='SLYOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='SLYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b.year as time
+		</if>
+		<if test="firstLevelZone != null and firstLevelZone != ''">
+			<!-- 一级分区 -->
+			sum(case when b.code='FLYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='FLYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='FLYALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='FLYALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='FLYNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='FLYTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='FLYIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='FLYOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='FLYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b.year as time
+		</if>
 		from
-		(select a.id,a.year,a.code,a.value,ind.precision from
-		"ANA_apparent_year" a left join "LC_APP_dim_indicator" ind on
-		 ind.code = a.code where
-		a.year &gt;= #{startTime} and a.year
-		&lt;= #{endTime}) b
-		group by b.year;
+		(select a.id,a.year,a.code,a.value,ind.precision 
+		from (
+			select id,year,code,value from "ANA_apparent_year"
+			where year &gt;= #{startTime} and year &lt;= #{endTime}
+			<if test="dmaNo != null and dmaNo != ''">
+			and "zoneNo" = #{dmaNo}
+			</if>
+			<if test="secondeLevelZone != null and secondeLevelZone != ''">
+			and "zoneNo" = #{secondeLevelZone}
+			</if>
+			<if test="firstLevelZone != null and firstLevelZone != ''">
+			and "zoneNo" = #{firstLevelZone}
+			</if>
+		) a,"LC_APP_dim_indicator" where ind.code = a.code 
+		) b
+		group by b.year
 	</select>
 
-	<select id="queryALList"
-		parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO"
-		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALListVO">
-		select * from "ANA_apparent_month";
+	<select id="queryMALList" resultType="com.koron.inwlms.bean.VO.apparentLoss.ALListVO">
+		select
+		<!-- 全网 -->
+		<if test="(qaDTO.firstLevelZone == null or qaDTO.firstLevelZone == '') and (qaDTO.secondeLevelZone == null or qaDTO.secondeLevelZone == '') 
+		and (qaDTO.dmaNo == null or qaDTO.dmaNo == '')">
+			b."zoneNo" as "zoneNo",
+			sum(case when b.code='FLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='FLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='FLMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='FLMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='FLMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='FLMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b."yearMonth" as time
+		</if>
+		<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != '' or (qaDTO.secondeLevelZone != null and qaDTO.secondeLevelZone != '')">
+			<!-- DMA/PMA -->
+			b."zoneNo" as "zoneNo",
+			sum(case when b.code='DMMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='DMMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='DMMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='DMMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='DMMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='DMMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b."yearMonth" as time
+		</if>
+		<if test="qaDTO.firstLevelZone != null and qaDTO.firstLevelZone != ''">
+			<!-- 一级分区 -->
+			b."zoneNo" as "zoneNo",
+			sum(case when b.code='SLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='SLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='SLMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='SLMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='SLMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='SLMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b."yearMonth" as time
+		</if>
+		from
+		(select a.id,a."yearMonth",a.code,a.value,ind.precision as precision, a."zoneNo" 
+		from (
+			select id,"yearMonth",code,value, "zoneNo" from "ANA_apparent_month"
+			where 1= 1
+			<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != ''">
+				and "zoneNo" = #{qaDTO.dmaNo}
+			</if>
+			<if test="lists != null and lists.size > 0">
+				and "zoneNo" in 
+				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
+		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
+		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qaDTO.startTime} 
+		and m."yearMonth" &lt;= #{qaDTO.endTime}) b
+		group by b."yearMonth",b."zoneNo"
+		limit #{qaDTO.pageCount} OFFSET #{qaDTO.pageCount}*(#{qaDTO.page}-1);
+	</select> 
+	
+	<select id="countMALList" resultType="java.lang.Integer">
+		select count(1) from (select b."yearMonth", b."zoneNo" from 
+		(select a.id,a."yearMonth",a.code,a."zoneNo" from
+		(select id,"yearMonth",code,value,"zoneNo" from "ANA_apparent_month" where 1= 1
+			<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != ''">
+				and "zoneNo" = #{qaDTO.dmaNo}
+			</if>
+			<if test="lists != null and lists.size > 0">
+				and "zoneNo" in 
+				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
+		) a, 
+		"LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code and m.id = a."yearMonth" and 
+		m."yearMonth" &gt;= #{qaDTO.startTime} and m."yearMonth" &lt;= #{qaDTO.endTime}) b group by b."yearMonth",b."zoneNo") bb
 	</select>
-
+	
+	<select id="queryYALList" resultType="com.koron.inwlms.bean.VO.apparentLoss.ALListVO">
+		select
+		<!-- 全网 -->
+		<if test="(qaDTO.firstLevelZone == null or qaDTO.firstLevelZone == '') and (qaDTO.secondeLevelZone == null or qaDTO.secondeLevelZone == '') 
+		and (qaDTO.dmaNo == null or qaDTO.dmaNo == '')">
+			b."zoneNo" as "zoneNo",
+			sum(case when b.code='FLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='FLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='FLMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='FLMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='FLMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='FLMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b.year as time
+		</if>
+		<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != '' or (qaDTO.secondeLevelZone != null and qaDTO.secondeLevelZone != '')">
+			<!-- DMA/PMA -->
+			b."zoneNo" as "zoneNo",
+			sum(case when b.code='DMMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='DMMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='DMMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='DMMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='DMMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='DMMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b.year as time
+		</if>
+		<if test="qaDTO.firstLevelZone != null and qaDTO.firstLevelZone != ''">
+			<!-- 一级分区 -->
+			b."zoneNo" as "zoneNo",
+			sum(case when b.code='SLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='SLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='SLMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='SLMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='SLMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='SLMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b.year as time
+		</if>
+		from
+		(select a.id,a.year,a.code,a.value,ind.precision,a."zoneNo" 
+		from (
+			select id,year,code,value, "zoneNo" from "ANA_apparent_year"
+			where year &gt;= #{qaDTO.startTime} and year &lt;= #{qaDTO.endTime}
+			<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != ''">
+				and "zoneNo" = #{qaDTO.dmaNo}
+			</if>
+			<if test="lists != null and lists.size > 0">
+				and "zoneNo" in 
+				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
+		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
+		) b
+		group by b.year,b."zoneNo"
+		limit #{qaDTO.pageCount} OFFSET #{qaDTO.pageCount}*(#{qaDTO.page}-1);
+	</select>
+	
+	<select id="countYALList" resultType="java.lang.Integer">
+		select count(1) from
+		(select a.id,a.year,a.code,a.value,ind.precision 
+		from (
+			select id,year,code,value from "ANA_apparent_year"
+			where year &gt;= #{qaDTO.startTime} and year &lt;= #{qaDTO.endTime}
+			<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != ''">
+				and "zoneNo" = #{qaDTO.dmaNo}
+			</if>
+			<if test="qaDTO.secondeLevelZone != null and qaDTO.secondeLevelZone != '' or (qaDTO.firstLevelZone != null and qaDTO.firstLevelZone != '')">
+				<if test="lists != null and lists.size > 0">
+					and "zoneNo" in 
+					<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+						#{item}    
+					</foreach> 
+				</if>
+			</if>
+		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
+		) b 
+	</select>
 </mapper>

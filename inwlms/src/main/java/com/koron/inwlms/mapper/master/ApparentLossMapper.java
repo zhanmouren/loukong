@@ -1,5 +1,8 @@
 package com.koron.inwlms.mapper.master;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
@@ -28,8 +31,31 @@ public interface ApparentLossMapper {
 	ALOverviewDataVO queryYALOverviewData(QueryALDTO queryALDTO);
 	
 	/**
-     * 表观漏损列表
+     * 查询月表观漏损列表
      * @return
      */
-	ALListVO queryALList(QueryALListDTO queryALListDTO);
+	List<ALListVO> queryMALList(@Param("qaDTO") QueryALListDTO qaDTO,@Param("lists") List<String> lists);
+	
+	/**
+	 * 查询月表观漏损总条数
+	 * @param qaDTO
+	 * @param lists
+	 * @return
+	 */
+	int countMALList(@Param("qaDTO") QueryALListDTO qaDTO,@Param("lists") List<String> lists);
+	
+	/**
+     * 查询年表观漏损列表
+     * @return
+     */
+	List<ALListVO> queryYALList(@Param("qaDTO") QueryALListDTO qaDTO,@Param("lists") List<String> lists);
+	
+	/**
+	 * 查询年表观漏损总条数
+	 * @param qaDTO
+	 * @param lists
+	 * @return
+	 */
+	int countYALList(@Param("qaDTO") QueryALListDTO qaDTO,@Param("lists") List<String> lists);
+	
 }

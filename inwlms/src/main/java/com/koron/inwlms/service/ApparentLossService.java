@@ -5,7 +5,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
-import com.koron.inwlms.bean.VO.common.PageBean;
+import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
 
 /**
  * 表观漏损接口
@@ -29,5 +29,5 @@ public interface ApparentLossService {
 	 * @param queryALListDTO
 	 * @return
 	 */
-	PageBean queryALList(SessionFactory factory,QueryALListDTO queryALListDTO);
+	PageALListVO queryALList(SessionFactory factory,QueryALListDTO queryALListDTO);
 }

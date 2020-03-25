@@ -21,7 +21,7 @@ import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
-import com.koron.inwlms.bean.VO.common.PageBean;
+import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
 import com.koron.inwlms.service.ApparentLossService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.util.Constant;
@@ -69,7 +69,18 @@ public class ApparentLossController {
     @ApiOperation(value = "查询表观漏损数据列表", notes = "查询表观漏损数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryALList(@RequestBody QueryALListDTO queryALListDTO) {
-		return null;
+		MessageBean<PageALListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageALListVO.class);
+		Integer timeType = queryALListDTO.getTimeType();
+		Integer startTime = queryALListDTO.getStartTime();
+		Integer endTime = queryALListDTO.getEndTime();
+		if(timeType == null || startTime == null || endTime == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription(Constant.MESSAGE_STRING_NULL);
+		}
+		PageALListVO data = ADOConnection.runTask(als, "queryALList", PageALListVO.class,queryALListDTO);
+		msg.setData(data);
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/queryALMapData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -96,14 +107,12 @@ public class ApparentLossController {
 			queryALListDTO.setPage(1);
 			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageBean pageBean = ADOConnection.runTask(als, "queryALList", PageBean.class,queryALListDTO);
+			PageALListVO pageBean = ADOConnection.runTask(als, "queryALList", PageALListVO.class,queryALListDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
 			//导出list
-//			return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
-			//导出分页
-			return ExportDataUtil.getExcelDataFileInfo(pageBean, jsonArray);
+			return ExportDataUtil.getExcelDataFileInfoByList(pageBean.getDataList(), jsonArray);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

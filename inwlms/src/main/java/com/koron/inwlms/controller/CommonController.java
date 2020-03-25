@@ -1,11 +1,14 @@
 package com.koron.inwlms.controller;
 
 import com.koron.common.StaffAttribute;
+import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
+import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
+import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.util.FileUtil;
 import com.koron.util.Constant;
 import io.swagger.annotations.Api;
@@ -29,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 通用controller层
@@ -203,4 +207,35 @@ public class CommonController {
     	this.fileConfigInfo = fileConfigInfo;
     }
     
+    /**
+     * （临时接口）
+	 * 查询指定分区等级的分区编号
+	 * @param zoneRank 1-一级分区，2-二级分区
+	 * @return 
+	 */
+	@RequestMapping(value = "/queryZoneNosByRank.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询指定分区等级的分区编号", notes = "查询指定分区等级的分区编号", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryZoneNosByRank(Integer zoneRank) {
+		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+		List<String> lists = ADOConnection.runTask(new GisZoneServiceImpl(), "queryZoneNosByRank", List.class,zoneRank);
+		msg.setData(lists);
+		return msg.toJson();
+	}
+	
+	/**
+	 * （临时接口）
+	 * 根据指定的分区编号查询所有子分区编号
+	 * @param zoneNo 分区编号
+	 * @return 
+	 */
+	@RequestMapping(value = "/querySubZoneNos.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据指定的分区编号查询所有子分区编号", notes = "根据指定的分区编号查询所有子分区编号", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String querySubZoneNos(String zoneNo) {
+		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+		List<String> lists = ADOConnection.runTask(new GisZoneServiceImpl(), "querySubZoneNos", List.class,zoneNo);
+		msg.setData(lists);
+		return msg.toJson();
+	}
 }
