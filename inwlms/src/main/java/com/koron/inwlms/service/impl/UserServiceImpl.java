@@ -15,6 +15,7 @@ import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
@@ -274,5 +275,15 @@ public class UserServiceImpl implements UserService{
 			}
 			addDetCount=userMapper.addDataDetDic(dataDicDetDTOList);
 			return addDetCount;
+		}
+
+		//查询数据字典接口 2020/03/25
+		@TaskAnnotation("queryDataDic")
+		@Override
+		public List<DataDicVO> queryDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
+			// TODO Auto-generated method stub
+			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			List<DataDicVO> dicList=userMapper.queryDataDic(dataDicDTO);
+			return dicList;
 		}
 }

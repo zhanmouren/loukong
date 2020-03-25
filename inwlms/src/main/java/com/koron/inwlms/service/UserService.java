@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -54,5 +55,7 @@ public interface UserService {
 	
 	//添加数据字典
 	Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
+	//查询数据字典
+	List<DataDicVO> queryDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
 	
 }

@@ -15,6 +15,7 @@ import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -80,5 +81,8 @@ public interface UserMapper {
 	
 	//添加数据字典明细
 	public Integer addDataDetDic(List<DataDicDetDTO> dataDicDetDTOList);
+	
+	//查询数据字典接口说明(通过名称标识等等)
+	public List<DataDicVO> queryDataDic(DataDicDTO dataDicDTO);
 
 }

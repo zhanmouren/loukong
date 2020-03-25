@@ -158,4 +158,19 @@
 			(${detdata.dictId}, #{detdata.dicDetName},#{detdata.dicDetValue}, #{detdata.createBy}, #{detdata.createTime}, #{detdata.updateBy}, #{detdata.updateTime})
 		</foreach>
     </insert>
+    
+     <!-- 查询数据字典接口说明(通过名称标识等等)  -->
+     <select id="queryDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+       select "dic".id as "dicId","dic".name as "dicName","dic".remark as "dicRemark","dic".flag as "dicFlag", 
+	   string_agg(concat("dicDet".name,'-',"dicDet"."value"),',') as "dicDetNameAndValue"
+       from "SM_dataDictionary" as "dic"
+       left join  "SM_dataDictionaryDet" as "dicDet" on "dicDet"."dictID"="dic".id  
+       <trim prefix="where" prefixOverrides="and|or">
+		<if test="dicName != null  and dicName !='' "> and "dic".name like '%${dicName}%'</if>  
+   	    <if test="dicFlag != null  and dicFlag !='' "> and "dic".flag like '%${dicFlag}%'</if>
+   	     group by "dic".id,"dic".name,"dic".remark,"dic".flag
+	  </trim>
+    </select>
+    
+    
 </mapper>
