@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.swan.bean.MessageBean;
 
 import com.koron.inwlms.bean.DTO.TestBean;
+import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -588,4 +590,97 @@ public class SystemManagerController {
 	}
 	
 	
+	
+	
+     /* -------下面的是关于系统配置的接口--------  */ 
+    
+	 /*
+     * date:2020-03-25
+     * funtion:插入集成配置功能（暂不开发，需求不明确）
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/addIntegration.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "插入集成配置功能接口", notes = "插入集成配置功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addIntegration(@RequestBody IntegrationConfDTO integrationConfDTO) {
+		if(integrationConfDTO.getOtherJDBC()==null || StringUtils.isBlank(integrationConfDTO.getOtherJDBC())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方JDBC不能为空", Integer.class).toJson();
+		}
+		if(integrationConfDTO.getSysName()==null || StringUtils.isBlank(integrationConfDTO.getSysName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方系统名称不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行集成配置功能的操作
+		  try{
+			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addIntegration", Integer.class, integrationConfDTO);		 
+			  if(insertRes!=null) {
+				  if(insertRes==1) {
+					//添加集成配置功能成功
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("添加配置成功");
+				  }else {
+				    //插入失败
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("添加配置失败");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//插入失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加配置失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
+     * date:2020-03-25
+     * funtion:新建数据字典
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/addDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "新建数据字典接口", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addDataDic(@RequestBody DataDicDTO dataDicDTO) {
+		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicFlag()==null || StringUtils.isBlank(dataDicDTO.getDicFlag())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDictionaryDetList().size()<1 ) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典明细列表不能为空", Integer.class).toJson();
+		}	
+		for(int i=0;i<dataDicDTO.getDictionaryDetList().size();i++) {
+			if(dataDicDTO.getDictionaryDetList().get(i).getDicDetName()==null) {
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典明细列表明细名称不能为空", Integer.class).toJson();	
+			}
+			if(dataDicDTO.getDictionaryDetList().get(i).getDicDetValue()==null) {
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典明细列表明细值不能为空", Integer.class).toJson();	
+			}
+		}
+		
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行新数据字典功能的操作
+		  try{
+			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addDataDic", Integer.class, dataDicDTO);		 
+			  if(insertRes!=null) {
+				  if(insertRes==-1) {
+					//添加数据字典功能成功
+				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("添加数据字典失败");
+				  }else {
+				    //插入失败
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("添加数据字典成功");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//插入失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加数据字典失败");
+	        }
+		
+	     return msg.toJson();
+	}
 }

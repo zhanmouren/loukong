@@ -8,6 +8,8 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Repository;
 
+import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
+import com.koron.inwlms.bean.DTO.sysManager.DataDicDetDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -70,4 +72,13 @@ public interface UserMapper {
 	
 	//删除部门中职员(批量)
 	public Integer delDeptUser(@Param("depId") Integer depId,@Param("list") List<Integer> userList);
+	
+	
+	/**下面是系统配置***/
+	//添加数据字典主表
+	public Integer addDataDic(DataDicDTO dataDicDTO);
+	
+	//添加数据字典明细
+	public Integer addDataDetDic(List<DataDicDetDTO> dataDicDetDTOList);
+
 }

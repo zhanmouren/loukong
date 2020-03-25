@@ -5,6 +5,7 @@ import java.util.List;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 
+import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -48,5 +49,10 @@ public interface UserService {
 	//删除部门中职员(批量)接口
 	Integer delDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO);
 	
+	
+	/**下面是系统配置***/
+	
+	//添加数据字典
+	Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
 	
 }

@@ -146,4 +146,16 @@
         </foreach>
     </delete>
     
+    <!-- 插入数据字典主表信息一条记录 -->
+    <select id="addDataDic" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO" resultType="Integer">  
+        insert into "SM_dataDictionary"(name,remark,flag,"createBy","createTime","updateBy","updateTime")
+        values(#{dicName},#{dicRemark},#{dicFlag},#{createBy},#{createTime},#{updateBy},#{updateTime})returning id         
+    </select>
+     <!-- 遍历插入数据字典明细信息多条记录 -->
+     <insert id="addDataDetDic" parameterType="java.util.List">  
+        insert into "SM_dataDictionaryDet"("dictID",name,value,"createBy","createTime","updateBy","updateTime")values
+		<foreach collection="list" item="detdata"  index="index" separator=",">
+			(${detdata.dictId}, #{detdata.dicDetName},#{detdata.dicDetValue}, #{detdata.createBy}, #{detdata.createTime}, #{detdata.updateBy}, #{detdata.updateTime})
+		</foreach>
+    </insert>
 </mapper>

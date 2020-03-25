@@ -8,6 +8,8 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
+import com.koron.inwlms.bean.DTO.sysManager.DataDicDetDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -241,5 +243,36 @@ public class UserServiceImpl implements UserService{
 			//执行批量删除角色职员的操作
 			Integer delResult=userMapper.delDeptUser(deptUserDTO.getDepId(),deptUserDTO.getUserList());
 			return delResult;
+		}
+
+		//添加数据字典接口 2020/03/25
+		@TaskAnnotation("addDataDic")
+		@Override
+		public Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
+			// TODO Auto-generated method stub
+			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+			dataDicDTO.setCreateBy("小詹");
+			dataDicDTO.setCreateTime(timeNow);
+			dataDicDTO.setUpdateBy("小詹");
+			dataDicDTO.setUpdateTime(timeNow);
+			//执行添加数据字典主表的操作(获取刚刚插入到数据字典主表的Id)
+			Integer dictId=userMapper.addDataDic(dataDicDTO);
+			Integer addDetCount;
+			List<DataDicDetDTO> dataDicDetDTOList=new ArrayList<DataDicDetDTO>();
+			//执行添加数据字典明细表的操作（多条记录）
+			for(int i=0;i<dataDicDTO.getDictionaryDetList().size();i++) {
+				DataDicDetDTO dataDicDetDTO=new DataDicDetDTO();
+				dataDicDetDTO.setDictId(dictId);
+				dataDicDetDTO.setDicDetName(dataDicDTO.getDictionaryDetList().get(i).getDicDetName());
+				dataDicDetDTO.setDicDetValue(dataDicDTO.getDictionaryDetList().get(i).getDicDetValue());
+				dataDicDetDTO.setCreateBy("小詹");
+				dataDicDetDTO.setCreateTime(timeNow);
+				dataDicDetDTO.setUpdateBy("小詹");
+				dataDicDetDTO.setUpdateTime(timeNow);
+				dataDicDetDTOList.add(dataDicDetDTO);
+			}
+			addDetCount=userMapper.addDataDetDic(dataDicDetDTOList);
+			return addDetCount;
 		}
 }
