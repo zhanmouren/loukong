@@ -210,4 +210,25 @@ public class UserServiceImpl implements UserService{
 			List<UserVO> userList=userMapper.queryExceptDeptUser(deptUserDTO);
 			return userList;
 		}
+
+		//添加用户(批量)和部门关系的操作 2020/03/25
+		@TaskAnnotation("addDeptUser")
+		@Override
+		public Integer addDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {
+			// TODO Auto-generated method stub
+			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
+			List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
+			Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+			for(int i=0;i<deptUserDTO.getUserList().size();i++) {
+				DeptAndUserDTO deptUserDTONew=new DeptAndUserDTO();
+				deptUserDTONew.setDepId(deptUserDTO.getDepId());
+				deptUserDTONew.setUserId(deptUserDTO.getUserList().get(i));
+				deptUserDTONew.setCreateTime(timeNow);
+				deptUserDTONew.setCreateBy("小詹");
+				deptUserDTOList.add(deptUserDTONew);
+			}
+			Integer addResult=userMapper.addDeptUser(deptUserDTOList);
+			return addResult;
+		}
 }

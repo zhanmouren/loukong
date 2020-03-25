@@ -128,5 +128,13 @@
 	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
 	   where "user".id not in(select "deptuser"."userID" from "SM_userDept" as "deptuser" where "deptuser"."deptID" =#{depId})	 
      </select>
+     
+     <!--遍历插入职员与部门的关系 -->
+    <insert id="addDeptUser" parameterType="java.util.List">  
+        insert into "SM_userDept"("userID", "deptID","createBy","createTime")values
+		<foreach collection="list" item="deptuser"  index="index" separator=",">
+			(${deptuser.userId}, ${deptuser.depId}, #{deptuser.createBy}, #{deptuser.createTime})
+		</foreach>
+    </insert>
     
 </mapper>

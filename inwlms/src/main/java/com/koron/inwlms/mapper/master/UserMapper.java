@@ -64,5 +64,7 @@ public interface UserMapper {
 	
 	//给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员) 2020/03/25	
 	public List<UserVO> queryExceptDeptUser(DeptAndUserDTO deptUserDTO);
-     
+	
+	//添加用户(批量)和部门关系的操作
+	public Integer addDeptUser(List<DeptAndUserDTO> deptUserDTOList);
 }

@@ -515,5 +515,41 @@ public class SystemManagerController {
 		 
 	}
 	
+	 /*
+     * date:2020-03-25
+     * funtion:插入职员(批量)和部门的关系
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/addDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "插入职员(批量)和部门的关系", notes = "插入职员(批量)和部门的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
+		if(deptUserDTO.getDepId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门Id不能为空", Integer.class).toJson();
+		}
+		if(deptUserDTO.getUserList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户列表不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行添加用户和部门关系的操作
+		  try{
+			  Integer addResult=ADOConnection.runTask(new UserServiceImpl(), "addDeptUser", Integer.class, deptUserDTO);		 
+			  if(addResult==-1) {				 
+					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+					 msg.setDescription("插入职员和部门的关系失败"); 
+					
+			 }else {
+				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				     msg.setDescription("插入职员和部门的关系成功"); 
+			 }
+	        }catch(Exception e){
+	        	//插入职员和角色的关系失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("插入职员和部门的关系失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
 	
 }
