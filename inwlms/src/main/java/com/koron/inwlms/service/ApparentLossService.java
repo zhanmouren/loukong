@@ -4,6 +4,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
+import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
 
@@ -30,4 +31,13 @@ public interface ApparentLossService {
 	 * @return
 	 */
 	PageALListVO queryALList(SessionFactory factory,QueryALListDTO queryALListDTO);
+
+	/**
+	 * 查询表观漏损图表数据
+	 * @param factory
+	 * @param queryALDTO
+	 * @return
+	 */
+	ALMapDataVO queryALMapData(SessionFactory factory,QueryALDTO queryALDTO);
+
 }

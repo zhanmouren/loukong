@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
+import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
 import com.koron.inwlms.service.ApparentLossService;
@@ -60,6 +61,12 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription(Constant.MESSAGE_STRING_NULL);
 		}
+		
+		if(startTime > endTime) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription(Constant.MESSAGE_STRING_PARAMS);
+   	 	}
 		ALOverviewDataVO data = ADOConnection.runTask(als, "queryALOverviewData", ALOverviewDataVO.class,queryALDTO);
 		msg.setData(data);
 		return msg.toJson();
@@ -87,7 +94,24 @@ public class ApparentLossController {
     @ApiOperation(value = "查询表观漏损图表数据", notes = "查询表观漏损图表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryALMapData(@RequestBody QueryALDTO queryALDTO) {
-		return null;
+		MessageBean<ALMapDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, ALMapDataVO.class);
+		Integer timeType = queryALDTO.getTimeType();
+		Integer startTime = queryALDTO.getStartTime();
+		Integer endTime = queryALDTO.getEndTime();
+		if(timeType == null || startTime == null || endTime == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription(Constant.MESSAGE_STRING_NULL);
+		}
+		
+		if(startTime > endTime) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription(Constant.MESSAGE_STRING_PARAMS);
+   	 	}
+		ALMapDataVO data = ADOConnection.runTask(als, "queryALMapData", ALMapDataVO.class,queryALDTO);
+		msg.setData(data);
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/downloadALList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })

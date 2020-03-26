@@ -155,7 +155,6 @@ public class Constant {
 	 */
 	public static final String MESSAGE_STRING_PARAMS = "参数校验异常";
 	
-	
 	/**
 	 * 自定义表单增加辅助单位功能(在前台要自动加上辅助功能的脚本)
 	 */

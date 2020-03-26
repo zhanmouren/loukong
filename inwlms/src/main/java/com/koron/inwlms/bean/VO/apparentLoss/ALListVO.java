@@ -38,6 +38,21 @@ public class ALListVO {
 	private Double percentNonMeterRead;
 	
 	/**
+	 * 抄表及时率
+	 */
+	private Double meterReadRate;
+	
+	/**
+	 * 抄表时间不固定占比
+	 */
+	private Double nonMeterReadTimeRate;
+	
+	/**
+	 * 超期服役水表占比
+	 */
+	private Double overdueMetersRate;
+	
+	/**
 	 * 水表基础信息不完善占比
 	 */
 	private Double nonBasicInfoMeterRate;
@@ -97,6 +112,30 @@ public class ALListVO {
 
 	public void setZoneNo(String zoneNo) {
 		this.zoneNo = zoneNo;
+	}
+
+	public Double getMeterReadRate() {
+		return meterReadRate;
+	}
+
+	public Double getNonMeterReadTimeRate() {
+		return nonMeterReadTimeRate;
+	}
+
+	public Double getOverdueMetersRate() {
+		return overdueMetersRate;
+	}
+
+	public void setMeterReadRate(Double meterReadRate) {
+		this.meterReadRate = meterReadRate;
+	}
+
+	public void setNonMeterReadTimeRate(Double nonMeterReadTimeRate) {
+		this.nonMeterReadTimeRate = nonMeterReadTimeRate;
+	}
+
+	public void setOverdueMetersRate(Double overdueMetersRate) {
+		this.overdueMetersRate = overdueMetersRate;
 	}
 	
 }
