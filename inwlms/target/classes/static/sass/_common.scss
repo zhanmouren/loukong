@@ -1,8 +1,0 @@
-@import "variable";
-
-@mixin borwse-prefix($property,$value){
-	#{$property}:#{$value};
-	@each $item in $browser-type{
-		#{$item}#{$property}:#{$value};
-	}
-}

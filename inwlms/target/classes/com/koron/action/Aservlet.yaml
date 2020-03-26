@@ -1,5 +1,0 @@
-update :
-    idCard :
-      require : 1
-      minLength : 3
-      maxLength : 40

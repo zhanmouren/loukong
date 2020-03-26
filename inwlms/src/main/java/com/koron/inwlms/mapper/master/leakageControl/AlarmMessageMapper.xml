@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.koron.inwlms.mapper.master.leakageControl.AlarmMessageMapper">
+  
+  <select id="queryAlarmMessage" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
+  select * from "APP_warningInf" where "alarmTime" between '${startTime}' and '${endTime}'
+  <if test="alarmType != null and alarmType != '' "> and "alarmType" = #{alarmType} </if>
+  <if test="areaCode != null and areaCode != '' "> and "areaCode" = #{areaCode}</if>
+  <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
+  <if test="objectId != null and objectId != '' "> and "objectId" = #{objectId}</if>
+  <if test="orderby != null and orderby != '' "> order by ${orderby}</if>
+  </select>
+  
+</mapper>
+  
