@@ -58,7 +58,7 @@ public class leakageControlController {
 			}
 		}catch(Exception e){
 			//查询失败
-	     	msg.setCode(Constant.MESSAGE_INT_Failed);
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询预警信息失败");
 		}
 			
@@ -78,7 +78,7 @@ public class leakageControlController {
 			msg.setData(alarmProcessList);
 		}catch(Exception e) {
 			//查询失败
-	     	msg.setCode(Constant.MESSAGE_INT_Failed);
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询预警信息处理任务失败");
 		}
 		return msg.toJson();
@@ -100,7 +100,7 @@ public class leakageControlController {
 			
 		}catch(Exception e) {
 			//修改失败
-	     	msg.setCode(Constant.MESSAGE_INT_Failed);
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("修改预警信息处理任务失败");
 		}
 		
@@ -125,7 +125,7 @@ public class leakageControlController {
 			}
 		}catch(Exception e) {
 			//添加失败
-	     	msg.setCode(Constant.MESSAGE_INT_Failed);
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("添加预警信息处理任务失败");
 		}
 		
