@@ -172,5 +172,14 @@
 	  </trim>
     </select>
     
+     <!-- 查询数据字典接口说明(通过字典主表Id)  -->
+     <select id="queryDicById"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+       select "dic".id as "dicId","dic".name as "dicName","dic".remark as "dicRemark","dic".flag as "dicFlag", 
+	   "dicDet".id as "dicDetId","dicDet"."dictID" as "dictId","dicDet".name as "dicDetName","dicDet"."value"as "dicDetValue"
+       from "SM_dataDictionary" as "dic"
+       left join  "SM_dataDictionaryDet" as "dicDet" on "dicDet"."dictID"="dic".id  
+       where "dic".id=#{dicId}
+    </select>
+    
     
 </mapper>

@@ -715,4 +715,38 @@ public class SystemManagerController {
 		 return msg.toJson();
 		 
 	}
+	
+	 /*
+     * date:2020-03-25
+     * funtion:通过字典主表ID查询数据字典接口说明(通过ID等等)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "主表ID查询数据字典详情接口", notes = "主表ID查询数据字典详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryDicById(@RequestBody DataDicDTO dataDicDTO) {
+		if(dataDicDTO.getDicId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 //执行查询数据字典
+		 try {
+			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryDicById", List.class, dataDicDTO);
+			 if(dicList.size()>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到相关数据字典的信息"); 
+			     msg.setData(dicList);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("没有查询到相关数据字典的信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询数据字典失败");
+	     }
+		 return msg.toJson();
+		 
+	}
 }

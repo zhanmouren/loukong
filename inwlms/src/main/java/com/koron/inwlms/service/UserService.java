@@ -55,7 +55,9 @@ public interface UserService {
 	
 	//添加数据字典
 	Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
-	//查询数据字典
+	//查询数据字典(这个是列转行，展示所有的数据字典)
 	List<DataDicVO> queryDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
+	//查询数据字典(通过Id查询详情)
+    List<DataDicVO> queryDicById(SessionFactory factory,DataDicDTO dataDicDTO);
 	
 }

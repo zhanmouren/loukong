@@ -277,13 +277,23 @@ public class UserServiceImpl implements UserService{
 			return addDetCount;
 		}
 
-		//查询数据字典接口 2020/03/25
+		//查询数据字典接口(这个是列转行，展示所有的数据字典) 2020/03/25
 		@TaskAnnotation("queryDataDic")
 		@Override
 		public List<DataDicVO> queryDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
 			// TODO Auto-generated method stub
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
 			List<DataDicVO> dicList=userMapper.queryDataDic(dataDicDTO);
+			return dicList;
+		}
+
+		//查询数据字典接口通过Id(通过Id查询详情) 2020/03/25
+		@TaskAnnotation("queryDicById")
+		@Override
+		public List<DataDicVO> queryDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
+			// TODO Auto-generated method stub
+			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			List<DataDicVO> dicList=userMapper.queryDicById(dataDicDTO);
 			return dicList;
 		}
 }

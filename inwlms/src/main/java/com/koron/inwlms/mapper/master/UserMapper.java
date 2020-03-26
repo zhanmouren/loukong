@@ -82,7 +82,10 @@ public interface UserMapper {
 	//添加数据字典明细
 	public Integer addDataDetDic(List<DataDicDetDTO> dataDicDetDTOList);
 	
-	//查询数据字典接口说明(通过名称标识等等)
+	//查询数据字典接口说明(通过名称标识等等,列转行)
 	public List<DataDicVO> queryDataDic(DataDicDTO dataDicDTO);
+	
+	//查询数据字典接口说明(通过Id查询详情)
+	public List<DataDicVO> queryDicById(DataDicDTO dataDicDTO);
 
 }
