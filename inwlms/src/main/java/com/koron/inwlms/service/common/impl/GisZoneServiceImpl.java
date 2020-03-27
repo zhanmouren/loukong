@@ -8,7 +8,9 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.service.common.GisZoneService;
+import com.koron.util.Constant;
 
 @Service
 public class GisZoneServiceImpl implements GisZoneService {
@@ -55,21 +57,27 @@ public class GisZoneServiceImpl implements GisZoneService {
 		MeterInfo meterInfo = new MeterInfo();
 		meterInfo.setMeterNo("C0210280000021");
 		meterInfo.setMeterDn(100);
+		meterInfo.setMeterType(Constant.FS_METER);
 		MeterInfo meterInfo1 = new MeterInfo();
-		meterInfo.setMeterNo("C0210280000022");
-		meterInfo.setMeterDn(100);
+		meterInfo1.setMeterNo("C0210280000022");
+		meterInfo1.setMeterDn(100);
+		meterInfo1.setMeterType(Constant.NOR_METER);
 		MeterInfo meterInfo2 = new MeterInfo();
-		meterInfo.setMeterNo("C0210280000167");
-		meterInfo.setMeterDn(40);
+		meterInfo2.setMeterNo("C0210280000167");
+		meterInfo2.setMeterDn(40);
+		meterInfo2.setMeterType(Constant.NOR_METER);
 		MeterInfo meterInfo3 = new MeterInfo();
-		meterInfo.setMeterNo("C0210280000169");
-		meterInfo.setMeterDn(50);
+		meterInfo3.setMeterNo("C0210280000169");
+		meterInfo3.setMeterDn(50);
+		meterInfo3.setMeterType(Constant.FS_METER);
 		MeterInfo meterInfo4 = new MeterInfo();
-		meterInfo.setMeterNo("C0210280000188");
-		meterInfo.setMeterDn(50);
+		meterInfo4.setMeterNo("C0210280000188");
+		meterInfo4.setMeterDn(50);
+		meterInfo4.setMeterType(Constant.NOR_METER);
 		MeterInfo meterInfo5 = new MeterInfo();
-		meterInfo.setMeterNo("C0210280000172");
-		meterInfo.setMeterDn(20);
+		meterInfo5.setMeterNo("C0210280000172");
+		meterInfo5.setMeterDn(20);
+		meterInfo5.setMeterType(Constant.NOR_METER);
 		lists.add(meterInfo);
 		lists.add(meterInfo1);
 		lists.add(meterInfo2);

@@ -458,4 +458,20 @@ public class TimeUtil {
     	 }
     	 return null;
      }
+     
+     /**
+      * 根据年时间返回年月时间
+      * @param year
+      * @return
+      */
+     public static Integer getMonthByYear(Integer year){
+    	Calendar date = Calendar.getInstance();
+        Integer nowYear = date.get(Calendar.YEAR);
+        if(year >= nowYear ) {
+        	String currentTime = getcurrentDay("yyyyMM",new Date());
+        	return Integer.parseInt(currentTime);
+        }else {
+        	return Integer.parseInt(year.toString()+"12");
+        }
+     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.koron.inwlms.mapper.master.ApparentLossMapper">
+<mapper namespace="com.koron.inwlms.mapper.master.apparentLoss.ApparentLossMapper">
 
 	<select id="queryMALOverviewData" parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO"
 		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO">
@@ -322,4 +322,33 @@
 		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
 		) b 
 	</select>
+	
+	<select id="queryMeterQH" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterQH">
+		select code as "meterNo",round( max(flux/day/24*2) :: NUMERIC, 6 ) as qh
+		from "gdh_month_flux_C001_jc" 
+		where month &gt;= #{qaDTO.startTime} || '' and month  &lt;= #{qaDTO.endTime} || ''
+		<if test="lists != null and lists.size > 0">
+			and code in 
+			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+				#{item.meterNo}    
+			</foreach> 
+		</if>
+		group by code;
+	</select>
+	
+	<select id="queryFSMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO">
+		select month as date,sum(flux) as value
+		from "gdh_month_flux_C001_jc" 
+		where month &gt;= #{qaDTO.startTime} || '' and month  &lt;= #{qaDTO.endTime} || ''
+		<if test="lists != null and lists.size > 0">
+			and code in 
+			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+				<if test="item.meterType != null and item.meterType != '' and item.meterType == 'W10184003'">
+					#{item.meterNo} 
+				</if>
+			</foreach> 
+		</if>
+		group by month order by month ASC;
+	</select>
+	
 </mapper>

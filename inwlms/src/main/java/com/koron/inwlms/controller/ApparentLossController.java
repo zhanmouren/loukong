@@ -22,6 +22,8 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.util.ExportDataUtil;
@@ -163,21 +165,86 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryMeterRunAnalysisList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询水表运行分析列表数据", notes = "查询水表运行分析列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryMeterRunAnalysisList(@RequestBody QueryALListDTO queryALListDTO) {
-		return null;
+	public String queryMeterRunAnalysisList(@RequestBody QueryALDTO queryALDTO) {
+		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+		Integer timeType = queryALDTO.getTimeType();
+		Integer startTime = queryALDTO.getStartTime();
+		Integer endTime = queryALDTO.getEndTime();
+		if(timeType == null || startTime == null || endTime == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription(Constant.MESSAGE_STRING_NULL);
+		}
+		
+		if(startTime > endTime) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription(Constant.MESSAGE_STRING_PARAMS);
+   	 	}
+		try{
+			List<MeterRunAnalysisVO> data = ADOConnection.runTask(als, "queryMeterRunAnalysisList", List.class,queryALDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
+		return msg.toJson();	
 	}
 	
 	@RequestMapping(value = "/queryMeterRunAnalysisMapData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询水表运行分析列表数据", notes = "查询水表运行分析列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "查询水表运行分析图表数据", notes = "查询水表运行分析图表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryMeterRunAnalysisMapData(@RequestBody QueryALDTO queryALDTO) {
-		return null;
+		MessageBean<MeterAnalysisMapVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, MeterAnalysisMapVO.class);
+		Integer timeType = queryALDTO.getTimeType();
+		Integer startTime = queryALDTO.getStartTime();
+		Integer endTime = queryALDTO.getEndTime();
+		if(timeType == null || startTime == null || endTime == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription(Constant.MESSAGE_STRING_NULL);
+		}
+		
+		if(startTime > endTime) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription(Constant.MESSAGE_STRING_PARAMS);
+   	 	}
+		try{
+			MeterAnalysisMapVO data = ADOConnection.runTask(als, "queryMeterRunAnalysisMapData", MeterAnalysisMapVO.class,queryALDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
+		return msg.toJson();	
 	}
 	
 	@RequestMapping(value = "/downloadMeterRunAnalysisList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载水表运行分析列表数据", notes = "下载水表运行分析列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String downloadMeterRunAnalysisList(@RequestBody QueryALDTO queryALDTO) {
+    public HttpEntity<?> downloadMeterRunAnalysisList(HttpServletResponse response, HttpServletRequest request) {
+		try{
+			String objValue = request.getParameter("objValue"); // 获取导出数据查询条件bean
+			String titleInfos = request.getParameter("titleInfos"); // 获取导出列表数据表头
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryALDTO queryALDTO = jsonValue.fromJson(objValue, QueryALDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryALDTO == null) {
+				queryALDTO = new QueryALDTO();
+			}
+			// 查询到导出数据结果
+			List<MeterRunAnalysisVO> lists = ADOConnection.runTask(als, "queryMeterRunAnalysisList", List.class,queryALDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(lists, jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	

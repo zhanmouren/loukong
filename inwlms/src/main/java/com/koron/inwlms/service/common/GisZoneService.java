@@ -5,6 +5,7 @@ import java.util.List;
 import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 
 /**
  * GIS分区接口（临时）

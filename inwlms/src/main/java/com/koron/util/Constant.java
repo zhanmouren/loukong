@@ -1,9 +1,15 @@
 package com.koron.util;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.util.field.EnumElement;
 import org.springframework.stereotype.Component;
+
+import com.koron.inwlms.bean.VO.common.SysConfigVO;
+import com.koron.inwlms.service.common.impl.CommonServiceImpl;
 
 @Component
 public class Constant {
@@ -250,4 +256,41 @@ public class Constant {
 	 * 时间类型年
 	 */
 	public final static Integer TIME_TYPE_Y = 4;
+	
+	/**
+	 * 最大口径参数前缀
+	 */
+	public final static String MAX_DN_PARAM = "QMADN";
+	
+	/**
+	 * 最小口径参数前缀
+	 */
+	public final static String MIN_DN_PARAM = "QMIDN";
+	
+	/**
+	 * 水表口径（大口径/小口径）判断值
+	 */
+	public final static int METER_DN_SIZE = 50;
+	
+	/**
+	 * 正常表
+	 */
+	public final static String NOR_METER =  "W10184001";
+	
+	/**
+	 * 监控表
+	 */
+	public final static String MONI_METER =  "W10184002";
+	
+	/**
+	 * 消防表
+	 */
+	public final static String FS_METER =  "W10184003";
+	
+	/**
+	 * 消防表
+	 */
+	public final static String COMN_METER =  "W10184004";
+	
+	
 }

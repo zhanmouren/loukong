@@ -9,6 +9,9 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterQH;
 
 /**
  * 表观漏损mapper
@@ -58,4 +61,19 @@ public interface ApparentLossMapper {
 	 */
 	int countYALList(@Param("qaDTO") QueryALListDTO qaDTO,@Param("lists") List<String> lists);
 	
+	/**
+	 * 查询水表运行分析数据
+	 * @param queryALDTO
+	 * @param lists
+	 * @return
+	 */
+	List<MeterQH> queryMeterQH(@Param("qaDTO") QueryALDTO queryALDTO,@Param("lists") List<MeterInfo> lists);
+
+	/**
+	 * 查询消防水表的月流量
+	 * @param queryALDTO
+	 * @param lists
+	 * @return
+	 */
+	List<MeterFlowVO> queryFSMeterMFlow(@Param("qaDTO") QueryALDTO queryALDTO,@Param("lists") List<MeterInfo> lists);
 }

@@ -17,6 +17,11 @@ public class MeterInfo {
 	 * 水表口径
 	 */
 	private Integer meterDn;
+	
+	/**
+	 * 水表类型
+	 */
+	private String meterType;
 
 	public String getMeterNo() {
 		return meterNo;
@@ -32,6 +37,14 @@ public class MeterInfo {
 
 	public void setMeterDn(Integer meterDn) {
 		this.meterDn = meterDn;
+	}
+
+	public String getMeterType() {
+		return meterType;
+	}
+
+	public void setMeterType(String meterType) {
+		this.meterType = meterType;
 	}
 	
 	
