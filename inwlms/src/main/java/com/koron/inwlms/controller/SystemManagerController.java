@@ -634,6 +634,7 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	
 	 /*
      * date:2020-03-25
      * funtion:新建数据字典
@@ -646,32 +647,36 @@ public class SystemManagerController {
 		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
 		}
-		if(dataDicDTO.getDicFlag()==null || StringUtils.isBlank(dataDicDTO.getDicFlag())) {
+		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
 		}
-		if(dataDicDTO.getDictionaryDetList().size()<1 ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典明细列表不能为空", Integer.class).toJson();
-		}	
-		for(int i=0;i<dataDicDTO.getDictionaryDetList().size();i++) {
-			if(dataDicDTO.getDictionaryDetList().get(i).getDicDetName()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典明细列表明细名称不能为空", Integer.class).toJson();	
+		if(dataDicDTO.getDataDicDTOList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键值不能为空", Integer.class).toJson();
+		}
+		for(int i=0;i<dataDicDTO.getDataDicDTOList().size();i++) {
+			if(dataDicDTO.getDataDicDTOList().get(i).getDicKey()==null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键不能为空", Integer.class).toJson();
 			}
-			if(dataDicDTO.getDictionaryDetList().get(i).getDicDetValue()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典明细列表明细值不能为空", Integer.class).toJson();	
+			if(dataDicDTO.getDataDicDTOList().get(i).getDicValue()==null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典值不能为空", Integer.class).toJson();
 			}
 		}
-		
+			
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
 			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addDataDic", Integer.class, dataDicDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
-					//添加数据字典功能成功
+					//添加数据字典功能失败
 				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 				    msg.setDescription("添加数据字典失败");
+				  }else if(insertRes==-2){
+					//添加数据字典功能失败
+					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+					 msg.setDescription("您添加的值域已经存在,不能重复添加");
 				  }else {
-				    //插入失败
+				    //插入成功
 			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 			        msg.setDescription("添加数据字典成功");
 				  }
@@ -687,17 +692,49 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-25
-     * funtion:查询数据字典接口说明(通过名称标识等等)
+     * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是明细信息)
      * author:xiaozhan
      */
 	@RequestMapping(value = "/queryDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询数据字典接口", notes = "查询数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "查询数据字典接口(明细信息)", notes = "查询数据字典接口(明细信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDataDic(@RequestBody DataDicDTO dataDicDTO) {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		 //执行查询数据字典
 		 try {
 			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryDataDic", List.class, dataDicDTO);
+			 if(dicList.size()>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到相关数据字典键值的信息"); 
+			     msg.setData(dicList);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("没有查询到相关数据字典的信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询数据字典键值失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
+
+	 /*
+    * date:2020-03-26
+    * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是主表信息)
+    * author:xiaozhan
+    */
+	@RequestMapping(value = "/queryMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+   @ApiOperation(value = "查询数据字典接口(主表信息)", notes = "查询数据字典接口(主表信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+   @ResponseBody
+	public String queryMainDataDic(@RequestBody DataDicDTO dataDicDTO) {
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 //执行查询数据字典
+		 try {
+			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryMainDataDic", List.class, dataDicDTO);
 			 if(dicList.size()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关数据字典的信息"); 
@@ -717,34 +754,163 @@ public class SystemManagerController {
 	}
 	
 	 /*
-     * date:2020-03-25
-     * funtion:通过字典主表ID查询数据字典接口说明(通过ID等等)
+     * date:2020-03-27
+     * funtion:通过字典主表ID修改数据字典接口(主表信息))说明(通过ID等等)
      * author:xiaozhan
      */
-	@RequestMapping(value = "/queryDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "主表ID查询数据字典详情接口", notes = "主表ID查询数据字典详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/updateDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "通过字典主表ID修改数据字典接口(主表信息))接口", notes = "通过字典主表ID修改数据字典接口(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDicById(@RequestBody DataDicDTO dataDicDTO) {
+	public String updateDicById(@RequestBody DataDicDTO dataDicDTO) {
 		if(dataDicDTO.getDicId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
-		}		
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		}
+		if(dataDicDTO.getDicParent()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行查询数据字典
 		 try {
-			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryDicById", List.class, dataDicDTO);
-			 if(dicList.size()>0) {
-				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			     msg.setDescription("查询到相关数据字典的信息"); 
-			     msg.setData(dicList);
-			 }else {
-			   //没查询到数据
-				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			     msg.setDescription("没有查询到相关数据字典的信息"); 
-			 }
+			 Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateDicById", Integer.class, dataDicDTO);
+			 if(updateRes!=null) {
+				  if(updateRes==-1) {
+					//修改数据字典失败
+				    msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				    msg.setDescription("修改数据字典失败");
+				  }else {
+				    //修改数据字典成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("修改数据字典成功");
+				  }
+			  }
 		 }catch(Exception e){
-	     	//查询失败
-	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	        msg.setDescription("查询数据字典失败");
+	     	//修改失败
+	     	msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+	        msg.setDescription("修改这条数据字典失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
+	 /*
+     * date:2020-03-27
+     * funtion:通过字典主表Parent删除数据字典接口(主表信息)(批量)说明(通过ID等等)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/deleteDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "主表parent删除数据字典详情(主表信息)接口", notes = "主表parent删除数据字典详情(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteDicById(@RequestBody DataDicDTO dataDicDTO) {		
+		if(dataDicDTO.getDicParentList().size()<1) {
+		  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
+		}	
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		 //执行删除数据字典
+		 try {
+			 Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "deleteDicById", Integer.class, dataDicDTO);
+			 if(delRes!=null) {
+				  if(delRes==-1) {
+					//删除数据字典失败
+				    msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				    msg.setDescription("删除数据字典失败");
+				  }else {
+				    //删除数据字典成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("删除数据字典成功");
+				  }
+			  }
+		 }catch(Exception e){
+	     	//删除失败
+	     	msg.setCode(Constant.MESSAGE_INT_DELERROR);
+	        msg.setDescription("删除数据字典失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
+	 /*
+     * date:2020-03-27
+     * funtion:通过字典主表ID修改数据字典明细接口(明细信息))说明(通过ID等等)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/updateDicDetById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "通过字典主表ID修改数据字典接口(明细信息))接口", notes = "通过字典主表ID修改数据字典接口(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateDicDetById(@RequestBody DataDicDTO dataDicDTO) {
+		if(dataDicDTO.getDicId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicParent()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicKey()==null || StringUtils.isBlank(dataDicDTO.getDicKey())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表键不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicValue()==null || StringUtils.isBlank(dataDicDTO.getDicValue())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		 //执行修改数据字典明细
+		 try {
+			 Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateDicDetById", Integer.class, dataDicDTO);
+			 if(updateRes!=null) {
+				  if(updateRes==-1) {
+					//修改数据字典失败
+				    msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				    msg.setDescription("修改数据字典失败");
+				  }else {
+				    //修改数据字典成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("修改数据字典成功");
+				  }
+			  }
+		 }catch(Exception e){
+	     	//修改失败
+	     	msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+	        msg.setDescription("修改这条数据字典失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
+	 /*
+     * date:2020-03-27
+     * funtion:通过字典主表id删除数据字典接口(明细信息)(批量)说明(通过ID等等)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/deleteDetDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "主表ID删除数据字典详情(明细信息)接口", notes = "主表ID删除数据字典详情(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteDetDicById(@RequestBody DataDicDTO dataDicDTO) {		
+		if(dataDicDTO.getDicIdList().size()<1) {
+		  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
+		}	
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		 //执行删除数据字典
+		 try {
+			 Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "deleteDetDicById", Integer.class, dataDicDTO);
+			 if(delRes!=null) {
+				  if(delRes==-1) {
+					//删除数据字典失败
+				    msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				    msg.setDescription("删除数据字典失败");
+				  }else {
+				    //删除数据字典成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("删除数据字典成功");
+				  }
+			  }
+		 }catch(Exception e){
+	     	//删除失败
+	     	msg.setCode(Constant.MESSAGE_INT_DELERROR);
+	        msg.setDescription("删除数据字典失败");
 	     }
 		 return msg.toJson();
 		 

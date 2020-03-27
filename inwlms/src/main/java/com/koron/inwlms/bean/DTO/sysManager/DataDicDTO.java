@@ -13,10 +13,27 @@ import java.util.List;
 */
 
 public class DataDicDTO {
+	//装数据字典的标识parent的List集合
+	private List<String> dicParentList;
+	//装数据字典的的Id集合
+	private List<Integer> dicIdList;
+	
+	public List<Integer> getDicIdList() {
+		return dicIdList;
+	}
+	public void setDicIdList(List<Integer> dicIdList) {
+		this.dicIdList = dicIdList;
+	}
+	public List<String> getDicParentList() {
+		return dicParentList;
+	}
+	public void setDicParentList(List<String> dicParentList) {
+		this.dicParentList = dicParentList;
+	}
 	//数据字典Id
 	private Integer dicId;
 	//数据字典标识
-	private String dicFlag;
+	private String dicParent;
 	//数据字典名称
 	private String dicName;
 	//数据字典备注
@@ -30,9 +47,40 @@ public class DataDicDTO {
 	//修改时间
 	private Timestamp updateTime;
 	       
-	//数据字典List明细
-	private List<DataDicDetDTO> dictionaryDetList;
-	 public String getCreateBy() {
+	//数据字典明细键
+		private String dicKey;
+		//数据字典明细值
+		private String dicValue;
+		//数据字典明细顺序
+		private Integer dicSeq;
+	    //装key Value的List列表
+		private	List<DataDicDTO> dataDicDTOList;
+
+	 public List<DataDicDTO> getDataDicDTOList() {
+			return dataDicDTOList;
+		}
+		public void setDataDicDTOList(List<DataDicDTO> dataDicDTOList) {
+			this.dataDicDTOList = dataDicDTOList;
+		}
+	public String getDicKey() {
+			return dicKey;
+		}
+		public void setDicKey(String dicKey) {
+			this.dicKey = dicKey;
+		}
+		public String getDicValue() {
+			return dicValue;
+		}
+		public void setDicValue(String dicValue) {
+			this.dicValue = dicValue;
+		}
+		public Integer getDicSeq() {
+			return dicSeq;
+		}
+		public void setDicSeq(Integer dicSeq) {
+			this.dicSeq = dicSeq;
+		}
+	public String getCreateBy() {
 			return createBy;
 		}
 		public void setCreateBy(String createBy) {
@@ -62,11 +110,12 @@ public class DataDicDTO {
 	public void setDicId(Integer dicId) {
 		this.dicId = dicId;
 	}
-	public String getDicFlag() {
-		return dicFlag;
+	
+	public String getDicParent() {
+		return dicParent;
 	}
-	public void setDicFlag(String dicFlag) {
-		this.dicFlag = dicFlag;
+	public void setDicParent(String dicParent) {
+		this.dicParent = dicParent;
 	}
 	public String getDicName() {
 		return dicName;
@@ -80,10 +129,5 @@ public class DataDicDTO {
 	public void setDicRemark(String dicRemark) {
 		this.dicRemark = dicRemark;
 	}
-	public List<DataDicDetDTO> getDictionaryDetList() {
-		return dictionaryDetList;
-	}
-	public void setDictionaryDetList(List<DataDicDetDTO> dictionaryDetList) {
-		this.dictionaryDetList = dictionaryDetList;
-	}
+	
 }

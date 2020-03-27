@@ -53,11 +53,23 @@ public interface UserService {
 	
 	/**下面是系统配置***/
 	
-	//添加数据字典
-	Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
-	//查询数据字典(这个是列转行，展示所有的数据字典)
-	List<DataDicVO> queryDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
-	//查询数据字典(通过Id查询详情)
-    List<DataDicVO> queryDicById(SessionFactory factory,DataDicDTO dataDicDTO);
+	  //添加数据字典
+		Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
+		//查询数据字典(查询明细信息键值)
+		List<DataDicVO> queryDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
+		//查询数据字典(查询明细信息主)
+	    List<DataDicVO> queryMainDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
+		
+	    //修改数据字典(通过parent)
+	    Integer updateDicById(SessionFactory factory, DataDicDTO dataDicDTO);
+	    
+	    //删除数据字典(通过parent)
+	    Integer deleteDicById(SessionFactory factory, DataDicDTO dataDicDTO);
+	    
+	    //通过字典主表ID修改数据字典明细接口(明细信息))
+	    Integer updateDicDetById(SessionFactory factory, DataDicDTO dataDicDTO);
+	    
+	    //删除数据字典(通过Id)
+	    Integer deleteDetDicById(SessionFactory factory, DataDicDTO dataDicDTO);
 	
 }

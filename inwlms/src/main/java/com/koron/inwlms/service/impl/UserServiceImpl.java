@@ -9,7 +9,6 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DataDicDetDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -245,55 +244,127 @@ public class UserServiceImpl implements UserService{
 			Integer delResult=userMapper.delDeptUser(deptUserDTO.getDepId(),deptUserDTO.getUserList());
 			return delResult;
 		}
-
+		
+		
 		//添加数据字典接口 2020/03/25
-		@TaskAnnotation("addDataDic")
-		@Override
-		public Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
-			// TODO Auto-generated method stub
-			UserMapper userMapper = factory.getMapper(UserMapper.class);
-			Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-			dataDicDTO.setCreateBy("小詹");
-			dataDicDTO.setCreateTime(timeNow);
-			dataDicDTO.setUpdateBy("小詹");
-			dataDicDTO.setUpdateTime(timeNow);
-			//执行添加数据字典主表的操作(获取刚刚插入到数据字典主表的Id)
-			Integer dictId=userMapper.addDataDic(dataDicDTO);
-			Integer addDetCount;
-			List<DataDicDetDTO> dataDicDetDTOList=new ArrayList<DataDicDetDTO>();
-			//执行添加数据字典明细表的操作（多条记录）
-			for(int i=0;i<dataDicDTO.getDictionaryDetList().size();i++) {
-				DataDicDetDTO dataDicDetDTO=new DataDicDetDTO();
-				dataDicDetDTO.setDictId(dictId);
-				dataDicDetDTO.setDicDetName(dataDicDTO.getDictionaryDetList().get(i).getDicDetName());
-				dataDicDetDTO.setDicDetValue(dataDicDTO.getDictionaryDetList().get(i).getDicDetValue());
-				dataDicDetDTO.setCreateBy("小詹");
-				dataDicDetDTO.setCreateTime(timeNow);
-				dataDicDetDTO.setUpdateBy("小詹");
-				dataDicDetDTO.setUpdateTime(timeNow);
-				dataDicDetDTOList.add(dataDicDetDTO);
-			}
-			addDetCount=userMapper.addDataDetDic(dataDicDetDTOList);
-			return addDetCount;
-		}
+				@TaskAnnotation("addDataDic")
+				@Override
+				public Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					DataDicDTO dicDTO=new DataDicDTO();
+					dicDTO.setDicParent(dataDicDTO.getDicParent());
+					//添加之前先判断dicParent是否已经存在
+					List<DataDicVO>  parentList=userMapper.queryDataDic(dicDTO);
+					Integer addResult=null;
+					if(parentList.size()>0) {
+					  //说明已经存在
+						addResult=-2;
+						return addResult;
+					}
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					List<DataDicDTO> dataDicDTOList=new ArrayList<DataDicDTO>();
+					//插入i条
+					for(int i=0;i<dataDicDTO.getDataDicDTOList().size();i++) {
+						DataDicDTO dataDicDTONew=new DataDicDTO();
+						dataDicDTONew.setDicName(dataDicDTO.getDicName());
+						dataDicDTONew.setDicParent(dataDicDTO.getDicParent());
+						dataDicDTONew.setDicRemark(dataDicDTO.getDicRemark());
+						dataDicDTONew.setDicKey(dataDicDTO.getDataDicDTOList().get(i).getDicKey());
+						dataDicDTONew.setDicValue(dataDicDTO.getDataDicDTOList().get(i).getDicValue());
+						if(dataDicDTO.getDataDicDTOList().get(i).getDicSeq()==null) {
+							dataDicDTONew.setDicSeq(i);
+						}else {
+							dataDicDTONew.setDicSeq(dataDicDTO.getDataDicDTOList().get(i).getDicSeq());
+						}
+						dataDicDTONew.setCreateBy("小詹");
+						dataDicDTONew.setCreateTime(timeNow);
+						dataDicDTONew.setUpdateBy("小詹");
+						dataDicDTONew.setUpdateTime(timeNow);
+						dataDicDTOList.add(dataDicDTONew);
+					}
+					
+					 addResult=userMapper.addDataDic(dataDicDTOList);
+					return addResult;			
+				}
 
-		//查询数据字典接口(这个是列转行，展示所有的数据字典) 2020/03/25
-		@TaskAnnotation("queryDataDic")
-		@Override
-		public List<DataDicVO> queryDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
-			// TODO Auto-generated method stub
-			UserMapper userMapper = factory.getMapper(UserMapper.class);
-			List<DataDicVO> dicList=userMapper.queryDataDic(dataDicDTO);
-			return dicList;
-		}
+				//查询数据字典接口(查询明细信息键值) 2020/03/26
+				@TaskAnnotation("queryDataDic")
+				@Override
+				public List<DataDicVO> queryDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<DataDicVO> dataDicVOList=userMapper.queryDataDic(dataDicDTO);
+					return dataDicVOList;
+				}
+				//查询数据字典接口(查询明细信息主表) 2020/03/26
+				@TaskAnnotation("queryMainDataDic")
+				@Override
+				public List<DataDicVO> queryMainDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					//只需要返回第一条主的信息就行
+					List<DataDicVO> dataDicVOList=userMapper.queryMainDataDic(dataDicDTO);
+					return dataDicVOList;
+				}
 
-		//查询数据字典接口通过Id(通过Id查询详情) 2020/03/25
-		@TaskAnnotation("queryDicById")
-		@Override
-		public List<DataDicVO> queryDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
-			// TODO Auto-generated method stub
-			UserMapper userMapper = factory.getMapper(UserMapper.class);
-			List<DataDicVO> dicList=userMapper.queryDicById(dataDicDTO);
-			return dicList;
-		}
+			    //修改数据字典(通过parent,修改一条就要修改多条主的信息) 2020/03/27
+				@TaskAnnotation("editDicById")
+				@Override
+				public Integer updateDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					dataDicDTO.setUpdateBy("小詹");
+					dataDicDTO.setUpdateTime(timeNow);
+					Integer updateRes=userMapper.updateDicById(dataDicDTO);
+					return updateRes;
+				}
+				
+				//删除数据字典(通过parent，删除一条就要修改多条主的信息，还要实现批量) 2020/03/27
+				@TaskAnnotation("deleteDicById")
+				@Override
+				public Integer deleteDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<DataDicDTO> dataDicDTOList=new ArrayList<DataDicDTO>();
+					for(int i=0;i<dataDicDTO.getDicParentList().size();i++) {
+						DataDicDTO dataDicDTONew=new DataDicDTO();
+						dataDicDTONew.setDicParent(dataDicDTO.getDicParentList().get(i));
+						dataDicDTOList.add(dataDicDTONew);
+					}
+					Integer delRes=userMapper.deleteDicById(dataDicDTOList);
+					return delRes;
+				}
+				
+				//修改数据字典明细的操作  2020/03/27
+				@TaskAnnotation("updateDicDetById")
+				@Override
+				public Integer updateDicDetById(SessionFactory factory, DataDicDTO dataDicDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					dataDicDTO.setUpdateBy("小詹");
+					dataDicDTO.setUpdateTime(timeNow);
+					Integer updateRes=userMapper.updateDicDetById(dataDicDTO);
+					return updateRes;
+				}
+		      
+				//删除数据字典(通过parent，删除一条就要修改多条主的信息，还要实现批量) 2020/03/27
+				@TaskAnnotation("deleteDetDicById")
+				@Override
+				public Integer deleteDetDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
+					// TODO Auto-generated method stub
+				    UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<DataDicDTO> dataDicDTOList=new ArrayList<DataDicDTO>();
+					for(int i=0;i<dataDicDTO.getDicIdList().size();i++) {
+					    DataDicDTO dataDicDTONew=new DataDicDTO();
+						dataDicDTONew.setDicId(dataDicDTO.getDicIdList().get(i));
+						dataDicDTOList.add(dataDicDTONew);
+					}
+					Integer delRes=userMapper.deleteDetDicById(dataDicDTOList);
+					 return delRes;
+					}		
+
+		
 }

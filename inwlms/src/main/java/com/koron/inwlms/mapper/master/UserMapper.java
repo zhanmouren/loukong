@@ -9,7 +9,6 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DataDicDetDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -77,15 +76,24 @@ public interface UserMapper {
 	
 	/**下面是系统配置***/
 	//添加数据字典主表
-	public Integer addDataDic(DataDicDTO dataDicDTO);
-	
-	//添加数据字典明细
-	public Integer addDataDetDic(List<DataDicDetDTO> dataDicDetDTOList);
-	
-	//查询数据字典接口说明(通过名称标识等等,列转行)
-	public List<DataDicVO> queryDataDic(DataDicDTO dataDicDTO);
-	
-	//查询数据字典接口说明(通过Id查询详情)
-	public List<DataDicVO> queryDicById(DataDicDTO dataDicDTO);
+		public Integer addDataDic(List<DataDicDTO> dataDicDTOList);
+		
+		//查询数据字典(查询明细信息键值)
+		public List<DataDicVO> queryDataDic(DataDicDTO dataDicDTO);
+		
+		//查询数据字典(查询明细信息键值)
+		public List<DataDicVO> queryMainDataDic(DataDicDTO dataDicDTO);
+		
+		//修改数据字典主表(批量修改主表信息)
+		public Integer updateDicById(DataDicDTO dataDicDTO);
+		
+		//删除数据字典主表(删除主表信息)
+		public Integer deleteDicById(List<DataDicDTO> dataDicDTOList);
+		
+		//修改数据字典明细的操作(单条)
+	    public Integer updateDicDetById(DataDicDTO dataDicDTO);
+	    
+	  //修改数据字典主表(批量修改明细信息)
+	  	public Integer deleteDetDicById(List<DataDicDTO> dataDicDTOList);	
 
 }
