@@ -33,15 +33,15 @@ public interface UserMapper {
 	public List<UserVO> queryUser(QueryUserDTO userDTO);
 	
 	//修改职员
-    public Integer editUser(UserDTO userDTO);
+    public Integer updateUser(UserDTO userDTO);
     
     //删除职员
-    public Integer delUser(UserDTO userDTO);
+    public Integer deleteUser(UserDTO userDTO);
     
     //新建新角色
     public Integer addNewRole(RoleDTO roleDTO);
   	 //修改角色属性
-    public Integer editRoleAttr(RoleDTO roleDTO);
+    public Integer updateRoleAttr(RoleDTO roleDTO);
     
     //删除角色
     public Integer  delRole(List<Integer> roleList);
@@ -59,7 +59,7 @@ public interface UserMapper {
 	public Integer addRoleUser(List<RoleAndUserDTO> roleAndUserDTOList);
 	
 	//删除角色中职员(批量)
-	public Integer  delRoleUser(@Param("roleId") Integer roleId,@Param("list") List<Integer> userList);
+	public Integer  deleteRoleUser(@Param("roleId") Integer roleId,@Param("list") List<Integer> userList);
 	
 	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
 	public List<UserVO> queryExceptRoleUser(RoleAndUserDTO roleUserDTO);
@@ -71,7 +71,7 @@ public interface UserMapper {
 	public Integer addDeptUser(List<DeptAndUserDTO> deptUserDTOList);
 	
 	//删除部门中职员(批量)
-	public Integer delDeptUser(@Param("depId") Integer depId,@Param("list") List<Integer> userList);
+	public Integer deleteDeptUser(@Param("depId") Integer depId,@Param("list") List<Integer> userList);
 	
 	
 	/**下面是系统配置***/

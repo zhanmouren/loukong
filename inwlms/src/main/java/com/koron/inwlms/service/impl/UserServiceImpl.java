@@ -49,26 +49,26 @@ public class UserServiceImpl implements UserService{
 		return userList;
 	}
 	//修改职员 2020/03/20
-	@TaskAnnotation("editUser")
+	@TaskAnnotation("updateUser")
 	@Override
-	public Integer editUser(SessionFactory factory, UserDTO userDTO) {
+	public Integer updateUser(SessionFactory factory, UserDTO userDTO) {
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
 		userDTO.setUpdateBy("xiaozhan");
 		userDTO.setUpdateTime(timeNow);
-		Integer editResult=userMapper.editUser(userDTO);
+		Integer editResult=userMapper.updateUser(userDTO);
 		return editResult;
 	}
    
 	//删除职员 2020/03/23
-	@TaskAnnotation("delUser")
+	@TaskAnnotation("deleteUser")
 	@Override
-	public Integer delUser(SessionFactory factory, UserDTO userDTO) {
+	public Integer deleteUser(SessionFactory factory, UserDTO userDTO) {
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		userDTO.setWhetUse(-1);
-		Integer delResult=userMapper.delUser(userDTO);
+		Integer delResult=userMapper.deleteUser(userDTO);
 		return delResult;
 	}
 	
@@ -88,22 +88,22 @@ public class UserServiceImpl implements UserService{
 	}
     
 	//修改角色属性  2020/03/23
-	@TaskAnnotation("editRoleAttr")
+	@TaskAnnotation("updateRoleAttr")
 	@Override
-	public Integer editRoleAttr(SessionFactory factory, RoleDTO roleDTO) {
+	public Integer updateRoleAttr(SessionFactory factory, RoleDTO roleDTO) {
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
 		roleDTO.setUpdateBy("xiaozhan");
 		roleDTO.setUpdateTime(timeNow);
-		Integer editResult=userMapper.editRoleAttr(roleDTO);
+		Integer editResult=userMapper.updateRoleAttr(roleDTO);
 		return editResult;
 	}
 	
 	//删除角色属性  2020/03/23(删除角色前先判断有没有绑定职员)
-	@TaskAnnotation("delRoleAttr")
+	@TaskAnnotation("deleteRoleAttr")
 	@Override
-	public RoleMsgVO delRoleAttr(SessionFactory factory, RoleDTO roleDTO) {
+	public RoleMsgVO deleteRoleAttr(SessionFactory factory, RoleDTO roleDTO) {
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		Integer delResult;
@@ -183,13 +183,13 @@ public class UserServiceImpl implements UserService{
 	}
 
 	//删除角色中职员(批量)接口 2020/03/24
-	@TaskAnnotation("delRoleUser")
+	@TaskAnnotation("deleteRoleUser")
 	@Override
-	public Integer delRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
+	public Integer deleteRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		//执行批量删除角色职员的操作
-		Integer delResult=userMapper.delRoleUser(roleUserDTO.getRoleId(),roleUserDTO.getUserList());
+		Integer delResult=userMapper.deleteRoleUser(roleUserDTO.getRoleId(),roleUserDTO.getUserList());
 		return delResult;
 	}
 
@@ -235,13 +235,13 @@ public class UserServiceImpl implements UserService{
 		}
 
 		//删除部门中职员(批量)接口 2020/03/25
-		@TaskAnnotation("delDeptUser")
+		@TaskAnnotation("deleteDeptUser")
 		@Override
-		public Integer delDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {
+		public Integer deleteDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {
 			// TODO Auto-generated method stub
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
 			//执行批量删除角色职员的操作
-			Integer delResult=userMapper.delDeptUser(deptUserDTO.getDepId(),deptUserDTO.getUserList());
+			Integer delResult=userMapper.deleteDeptUser(deptUserDTO.getDepId(),deptUserDTO.getUserList());
 			return delResult;
 		}
 		
@@ -309,7 +309,7 @@ public class UserServiceImpl implements UserService{
 				}
 
 			    //修改数据字典(通过parent,修改一条就要修改多条主的信息) 2020/03/27
-				@TaskAnnotation("editDicById")
+				@TaskAnnotation("updateDicById")
 				@Override
 				public Integer updateDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
 					// TODO Auto-generated method stub

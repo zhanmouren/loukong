@@ -128,10 +128,10 @@ public class SystemManagerController {
      * funtion:修改新职员接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/editUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/updateUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改职员信息接口", notes = "修改职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String editUser(@RequestBody UserDTO userDTO) {
+	public String updateUser(@RequestBody UserDTO userDTO) {
 		if(userDTO.getUserId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的Id不能为空", Integer.class).toJson();
 		}
@@ -147,7 +147,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行修改职员的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "editUser", Integer.class, userDTO);		 
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateUser", Integer.class, userDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
 					//修改用户成功
@@ -173,17 +173,17 @@ public class SystemManagerController {
      * funtion:删除新职员接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/delUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/deleteUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除职员信息接口", notes = "删除职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String  delUser(@RequestBody UserDTO userDTO) {
+	public String  deleteUser(@RequestBody UserDTO userDTO) {
 		if(userDTO.getUserId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的Id不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除职员的操作
 		  try{
-			  Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "delUser", Integer.class, userDTO);		 
+			  Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "deleteUser", Integer.class, userDTO);		 
 			  if(delRes!=null) {
 				  if(delRes==1) {
 					//删除用户成功
@@ -245,10 +245,10 @@ public class SystemManagerController {
      * funtion:修改角色属性接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/editRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/updateRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改角色属性接口", notes = "修改角色属性接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String editRoleAttr(@RequestBody RoleDTO roleDTO) {
+	public String updateRoleAttr(@RequestBody RoleDTO roleDTO) {
 		if(roleDTO.getRoleId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
 		}
@@ -259,7 +259,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行修改职员的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "editRoleAttr", Integer.class, roleDTO);		 
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateRoleAttr", Integer.class, roleDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
 					//修改用户成功
@@ -285,17 +285,17 @@ public class SystemManagerController {
      * funtion:批量删除删除角色接口（超级管理员角色不允许删除，代码待写）
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/delRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/deleteRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量删除角色接口", notes = "批量删除角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String delRoleAttr(@RequestBody RoleDTO roleDTO) {
+	public String deleteRoleAttr(@RequestBody RoleDTO roleDTO) {
 		if(roleDTO.getRoleIdList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色列表Id不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色的操作
 		  try{
-			  RoleMsgVO roleMsgVO=ADOConnection.runTask(new UserServiceImpl(), "delRoleAttr", RoleMsgVO.class, roleDTO);		 
+			  RoleMsgVO roleMsgVO=ADOConnection.runTask(new UserServiceImpl(), "deleteRoleAttr", RoleMsgVO.class, roleDTO);		 
 			  if(roleMsgVO!=null) {
 				  if(roleMsgVO.getResult()==-1) {
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
@@ -419,10 +419,10 @@ public class SystemManagerController {
      * funtion:删除角色中职员(批量)接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/delRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/deleteRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除角色中职员接口", notes = "删除角色中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String delRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
+	public String deleteRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
 		if(roleUserDTO.getRoleId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
 		}
@@ -432,7 +432,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色中职员(批量)操作
 		  try{
-			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "delRoleUser", Integer.class, roleUserDTO);		 
+			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "deleteRoleUser", Integer.class, roleUserDTO);		 
 			  if(delResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
 					 msg.setDescription("删除角色中职员(批量)失败"); 
@@ -559,10 +559,10 @@ public class SystemManagerController {
      * funtion:删除部门中职员(批量)接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/delDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/deleteDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除部门中职员接口", notes = "删除部门中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String delDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
+	public String deleteDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
 		if(deptUserDTO.getDepId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门Id不能为空", Integer.class).toJson();
 		}
@@ -572,7 +572,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除部门中职员(批量)操作
 		  try{
-			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "delDeptUser", Integer.class, deptUserDTO);		 
+			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "deleteDeptUser", Integer.class, deptUserDTO);		 
 			  if(delResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
 					 msg.setDescription("删除部门中职员(批量)失败"); 
