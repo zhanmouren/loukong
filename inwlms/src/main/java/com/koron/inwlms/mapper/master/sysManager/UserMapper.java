@@ -1,4 +1,4 @@
-package com.koron.inwlms.mapper.master;
+package com.koron.inwlms.mapper.master.sysManager;
 
 import java.util.List;
 

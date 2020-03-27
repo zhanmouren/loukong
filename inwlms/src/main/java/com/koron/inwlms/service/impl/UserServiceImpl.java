@@ -19,7 +19,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
-import com.koron.inwlms.mapper.master.UserMapper;
+import com.koron.inwlms.mapper.master.sysManager.UserMapper;
 import com.koron.inwlms.service.UserService;
 
 @Service
