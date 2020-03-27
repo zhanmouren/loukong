@@ -7,6 +7,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.service.common.GisZoneService;
 
 @Service
@@ -45,6 +46,37 @@ public class GisZoneServiceImpl implements GisZoneService {
 			list.add("DM02002002");
 		}
 		return list;
+	}
+
+	@TaskAnnotation("queryMeterByZoneNo")
+	@Override
+	public List<MeterInfo> queryMeterByZoneNo(SessionFactory factory, String zoneNo) {
+		List<MeterInfo> lists = new ArrayList<>();
+		MeterInfo meterInfo = new MeterInfo();
+		meterInfo.setMeterNo("C0210280000021");
+		meterInfo.setMeterDn(100);
+		MeterInfo meterInfo1 = new MeterInfo();
+		meterInfo.setMeterNo("C0210280000022");
+		meterInfo.setMeterDn(100);
+		MeterInfo meterInfo2 = new MeterInfo();
+		meterInfo.setMeterNo("C0210280000167");
+		meterInfo.setMeterDn(40);
+		MeterInfo meterInfo3 = new MeterInfo();
+		meterInfo.setMeterNo("C0210280000169");
+		meterInfo.setMeterDn(50);
+		MeterInfo meterInfo4 = new MeterInfo();
+		meterInfo.setMeterNo("C0210280000188");
+		meterInfo.setMeterDn(50);
+		MeterInfo meterInfo5 = new MeterInfo();
+		meterInfo.setMeterNo("C0210280000172");
+		meterInfo.setMeterDn(20);
+		lists.add(meterInfo);
+		lists.add(meterInfo1);
+		lists.add(meterInfo2);
+		lists.add(meterInfo3);
+		lists.add(meterInfo4);
+		lists.add(meterInfo5);
+		return lists;
 	}
 
 }

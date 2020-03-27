@@ -1,4 +1,4 @@
-package com.koron.inwlms.service.impl;
+package com.koron.inwlms.service.apparentLoss.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +17,11 @@ import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterManageData;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterManageRankData;
 import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
-import com.koron.inwlms.bean.VO.apparentLoss.ZoneData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneDatas;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneRankData;
 import com.koron.inwlms.bean.VO.common.PageVO;
-import com.koron.inwlms.mapper.master.ApparentLossMapper;
-import com.koron.inwlms.service.ApparentLossService;
+import com.koron.inwlms.mapper.master.apparentLoss.ApparentLossMapper;
+import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.inwlms.util.TimeUtil;

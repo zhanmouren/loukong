@@ -23,7 +23,7 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
-import com.koron.inwlms.service.ApparentLossService;
+import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.util.Constant;
 
@@ -67,8 +67,14 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription(Constant.MESSAGE_STRING_PARAMS);
    	 	}
-		ALOverviewDataVO data = ADOConnection.runTask(als, "queryALOverviewData", ALOverviewDataVO.class,queryALDTO);
-		msg.setData(data);
+		try{
+			ALOverviewDataVO data = ADOConnection.runTask(als, "queryALOverviewData", ALOverviewDataVO.class,queryALDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
+		
 		return msg.toJson();
 	}
 	
@@ -85,8 +91,13 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription(Constant.MESSAGE_STRING_NULL);
 		}
-		PageALListVO data = ADOConnection.runTask(als, "queryALList", PageALListVO.class,queryALListDTO);
-		msg.setData(data);
+		try{
+			PageALListVO data = ADOConnection.runTask(als, "queryALList", PageALListVO.class,queryALListDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
 		return msg.toJson();
 	}
 	
@@ -109,8 +120,13 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription(Constant.MESSAGE_STRING_PARAMS);
    	 	}
-		ALMapDataVO data = ADOConnection.runTask(als, "queryALMapData", ALMapDataVO.class,queryALDTO);
-		msg.setData(data);
+		try{
+			ALMapDataVO data = ADOConnection.runTask(als, "queryALMapData", ALMapDataVO.class,queryALDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
 		return msg.toJson();
 	}
 	
