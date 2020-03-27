@@ -13,6 +13,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -364,7 +365,31 @@ public class UserServiceImpl implements UserService{
 					}
 					Integer delRes=userMapper.deleteDetDicById(dataDicDTOList);
 					 return delRes;
-					}		
+					}
+
+				//新建特征日 2020/03/27
+				@TaskAnnotation("addSpecialDate")
+				@Override
+				public Integer addSpecialDate(SessionFactory factory,SpecialDayDTO specialDayDTO) {
+					// TODO Auto-generated method stub
+				    UserMapper userMapper = factory.getMapper(UserMapper.class);
+				    Integer insertRes=null;
+				    //新建的时候判断在那个日期是否已经存在了
+				    SpecialDayDTO specialDayDTONew=new SpecialDayDTO();
+				    specialDayDTONew.setSpDate(specialDayDTO.getSpDate());
+				    List<SpecialDayDTO> specialDayDTOList=userMapper.queryExistSp(specialDayDTONew);
+				    if(specialDayDTOList.size()>0) {
+				    	insertRes=-2;
+				    	return insertRes;
+				    }
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					specialDayDTO.setCreateBy("小詹");
+					specialDayDTO.setCreateTime(timeNow);
+					specialDayDTO.setUpdateBy("小詹");
+					specialDayDTO.setUpdateTime(timeNow);
+				    insertRes=userMapper.addSpecialDate(specialDayDTO);
+					return insertRes;					
+				}		
 
 		
 }

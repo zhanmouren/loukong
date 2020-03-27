@@ -10,6 +10,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -71,5 +72,10 @@ public interface UserService {
 	    
 	    //删除数据字典(通过Id)
 	    Integer deleteDetDicById(SessionFactory factory, DataDicDTO dataDicDTO);
+	    
+	   //特征日
+	     
+	    //新建特征日
+	    Integer addSpecialDate(SessionFactory factory,SpecialDayDTO specialDayDTO);
 	
 }

@@ -169,7 +169,7 @@
 		  </trim>
 		  order by "dic".seq
       </select>
-       <!-- 查询数据字典 主标识明细的信息-->
+       <!-- 查询数据字典 是否已经存在该Parent的信息-->
       <select id="queryParentDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select "dic".id as dicId,"dic".parent as dicParent,"dic".name as dicName,"dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
           from "SM_dataDictionary" as "dic"
@@ -234,6 +234,20 @@
           </foreach>
      </delete>
     
+     <!-- 插入特征日表信息一条记录 -->
+    <insert id="addSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO">  
+        insert into "SM_specialDay"(name,remark,"spDate","createBy","createTime","updateBy","updateTime")values
+         (#{spName},#{spRemark},#{spDate},#{createBy},#{createTime},#{updateBy},#{updateTime})
+    </insert>
+    
+     <!-- 查询特征日 是否已经存在该特征日的信息-->
+      <select id="queryExistSp"  parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.SpecialDayVO">
+          select "sp".id as spId,"sp".name as spName,"sp".remark as spRemark,"sp"."spDate" as spDate,"sp"."createBy" as createBy,"sp"."createTime" as createTime,"sp"."updateBy" as updateBy,"sp"."updateTime" as updateTime 
+          from "SM_specialDay" as "sp"
+	      <trim prefix="where" prefixOverrides="and|or">
+			<if test="spDate != null"> and "sp"."spDate" = '${spDate}'</if>          
+		  </trim>
+      </select>
     
     
 </mapper>

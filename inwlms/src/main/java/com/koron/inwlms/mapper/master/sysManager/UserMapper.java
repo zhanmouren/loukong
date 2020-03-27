@@ -13,6 +13,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -98,5 +99,10 @@ public interface UserMapper {
 	    
 	  //修改数据字典主表(批量修改明细信息)
 	  	public Integer deleteDetDicById(List<DataDicDTO> dataDicDTOList);	
+	//特征日
+	  	//新建特征日
+	  	public Integer addSpecialDate(SpecialDayDTO specialDayDTO);
+	  	//判断是否存在相同的特征日
+	  	public  List<SpecialDayDTO> queryExistSp(SpecialDayDTO specialDayDTO);
 
 }

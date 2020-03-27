@@ -20,6 +20,7 @@ import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -915,4 +916,48 @@ public class SystemManagerController {
 		 return msg.toJson();
 		 
 	}
+	 /*
+     * date:2020-03-27
+     * funtion:新建特征日接口功能描述
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/addSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "新建特征日接口", notes = "新建特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+		if(specialDayDTO.getSpName()==null || StringUtils.isBlank(specialDayDTO.getSpName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
+		}
+		if(specialDayDTO.getSpDate()==null || StringUtils.isBlank(specialDayDTO.getSpDate())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
+		}
+			
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行添加特征日的操作
+		  try{
+			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addSpecialDate", Integer.class, specialDayDTO);		 
+			  if(insertRes!=null) {
+				  if(insertRes==-1) {
+					//添加特征日失败
+				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("添加特征日失败");
+				  }else if(insertRes==-2){
+					//添加特征日失败
+					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+					 msg.setDescription("重复添加特征日");  
+				  }else {
+				    //添加特征日成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("添加特征日成功");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//插入失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加特征日失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
 }
