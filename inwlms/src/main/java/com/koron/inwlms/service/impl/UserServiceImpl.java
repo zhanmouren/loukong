@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService{
 		  //说明这条角色RoleId存在用户
 		  if(userList.size()>0) {
 			  roleMsgVO.setResult(-1);
-			  roleMsgVO.setMessage("角色为："+userList.get(0).getRoleName()+"下存在职员");
+			  roleMsgVO.setMessage("角色为："+userList.get(0).getRoleName()+"下存在职员,请先删除关系后，继续操作");
 			  return roleMsgVO;
 		  }
 		}
