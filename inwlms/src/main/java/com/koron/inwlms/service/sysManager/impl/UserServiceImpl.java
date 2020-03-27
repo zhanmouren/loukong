@@ -255,7 +255,7 @@ public class UserServiceImpl implements UserService{
 					DataDicDTO dicDTO=new DataDicDTO();
 					dicDTO.setDicParent(dataDicDTO.getDicParent());
 					//添加之前先判断dicParent是否已经存在
-					List<DataDicVO>  parentList=userMapper.queryDataDic(dicDTO);
+					List<DataDicVO>  parentList=userMapper.queryParentDic(dicDTO);
 					Integer addResult=null;
 					if(parentList.size()>0) {
 					  //说明已经存在

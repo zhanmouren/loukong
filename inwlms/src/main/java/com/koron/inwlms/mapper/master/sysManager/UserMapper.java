@@ -81,6 +81,9 @@ public interface UserMapper {
 		//查询数据字典(查询明细信息键值)
 		public List<DataDicVO> queryDataDic(DataDicDTO dataDicDTO);
 		
+		//查询数据字典(查询是否已经存在值域)
+		public List<DataDicVO> queryParentDic(DataDicDTO dataDicDTO);
+		
 		//查询数据字典(查询明细信息键值)
 		public List<DataDicVO> queryMainDataDic(DataDicDTO dataDicDTO);
 		

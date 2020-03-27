@@ -169,6 +169,14 @@
 		  </trim>
 		  order by "dic".seq
       </select>
+       <!-- 查询数据字典 主标识明细的信息-->
+      <select id="queryParentDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".name as dicName,"dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          from "SM_dataDictionary" as "dic"
+	      <trim prefix="where" prefixOverrides="and|or">
+			<if test="dicParent != null"> and "dic".parent = '${dicParent}'</if>          
+		  </trim>
+      </select>
       
         <!-- 查询数据字典 主标识主的信息-->
       <select id="queryMainDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
