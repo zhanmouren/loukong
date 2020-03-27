@@ -1,4 +1,4 @@
-package com.koron.inwlms.service;
+package com.koron.inwlms.service.sysManager;
 
 import java.util.List;
 

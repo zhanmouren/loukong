@@ -1,4 +1,4 @@
-package com.koron.inwlms.service.impl;
+package com.koron.inwlms.service.sysManager.impl;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.master.sysManager.UserMapper;
-import com.koron.inwlms.service.UserService;
+import com.koron.inwlms.service.sysManager.UserService;
 
 @Service
 public class UserServiceImpl implements UserService{
