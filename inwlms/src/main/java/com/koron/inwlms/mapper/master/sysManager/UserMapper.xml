@@ -14,7 +14,7 @@
 	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"       
        <trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user".name like '%${name}%'</if>  
-   	    <if test="depName != null  and depName !='' "> and "dept" like '%${depName}%'</if>
+   	    <if test="depName != null  and depName !='' "> and "dept".name like '%${depName}%'</if>
    	    <if test="userId != null"> and "user".id ='${userId}'</if>  
    	    <if test="status != null"> and "user".status ='${status}'</if>
    	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>          
