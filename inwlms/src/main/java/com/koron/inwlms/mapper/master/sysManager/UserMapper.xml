@@ -260,6 +260,13 @@
 		order by orderDate) as yearmonth
 		left join "SM_specialDay" as sp on sp."spDate"=yearmonth.orderdate
       </select>
+      
+      <!-- 根据Id删除特征日 -->
+     <delete id="deleteSpecialDate">
+         delete from "SM_specialDay" 
+         where "spDate"=#{spDate}
+     </delete>
+    
     
     
 </mapper>

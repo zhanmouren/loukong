@@ -998,4 +998,40 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
+	 /*
+     * date:2020-03-30
+     * funtion:删除特征日接口功能描述
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/deleteSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除特征日接口", notes = "删除特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+		if(specialDayDTO.getSpDate()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
+		}			
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//根据日期执行删除特征日的操作
+		  try{
+			  Integer deleteRes=ADOConnection.runTask(new UserServiceImpl(), "deleteSpecialDate", Integer.class, specialDayDTO);		 
+			  if(deleteRes!=null) {
+				  if(deleteRes==-1) {
+					//删除特征日失败
+				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("删除特征日失败");
+				  }else {
+				    //删除特征日成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("删除特征日成功");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//插入失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("删除特征日失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
 }

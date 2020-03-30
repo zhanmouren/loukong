@@ -468,6 +468,16 @@ public class UserServiceImpl implements UserService{
 					specialDayDTO.setEndTime(endDate);
 					List<SpecialDayDTO> spList=userMapper.querySpecialDate(specialDayDTO);
 					return spList;
+				}
+
+				//根据日期删除特征日 2020/03/30
+				@TaskAnnotation("deleteSpecialDate")
+				@Override
+				public Integer deleteSpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Integer deleteRes=userMapper.deleteSpecialDate(specialDayDTO);
+					return deleteRes;
 				}		
 
 		
