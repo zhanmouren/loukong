@@ -104,5 +104,8 @@ public interface UserMapper {
 	  	public Integer addSpecialDate(SpecialDayDTO specialDayDTO);
 	  	//判断是否存在相同的特征日
 	  	public  List<SpecialDayDTO> queryExistSp(SpecialDayDTO specialDayDTO);
+	  	
+	  	//查询某年某月特征日 2020/03/27
+		public  List<SpecialDayDTO> querySpecialDate(SpecialDayDTO specialDayDTO);
 
 }

@@ -77,5 +77,7 @@ public interface UserService {
 	     
 	    //新建特征日
 	    Integer addSpecialDate(SessionFactory factory,SpecialDayDTO specialDayDTO);
+	    //查询某年某月特征日接口
+	    List<SpecialDayDTO> querySpecialDate(SessionFactory factory,SpecialDayDTO specialDayDTO);
 	
 }

@@ -1,7 +1,10 @@
 package com.koron.inwlms.service.sysManager.impl;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
@@ -389,6 +392,82 @@ public class UserServiceImpl implements UserService{
 					specialDayDTO.setUpdateTime(timeNow);
 				    insertRes=userMapper.addSpecialDate(specialDayDTO);
 					return insertRes;					
+				}
+
+				//查询某年某月特征日 2020/03/27
+				@TaskAnnotation("querySpecialDate")
+				@Override
+				public List<SpecialDayDTO> querySpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					//获取String年份(开始日期 年月,结束日期年月)
+					 String selectYear="";
+					if(specialDayDTO.getSelectYear()!=null) {
+					   selectYear=specialDayDTO.getSelectYear();
+					}
+					String selectMonth="";
+					if(specialDayDTO.getSelectMonth()!=null) {
+					  selectMonth=specialDayDTO.getSelectMonth();	
+					}				
+			        String endYear="";
+			        String endMonth="";
+			        //如果选择的月份小于10 
+			        if(Integer.valueOf(selectMonth)<10) {				        	
+			        	if(Integer.valueOf(selectMonth)==9) {
+			        		//当前选择月
+			        		selectMonth="09";
+			        		//当前选择年
+			        		selectYear=selectYear;
+			        		//下个月
+			        		endMonth="10";			        	
+			        		endYear=selectYear;
+			        	}else {
+			        		//当前选择月
+			        		selectMonth="0"+selectMonth;
+			        		//当前选择年	
+			        		selectYear=selectYear;
+			        		//下一个月份加1
+			        		int selectMonthInt=Integer.parseInt(selectMonth)+1;
+			        		//转化为String
+			        		endMonth="0"+String.valueOf(selectMonthInt);
+			        		endYear=selectYear;
+			        	}		        	 
+			        }else if(Integer.valueOf(selectMonth)==12){
+			        	//当前选择月
+		        		selectMonth="12";
+		        		//当前选择年
+		        		selectYear=selectYear;
+		        		//下个月
+		        		endMonth="01";
+		        		//下一年
+		        		int endYearInt=Integer.parseInt(selectYear)+1;
+		        		//转化为String
+		        		endYear=String.valueOf(endYearInt);
+			        }else {
+			        	//当前选择月
+		        		selectMonth=selectMonth;
+		        		//当前选择年
+		        		selectYear=selectYear;
+		        		//下一个月份加1
+		        		int selectMonthInt=Integer.parseInt(selectMonth)+1;
+		        		//转化为String
+		        		endMonth=String.valueOf(selectMonthInt);		        	
+		        		endYear=selectYear;
+			        }
+					//封装日期数据
+					if(specialDayDTO.getSelectYear()!=null) {
+						specialDayDTO.setSelectYear(selectYear);
+						specialDayDTO.setEndYear(endYear);
+					}if(specialDayDTO.getSelectMonth()!=null) {
+						specialDayDTO.setSelectMonth(selectMonth);
+						specialDayDTO.setEndMonth(endMonth);
+					}
+					String startDate= specialDayDTO.getSelectYear()+"-"+specialDayDTO.getSelectMonth();
+					String endDate= specialDayDTO.getEndYear()+"-"+specialDayDTO.getEndMonth();
+					specialDayDTO.setStartTime(startDate);
+					specialDayDTO.setEndTime(endDate);
+					List<SpecialDayDTO> spList=userMapper.querySpecialDate(specialDayDTO);
+					return spList;
 				}		
 
 		
