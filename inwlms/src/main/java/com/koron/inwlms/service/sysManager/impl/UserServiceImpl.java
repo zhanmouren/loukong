@@ -478,6 +478,16 @@ public class UserServiceImpl implements UserService{
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					Integer deleteRes=userMapper.deleteSpecialDate(specialDayDTO);
 					return deleteRes;
+				}
+
+				//根据日期修改特征日
+				@TaskAnnotation("updateSpecialDate")
+				@Override
+				public Integer updateSpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Integer updateRes=userMapper.updateSpecialDate(specialDayDTO);
+					return updateRes;
 				}		
 
 		

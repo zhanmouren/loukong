@@ -81,5 +81,8 @@ public interface UserService {
 	    List<SpecialDayDTO> querySpecialDate(SessionFactory factory,SpecialDayDTO specialDayDTO);
 	    //根据日期删除特征日
 	    Integer deleteSpecialDate(SessionFactory factory,SpecialDayDTO specialDayDTO);
+	    
+	    //修改特征日操作
+	    Integer updateSpecialDate(SessionFactory factory,SpecialDayDTO specialDayDTO);
 	
 }

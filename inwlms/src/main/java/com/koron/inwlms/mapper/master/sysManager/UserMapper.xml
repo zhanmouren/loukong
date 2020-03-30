@@ -266,6 +266,16 @@
          delete from "SM_specialDay" 
          where "spDate"=#{spDate}
      </delete>
+     
+      <!-- 修改数据字典主的信息 根据日期-->
+       <update id="updateSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
+		update "SM_specialDay" 
+		<set>	                                 
+             <if test="spName != null" > name= #{spName},</if>            
+             <if test="spRemark != null" > remark= #{spRemark},</if> 
+        </set>
+		where  "spDate"=#{spDate}
+	   </update>
     
     
     

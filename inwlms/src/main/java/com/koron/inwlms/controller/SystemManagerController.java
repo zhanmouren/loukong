@@ -1017,7 +1017,7 @@ public class SystemManagerController {
 			  if(deleteRes!=null) {
 				  if(deleteRes==-1) {
 					//删除特征日失败
-				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setCode(Constant.MESSAGE_INT_DELERROR);
 				    msg.setDescription("删除特征日失败");
 				  }else {
 				    //删除特征日成功
@@ -1026,7 +1026,7 @@ public class SystemManagerController {
 				  }
 			  }
 	        }catch(Exception e){
-	        	//插入失败
+	        	//删除失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("删除特征日失败");
 	        }
@@ -1034,4 +1034,43 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
+	
+	 /*
+     * date:2020-03-30
+     * funtion:修改特征日接口功能描述
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/updateSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改特征日接口", notes = "修改特征日接口接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+		if(specialDayDTO.getSpDate()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
+		}	
+		if(specialDayDTO.getSpName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
+		}	
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//根据id执行修改特征日的操作
+		  try{
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateSpecialDate", Integer.class, specialDayDTO);		 
+			  if(updateRes!=null) {
+				  if(updateRes==-1) {
+					//修改特征日失败
+				    msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				    msg.setDescription("修改特征日失败");
+				  }else {
+				    //修改特征日成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("修改特征日成功");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//修改失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("修改特征日失败");
+	        }
+		
+	     return msg.toJson();
+	}
 }

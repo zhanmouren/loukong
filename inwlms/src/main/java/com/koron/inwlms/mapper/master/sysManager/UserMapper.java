@@ -110,5 +110,8 @@ public interface UserMapper {
 		
 		//根据日期删除特征日
 		public  Integer deleteSpecialDate(SpecialDayDTO specialDayDTO);
+		
+		//根据日期修改特征日
+		public Integer updateSpecialDate(SpecialDayDTO specialDayDTO);
 
 }
