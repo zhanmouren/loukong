@@ -5,8 +5,10 @@ import java.util.List;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 
+import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -84,5 +86,10 @@ public interface UserService {
 	    
 	    //修改特征日操作
 	    Integer updateSpecialDate(SessionFactory factory,SpecialDayDTO specialDayDTO);
+	    
+	    /** -----------树形组件------------------**/    
+	    
+	    //插入到部门表中和部门组织表中
+	    String addTreeDept(SessionFactory factory,  OrgAndDeptDTO orgDeptDTO);
 	
 }

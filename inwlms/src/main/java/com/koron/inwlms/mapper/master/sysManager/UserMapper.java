@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -113,5 +114,11 @@ public interface UserMapper {
 		
 		//根据日期修改特征日
 		public Integer updateSpecialDate(SpecialDayDTO specialDayDTO);
+		
+	 /** -----------树形组件------------------**/  
+		  //插入到部门表中中
+		public Integer addDeptNew(OrgAndDeptDTO orgDeptDTO);
+		//插入组织部门表中
+		public Integer addOrgDept(OrgAndDeptDTO orgDeptDTO);
 
 }

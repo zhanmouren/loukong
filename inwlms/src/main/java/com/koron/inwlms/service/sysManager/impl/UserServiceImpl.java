@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -25,6 +26,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.master.sysManager.UserMapper;
 import com.koron.inwlms.service.sysManager.UserService;
+import com.koron.inwlms.util.RandomCodeUtil;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -480,7 +482,7 @@ public class UserServiceImpl implements UserService{
 					return deleteRes;
 				}
 
-				//根据日期修改特征日
+				//根据日期修改特征日  2020/03/30
 				@TaskAnnotation("updateSpecialDate")
 				@Override
 				public Integer updateSpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {
@@ -488,7 +490,39 @@ public class UserServiceImpl implements UserService{
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					Integer updateRes=userMapper.updateSpecialDate(specialDayDTO);
 					return updateRes;
-				}		
+				}
+
+				//组织下添加部门2020/03/31
+				@TaskAnnotation("addTreeDept")
+				@Override
+				public String addTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);	
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					orgDeptDTO.setCreateTime(timeNow);
+					orgDeptDTO.setCreateBy("小詹");
+					orgDeptDTO.setUpdateBy("小詹");
+					orgDeptDTO.setDepStatus(0);
+					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
+					String deptCode=randomCodeUtil.getCode(2);
+					orgDeptDTO.setDepCode(deptCode);
+					orgDeptDTO.setUpdateTime(timeNow);
+					//先执行生成部门的操作(获取刚刚插入到部门表的Id)
+					Integer depId=userMapper.addDeptNew(orgDeptDTO);
+					//插入组织部门关系表
+					OrgAndDeptDTO orgDeptDTONew=new OrgAndDeptDTO();
+					orgDeptDTONew.setDepId(depId);
+					orgDeptDTONew.setOrgId(orgDeptDTO.getOrgId());
+					orgDeptDTONew.setCreateTime(timeNow);
+					orgDeptDTONew.setCreateBy("小詹");
+					orgDeptDTONew.setUpdateBy("小詹");										
+					orgDeptDTONew.setUpdateTime(timeNow);
+					Integer addRes=userMapper.addOrgDept(orgDeptDTONew);
+					if(addRes==-1) {
+						deptCode=null;
+					}
+					return deptCode;
+				}						   
 
 		
 }

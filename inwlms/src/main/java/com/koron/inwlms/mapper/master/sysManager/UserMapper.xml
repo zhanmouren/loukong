@@ -276,7 +276,18 @@
         </set>
 		where  "spDate"=#{spDate}
 	   </update>
+	   
+	  <!-- 树形组件 -->
     
+      <!-- 插入部门主表信息一条记录 -->
+    <select id="addDeptNew" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO" resultType="Integer">  
+        insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
+        values(#{depCode},#{depName},#{depStatus},#{createBy},#{createTime},#{updateBy},#{updateTime})returning id         
+    </select>
     
+     <insert id="addOrgDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
+        insert into "SM_orgDept"("orgID","deptID","createBy","createTime","updateBy","updateTime")
+        values(#{orgId},#{depId},#{createBy},#{createTime},#{updateBy},#{updateTime})       
+     </insert>
     
 </mapper>

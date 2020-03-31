@@ -1,5 +1,6 @@
 package com.koron.common.web.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
@@ -41,6 +42,7 @@ public class TreeService {
 	@TaskAnnotation("addNode")
 	public static LongTreeBean add(SessionFactory factory, LongTreeBean parent, LongTreeBean child) {
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
 		if (parent == null) {
 			LongTreeBean bean = new LongTreeBean();
 			bean.setParentMask(0).setMask(0).setChildMask(1);
