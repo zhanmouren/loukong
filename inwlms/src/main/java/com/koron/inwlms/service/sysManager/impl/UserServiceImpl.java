@@ -502,6 +502,7 @@ public class UserServiceImpl implements UserService{
 					orgDeptDTO.setCreateTime(timeNow);
 					orgDeptDTO.setCreateBy("小詹");
 					orgDeptDTO.setUpdateBy("小詹");
+					//部门正常使用状态0,禁用状态-1
 					orgDeptDTO.setDepStatus(0);
 					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
 					String deptCode=randomCodeUtil.getCode(2);
@@ -522,7 +523,28 @@ public class UserServiceImpl implements UserService{
 						deptCode=null;
 					}
 					return deptCode;
-				}						   
+				}
 
-		
+				//部门下添加部门2020/03/31	
+				@TaskAnnotation("deptAddTreeDept")
+				@Override
+				public String deptAddTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);	
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					orgDeptDTO.setCreateTime(timeNow);
+					orgDeptDTO.setCreateBy("小詹");
+					orgDeptDTO.setUpdateBy("小詹");
+					//部门正常使用状态0,禁用状态-1
+					orgDeptDTO.setDepStatus(0);
+					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
+					String deptCode=randomCodeUtil.getCode(2);
+					orgDeptDTO.setDepCode(deptCode);
+					orgDeptDTO.setUpdateTime(timeNow);
+					Integer addRes=userMapper.deptAddTreeDept(orgDeptDTO);
+					if(addRes==-1) {
+						deptCode=null;
+					}
+					return deptCode;
+				}						   	
 }

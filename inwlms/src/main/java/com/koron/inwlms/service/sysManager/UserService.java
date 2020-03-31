@@ -91,5 +91,8 @@ public interface UserService {
 	    
 	    //插入到部门表中和部门组织表中
 	    String addTreeDept(SessionFactory factory,  OrgAndDeptDTO orgDeptDTO);
+	    
+	    //插入部门表
+	    String deptAddTreeDept(SessionFactory factory,  OrgAndDeptDTO orgDeptDTO);
 	
 }

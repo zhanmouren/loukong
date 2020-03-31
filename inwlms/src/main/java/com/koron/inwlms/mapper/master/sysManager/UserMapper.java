@@ -120,5 +120,9 @@ public interface UserMapper {
 		public Integer addDeptNew(OrgAndDeptDTO orgDeptDTO);
 		//插入组织部门表中
 		public Integer addOrgDept(OrgAndDeptDTO orgDeptDTO);
+		
+		//插入到部门表中
+		public Integer deptAddTreeDept(OrgAndDeptDTO orgDeptDTO);
+		
 
 }

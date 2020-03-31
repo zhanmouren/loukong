@@ -1125,17 +1125,9 @@ public class SystemManagerController {
 		if(parentBean.getId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "组织Id不能为空", Integer.class).toJson();
 		}	
-		if(parentBean.getForeignkey()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "组织的外键不能为空", Integer.class).toJson();
-		}
 		if(parentBean.getDepName()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
-		}
-		Integer type=new Integer(parentBean.getType());
-		if(type==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树的类型不能为空", Integer.class).toJson();
-		}	
-		
+		}		
 		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
 		  try{			
 				  //组织下添加部门的话，先插入SM_department，SM_orgDept表数据		
@@ -1151,7 +1143,7 @@ public class SystemManagerController {
 				  //组装child,主要两个参数，一个type，一个是foreignkey	
 					  LongTreeBean child=new LongTreeBean();
 					  child.setForeignkey(deptCode);
-					  child.setType(parentBean.getType());
+					  child.setType(1);
 					  LongTreeBean longTreeBean=ADOConnection.runTask(new TreeService(), "addNode", LongTreeBean.class, parentBean,child);				 
 					  if(longTreeBean!=null) {
 					     msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
@@ -1160,6 +1152,59 @@ public class SystemManagerController {
 					  }else {
 						 msg.setCode(Constant.MESSAGE_INT_ERROR);
 				         msg.setDescription("生成部门失败");
+					  }
+				  }
+			 
+			 
+	        }catch(Exception e){
+	        	//生成失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("生成部门失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-30
+     * funtion:部门下添加部门
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/deptAddTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "部门下添加部门接口", notes = "部门下添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deptAddTreeDept(@RequestBody  LongTreeBean parentBean) {
+		if(parentBean.getId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "父部门Id不能为空", Integer.class).toJson();
+		}	
+		if(parentBean.getDepName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "子部门名称不能为空", Integer.class).toJson();
+		}	
+		
+		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
+		  try{			
+				  //部门下添加部门的话，先插入SM_department表数据		
+			      OrgAndDeptDTO orgDeptDTO=new OrgAndDeptDTO();
+			      orgDeptDTO.setOrgId(parentBean.getId());
+			      orgDeptDTO.setDepName(parentBean.getDepName());			      
+				  String deptCode=ADOConnection.runTask(new UserServiceImpl(), "deptAddTreeDept", String.class, orgDeptDTO);
+				  if(deptCode==null) {
+					   //生成失败
+			        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+			            msg.setDescription("生成部门失败");
+				  }else {
+				  //组装child,主要两个参数，一个type，一个是foreignkey	
+					  LongTreeBean child=new LongTreeBean();
+					  child.setForeignkey(deptCode);
+					  child.setType(1);
+					  LongTreeBean longTreeBean=ADOConnection.runTask(new TreeService(), "addNode", LongTreeBean.class, parentBean,child);				 
+					  if(longTreeBean!=null) {
+					     msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					     msg.setDescription("部门下添加部门成功");
+					     msg.setData(longTreeBean);		  
+					  }else {
+						 msg.setCode(Constant.MESSAGE_INT_ERROR);
+				         msg.setDescription("部门添加部门失败");
 					  }
 				  }
 			 

@@ -289,5 +289,10 @@
         insert into "SM_orgDept"("orgID","deptID","createBy","createTime","updateBy","updateTime")
         values(#{orgId},#{depId},#{createBy},#{createTime},#{updateBy},#{updateTime})       
      </insert>
+     
+     <insert id="deptAddTreeDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
+        insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
+        values(#{depCode},#{depName},#{depStatus},#{createBy},#{createTime},#{updateBy},#{updateTime})      
+     </insert>
     
 </mapper>
