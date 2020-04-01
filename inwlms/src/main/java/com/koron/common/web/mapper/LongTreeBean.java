@@ -6,17 +6,14 @@ public class LongTreeBean extends TreeBean.Long{
 	
 	public static final LongTreeBean ROOT = (LongTreeBean)new LongTreeBean().setSeq(1l).setMask(1).setChildMask(0).setParentMask(0);
 	
-	//部门名称
-	private String depName;
-
-	
-	public String getDepName() {
-		return depName;
-	}
-
-	public void setDepName(String depName) {
-		this.depName = depName;
-	}
+	/*
+	 * //部门名称 private String depName;
+	 * 
+	 * 
+	 * public String getDepName() { return depName; }
+	 * 
+	 * public void setDepName(String depName) { this.depName = depName; }
+	 */
 
 	
 

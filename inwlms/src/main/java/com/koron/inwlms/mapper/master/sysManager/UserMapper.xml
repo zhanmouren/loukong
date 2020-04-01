@@ -284,15 +284,41 @@
         insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
         values(#{depCode},#{depName},#{depStatus},#{createBy},#{createTime},#{updateBy},#{updateTime})returning id         
     </select>
-    
+     <!-- 插入组织部门表中-->
      <insert id="addOrgDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
         insert into "SM_orgDept"("orgID","deptID","createBy","createTime","updateBy","updateTime")
         values(#{orgId},#{depId},#{createBy},#{createTime},#{updateBy},#{updateTime})       
      </insert>
-     
+      <!--部门下添加部门-->
      <insert id="deptAddTreeDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
         insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
         values(#{depCode},#{depName},#{depStatus},#{createBy},#{createTime},#{updateBy},#{updateTime})      
      </insert>
+     
+      <!-- 根据外键Code查询删除的部门节点下是否存在职员-->
+      <select id="judgeExistUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DeptAndUserVO">
+          select  "dept".name as "depName","user".id as "userId","user".name as "name"
+          from "SM_user" as "user"
+          left join "SM_userDept" as "userdept" on "user".id="userdept"."userID"
+          left join  "SM_department" as "dept" on "userdept"."deptID"= "dept".id 
+          where "dept".code=#{depCode}       
+      </select>
+     
+       <!--物理删除部门，部门表 根据外键Code -->
+     <delete id="deleteTreeDept">
+         delete from "SM_department" 
+         where "code"=#{depCode}
+     </delete>
+     
+     <!-- 修改部门名称，通过部门ID-->
+       <update id="updateTreeDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO">   
+		update "SM_department" 
+		<set>	                                 
+             <if test="depName != null" > name= #{depName},</if>            
+             <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
+             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+        </set>
+		where  id=#{depId}
+	   </update>
     
 </mapper>

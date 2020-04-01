@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -123,6 +124,15 @@ public interface UserMapper {
 		
 		//插入到部门表中
 		public Integer deptAddTreeDept(OrgAndDeptDTO orgDeptDTO);
+		
+		//删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除
+		public List<UserVO> judgeExistUser(DeptAndUserDTO deptAndUserDTO);
+		
+		//物理删除部门，部门表 根据外键Code
+		public Integer deleteTreeDept(DeptAndUserDTO deptAndUserDTO);
+		
+		//根据Id更新部门名称
+		public Integer updateTreeDept(DeptDTO deptDTO);
 		
 
 }

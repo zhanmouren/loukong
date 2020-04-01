@@ -125,16 +125,20 @@ public class TreeService {
 	 * @return
 	 */
 	@TaskAnnotation("forceDeleteNode")
-	public static final int forceDelete(SessionFactory factory, int type,long seq, boolean force) {
+	public static final Integer forceDelete(SessionFactory factory, int type,long seq, boolean force) {
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
 		LongTreeBean node = mapper.getBySeq(seq, type);
 		List<LongTreeBean> list = getDescendant(factory,type,seq,node.getMask(),node.getParentMask());
-		if(!force && list.size() > 1)
-			return -1;
+		Integer i=null;
+		if(!force && list.size() > 1) {
+			i=-1;
+			return i;
+		}
 		for (LongTreeBean longTreeBean : list) {
 			mapper.delete(longTreeBean.getType(),longTreeBean.getSeq());			
 		}
-		return list.size();
+		i=list.size();
+		return i;
 	}
 
 	/**

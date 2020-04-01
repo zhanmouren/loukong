@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -546,5 +547,42 @@ public class UserServiceImpl implements UserService{
 						deptCode=null;
 					}
 					return deptCode;
+				}
+
+			   //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除根据外键code 2020/04/01
+				@TaskAnnotation("judgeExistUser")
+				@Override
+				public Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<UserVO> userList=userMapper.judgeExistUser(deptAndUserDTO);
+					Integer userRes=0;
+					if(userList.size()>0) {
+						userRes=-1;
+					}
+					return userRes;
+				}
+
+				//物理删除部门，部门表 根据外键Code 2020/04/01
+				@TaskAnnotation("deleteTreeDept")
+				@Override
+				public Integer deleteTreeDept(SessionFactory factory, DeptAndUserDTO deptAndUserDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Integer   delRes=userMapper.deleteTreeDept(deptAndUserDTO);
+					return delRes;
+				}
+
+				//根据部门Id更新部门名称 2020/04/01
+				@TaskAnnotation("updateTreeDept")
+				@Override
+				public Integer updateTreeDept(SessionFactory factory, DeptDTO deptDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					deptDTO.setUpdateBy("小詹");
+					deptDTO.setUpdateTime(timeNow);
+					Integer updateRes=userMapper.updateTreeDept(deptDTO);
+					return updateRes;
 				}						   	
 }

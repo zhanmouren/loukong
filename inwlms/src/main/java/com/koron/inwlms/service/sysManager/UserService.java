@@ -8,6 +8,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -94,5 +95,13 @@ public interface UserService {
 	    
 	    //插入部门表
 	    String deptAddTreeDept(SessionFactory factory,  OrgAndDeptDTO orgDeptDTO);
+	    
+	    //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除
+	    Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO);
+	    
+	    //物理删除部门，部门表
+	    Integer deleteTreeDept(SessionFactory factory,DeptAndUserDTO deptAndUserDTO);
 	
+	   //修改部门名称，通过部门ID
+	    Integer updateTreeDept(SessionFactory factory,DeptDTO deptDTO);
 }
