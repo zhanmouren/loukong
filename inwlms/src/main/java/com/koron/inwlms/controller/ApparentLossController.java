@@ -22,6 +22,7 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrTotalAnalysisDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
@@ -252,7 +253,29 @@ public class ApparentLossController {
     @ApiOperation(value = "查询诊断报告总体分析数据", notes = "查询诊断报告总体分析数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDrTotalAnalysisData(@RequestBody QueryALDTO queryALDTO) {
-		return null;
+		MessageBean<DrTotalAnalysisDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrTotalAnalysisDataVO.class);
+		Integer timeType = queryALDTO.getTimeType();
+		Integer startTime = queryALDTO.getStartTime();
+		Integer endTime = queryALDTO.getEndTime();
+		if(timeType == null || startTime == null || endTime == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription(Constant.MESSAGE_STRING_NULL);
+		}
+		
+		if(startTime > endTime) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription(Constant.MESSAGE_STRING_PARAMS);
+   	 	}
+		try{
+			DrTotalAnalysisDataVO data = ADOConnection.runTask(als, "queryDrTotalAnalysisData", DrTotalAnalysisDataVO.class,queryALDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/queryDrCurrentMeterData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })

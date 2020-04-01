@@ -9,6 +9,10 @@ package com.koron.inwlms.bean.VO.apparentLoss;
 public class MeterInfo {
 
 	/**
+	 * 用户名称
+	 */
+	private String accName;
+	/**
 	 * 水表编号
 	 */
 	private String meterNo;
@@ -22,6 +26,11 @@ public class MeterInfo {
 	 * 水表类型
 	 */
 	private String meterType;
+	
+	/**
+	 * 用水类型
+	 */
+	private String useType;
 
 	public String getMeterNo() {
 		return meterNo;
@@ -46,6 +55,21 @@ public class MeterInfo {
 	public void setMeterType(String meterType) {
 		this.meterType = meterType;
 	}
-	
+
+	public String getAccName() {
+		return accName;
+	}
+
+	public void setAccName(String accName) {
+		this.accName = accName;
+	}
+
+	public String getUseType() {
+		return useType;
+	}
+
+	public void setUseType(String useType) {
+		this.useType = useType;
+	}
 	
 }

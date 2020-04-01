@@ -474,4 +474,42 @@ public class TimeUtil {
         	return Integer.parseInt(year.toString()+"12");
         }
      }
+     
+     /**
+      * 格式化时间 yyyyMM格式化为yyyy年MM月
+      * @return
+      */
+     public static String formatTime(Integer time) {
+    	 String strTime = time.toString();
+    	if(strTime.length() == 4) {
+    		return strTime+"年";
+    	}else if(strTime.length() == 6) {
+    		return strTime.substring(0, 4)+"年"+strTime.substring(4)+"月";
+    	}
+    	return time+""; 
+     }
+     
+     /**
+      * 返回上个月的int类型时间 
+      * @param time yyyyMM
+      * @return
+      */
+     public static Integer getPreMonth(Integer time){
+    	 String strTime = time.toString();
+    	 if(strTime.length() != 6) {
+    		 try {
+				throw new Exception("时间格式不正常");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+    	 } 
+    	 Integer month = Integer.parseInt(strTime.substring(4)) - 1;
+    	 if(month == 0) {
+    		 Integer year = Integer.parseInt(strTime.substring(0, 4)) - 1;
+    		 String nowTime = year.toString()+"12";
+    		 return Integer.parseInt(nowTime);
+    	 }else {
+    		 return time-1;
+    	 }
+     }
 }

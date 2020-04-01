@@ -288,9 +288,113 @@ public class Constant {
 	public final static String FS_METER =  "W10184003";
 	
 	/**
-	 * 消防表
+	 * 公司内部表
 	 */
 	public final static String COMN_METER =  "W10184004";
 	
+	/**
+	 * 口径15
+	 */
+	public final static int DN_15 =  15;
+	
+	/**
+	 * 口径20
+	 */
+	public final static int DN_20 =  20;
+	
+	/**
+	 * 口径25
+	 */
+	public final static int DN_25 =  25;
+	
+	/**
+	 * 口径40
+	 */
+	public final static int DN_40 =  40;
+	
+	/**
+	 * 口径50
+	 */
+	public final static int DN_50 =  50;
+	
+	/**
+	 * 口径80
+	 */
+	public final static int DN_80 =  80;
+	
+	/**
+	 * 口径100
+	 */
+	public final static int DN_100 =  100;
+	
+	/**
+	 * 口径150
+	 */
+	public final static int DN_150 =  150;
+	
+	/**
+	 * 口径200
+	 */
+	public final static int DN_200 =  200;
+	
+	/**
+	 * 口径300
+	 */
+	public final static int DN_300 =  300;
+	
+	/**
+	 * 口径400
+	 */
+	public final static int DN_400 =  400;
+	
+	/**
+	 * 口径600
+	 */
+	public final static int DN_600 =  600;
+	
+	/**
+	 * 口径前缀
+	 */
+	public final static String DN_STR =  "DN";
+	
+	/**
+	 * 评分等级:优
+	 */
+	public final static String SCORE_Y =  "优";
+	
+	/**
+	 * 评分等级:良
+	 */
+	public final static String SCORE_L =  "良";
+	
+	/**
+	 * 评分等级:差
+	 */
+	public final static String SCORE_C =  "差";
+	
+	/**
+	 * 用水类别：居民
+	 */
+	public final static String USER_TYPE_PP =  "W101770001";
+	
+	/**
+	 * 用水类别：工商业
+	 */
+	public final static String USER_TYPE_BS =  "W101770002";
+	
+	/**
+	 * 用水类别：区域
+	 */
+	public final static String USER_TYPE_AR =  "W101770003";
+	
+	/**
+	 * 用水类别：特种
+	 */
+	public final static String USER_TYPE_SP =  "W101770004";
+	
+	/**
+	 * 用水类别：其他
+	 */
+	public final static String USER_TYPE_OT =  "W101770005";
 	
 }
