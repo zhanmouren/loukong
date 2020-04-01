@@ -3,7 +3,6 @@ package com.koron.inwlms.bean.VO.sysManager;
 import java.sql.Timestamp;
 import java.util.List;
 
-import com.koron.inwlms.bean.DTO.sysManager.DataDicDetDTO;
 
 /**
  * 数据字典主表VO
@@ -15,21 +14,42 @@ public class DataDicVO {
 	//数据字典Id
 	private Integer dicId;
 	//数据字典标识
-	private String dicFlag;
+	private String dicParent;
 	//数据字典名称
 	private String dicName;
 	//数据字典备注
 	private String dicRemark;
-	//数据字典明细名称和值
-	private String dicDetNameAndValue;
    
+	//数据字典明细键
+	private String dicKey;
+	//数据字典明细值
+	private String dicValue;
+	//数据字典明细顺序
+	private Integer dicSeq;
 	
-	
-	public String getDicDetNameAndValue() {
-		return dicDetNameAndValue;
+	public String getDicParent() {
+		return dicParent;
 	}
-	public void setDicDetNameAndValue(String dicDetNameAndValue) {
-		this.dicDetNameAndValue = dicDetNameAndValue;
+	public void setDicParent(String dicParent) {
+		this.dicParent = dicParent;
+	}
+	public String getDicKey() {
+		return dicKey;
+	}
+	public void setDicKey(String dicKey) {
+		this.dicKey = dicKey;
+	}
+	public String getDicValue() {
+		return dicValue;
+	}
+	public void setDicValue(String dicValue) {
+		this.dicValue = dicValue;
+	}
+	public Integer getDicSeq() {
+		return dicSeq;
+	}
+	public void setDicSeq(Integer dicSeq) {
+		this.dicSeq = dicSeq;
 	}
 	//创建人
 	private String createBy;
@@ -39,27 +59,14 @@ public class DataDicVO {
 	private String updateBy;
 	//修改时间
 	private Timestamp updateTime;
-	//数据字典List明细
-	private List<DataDicDetDTO> dictionaryDetList;
-	
-	public List<DataDicDetDTO> getDictionaryDetList() {
-		return dictionaryDetList;
-	}
-	public void setDictionaryDetList(List<DataDicDetDTO> dictionaryDetList) {
-		this.dictionaryDetList = dictionaryDetList;
-	}
+
 	public Integer getDicId() {
 		return dicId;
 	}
 	public void setDicId(Integer dicId) {
 		this.dicId = dicId;
 	}
-	public String getDicFlag() {
-		return dicFlag;
-	}
-	public void setDicFlag(String dicFlag) {
-		this.dicFlag = dicFlag;
-	}
+	
 	public String getDicName() {
 		return dicName;
 	}

@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.master.sysManager.UserMapper">
+   <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">  
+        insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime")
+        values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime})     
+    </insert>
+    
+    <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+      select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+	   from "SM_user" as "user"       
+	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
+	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"       
+       <trim prefix="where" prefixOverrides="and|or">
+		<if test="name != null  and name !='' "> and "user".name like '%${name}%'</if>  
+   	    <if test="depName != null  and depName !='' "> and "dept".name like '%${depName}%'</if>
+   	    <if test="userId != null"> and "user".id ='${userId}'</if>  
+   	    <if test="status != null"> and "user".status ='${status}'</if>
+   	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>          
+	  </trim>
+    </select>
+    
+    <update id="updateUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
+		update "SM_user" 
+		<set>	    
+             <if test="name != null  and name !=''" > name = #{name},  </if>                       
+             <if test="loginName != null and loginName !=''" > "loginName" = #{loginName},</if>            
+             <if test="password != null and password !=''" > password = #{password}, </if>                       
+             <if test="sex != null" >sex = #{sex,jdbcType=INTEGER}, </if>                        
+             <if test="Email != null and Email != ''" > "Email" = #{Email}, </if>               
+             <if test="updateBy != null and updateBy!=''" >  "updateBy" = #{updateBy},</if>                        
+             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>  
+             <if test="status != null" > status = #{status},  </if>               
+		</set>
+		where id=#{userId}
+     </update>
+     
+    <update id="deleteUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
+		update "SM_user" 
+		<set>	                                 
+             <if test="whetUse != null" > "whetUse" = #{whetUse},</if> 
+        </set>
+		where id=#{userId}
+     </update>
+     
+      <insert id="addNewRole" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">  
+        insert into "SM_userRole"(name,remark,"createBy","createTime","updateBy","updateTime")
+        values(#{roleName},#{roleRemark},#{createBy},#{createTime},#{updateBy},#{updateTime})     
+    </insert>
+    
+    <update id="updateRoleAttr" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">   
+		update "SM_userRole" 
+		<set>	                                 
+             <if test="roleName != null" > name= #{roleName},</if>            
+             <if test="roleRemark != null" > remark= #{roleName},</if>
+             <if test="updateBy != null and updateBy!=''" > "updateBy" = #{updateBy},</if>                        
+             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+        </set>
+		where id=#{roleId}
+     </update>
+     
+     <select id="queryRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleMsgVO">
+       select "userRole".name as roleName
+       from  "SM_userRoleRelation" as "userRela"
+       left join  "SM_userRole" as "userRole" on "userRole".id="userRela"."roleID"
+       where "userRela"."roleID"=#{roleId}
+    </select>
+    
+    <!-- 批量删除角色信息 -->
+    <delete id="delRole" parameterType="int">
+        delete from "SM_userRole" where id in
+        <foreach item="roleItem" collection="list" open="(" separator="," close=")">
+            #{roleItem}
+        </foreach>
+    </delete>
+    
+    <!--根据角色ID加载角色人员列表接口 -->
+     <select id="queryUserByRoleId"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+       select "user".id as "userId","user"."loginName","user".passWord,"user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"
+       from "SM_userRoleRelation" as "userRela"
+       left join "SM_user" as "user" on "userRela"."userID"="user".id
+       left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
+	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"
+       where "userRela"."roleID"=#{roleId}
+    </select>
+    
+    <!--查询所有角色列表 -->
+    <select id="queryAllRole"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
+       select id as "roleId",name as "roleName",remark as "roleRemark","createBy","createTime","updateBy","updateTime" 
+       from "SM_userRole" 
+    </select>
+    
+    <!--遍历插入职员与角色的关系 -->
+    <insert id="addRoleUser" parameterType="java.util.List">  
+        insert into "SM_userRoleRelation"("userID", "roleID","createBy","createTime","updateBy","updateTime")values
+		<foreach collection="list" item="roleuser"  index="index" separator=",">
+			(${roleuser.userId}, ${roleuser.roleId}, #{roleuser.createBy}, #{roleuser.createTime}, #{roleuser.updateBy}, #{roleuser.updateTime})
+		</foreach>
+    </insert>
+    
+     <!-- 批量删除角色中员工信息 -->
+    <delete id="deleteRoleUser">
+        delete from "SM_userRoleRelation" where "roleID"=#{roleId} 
+        and "userID" in
+        <foreach item="userItem" collection="list" open="(" separator="," close=")">
+            #{userItem}
+        </foreach>
+    </delete>
+    
+     <!-- 角色弹窗选择职员 -->
+     <select id="queryExceptRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+       select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+	   from "SM_user" as "user"       
+	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
+	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
+	   where "user".id not in(select "userrela"."userID" from "SM_userRoleRelation" as "userrela" where "userrela"."roleID" =#{roleId})	 
+     </select>
+     
+      <!-- 部门弹窗选择职员 -->
+     <select id="queryExceptDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+       select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+	   from "SM_user" as "user"       
+	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
+	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
+	   where "user".id not in(select "deptuser"."userID" from "SM_userDept" as "deptuser" where "deptuser"."deptID" =#{depId})	 
+     </select>
+     
+     <!--遍历插入职员与部门的关系 -->
+    <insert id="addDeptUser" parameterType="java.util.List">  
+        insert into "SM_userDept"("userID", "deptID","createBy","createTime")values
+		<foreach collection="list" item="deptuser"  index="index" separator=",">
+			(${deptuser.userId}, ${deptuser.depId}, #{deptuser.createBy}, #{deptuser.createTime})
+		</foreach>
+    </insert>
+    
+     <!-- 批量删除部门中员工信息 -->
+    <delete id="deleteDeptUser">
+        delete from "SM_userDept" where "deptID"=#{depId} 
+        and "userID" in
+        <foreach item="userItem" collection="list" open="(" separator="," close=")">
+            #{userItem}
+        </foreach>
+    </delete>
+    
+    
+    <!-- 遍历插入数据字典主表信息一条记录 -->
+    <insert id="addDataDic" parameterType="java.util.List">  
+        insert into "SM_dataDictionary"(name,remark,parent,key,value,seq,"createBy","createTime","updateBy","updateTime")values
+        <foreach collection="list" index="index" separator="," item="item">
+          (#{item.dicName},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime})  
+        </foreach>      
+    </insert>
+    
+     <!-- 查询数据字典 主标识明细的信息-->
+      <select id="queryDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".name as dicName,"dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          from "SM_dataDictionary" as "dic"
+	      <trim prefix="where" prefixOverrides="and|or">
+	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
+			<if test="dicParent != null"> and "dic".parent like '%${dicParent}%'</if>  
+	   	    <if test="dicName != null"> and "dic".name like '%${dicName}%'</if>
+	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
+	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
+	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
+		  </trim>
+		  order by "dic".seq
+      </select>
+       <!-- 查询数据字典 是否已经存在该Parent的信息-->
+      <select id="queryParentDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".name as dicName,"dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          from "SM_dataDictionary" as "dic"
+	      <trim prefix="where" prefixOverrides="and|or">
+			<if test="dicParent != null"> and "dic".parent = '${dicParent}'</if>          
+		  </trim>
+      </select>
+      
+        <!-- 查询数据字典 主标识主的信息-->
+      <select id="queryMainDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".name as dicName,"dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          from "SM_dataDictionary" as "dic"
+	      <trim prefix="where" prefixOverrides="and|or">
+	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
+			<if test="dicParent != null"> and "dic".parent like '%${dicParent}%'</if>  
+	   	    <if test="dicName != null"> and "dic".name like '%${dicName}%'</if>
+	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
+	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
+	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
+		  </trim>
+		  limit 1
+      </select>
+      
+       <!-- 修改数据字典主的信息 根据parent-->
+       <update id="updateDicById" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
+		update "SM_dataDictionary" 
+		<set>	                                 
+             <if test="dicName != null" > name= #{dicName},</if>            
+             <if test="dicRemark != null" > remark= #{dicRemark},</if>
+             <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
+             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+        </set>
+		where  parent=#{dicParent}
+     </update>
+     
+      <!-- 删除数据字典(通过parent),还要实现批量 -->
+     <delete id="deleteDicById">
+         delete from "SM_dataDictionary" where "parent" in
+          <foreach item="dicitem" collection="list" open="(" separator="," close=")">
+            #{dicitem.dicParent}
+          </foreach>
+     </delete>
+     
+      <!-- 修改数据字典主的信息 根据Id-->
+       <update id="updateDicDetById" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
+		update "SM_dataDictionary" 
+		<set>	                                 
+             <if test="dicKey != null" > key= #{dicKey},</if>            
+             <if test="dicValue != null" > value= #{dicValue},</if>
+             <if test="dicSeq != null" > seq= #{dicSeq},</if>
+             <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
+             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+        </set>
+		where  id=#{dicId}
+	   </update>
+	   
+	  <!-- 删除数据字典(通过Id),还要实现批量 -->
+     <delete id="deleteDetDicById">
+         delete from "SM_dataDictionary" where "id" in
+          <foreach item="dicitem" collection="list" open="(" separator="," close=")">
+            #{dicitem.dicId}
+          </foreach>
+     </delete>
+    
+     <!-- 插入特征日表信息一条记录 -->
+    <insert id="addSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO">  
+        insert into "SM_specialDay"(name,remark,"spDate","createBy","createTime","updateBy","updateTime")values
+         (#{spName},#{spRemark},#{spDate},#{createBy},#{createTime},#{updateBy},#{updateTime})
+    </insert>
+    
+     <!-- 查询特征日 是否已经存在该特征日的信息-->
+      <select id="queryExistSp"  parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.SpecialDayVO">
+          select "sp".id as spId,"sp".name as spName,"sp".remark as spRemark,"sp"."spDate" as spDate,"sp"."createBy" as createBy,"sp"."createTime" as createTime,"sp"."updateBy" as updateBy,"sp"."updateTime" as updateTime 
+          from "SM_specialDay" as "sp"
+	      <trim prefix="where" prefixOverrides="and|or">
+			<if test="spDate != null"> and "sp"."spDate" = '${spDate}'</if>          
+		  </trim>
+      </select>
+      
+       <!-- 查询某年某月特征日-->
+      <select id="querySpecialDate"  parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.SpecialDayVO">
+        select yearmonth.orderdate as "spDate",case when sp.name is null then '' else sp.name end as "spName",case when sp.remark is null then '' else sp.remark end as "spRemark" from 
+		(select to_char(tt.day, 'yyyy-mm-dd') as orderDate
+		from (select generate_series(cast(to_char(to_date('${startTime}', 'YYYY-MM'), 'yyyy-mm') || '-01' as date),
+		                             cast(
+		                               cast(to_char(to_date('${endTime}', 'YYYY-MM'), 'yyyy-mm') || '-01' as timestamp) + '-1 d'
+		                               as date), '1 d') as day) as tt
+		order by orderDate) as yearmonth
+		left join "SM_specialDay" as sp on sp."spDate"=yearmonth.orderdate
+      </select>
+      
+      <!-- 根据Id删除特征日 -->
+     <delete id="deleteSpecialDate">
+         delete from "SM_specialDay" 
+         where "spDate"=#{spDate}
+     </delete>
+     
+      <!-- 修改数据字典主的信息 根据日期-->
+       <update id="updateSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
+		update "SM_specialDay" 
+		<set>	                                 
+             <if test="spName != null" > name= #{spName},</if>            
+             <if test="spRemark != null" > remark= #{spRemark},</if> 
+        </set>
+		where  "spDate"=#{spDate}
+	   </update>
+	   
+	  <!-- 树形组件 -->
+    
+      <!-- 插入部门主表信息一条记录 -->
+    <select id="addDeptNew" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO" resultType="Integer">  
+        insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
+        values(#{depCode},#{depName},#{depStatus},#{createBy},#{createTime},#{updateBy},#{updateTime})returning id         
+    </select>
+     <!-- 插入组织部门表中-->
+     <insert id="addOrgDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
+        insert into "SM_orgDept"("orgID","deptID","createBy","createTime","updateBy","updateTime")
+        values(#{orgId},#{depId},#{createBy},#{createTime},#{updateBy},#{updateTime})       
+     </insert>
+      <!--部门下添加部门-->
+     <insert id="deptAddTreeDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
+        insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
+        values(#{depCode},#{depName},#{depStatus},#{createBy},#{createTime},#{updateBy},#{updateTime})      
+     </insert>
+     
+      <!-- 根据外键Code查询删除的部门节点下是否存在职员-->
+      <select id="judgeExistUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DeptAndUserVO">
+          select  "dept".name as "depName","user".id as "userId","user".name as "name"
+          from "SM_user" as "user"
+          left join "SM_userDept" as "userdept" on "user".id="userdept"."userID"
+          left join  "SM_department" as "dept" on "userdept"."deptID"= "dept".id 
+          where "dept".code=#{depCode}       
+      </select>
+     
+       <!--物理删除部门，部门表 根据外键Code -->
+     <delete id="deleteTreeDept">
+         delete from "SM_department" 
+         where "code"=#{depCode}
+     </delete>
+     
+     <!-- 修改部门名称，通过部门ID-->
+       <update id="updateTreeDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO">   
+		update "SM_department" 
+		<set>	                                 
+             <if test="depName != null" > name= #{depName},</if>            
+             <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
+             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+        </set>
+		where  id=#{depId}
+	   </update>
+    
+</mapper>

@@ -4,8 +4,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
+import net.bytebuddy.implementation.bytecode.Throw;
 
 /**
  * @author csh
@@ -395,5 +399,79 @@ public class TimeUtil {
          String lastDayOfMonth = sdf.format(cal.getTime());
            
          return lastDayOfMonth;
+     }
+     
+     /**
+      * 返回下个月的int类型时间 
+      * @param time yyyyMM
+      * @return
+      */
+     public static Integer getNextMonth(Integer time){
+    	 String strTime = time.toString();
+    	 if(strTime.length() != 6) {
+    		 try {
+				throw new Exception("时间格式不正常");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+    	 } 
+    	 Integer month = Integer.parseInt(strTime.substring(4)) + 1;
+    	 if(month > 12) {
+    		 Integer year = Integer.parseInt(strTime.substring(0, 4)) + 1;
+    		 String nowTime = year.toString()+"01";
+    		 return Integer.parseInt(nowTime);
+    	 }else {
+    		 return time+1;
+    	 }
+     }
+     
+     /**
+      * 获取时间范围集合（年，月）
+      * @param startTime
+      * @param endTime
+      * @return
+      */
+     public static List<Integer> getMonthsList(Integer startTime,Integer endTime){
+    	 String strSTime = startTime.toString();
+    	 String strETime = endTime.toString();
+    	 List<Integer> lists = new ArrayList<Integer>(); 
+    	 if(strSTime.length() == 6 && strETime.length() == 6) {
+    		 //计算月时间范围
+    		 lists.add(startTime);
+    		 Integer nowTime = startTime;
+    		 while(nowTime < endTime) {
+    			 Integer nextMonth = getNextMonth(nowTime);
+    			 lists.add(nextMonth);
+    			 nowTime = nextMonth;
+    		 }
+    		 return lists;
+    	 }else if(strSTime.length() == 4 && strETime.length() == 4) {
+    		 //计算年时间范围
+    		 lists.add(startTime);
+    		 Integer nowTime = startTime;
+    		 while(nowTime < endTime) {
+    			 Integer nextYear =nowTime + 1;
+    			 lists.add(nextYear);
+    			 nowTime = nextYear;
+    		 }
+    		 return lists;
+    	 }
+    	 return null;
+     }
+     
+     /**
+      * 根据年时间返回年月时间
+      * @param year
+      * @return
+      */
+     public static Integer getMonthByYear(Integer year){
+    	Calendar date = Calendar.getInstance();
+        Integer nowYear = date.get(Calendar.YEAR);
+        if(year >= nowYear ) {
+        	String currentTime = getcurrentDay("yyyyMM",new Date());
+        	return Integer.parseInt(currentTime);
+        }else {
+        	return Integer.parseInt(year.toString()+"12");
+        }
      }
 }

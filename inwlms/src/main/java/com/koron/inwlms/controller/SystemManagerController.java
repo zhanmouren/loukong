@@ -13,21 +13,27 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.swan.bean.MessageBean;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.TestBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
+import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
+import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
-import com.koron.inwlms.service.UserService;
 import com.koron.inwlms.service.impl.TestServiceImpl;
-import com.koron.inwlms.service.impl.UserServiceImpl;
+import com.koron.inwlms.service.sysManager.UserService;
+import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -128,10 +134,10 @@ public class SystemManagerController {
      * funtion:修改新职员接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/editUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/updateUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改职员信息接口", notes = "修改职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String editUser(@RequestBody UserDTO userDTO) {
+	public String updateUser(@RequestBody UserDTO userDTO) {
 		if(userDTO.getUserId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的Id不能为空", Integer.class).toJson();
 		}
@@ -147,7 +153,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行修改职员的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "editUser", Integer.class, userDTO);		 
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateUser", Integer.class, userDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
 					//修改用户成功
@@ -173,17 +179,17 @@ public class SystemManagerController {
      * funtion:删除新职员接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/delUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/deleteUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除职员信息接口", notes = "删除职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String  delUser(@RequestBody UserDTO userDTO) {
+	public String  deleteUser(@RequestBody UserDTO userDTO) {
 		if(userDTO.getUserId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的Id不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除职员的操作
 		  try{
-			  Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "delUser", Integer.class, userDTO);		 
+			  Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "deleteUser", Integer.class, userDTO);		 
 			  if(delRes!=null) {
 				  if(delRes==1) {
 					//删除用户成功
@@ -245,10 +251,10 @@ public class SystemManagerController {
      * funtion:修改角色属性接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/editRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/updateRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改角色属性接口", notes = "修改角色属性接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String editRoleAttr(@RequestBody RoleDTO roleDTO) {
+	public String updateRoleAttr(@RequestBody RoleDTO roleDTO) {
 		if(roleDTO.getRoleId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
 		}
@@ -259,7 +265,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行修改职员的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "editRoleAttr", Integer.class, roleDTO);		 
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateRoleAttr", Integer.class, roleDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
 					//修改用户成功
@@ -285,17 +291,17 @@ public class SystemManagerController {
      * funtion:批量删除删除角色接口（超级管理员角色不允许删除，代码待写）
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/delRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/deleteRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量删除角色接口", notes = "批量删除角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String delRoleAttr(@RequestBody RoleDTO roleDTO) {
+	public String deleteRoleAttr(@RequestBody RoleDTO roleDTO) {
 		if(roleDTO.getRoleIdList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色列表Id不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色的操作
 		  try{
-			  RoleMsgVO roleMsgVO=ADOConnection.runTask(new UserServiceImpl(), "delRoleAttr", RoleMsgVO.class, roleDTO);		 
+			  RoleMsgVO roleMsgVO=ADOConnection.runTask(new UserServiceImpl(), "deleteRoleAttr", RoleMsgVO.class, roleDTO);		 
 			  if(roleMsgVO!=null) {
 				  if(roleMsgVO.getResult()==-1) {
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
@@ -419,10 +425,10 @@ public class SystemManagerController {
      * funtion:删除角色中职员(批量)接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/delRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/deleteRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除角色中职员接口", notes = "删除角色中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String delRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
+	public String deleteRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
 		if(roleUserDTO.getRoleId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
 		}
@@ -432,7 +438,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色中职员(批量)操作
 		  try{
-			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "delRoleUser", Integer.class, roleUserDTO);		 
+			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "deleteRoleUser", Integer.class, roleUserDTO);		 
 			  if(delResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
 					 msg.setDescription("删除角色中职员(批量)失败"); 
@@ -559,10 +565,10 @@ public class SystemManagerController {
      * funtion:删除部门中职员(批量)接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/delDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/deleteDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除部门中职员接口", notes = "删除部门中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String delDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
+	public String deleteDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
 		if(deptUserDTO.getDepId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门Id不能为空", Integer.class).toJson();
 		}
@@ -572,7 +578,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除部门中职员(批量)操作
 		  try{
-			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "delDeptUser", Integer.class, deptUserDTO);		 
+			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "deleteDeptUser", Integer.class, deptUserDTO);		 
 			  if(delResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
 					 msg.setDescription("删除部门中职员(批量)失败"); 
@@ -634,6 +640,7 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	
 	 /*
      * date:2020-03-25
      * funtion:新建数据字典
@@ -646,32 +653,36 @@ public class SystemManagerController {
 		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
 		}
-		if(dataDicDTO.getDicFlag()==null || StringUtils.isBlank(dataDicDTO.getDicFlag())) {
+		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
 		}
-		if(dataDicDTO.getDictionaryDetList().size()<1 ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典明细列表不能为空", Integer.class).toJson();
-		}	
-		for(int i=0;i<dataDicDTO.getDictionaryDetList().size();i++) {
-			if(dataDicDTO.getDictionaryDetList().get(i).getDicDetName()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典明细列表明细名称不能为空", Integer.class).toJson();	
+		if(dataDicDTO.getDataDicDTOList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键值不能为空", Integer.class).toJson();
+		}
+		for(int i=0;i<dataDicDTO.getDataDicDTOList().size();i++) {
+			if(dataDicDTO.getDataDicDTOList().get(i).getDicKey()==null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键不能为空", Integer.class).toJson();
 			}
-			if(dataDicDTO.getDictionaryDetList().get(i).getDicDetValue()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典明细列表明细值不能为空", Integer.class).toJson();	
+			if(dataDicDTO.getDataDicDTOList().get(i).getDicValue()==null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典值不能为空", Integer.class).toJson();
 			}
 		}
-		
+			
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
 			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addDataDic", Integer.class, dataDicDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
-					//添加数据字典功能成功
+					//添加数据字典功能失败
 				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 				    msg.setDescription("添加数据字典失败");
+				  }else if(insertRes==-2){
+					//添加数据字典功能失败
+					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+					 msg.setDescription("您添加的值域已经存在,不能重复添加");
 				  }else {
-				    //插入失败
+				    //插入成功
 			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 			        msg.setDescription("添加数据字典成功");
 				  }
@@ -687,17 +698,49 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-25
-     * funtion:查询数据字典接口说明(通过名称标识等等)
+     * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是明细信息)
      * author:xiaozhan
      */
 	@RequestMapping(value = "/queryDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询数据字典接口", notes = "查询数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "查询数据字典接口(明细信息)", notes = "查询数据字典接口(明细信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDataDic(@RequestBody DataDicDTO dataDicDTO) {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		 //执行查询数据字典
 		 try {
 			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryDataDic", List.class, dataDicDTO);
+			 if(dicList.size()>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到相关数据字典键值的信息"); 
+			     msg.setData(dicList);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("没有查询到相关数据字典的信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询数据字典键值失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
+
+	 /*
+    * date:2020-03-26
+    * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是主表信息)
+    * author:xiaozhan
+    */
+	@RequestMapping(value = "/queryMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+   @ApiOperation(value = "查询数据字典接口(主表信息)", notes = "查询数据字典接口(主表信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+   @ResponseBody
+	public String queryMainDataDic(@RequestBody DataDicDTO dataDicDTO) {
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 //执行查询数据字典
+		 try {
+			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryMainDataDic", List.class, dataDicDTO);
 			 if(dicList.size()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关数据字典的信息"); 
@@ -717,36 +760,581 @@ public class SystemManagerController {
 	}
 	
 	 /*
-     * date:2020-03-25
-     * funtion:通过字典主表ID查询数据字典接口说明(通过ID等等)
+     * date:2020-03-27
+     * funtion:通过字典主表ID修改数据字典接口(主表信息))说明(通过ID等等)
      * author:xiaozhan
      */
-	@RequestMapping(value = "/queryDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "主表ID查询数据字典详情接口", notes = "主表ID查询数据字典详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/updateDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "通过字典主表ID修改数据字典接口(主表信息))接口", notes = "通过字典主表ID修改数据字典接口(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDicById(@RequestBody DataDicDTO dataDicDTO) {
+	public String updateDicById(@RequestBody DataDicDTO dataDicDTO) {
 		if(dataDicDTO.getDicId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
-		}		
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		}
+		if(dataDicDTO.getDicParent()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行查询数据字典
 		 try {
-			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryDicById", List.class, dataDicDTO);
-			 if(dicList.size()>0) {
-				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			     msg.setDescription("查询到相关数据字典的信息"); 
-			     msg.setData(dicList);
-			 }else {
-			   //没查询到数据
-				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			     msg.setDescription("没有查询到相关数据字典的信息"); 
-			 }
+			 Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateDicById", Integer.class, dataDicDTO);
+			 if(updateRes!=null) {
+				  if(updateRes==-1) {
+					//修改数据字典失败
+				    msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				    msg.setDescription("修改数据字典失败");
+				  }else {
+				    //修改数据字典成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("修改数据字典成功");
+				  }
+			  }
 		 }catch(Exception e){
-	     	//查询失败
-	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	        msg.setDescription("查询数据字典失败");
+	     	//修改失败
+	     	msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+	        msg.setDescription("修改这条数据字典失败");
 	     }
 		 return msg.toJson();
 		 
+	}
+	
+	 /*
+     * date:2020-03-27
+     * funtion:通过字典主表Parent删除数据字典接口(主表信息)(批量)说明(通过ID等等)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/deleteDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "主表parent删除数据字典详情(主表信息)接口", notes = "主表parent删除数据字典详情(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteDicById(@RequestBody DataDicDTO dataDicDTO) {		
+		if(dataDicDTO.getDicParentList().size()<1) {
+		  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
+		}	
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		 //执行删除数据字典
+		 try {
+			 Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "deleteDicById", Integer.class, dataDicDTO);
+			 if(delRes!=null) {
+				  if(delRes==-1) {
+					//删除数据字典失败
+				    msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				    msg.setDescription("删除数据字典失败");
+				  }else {
+				    //删除数据字典成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("删除数据字典成功");
+				  }
+			  }
+		 }catch(Exception e){
+	     	//删除失败
+	     	msg.setCode(Constant.MESSAGE_INT_DELERROR);
+	        msg.setDescription("删除数据字典失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
+	 /*
+     * date:2020-03-27
+     * funtion:通过字典主表ID修改数据字典明细接口(明细信息))说明(通过ID等等)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/updateDicDetById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "通过字典主表ID修改数据字典接口(明细信息))接口", notes = "通过字典主表ID修改数据字典接口(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateDicDetById(@RequestBody DataDicDTO dataDicDTO) {
+		if(dataDicDTO.getDicId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicParent()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicKey()==null || StringUtils.isBlank(dataDicDTO.getDicKey())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表键不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicValue()==null || StringUtils.isBlank(dataDicDTO.getDicValue())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		 //执行修改数据字典明细
+		 try {
+			 Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateDicDetById", Integer.class, dataDicDTO);
+			 if(updateRes!=null) {
+				  if(updateRes==-1) {
+					//修改数据字典失败
+				    msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				    msg.setDescription("修改数据字典失败");
+				  }else {
+				    //修改数据字典成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("修改数据字典成功");
+				  }
+			  }
+		 }catch(Exception e){
+	     	//修改失败
+	     	msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+	        msg.setDescription("修改这条数据字典失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
+	 /*
+     * date:2020-03-27
+     * funtion:通过字典主表id删除数据字典接口(明细信息)(批量)说明(通过ID等等)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/deleteDetDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "主表ID删除数据字典详情(明细信息)接口", notes = "主表ID删除数据字典详情(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteDetDicById(@RequestBody DataDicDTO dataDicDTO) {		
+		if(dataDicDTO.getDicIdList().size()<1) {
+		  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
+		}	
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		 //执行删除数据字典
+		 try {
+			 Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "deleteDetDicById", Integer.class, dataDicDTO);
+			 if(delRes!=null) {
+				  if(delRes==-1) {
+					//删除数据字典失败
+				    msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				    msg.setDescription("删除数据字典失败");
+				  }else {
+				    //删除数据字典成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("删除数据字典成功");
+				  }
+			  }
+		 }catch(Exception e){
+	     	//删除失败
+	     	msg.setCode(Constant.MESSAGE_INT_DELERROR);
+	        msg.setDescription("删除数据字典失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	 /*
+     * date:2020-03-27
+     * funtion:新建特征日接口功能描述
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/addSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "新建特征日接口", notes = "新建特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+		if(specialDayDTO.getSpName()==null || StringUtils.isBlank(specialDayDTO.getSpName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
+		}
+		if(specialDayDTO.getSpDate()==null || StringUtils.isBlank(specialDayDTO.getSpDate())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
+		}
+			
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行添加特征日的操作
+		  try{
+			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addSpecialDate", Integer.class, specialDayDTO);		 
+			  if(insertRes!=null) {
+				  if(insertRes==-1) {
+					//添加特征日失败
+				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("添加特征日失败");
+				  }else if(insertRes==-2){
+					//添加特征日失败
+					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+					 msg.setDescription("重复添加特征日");  
+				  }else {
+				    //添加特征日成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("添加特征日成功");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//插入失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加特征日失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
+     * date:2020-03-27
+     * funtion:查询某年某月特征日接口功能描述
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/querySpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询某年某月特征日接口", notes = "查询某年某月特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String querySpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+		if(specialDayDTO.getSelectYear()==null || StringUtils.isBlank(specialDayDTO.getSelectYear())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日年份不能为空", Integer.class).toJson();
+		}
+		if(specialDayDTO.getSelectMonth()==null || StringUtils.isBlank(specialDayDTO.getSelectMonth())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日月份不能为空", Integer.class).toJson();
+		}
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		//执行查询一个月特征日的操作
+		  try{
+			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(new UserServiceImpl(), "querySpecialDate", List.class, specialDayDTO);		 
+			  if(specialDayDTOList.size()>0) {			 
+					//查询特征日成功
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("查询特征日成功");
+				    msg.setData(specialDayDTOList);
+			   }else {
+				    //查询特征日失败
+			        msg.setCode(Constant.MESSAGE_INT_ERROR);
+			        msg.setDescription("查询特征日失败");
+				}
+			  
+	        }catch(Exception e){
+	        	//查询特征日失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询特征日失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-30
+     * funtion:删除特征日接口功能描述
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/deleteSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除特征日接口", notes = "删除特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+		if(specialDayDTO.getSpDate()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
+		}			
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//根据日期执行删除特征日的操作
+		  try{
+			  Integer deleteRes=ADOConnection.runTask(new UserServiceImpl(), "deleteSpecialDate", Integer.class, specialDayDTO);		 
+			  if(deleteRes!=null) {
+				  if(deleteRes==-1) {
+					//删除特征日失败
+				    msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				    msg.setDescription("删除特征日失败");
+				  }else {
+				    //删除特征日成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("删除特征日成功");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//删除失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("删除特征日失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	
+	 /*
+     * date:2020-03-30
+     * funtion:修改特征日接口功能描述
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/updateSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改特征日接口", notes = "修改特征日接口接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+		if(specialDayDTO.getSpDate()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
+		}	
+		if(specialDayDTO.getSpName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
+		}	
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//根据id执行修改特征日的操作
+		  try{
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateSpecialDate", Integer.class, specialDayDTO);		 
+			  if(updateRes!=null) {
+				  if(updateRes==-1) {
+					//修改特征日失败
+				    msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				    msg.setDescription("修改特征日失败");
+				  }else {
+				    //修改特征日成功
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("修改特征日成功");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//修改失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("修改特征日失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /** -----------树形组件------------------**/     
+		
+	 /*
+     * date:2020-03-30
+     * funtion:生成组织的父节点
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/addOrgParent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "生成组织的父节点接口", notes = "生成组织的父节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addOrgParent(@RequestBody  LongTreeBean child) {
+		Integer type=new Integer(child.getType());
+		if(type==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树的类型不能为空", Integer.class).toJson();
+		}	
+		if(child.getForeignkey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "组织的外键不能为空", Integer.class).toJson();
+		}
+		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
+		//生成组织的父节点
+		  try{
+			  LongTreeBean longTreeBean=ADOConnection.runTask(new TreeService(), "addNode", LongTreeBean.class, null,child);
+			  if(longTreeBean!=null) {
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("生成组织父节点成功");
+			        msg.setData(longTreeBean);
+			  }
+	        }catch(Exception e){
+	        	//生成失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("生成组织父节点失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
+     * date:2020-03-30
+     * funtion:组织下添加部门
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/addTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "组织下添加部门接口", notes = "组织下添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addTreeDept(@RequestBody  TreeDTO parentBean) {
+		if(parentBean.getId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "组织Id不能为空", Integer.class).toJson();
+		}	
+		if(parentBean.getDepName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
+		}
+		if(parentBean.getForeignKey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "上级部门的外键不能为空", Integer.class).toJson();
+		}	
+		if(parentBean.getType()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树的类型不能为空", Integer.class).toJson();
+		}	
+		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
+		  try{			
+				  //组织下添加部门的话，先插入SM_department，SM_orgDept表数据		
+			      OrgAndDeptDTO orgDeptDTO=new OrgAndDeptDTO();
+			      orgDeptDTO.setOrgId(parentBean.getId());
+			      orgDeptDTO.setDepName(parentBean.getDepName());			      
+				  String deptCode=ADOConnection.runTask(new UserServiceImpl(), "addTreeDept", String.class, orgDeptDTO);
+				  if(deptCode==null) {
+					   //生成失败
+			        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+			            msg.setDescription("生成部门失败");
+				  }else {
+				  //组装child,主要两个参数，一个type，一个是foreignkey	
+					  LongTreeBean child=new LongTreeBean();
+					  child.setForeignkey(deptCode);
+					  child.setType(0);
+					  //根据treeParentId获取node
+					  LongTreeBean parent=ADOConnection.runTask(new TreeService(), "getNode", LongTreeBean.class, parentBean.getType().intValue(),parentBean.getForeignKey());
+					    if(parent!=null) {
+					      //生成根节点
+						  LongTreeBean longTreeBean=ADOConnection.runTask(new TreeService(), "addNode", LongTreeBean.class, parent,child);				 
+						  if(longTreeBean!=null) {
+						     msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+						     msg.setDescription("生成部门成功");
+						     msg.setData(longTreeBean);		  
+						  }else {
+							 msg.setCode(Constant.MESSAGE_INT_ERROR);
+					         msg.setDescription("生成部门失败");
+						  }
+					    }
+				  }
+			 
+			 
+	        }catch(Exception e){
+	        	//生成失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("生成部门失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-30
+     * funtion:部门下添加部门
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/deptAddTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "部门下添加部门接口", notes = "部门下添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deptAddTreeDept(@RequestBody  TreeDTO parentBean) {
+		if(parentBean.getId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "组织Id不能为空", Integer.class).toJson();
+		}	
+		if(parentBean.getDepName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
+		}
+		
+		
+		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
+		  try{			
+				  //部门下添加部门的话，先插入SM_department表数据		
+			      OrgAndDeptDTO orgDeptDTO=new OrgAndDeptDTO();
+			      orgDeptDTO.setOrgId(parentBean.getId());
+			      orgDeptDTO.setDepName(parentBean.getDepName());			      
+				  String deptCode=ADOConnection.runTask(new UserServiceImpl(), "deptAddTreeDept", String.class, orgDeptDTO);
+				  if(deptCode==null) {
+					   //生成失败
+			        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+			            msg.setDescription("生成部门失败");
+				  }else {
+				  //组装child,主要两个参数，一个type，一个是foreignkey	
+					  LongTreeBean child=new LongTreeBean();
+					  child.setForeignkey(deptCode);
+					  child.setType(0);
+					  //根据treeParentId获取node
+					  LongTreeBean parent=ADOConnection.runTask(new TreeService(), "getNode", LongTreeBean.class, parentBean.getType().intValue(),parentBean.getForeignKey());
+					  if(parent!=null) {
+						  //生成子部门
+						  LongTreeBean longTreeBean=ADOConnection.runTask(new TreeService(), "addNode", LongTreeBean.class, parent,child);				 
+						  if(longTreeBean!=null) {
+						     msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+						     msg.setDescription("部门下添加部门成功");
+						     msg.setData(longTreeBean);		  
+						  }else {
+							 msg.setCode(Constant.MESSAGE_INT_ERROR);
+					         msg.setDescription("部门添加部门失败");
+						  }
+					 }
+				  }
+			 
+			 
+	        }catch(Exception e){
+	        	//生成失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("生成部门失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
+     * date:2020-03-30
+     * funtion:删除树结构的部门
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/deleteTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除树结构的部门接口", notes = "删除树结构的部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteTreeDept(@RequestBody  LongTreeBean longTreeBean) {
+		Integer type=Integer.valueOf(longTreeBean.getType());
+		if(type==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson();
+		}	
+		if(longTreeBean.getSeq()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "节点序列号不能为空", Integer.class).toJson();
+		}
+		if(longTreeBean.getForeignkey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "节点外键不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
+		  try{		
+			  DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
+			  deptAndUserDTO.setDepCode(longTreeBean.getForeignkey());
+			  //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除，根据外键Code
+			  Integer res=ADOConnection.runTask(new UserServiceImpl(), "judgeExistUser", Integer.class, deptAndUserDTO);
+			  if(res!=null && res==0) {
+				  //判断下级数据是不是存在,就是不能强删除(下面这步才执行的是删除树结构节点的操作) 
+				  Integer delRes=ADOConnection.runTask(new TreeService(), "forceDeleteNode", Integer.class, longTreeBean.getType(),longTreeBean.getSeq(),false);
+				  if(delRes!=null && delRes!=-1) {
+						//删除数结构部门成功，执行删除部门的操作(物理删除),根据外键Code
+					   Integer delDeptRes=ADOConnection.runTask(new UserServiceImpl(), "deleteTreeDept", Integer.class, deptAndUserDTO);
+					   if(delDeptRes!=null) {
+						   if(delDeptRes==-1) {
+							   //删除数结构部门失败
+						        msg.setCode(Constant.MESSAGE_INT_DELERROR);
+						        msg.setDescription("物理删除数结构部门失败");  
+						   }else {
+							    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+							    msg.setDescription("删除部门成功"); 
+						   }
+					   }else {
+						   //删除数结构部门失败
+					        msg.setCode(Constant.MESSAGE_INT_DELERROR);
+					        msg.setDescription("物理删除数结构部门失败");  
+					   }
+					  }else {
+					    //删除数结构部门失败
+				        msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				        msg.setDescription("存在下级结构，删除数结构部门失败");
+					  } 
+			   }else {
+				  //删除数结构部门失败
+			        msg.setCode(Constant.MESSAGE_INT_DELERROR);
+			        msg.setDescription("该部门存在下级职员，删除数结构部门失败"); 
+			    }
+			 		  
+	        }catch(Exception e){
+	        	//生成失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("删除失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
+     * date:2020-04-01
+     * funtion:修改树结构的部门
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/updateTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改树结构的部门接口", notes = "修改树结构的部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateTreeDept(@RequestBody DeptDTO deptDTO) {
+		//修改的只有部门名称
+		if(deptDTO.getDepId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门的Id不能为空", Integer.class).toJson();
+		}
+		if(deptDTO.getDepName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{				
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateTreeDept", Integer.class, deptDTO);	
+			  if(updateRes!=null) {
+				  if(updateRes!=-1) {
+					  msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					   msg.setDescription("修改节点部门成功"); 
+				  }else {
+					//更新失败
+			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+			        msg.setDescription("修改节点部门失败"); 
+				  }
+			  }
+	        }catch(Exception e){
+	        	//更新失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("修改失败");
+	        }
+		
+	     return msg.toJson();
 	}
 }
