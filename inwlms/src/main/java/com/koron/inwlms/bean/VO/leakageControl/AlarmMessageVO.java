@@ -11,10 +11,17 @@ public class AlarmMessageVO {
 
 	private Integer id;
 	
+	/**
+	 * 主报警ID
+	 */
 	private Integer r_ref;
-	
+	/**
+	 * 报警编码
+	 */
 	private String alarmNum;
-	
+	/**
+	 * 预警方案ID
+	 */
 	private Integer warningId;
 	
 	private Integer objectId;
@@ -24,7 +31,9 @@ public class AlarmMessageVO {
 	private String alarmType;
 	
 	private String content;
-	
+	/**
+	 * 报警时间
+	 */
 	private Date alarmTime;
 	
 	private Date createTime;
@@ -32,6 +41,48 @@ public class AlarmMessageVO {
 	private String updateBy;
 	
 	private String createBy;
+	
+	private String ObjectType;
+	
+	private String alarmSchemeName;
+	
+	private String taskCode;
+	
+	private String taskState;
+	
+	
+
+	public String getObjectType() {
+		return ObjectType;
+	}
+
+	public void setObjectType(String objectType) {
+		ObjectType = objectType;
+	}
+
+	public String getAlarmSchemeName() {
+		return alarmSchemeName;
+	}
+
+	public void setAlarmSchemeName(String alarmSchemeName) {
+		this.alarmSchemeName = alarmSchemeName;
+	}
+
+	public String getTaskCode() {
+		return taskCode;
+	}
+
+	public void setTaskCode(String taskCode) {
+		this.taskCode = taskCode;
+	}
+
+	public String getTaskState() {
+		return taskState;
+	}
+
+	public void setTaskState(String taskState) {
+		this.taskState = taskState;
+	}
 
 	public Integer getId() {
 		return id;

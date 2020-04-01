@@ -4,6 +4,7 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 
 public class AlarmProcessDTO extends BaseDTO{
 
+	private Integer id;
 	/**
 	 * 预警类型
 	 */
@@ -48,6 +49,15 @@ public class AlarmProcessDTO extends BaseDTO{
 	
 	private String state;
 	
+
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public String getState() {
 		return state;

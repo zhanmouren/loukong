@@ -18,8 +18,8 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 public interface AlarmProcessMapper {
 	
 	List<AlarmProcessVO> queryAlarmProcess(AlarmProcessDTO alarmProcessDTO);
-	Integer addAlarmProcess(AlarmProcessDTO alarmProcessDTO);
-	Integer updataAlarmProcess(AlarmProcessDTO alarmProcessDTO);
+	Integer addAlarmProcess(AlarmProcessVO alarmProcessVO);
+	Integer updateAlarmProcess(AlarmProcessVO alarmProcessVO);
 	Integer deleteAlarmProcess(Integer id);
 
 }

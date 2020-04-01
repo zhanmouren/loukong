@@ -89,7 +89,7 @@ public class AlarmProcessVO {
 	/**
 	 * 修改时间
 	 */
-	private Date updataTime;
+	private Date updateTime;
 
 	private String alarmContent;
 	
@@ -97,7 +97,18 @@ public class AlarmProcessVO {
 	
 	private String objectType;
 	
+	private String taskCode;
 	
+	
+	
+	public String getTaskCode() {
+		return taskCode;
+	}
+
+	public void setTaskCode(String taskCode) {
+		this.taskCode = taskCode;
+	}
+
 	public String getAlarmContent() {
 		return alarmContent;
 	}
@@ -258,12 +269,12 @@ public class AlarmProcessVO {
 		this.updateBy = updateBy;
 	}
 
-	public Date getUpdataTime() {
-		return updataTime;
+	public Date getUpdateTime() {
+		return updateTime;
 	}
 
-	public void setUpdataTime(Date updataTime) {
-		this.updataTime = updataTime;
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 	
 	

@@ -6,17 +6,21 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 
 @Service
 public interface AlarmProcessService {
 
 	List<AlarmProcessVO> queryAlarmProcess(SessionFactory factory, AlarmProcessDTO alarmProcessDTO);
 
-	Integer updateAlarmProcess(SessionFactory factory, AlarmProcessDTO alarmProcessDTO);
+	Integer updateAlarmProcess(SessionFactory factory, AlarmProcessVO alarmProcessVO);
 
-	Integer addAlarmProcess(SessionFactory factory, AlarmProcessDTO alarmProcessDTO);
+	Integer addAlarmProcess(SessionFactory factory, AlarmProcessVO alarmProcessVO);
 
 	Integer deleteAlarmProcess(SessionFactory factory, Integer id);
+
+	TreatmentEffectVO queryTreatmentEffect(SessionFactory factory, TreatmentEffectDTO treatmentEffectDTO);
 
 }
