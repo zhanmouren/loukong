@@ -9,7 +9,13 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrCurrentMeterDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrDealAdviseVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrMeterAnaDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrMeterManageVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrTotalAnalysisDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
 
@@ -60,4 +66,42 @@ public interface ApparentLossService {
 	 * @return
 	 */
 	MeterAnalysisMapVO queryMeterRunAnalysisMapData(SessionFactory factory, QueryALDTO queryALDTO);
+	
+	/**
+	 * 查询诊断报告总体数据
+	 * @param factory
+	 * @param queryALDTO
+	 * @return
+	 */
+	DrTotalAnalysisDataVO queryDrTotalAnalysisData(SessionFactory factory, QueryALDTO queryALDTO);
+
+	/**
+	 * 查询诊断报告现状水表数据
+	 * @return
+	 */
+	DrCurrentMeterDataVO queryDrCurrentMeterData(SessionFactory factory, QueryALDTO queryALDTO);
+
+	/**
+	 * 诊断报告表计管理问题
+	 * @param factory
+	 * @param queryALDTO
+	 * @return
+	 */
+	DrMeterManageVO queryDrMeterManageData(SessionFactory factory, QueryALDTO queryALDTO);
+
+	/**
+	 * 诊断报告水表分析接口
+	 * @param factory
+	 * @param queryALDTO
+	 * @return
+	 */
+	DrMeterAnaDataVO queryMeterAnaData(SessionFactory factory, QueryALDTO queryALDTO);
+	
+	/**
+	 * 诊断报告处理建议接口
+	 * @param factory
+	 * @param queryALDTO
+	 * @return
+	 */
+	DrDealAdviseVO queryDrDealAdvise(SessionFactory factory, QueryALDTO queryALDTO);
 }
