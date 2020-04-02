@@ -1192,7 +1192,12 @@ public class SystemManagerController {
 		if(parentBean.getDepName()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}
-		
+		if(parentBean.getForeignKey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "上级部门的外键不能为空", Integer.class).toJson();
+		}	
+		if(parentBean.getType()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树的类型不能为空", Integer.class).toJson();
+		}	
 		
 		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
 		  try{			
