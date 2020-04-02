@@ -1116,7 +1116,7 @@ public class SystemManagerController {
 	}
 	 /*
      * date:2020-03-30
-     * funtion:组织下添加部门
+     * funtion:组织下添加部门,部门下添加部门
      * author:xiaozhan
      */
 	@RequestMapping(value = "/addTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1262,9 +1262,6 @@ public class SystemManagerController {
 		if(type==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson();
 		}	
-		if(longTreeBean.getSeq()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "节点序列号不能为空", Integer.class).toJson();
-		}
 		if(longTreeBean.getForeignkey()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "节点外键不能为空", Integer.class).toJson();
 		}
@@ -1277,7 +1274,7 @@ public class SystemManagerController {
 			  Integer res=ADOConnection.runTask(new UserServiceImpl(), "judgeExistUser", Integer.class, deptAndUserDTO);
 			  if(res!=null && res==0) {
 				  //判断下级数据是不是存在,就是不能强删除(下面这步才执行的是删除树结构节点的操作) 
-				  Integer delRes=ADOConnection.runTask(new TreeService(), "forceDeleteNode", Integer.class, longTreeBean.getType(),longTreeBean.getSeq(),false);
+				  Integer delRes=ADOConnection.runTask(new TreeService(), "forceDelNode", Integer.class, longTreeBean.getType(),longTreeBean.getForeignkey(),false);
 				  if(delRes!=null && delRes!=-1) {
 						//删除数结构部门成功，执行删除部门的操作(物理删除),根据外键Code
 					   Integer delDeptRes=ADOConnection.runTask(new UserServiceImpl(), "deleteTreeDept", Integer.class, deptAndUserDTO);
@@ -1347,6 +1344,43 @@ public class SystemManagerController {
 	        	//更新失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("修改失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
+     * date:2020-04-01
+     * funtion:查看组织树结构(展开所有)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryTreeOrg.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查看组织树接口", notes = "查看组织树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryTreeOrg(@RequestBody TreeDTO treeDTO) {
+		Integer type=Integer.valueOf(treeDTO.getType());
+		if(type==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
+		}	
+		if(treeDTO.getForeignKey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<LongTreeBean> treeBeanList=ADOConnection.runTask(new TreeService(), "descendantByCode", List.class,treeDTO.getType(),treeDTO.getForeignKey());	
+			  if(treeBeanList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询组织树成功"); 
+					msg.setData(treeBeanList);
+				  }else {
+					//查询失败
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询组织树失败"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
 	        }
 		
 	     return msg.toJson();

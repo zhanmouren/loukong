@@ -89,6 +89,20 @@ public class TreeService {
 		return mapper.getDescendant(seq,type,mask,parentMask);
 	}
 	/**
+	 * 获取节点下所有子节点
+	 * @param factory
+	 * @param type 类型
+	 * @param foreignKey 外键
+	 * 
+	 * @return
+	 */
+	@TaskAnnotation("descendantByCode")
+	public static List<LongTreeBean> descendantByCode(SessionFactory factory,int type,String foreignKey){
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+		return mapper.getDescendant(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+	}
+	/**
 	 * 获取节点路径.
 	 * 从最上层节点到当前节点
 	 * @param factory
@@ -125,10 +139,32 @@ public class TreeService {
 	 * @return
 	 */
 	@TaskAnnotation("forceDeleteNode")
-	public static final Integer forceDelete(SessionFactory factory, int type,long seq, boolean force) {
+	public static final int forceDelete(SessionFactory factory, int type,long seq, boolean force) {
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
 		LongTreeBean node = mapper.getBySeq(seq, type);
 		List<LongTreeBean> list = getDescendant(factory,type,seq,node.getMask(),node.getParentMask());
+		if(!force && list.size() > 1)
+			return -1;
+		for (LongTreeBean longTreeBean : list) {
+			mapper.delete(longTreeBean.getType(),longTreeBean.getSeq());			
+		}
+		return list.size();
+	}
+	/**
+	 * <pre>	
+	 * 删除节点.
+	 * 如果force为真，且其下有子节点，则子节点一起删除
+	 * </pre>
+	 * 
+	 * @param node 被删除的节点
+	 * @param force 是否强制删除节点
+	 * @return
+	 */
+	@TaskAnnotation("forceDelNode")
+	public static final Integer forceDelNode(SessionFactory factory, int type,String foreignkey, boolean force) {
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		LongTreeBean node = mapper.getByFor(foreignkey, type);
+		List<LongTreeBean> list = getDescendant(factory,type,node.getSeq(),node.getMask(),node.getParentMask());
 		Integer i=null;
 		if(!force && list.size() > 1) {
 			i=-1;
