@@ -18,6 +18,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -87,7 +88,7 @@ public interface UserMapper {
 		//查询数据字典(查询是否已经存在值域)
 		public List<DataDicVO> queryParentDic(DataDicDTO dataDicDTO);
 		
-		//查询数据字典(查询明细信息键值)
+		//查询数据字典(查询主信息键值)
 		public List<DataDicVO> queryMainDataDic(DataDicDTO dataDicDTO);
 		
 		//修改数据字典主表(批量修改主表信息)
@@ -134,5 +135,7 @@ public interface UserMapper {
 		//根据Id更新部门名称
 		public Integer updateTreeDept(DeptDTO deptDTO);
 		
+		//根据Code查询组织
+		List <OrgVO> queryOrgByCode(@Param("orgCode") String orgCode);
 
 }

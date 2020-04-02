@@ -5,9 +5,13 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
+import com.koron.inwlms.bean.VO.sysManager.OrgVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
+import com.koron.inwlms.mapper.master.sysManager.UserMapper;
 
 /**<pre>
  * 树形结构：
@@ -18,6 +22,8 @@ import com.koron.common.web.mapper.TreeMapper;
  *
  */
 public class TreeService {
+	
+	
 	/**
 	 * 根据序号获取对应的层级数据
 	 */
@@ -89,7 +95,7 @@ public class TreeService {
 		return mapper.getDescendant(seq,type,mask,parentMask);
 	}
 	/**
-	 * 获取节点下所有子节点
+	 * 获取节点下所有子节点(节点名称)
 	 * @param factory
 	 * @param type 类型
 	 * @param foreignKey 外键
@@ -97,10 +103,29 @@ public class TreeService {
 	 * @return
 	 */
 	@TaskAnnotation("descendantByCode")
-	public static List<LongTreeBean> descendantByCode(SessionFactory factory,int type,String foreignKey){
+	public static List<TreeDeptVO> descendantByCode(SessionFactory factory,int type,String foreignKey){
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		UserMapper userMapper = factory.getMapper(UserMapper.class);	
 		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
-		return mapper.getDescendant(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+		List<TreeDeptVO> deptList=mapper.getDescendantName(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+		//查询Code为Org001的组织的详细信息
+		String orgCode="Org001";
+		List <OrgVO> orgList=userMapper.queryOrgByCode(orgCode);
+		//判断是不是根节点开始查询
+		boolean flag=false;
+		if(deptList.size()>0 && orgList.size()>0) {
+			for(int i=0;i<deptList.size();i++) {
+				//说明是组织
+				if(orgCode.equals(deptList.get(i).getForeignkey())) {
+					flag=true;
+					deptList.get(i).setDepId(orgList.get(0).getOrgId());
+					deptList.get(i).setDepName(orgList.get(0).getOrgName());
+					deptList.get(i).setDepCode(orgList.get(0).getOrgCode());
+					break;
+				}
+			}
+		}
+		return deptList;
 	}
 	/**
 	 * 获取节点路径.

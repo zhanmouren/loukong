@@ -1,6 +1,5 @@
 package com.koron.common.web.mapper;
 
-import java.sql.Timestamp;
 
 public class LongTreeBean extends TreeBean.Long{
 	

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.*;
 
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
+
 public interface TreeMapper {
     /**
      * 根据序号获取对应的层级数据
@@ -60,6 +62,15 @@ public interface TreeMapper {
      */
     @Select("select * from \"SM_treeDet\" where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and type = #{type} order by seq")
     public List<LongTreeBean> getDescendant(@Param("seq") long seq, @Param("type") int type, @Param("mask") int mask, @Param("parentMask") int parentMask);
+
+    /**
+     * 获取节点之下所有节点和节点名称(组织部门)
+     *
+     * @param bean 节点
+     * @return 节点集合
+     */
+    @Select("select \"SM_treeDet\".*, \"SM_department\".id \"depId\", \"SM_department\".name \"depName\",\"SM_department\".code \"depCode\",\"SM_department\".status \"depstatus\" from \"SM_treeDet\"  left join \"SM_department\"  on \"SM_treeDet\".foreignkey=\"SM_department\".code where (\"SM_treeDet\".seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and \"SM_treeDet\".type = #{type} order by \"SM_treeDet\".seq")
+    public List<TreeDeptVO> getDescendantName(@Param("seq") long seq, @Param("type") int type, @Param("mask") int mask, @Param("parentMask") int parentMask);
 
     /**
      * 获取节点的兄弟节点

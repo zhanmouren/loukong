@@ -30,6 +30,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.impl.TestServiceImpl;
 import com.koron.inwlms.service.sysManager.UserService;
@@ -1367,7 +1368,7 @@ public class SystemManagerController {
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<LongTreeBean> treeBeanList=ADOConnection.runTask(new TreeService(), "descendantByCode", List.class,treeDTO.getType(),treeDTO.getForeignKey());	
+			  List<TreeDeptVO> treeBeanList=ADOConnection.runTask(new TreeService(), "descendantByCode", List.class,treeDTO.getType(),treeDTO.getForeignKey());	
 			  if(treeBeanList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询组织树成功"); 
