@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
+import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.master.sysManager.UserMapper;
 
 /**<pre>
@@ -109,15 +111,13 @@ public class TreeService {
 		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
 		List<TreeDeptVO> deptList=mapper.getDescendantName(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
 		//查询Code为Org001的组织的详细信息
+		//todo
 		String orgCode="Org001";
 		List <OrgVO> orgList=userMapper.queryOrgByCode(orgCode);
-		//判断是不是根节点开始查询
-		boolean flag=false;
 		if(deptList.size()>0 && orgList.size()>0) {
 			for(int i=0;i<deptList.size();i++) {
 				//说明是组织
 				if(orgCode.equals(deptList.get(i).getForeignkey())) {
-					flag=true;
 					deptList.get(i).setDepId(orgList.get(0).getOrgId());
 					deptList.get(i).setDepName(orgList.get(0).getOrgName());
 					deptList.get(i).setDepCode(orgList.get(0).getOrgCode());

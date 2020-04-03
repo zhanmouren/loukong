@@ -91,13 +91,13 @@ public interface UserService {
 	    /** -----------树形组件------------------**/    
 	    
 	    //插入到部门表中和部门组织表中
-	    String addTreeDept(SessionFactory factory,  OrgAndDeptDTO orgDeptDTO);
+	    Integer addTreeDept(SessionFactory factory,  OrgAndDeptDTO orgDeptDTO,int type,String foreignKey);
 	    
 	    //插入部门表
-	    String deptAddTreeDept(SessionFactory factory,  OrgAndDeptDTO orgDeptDTO);
+	    Integer deptAddTreeDept(SessionFactory factory,  OrgAndDeptDTO orgDeptDTO,int type,String foreignKey);
 	    
 	    //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除
-	    Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO);
+	    Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO,int type,String foreignkey, boolean force);
 	    
 	    //物理删除部门，部门表
 	    Integer deleteTreeDept(SessionFactory factory,DeptAndUserDTO deptAndUserDTO);

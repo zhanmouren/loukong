@@ -7,10 +7,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
@@ -28,6 +31,7 @@ import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.master.sysManager.UserMapper;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.RandomCodeUtil;
+import com.koron.util.Constant;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -496,7 +500,7 @@ public class UserServiceImpl implements UserService{
 				//组织下添加部门2020/03/31
 				@TaskAnnotation("addTreeDept")
 				@Override
-				public String addTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO) {
+				public Integer addTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO,int type,String foreignKey) {
 					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);	
 					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
@@ -504,6 +508,7 @@ public class UserServiceImpl implements UserService{
 					orgDeptDTO.setCreateBy("小詹");
 					orgDeptDTO.setUpdateBy("小詹");
 					//部门正常使用状态0,禁用状态-1
+					Integer finalRes=null;
 					orgDeptDTO.setDepStatus(0);
 					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
 					String deptCode=randomCodeUtil.getCode(2);
@@ -521,21 +526,40 @@ public class UserServiceImpl implements UserService{
 					orgDeptDTONew.setUpdateTime(timeNow);
 					Integer addRes=userMapper.addOrgDept(orgDeptDTONew);
 					if(addRes==-1) {
-						deptCode=null;
+						finalRes=-1;
 					}
-					return deptCode;
+					else {
+					  //组装child,主要两个参数，一个type，一个是foreignkey	
+						  LongTreeBean child=new LongTreeBean();
+						  child.setForeignkey(deptCode);
+						  child.setType(0);
+						  //根据treeParentId获取node
+						  TreeService treeService  =new TreeService();
+						  LongTreeBean parent= treeService.getNode(factory, type, foreignKey);
+						    if(parent!=null) {
+						      //生成根节点
+						      LongTreeBean longTreeBean =treeService.add(factory, parent, child);	
+							  if(longTreeBean!=null) {
+							   	  finalRes=1;
+							  }else {
+								  finalRes=-1;
+							  }
+						    }
+					  }
+					return finalRes;
 				}
 
 				//部门下添加部门2020/03/31	
 				@TaskAnnotation("deptAddTreeDept")
 				@Override
-				public String deptAddTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO) {
+				public Integer deptAddTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO,int type,String foreignKey) {
 					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);	
 					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
 					orgDeptDTO.setCreateTime(timeNow);
 					orgDeptDTO.setCreateBy("小詹");
 					orgDeptDTO.setUpdateBy("小詹");
+					Integer finalRes=null;
 					//部门正常使用状态0,禁用状态-1
 					orgDeptDTO.setDepStatus(0);
 					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
@@ -544,22 +568,66 @@ public class UserServiceImpl implements UserService{
 					orgDeptDTO.setUpdateTime(timeNow);
 					Integer addRes=userMapper.deptAddTreeDept(orgDeptDTO);
 					if(addRes==-1) {
-						deptCode=null;
+						finalRes=-1;
 					}
-					return deptCode;
+					else {
+					  //组装child,主要两个参数，一个type，一个是foreignkey	
+						  LongTreeBean child=new LongTreeBean();
+						  child.setForeignkey(deptCode);
+						  child.setType(0);
+						  //根据treeParentId获取node
+						  TreeService treeService  =new TreeService();
+						  LongTreeBean parent= treeService.getNode(factory, type, foreignKey);
+						    if(parent!=null) {
+						      //生成根节点
+						    	LongTreeBean longTreeBean =treeService.add(factory, parent, child);							  
+							  if(longTreeBean!=null) {
+							   	  finalRes=1;
+							  }else {
+								  finalRes=-1;
+							  }
+						    }
+					  }
+					return finalRes;
 				}
 
 			   //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除根据外键code 2020/04/01
 				@TaskAnnotation("judgeExistUser")
 				@Override
-				public Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO) {
+				public Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO,int type,String foreignkey, boolean force) {
 					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<UserVO> userList=userMapper.judgeExistUser(deptAndUserDTO);
 					Integer userRes=0;
 					if(userList.size()>0) {
-						userRes=-1;
+						//删除部门存在职员,不同意删除
+						userRes=-2;
+						return userRes;
 					}
+					 if(userRes!=null && userRes==0) {
+						  //判断下级数据是不是存在,就是不能强删除(下面这步才执行的是删除树结构节点的操作) 
+						  TreeService treeService  =new TreeService();
+						  Integer  delRes=treeService.forceDelNode(factory,type,foreignkey,force);					
+						  if(delRes!=null && delRes!=-1) {
+							    UserServiceImpl userService=new UserServiceImpl();
+								//删除数结构部门成功，执行删除部门的操作(物理删除),根据外键Code
+							   Integer delDeptRes = userService.deleteTreeDept(factory, deptAndUserDTO);
+							   if(delDeptRes!=null) {
+								   if(delDeptRes==-1) {
+									   //删除部门失败
+									   userRes=-1;
+								   }else {
+									   //删除部门成功
+									   userRes=0;
+								   }
+							   }else {
+								   userRes=-1;
+							   }
+							  }else {
+								 //存在下级单位
+							     userRes=-3;
+							  } 
+					   }
 					return userRes;
 				}
 
