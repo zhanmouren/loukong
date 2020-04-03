@@ -137,5 +137,8 @@ public interface UserMapper {
 		
 		//根据Code查询组织
 		List <OrgVO> queryOrgByCode(@Param("orgCode") String orgCode);
+		
+		//根据部门Code查询部门人员
+		List<UserVO> queryDeptUser(DeptDTO deptDTO);
 
 }

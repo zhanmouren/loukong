@@ -627,5 +627,14 @@ public class UserServiceImpl implements UserService{
 					deptDTO.setUpdateTime(timeNow);
 					Integer updateRes=userMapper.updateTreeDept(deptDTO);
 					return updateRes;
+				}
+
+				//根据部门Code查询部门职员
+				@TaskAnnotation("queryDeptUser")
+				@Override
+				public List<UserVO> queryDeptUser(SessionFactory factory, DeptDTO deptDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<UserVO> userList=userMapper.queryDeptUser(deptDTO);
+					return userList;
 				}						   	
 }

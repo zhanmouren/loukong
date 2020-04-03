@@ -333,5 +333,16 @@
           from "SM_organize"  
           where    code=#{orgCode}
       </select>
+      
+        <!-- 根据部门Code查询部门人员-->
+      <select id="queryDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+          select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."Email" is null then '' else "user"."Email" end,"user".name,case when "user".position is null then -1 else "user".position end,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
+		  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+		   from "SM_user" as "user"       
+		   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
+		   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"   
+          where "dept".code=#{depCode}
+          order by "user"."createTime" desc
+      </select>
     
 </mapper>

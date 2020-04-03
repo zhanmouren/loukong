@@ -105,4 +105,7 @@ public interface UserService {
 	
 	   //修改部门名称，通过部门ID
 	    Integer updateTreeDept(SessionFactory factory,DeptDTO deptDTO);
+	    
+	    //根据部门Code查询部门职员
+	    List<UserVO> queryDeptUser(SessionFactory factory,DeptDTO deptDTO);
 }

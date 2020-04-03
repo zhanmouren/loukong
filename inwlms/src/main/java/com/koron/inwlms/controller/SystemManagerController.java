@@ -1293,4 +1293,35 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	 /*
+     * date:2020-04-03
+     * funtion:根据部门Code查询部门职员
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据部门Code查询职员接口", notes = "根据部门Code查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryDeptUser(@RequestBody DeptDTO deptDTO) {		
+		if(deptDTO.getDepCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<UserVO> deptUserList=ADOConnection.runTask(new UserServiceImpl(), "queryDeptUser", List.class,deptDTO);	
+			  if(deptUserList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询职员成功"); 
+					msg.setData(deptUserList);
+				  }else {
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("没有查询到相关职员"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
 }
