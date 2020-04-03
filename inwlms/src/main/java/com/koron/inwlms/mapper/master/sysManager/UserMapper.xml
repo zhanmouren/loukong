@@ -19,7 +19,7 @@
    	    <if test="status != null"> and "user".status ='${status}'</if>
    	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>          
 	  </trim>
-	   order by "createTime" desc
+	   order by "user"."createTime" desc
     </select>
     
     <update id="updateUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
