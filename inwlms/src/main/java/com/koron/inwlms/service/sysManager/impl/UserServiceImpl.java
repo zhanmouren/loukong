@@ -53,8 +53,7 @@ public class UserServiceImpl implements UserService{
 	//查询职员 2020/03/19	
 	@TaskAnnotation("queryUser")
 	@Override
-	public List<UserVO> queryUser(SessionFactory factory,QueryUserDTO userDTO) {
-		// TODO Auto-generated method stub
+	public List<UserVO> queryUser(SessionFactory factory,QueryUserDTO userDTO) {		
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<UserVO> userList=userMapper.queryUser(userDTO);
 		return userList;
@@ -75,8 +74,7 @@ public class UserServiceImpl implements UserService{
 	//删除职员 2020/03/23
 	@TaskAnnotation("deleteUser")
 	@Override
-	public Integer deleteUser(SessionFactory factory, UserDTO userDTO) {
-		// TODO Auto-generated method stub
+	public Integer deleteUser(SessionFactory factory, UserDTO userDTO) {		
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		userDTO.setWhetUse(-1);
 		Integer delResult=userMapper.deleteUser(userDTO);
@@ -114,8 +112,7 @@ public class UserServiceImpl implements UserService{
 	//删除角色属性  2020/03/23(删除角色前先判断有没有绑定职员)
 	@TaskAnnotation("deleteRoleAttr")
 	@Override
-	public RoleMsgVO deleteRoleAttr(SessionFactory factory, RoleDTO roleDTO) {
-		// TODO Auto-generated method stub
+	public RoleMsgVO deleteRoleAttr(SessionFactory factory, RoleDTO roleDTO) {		
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		Integer delResult;
 		RoleMsgVO roleMsgVO=new RoleMsgVO();
@@ -142,8 +139,7 @@ public class UserServiceImpl implements UserService{
 	//根据角色Id加载角色人员接口 2020/03/24
 	@TaskAnnotation("queryUserByRoleId")
 	@Override
-	public List<UserVO> queryUserByRoleId(SessionFactory factory, RoleDTO roleDTO) {	
-		// TODO Auto-generated method stub
+	public List<UserVO> queryUserByRoleId(SessionFactory factory, RoleDTO roleDTO) {			
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<UserVO> userList=userMapper.queryUserByRoleId(roleDTO);
 		return userList;
@@ -152,8 +148,7 @@ public class UserServiceImpl implements UserService{
 	//根据角色Id加载角色接口 2020/03/24
 	@TaskAnnotation("queryAllRole")
 	@Override
-	public List<RoleVO> queryAllRole(SessionFactory factory) {
-		// TODO Auto-generated method stub
+	public List<RoleVO> queryAllRole(SessionFactory factory) {		
 		//先查询所有的角色
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<RoleVO> roleList=userMapper.queryAllRole();
@@ -188,7 +183,6 @@ public class UserServiceImpl implements UserService{
 	@TaskAnnotation("deleteRoleUser")
 	@Override
 	public Integer deleteRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
-		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		//执行批量删除角色职员的操作
 		Integer delResult=userMapper.deleteRoleUser(roleUserDTO.getRoleId(),roleUserDTO.getUserList());
@@ -198,8 +192,7 @@ public class UserServiceImpl implements UserService{
 	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员) 2020/03/24
 	@TaskAnnotation("queryExceptRoleUser")
 	@Override
-	public List<UserVO> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
-		// TODO Auto-generated method stub
+	public List<UserVO> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {		
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<UserVO> userList=userMapper.queryExceptRoleUser(roleUserDTO);
 		return userList;
@@ -208,8 +201,7 @@ public class UserServiceImpl implements UserService{
 	//给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员) 2020/03/25
 		@TaskAnnotation("queryExceptDeptUser")
 		@Override
-		public List<UserVO> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {
-			// TODO Auto-generated method stub
+		public List<UserVO> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {			
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
 			List<UserVO> userList=userMapper.queryExceptDeptUser(deptUserDTO);
 			return userList;
@@ -239,8 +231,7 @@ public class UserServiceImpl implements UserService{
 		//删除部门中职员(批量)接口 2020/03/25
 		@TaskAnnotation("deleteDeptUser")
 		@Override
-		public Integer deleteDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {
-			// TODO Auto-generated method stub
+		public Integer deleteDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {			
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
 			//执行批量删除角色职员的操作
 			Integer delResult=userMapper.deleteDeptUser(deptUserDTO.getDepId(),deptUserDTO.getUserList());
@@ -302,8 +293,7 @@ public class UserServiceImpl implements UserService{
 				//查询数据字典接口(查询明细信息主表) 2020/03/26
 				@TaskAnnotation("queryMainDataDic")
 				@Override
-				public List<DataDicVO> queryMainDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
-					// TODO Auto-generated method stub
+				public List<DataDicVO> queryMainDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					//只需要返回第一条主的信息就行
 					List<DataDicVO> dataDicVOList=userMapper.queryMainDataDic(dataDicDTO);
@@ -326,8 +316,7 @@ public class UserServiceImpl implements UserService{
 				//删除数据字典(通过parent，删除一条就要修改多条主的信息，还要实现批量) 2020/03/27
 				@TaskAnnotation("deleteDicById")
 				@Override
-				public Integer deleteDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
-					// TODO Auto-generated method stub
+				public Integer deleteDicById(SessionFactory factory, DataDicDTO dataDicDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<DataDicDTO> dataDicDTOList=new ArrayList<DataDicDTO>();
 					for(int i=0;i<dataDicDTO.getDicParentList().size();i++) {
@@ -395,8 +384,7 @@ public class UserServiceImpl implements UserService{
 				//查询某年某月特征日 2020/03/27
 				@TaskAnnotation("querySpecialDate")
 				@Override
-				public List<SpecialDayDTO> querySpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {
-					// TODO Auto-generated method stub
+				public List<SpecialDayDTO> querySpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					//获取String年份(开始日期 年月,结束日期年月)
 					 String selectYear="";
@@ -471,8 +459,7 @@ public class UserServiceImpl implements UserService{
 				//根据日期删除特征日 2020/03/30
 				@TaskAnnotation("deleteSpecialDate")
 				@Override
-				public Integer deleteSpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {
-					// TODO Auto-generated method stub
+				public Integer deleteSpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					Integer deleteRes=userMapper.deleteSpecialDate(specialDayDTO);
 					return deleteRes;
@@ -481,8 +468,7 @@ public class UserServiceImpl implements UserService{
 				//根据日期修改特征日  2020/03/30
 				@TaskAnnotation("updateSpecialDate")
 				@Override
-				public Integer updateSpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {
-					// TODO Auto-generated method stub
+				public Integer updateSpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					Integer updateRes=userMapper.updateSpecialDate(specialDayDTO);
 					return updateRes;
@@ -585,8 +571,7 @@ public class UserServiceImpl implements UserService{
 			   //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除根据外键code 2020/04/01
 				@TaskAnnotation("judgeExistUser")
 				@Override
-				public Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO,int type,String foreignkey, boolean force) {
-					// TODO Auto-generated method stub
+				public Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO,int type,String foreignkey, boolean force) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<UserVO> userList=userMapper.judgeExistUser(deptAndUserDTO);
 					Integer userRes=0;
@@ -626,7 +611,6 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("deleteTreeDept")
 				@Override
 				public Integer deleteTreeDept(SessionFactory factory, DeptAndUserDTO deptAndUserDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					Integer   delRes=userMapper.deleteTreeDept(deptAndUserDTO);
 					return delRes;
