@@ -31,7 +31,22 @@ public class MeterInfo {
 	 * 用水类型
 	 */
 	private String useType;
-
+	
+	/**
+	 * 用户地址
+	 */
+	private String address;
+	
+	/**
+	 * 超标日期
+	 */
+	private String mReadDate;  
+	
+	/**
+	 * 用户编号
+	 */
+	private String accNo;
+	
 	public String getMeterNo() {
 		return meterNo;
 	}
@@ -70,6 +85,30 @@ public class MeterInfo {
 
 	public void setUseType(String useType) {
 		this.useType = useType;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public String getmReadDate() {
+		return mReadDate;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public void setmReadDate(String mReadDate) {
+		this.mReadDate = mReadDate;
+	}
+
+	public String getAccNo() {
+		return accNo;
+	}
+
+	public void setAccNo(String accNo) {
+		this.accNo = accNo;
 	}
 	
 }

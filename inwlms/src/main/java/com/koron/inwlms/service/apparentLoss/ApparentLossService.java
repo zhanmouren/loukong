@@ -14,6 +14,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrDealAdviseVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrMeterAnaDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrMeterManageVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrTotalAnalysisDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
@@ -104,4 +105,12 @@ public interface ApparentLossService {
 	 * @return
 	 */
 	DrDealAdviseVO queryDrDealAdvise(SessionFactory factory, QueryALDTO queryALDTO);
+
+	/**
+	 * 查询诊断报告-问题清单数据
+	 * @param factory
+	 * @param queryALDTO
+	 * @return
+	 */
+	DrqlVO queryDrQuestionList(SessionFactory factory, QueryALDTO queryALDTO);
 }

@@ -12,7 +12,7 @@ public class DrMeterAnaDataVO {
 	/**
 	 * 不同口径水表计量情况统计列表
 	 */
-	private List<MeterRunAnalysisVO> mralists;
+	private List<MeterRunAnalysisVO> mraLists;
 	
 	/**
 	 * 小口径，大口径，大口径（除消防表）的饼图统计数据
@@ -34,9 +34,6 @@ public class DrMeterAnaDataVO {
 	 */
 	private List<DrSmallDnAnaData> dsdaLists;
 
-	public List<MeterRunAnalysisVO> getMralists() {
-		return mralists;
-	}
 
 	public ALMapDataVO getaLMapDataVO() {
 		return aLMapDataVO;
@@ -54,10 +51,6 @@ public class DrMeterAnaDataVO {
 		return dsdaLists;
 	}
 
-	public void setMralists(List<MeterRunAnalysisVO> mralists) {
-		this.mralists = mralists;
-	}
-
 	public void setaLMapDataVO(ALMapDataVO aLMapDataVO) {
 		this.aLMapDataVO = aLMapDataVO;
 	}
@@ -72,6 +65,14 @@ public class DrMeterAnaDataVO {
 
 	public void setDsdaLists(List<DrSmallDnAnaData> dsdaLists) {
 		this.dsdaLists = dsdaLists;
+	}
+
+	public List<MeterRunAnalysisVO> getMraLists() {
+		return mraLists;
+	}
+
+	public void setMraLists(List<MeterRunAnalysisVO> mraLists) {
+		this.mraLists = mraLists;
 	}
 	
 	

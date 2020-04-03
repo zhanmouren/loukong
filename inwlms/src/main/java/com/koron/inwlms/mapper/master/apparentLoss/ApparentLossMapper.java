@@ -9,6 +9,7 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlMeterErrUseData;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData;
@@ -144,4 +145,9 @@ public interface ApparentLossMapper {
 	 * @return
 	 */
 	List<Double> queryMeterMMaxFlow(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+
+	/**
+	 * 查询用水异常水表数据
+	 */
+	List<DrqlMeterErrUseData> queryMeterErrUseData(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
 }
