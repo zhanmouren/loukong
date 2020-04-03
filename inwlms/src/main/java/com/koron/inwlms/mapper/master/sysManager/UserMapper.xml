@@ -19,6 +19,7 @@
    	    <if test="status != null"> and "user".status ='${status}'</if>
    	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>          
 	  </trim>
+	   order by "createTime" desc
     </select>
     
     <update id="updateUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
@@ -65,6 +66,7 @@
        from  "SM_userRoleRelation" as "userRela"
        left join  "SM_userRole" as "userRole" on "userRole".id="userRela"."roleID"
        where "userRela"."roleID"=#{roleId}
+       order by "userRole"."createTime" desc
     </select>
     
     <!-- 批量删除角色信息 -->
@@ -84,12 +86,14 @@
        left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
 	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"
        where "userRela"."roleID"=#{roleId}
+       order by "user"."createTime" desc
     </select>
     
     <!--查询所有角色列表 -->
     <select id="queryAllRole"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
        select id as "roleId",name as "roleName",remark as "roleRemark","createBy","createTime","updateBy","updateTime" 
        from "SM_userRole" 
+       order by "createTime" desc
     </select>
     
     <!--遍历插入职员与角色的关系 -->
@@ -116,7 +120,8 @@
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
 	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
-	   where "user".id not in(select "userrela"."userID" from "SM_userRoleRelation" as "userrela" where "userrela"."roleID" =#{roleId})	 
+	   where "user".id not in(select "userrela"."userID" from "SM_userRoleRelation" as "userrela" where "userrela"."roleID" =#{roleId})	
+	   order by "user"."createTime" desc 
      </select>
      
       <!-- 部门弹窗选择职员 -->
@@ -126,7 +131,8 @@
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
 	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
-	   where "user".id not in(select "deptuser"."userID" from "SM_userDept" as "deptuser" where "deptuser"."deptID" =#{depId})	 
+	   where "user".id not in(select "deptuser"."userID" from "SM_userDept" as "deptuser" where "deptuser"."deptID" =#{depId})
+	   order by "user"."createTime" desc	 
      </select>
      
      <!--遍历插入职员与部门的关系 -->

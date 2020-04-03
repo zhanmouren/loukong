@@ -18,6 +18,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 
@@ -39,8 +40,8 @@ public interface UserService {
 	RoleMsgVO deleteRoleAttr(SessionFactory factory, RoleDTO roleDTO);	
 	//根据角色Id加载角色人员接口
 	List<UserVO> queryUserByRoleId(SessionFactory factory, RoleDTO roleDTO);
-	//查询所有角色接口以及相关职员(默认第一次进入角色的时候)
-	RoleAndUserVO queryAllRoleUser(SessionFactory factory, RoleDTO roleDTO);
+	//查询所有角色接口
+	 List<RoleVO> queryAllRole(SessionFactory factory);
 	//添加用户(批量)和角色关系的操作
 	Integer addRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
 	//删除角色中职员(批量)接口

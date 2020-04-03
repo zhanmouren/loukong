@@ -30,6 +30,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.impl.TestServiceImpl;
@@ -331,10 +332,8 @@ public class SystemManagerController {
     @ApiOperation(value = "根据角色ID加载角色人员接口", notes = "根据角色ID加载角色人员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryUserByRoleId(@RequestBody RoleDTO roleDTO) {
-		//可以不传角色Id,默认为超级管理员
 		 if(roleDTO.getRoleId()==null) {
-			 //测试中暂时设定id为3的为超级管理员
-			 roleDTO.setRoleId(3);
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
 		 }
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		//执行删除角色的操作
@@ -359,27 +358,27 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-24
-     * funtion:查询所有角色接口以及相关职员(默认第一次进入角色的时候)
+     * funtion:查询所有角色接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/queryAllRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询所有角色接口以及相关职员", notes = "查询所有角色接口以及相关职员", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/queryAllRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询所有角色接口", notes = "查询所有角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryAllRoleUser(@RequestBody RoleDTO roleDTO) {		
-		 MessageBean<RoleAndUserVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, RoleAndUserVO.class);	       
+	public String queryAllRole() {		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
-			  RoleAndUserVO roleAndUserVO=ADOConnection.runTask(new UserServiceImpl(), "queryAllRoleUser", RoleAndUserVO.class, roleDTO);		 
-			  if(roleAndUserVO!=null) {				 
+			  List<RoleVO> roleList=ADOConnection.runTask(new UserServiceImpl(), "queryAllRole", List.class);		 
+			  if(roleList.size()>0) {				 
 					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					 msg.setDescription("查询到所有角色和相关职员信息列表"); 
-					 msg.setData(roleAndUserVO);
+					 msg.setDescription("查询到所有角色列表"); 
+					 msg.setData(roleList);
 			 }else {
 				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				     msg.setDescription("没有查询到所有角色和相关职员信息列表"); 
+				     msg.setDescription("没有查询到所有角色"); 
 			 }
 	        }catch(Exception e){
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("查询角色职员失败");
+	            msg.setDescription("查询角色失败");
 	        }
 		
 	     return msg.toJson();

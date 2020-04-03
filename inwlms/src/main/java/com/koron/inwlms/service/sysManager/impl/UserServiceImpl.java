@@ -149,25 +149,16 @@ public class UserServiceImpl implements UserService{
 		return userList;
 	}
 
-	//根据角色Id加载角色人员接口 2020/03/24
-	@TaskAnnotation("queryAllRoleUser")
+	//根据角色Id加载角色接口 2020/03/24
+	@TaskAnnotation("queryAllRole")
 	@Override
-	public RoleAndUserVO queryAllRoleUser(SessionFactory factory, RoleDTO roleDTO) {
+	public List<RoleVO> queryAllRole(SessionFactory factory) {
 		// TODO Auto-generated method stub
 		//先查询所有的角色
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<RoleVO> roleList=userMapper.queryAllRole();
-		//查询第一个角色的角色人员接口
-		if(roleDTO.getRoleId()==null) {
-			//测试用，先默认为3
-		   roleDTO.setRoleId(3);
-		}
-		List<UserVO> userList=userMapper.queryUserByRoleId(roleDTO);
-		//拼接在一个List中
-		RoleAndUserVO roleAndUser=new RoleAndUserVO();
-		roleAndUser.setRoleList(roleList);
-		roleAndUser.setUserList(userList);		
-		return roleAndUser;
+		return roleList;
+		
 	}
 
 	//遍历插入职员和角色的关系 2020/03/24
