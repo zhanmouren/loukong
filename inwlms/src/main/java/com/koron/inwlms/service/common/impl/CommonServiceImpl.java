@@ -7,7 +7,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.VO.common.SysConfigVO;
-import com.koron.inwlms.mapper.master.common.CommonMapper;
+import com.koron.inwlms.mapper.common.CommonMapper;
 import com.koron.inwlms.service.common.CommonService;
 
 @Service
