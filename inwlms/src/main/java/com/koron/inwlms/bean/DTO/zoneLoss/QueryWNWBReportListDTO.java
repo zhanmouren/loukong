@@ -15,7 +15,7 @@ public class QueryWNWBReportListDTO extends BaseDTO{
 	public String reportName;
 	
 	/**
-	 * 时间类型（0：分 ，1：时，2：日，3：月，4：年）
+	 * 时间类型（3：月，4：年）
 	 */
 	public Integer timeType;
 	

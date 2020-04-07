@@ -1,7 +1,11 @@
 package com.koron.inwlms.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.koron.ebs.mybatis.ADOConnection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +28,11 @@ import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneIndicatorListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneWBLossDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportAttachmentDTO;
+import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBReportListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO;
+import com.koron.inwlms.service.zoneLoss.WaterBalanceAnaService;
+import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,18 +47,104 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/ZoneLossController")
 public class ZoneLossController {
 
-	@RequestMapping(value = "/queryZoneWBLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@Autowired
+    private WaterBalanceAnaService wbas;
+	
+	@RequestMapping(value = "/queryZoneWBLossData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区水平衡漏损数据", notes = "查询分区水平衡漏损数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZoneWBLossList(@RequestBody QueryZoneWBLossDTO queryZoneWBLossDTO) {
-		return null;
+	public String queryZoneWBLossData(@RequestBody QueryZoneWBLossDTO queryZoneWBLossDTO) {
+		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(queryZoneWBLossDTO.getTimeType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("时间粒度为空");
+			return msg.toJson();
+		}
+		if(queryZoneWBLossDTO.getTimeType() < Constant.TIME_TYPE_M || queryZoneWBLossDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+			//传参数值不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("时间粒度数值错误");
+			return msg.toJson();
+		}
+		if(queryZoneWBLossDTO.getStartTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("开始时间为空");
+			return msg.toJson();
+		}
+		if(queryZoneWBLossDTO.getEndTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("结束时间为空");
+			return msg.toJson();
+		}
+		if(queryZoneWBLossDTO.getStartTime() > queryZoneWBLossDTO.getEndTime()) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("开始时间大于结束时间");
+			return msg.toJson();
+   	 	}
+		if(queryZoneWBLossDTO.getZoneRank() != null && (Constant.RANK_F < queryZoneWBLossDTO.getZoneRank() || queryZoneWBLossDTO.getZoneRank() > Constant.RANK_T)) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("分区等级数值错误");
+			return msg.toJson();
+		}
+		try{
+			List<ZoneWBLossVO> data = ADOConnection.runTask(wbas, "queryZoneWBLossData", List.class,queryZoneWBLossDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
+		
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/queryWNWBReportList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询全网水平衡报表列表", notes = "查询全网水平衡报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryWNWBReportList(@RequestBody QueryWNWBReportListDTO queryWNWBReportListDTO) {
-		return null;
+		MessageBean<PageWNWBReportListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageWNWBReportListVO.class);
+		if(queryWNWBReportListDTO.getTimeType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("时间粒度为空");
+			return msg.toJson();
+		}
+		if(queryWNWBReportListDTO.getTimeType() < Constant.TIME_TYPE_M || queryWNWBReportListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+			//传参数值不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("时间粒度数值错误");
+			return msg.toJson();
+		}
+		if(queryWNWBReportListDTO.getStartTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("开始时间为空");
+			return msg.toJson();
+		}
+		if(queryWNWBReportListDTO.getEndTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("结束时间为空");
+			return msg.toJson();
+		}
+		if(queryWNWBReportListDTO.getStartTime() > queryWNWBReportListDTO.getEndTime()) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("开始时间大于结束时间");
+			return msg.toJson();
+   	 	}
+		try{
+			PageWNWBReportListVO data = ADOConnection.runTask(wbas, "queryWNWBReportList", PageWNWBReportListVO.class,queryWNWBReportListDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/downloadWNWBReport.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })

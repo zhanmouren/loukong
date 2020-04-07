@@ -156,7 +156,7 @@
 			<if test="zoneNo != null and zoneNo != ''">
 			and "zoneNo" = #{zoneNo}
 			</if>
-		) a,"LC_APP_dim_indicator" where ind.code = a.code 
+		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
 		) b
 		group by b.year
 	</select>

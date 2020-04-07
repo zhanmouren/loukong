@@ -1,5 +1,6 @@
 package com.koron.inwlms.bean.DTO.zoneLoss;
 
+
 /**|
  * 查询分区水平衡漏损数据DTO
  * @author csh
@@ -8,12 +9,17 @@ package com.koron.inwlms.bean.DTO.zoneLoss;
 public class QueryZoneWBLossDTO {
 
 	/**
-	 * 分区名称
+	 * 分区编号
 	 */
-	public String zoneName;
+	public String zoneNo;
 	
 	/**
-	 * 时间类型（0：分 ，1：时，2：日，3：月，4：年）
+	 * 分区等级
+	 */
+	private Integer zoneRank;
+	
+	/**
+	 * 时间类型（3：月，4：年）
 	 */
 	public Integer timeType;
 	
@@ -51,12 +57,20 @@ public class QueryZoneWBLossDTO {
 		this.endTime = endTime;
 	}
 
-	public String getZoneName() {
-		return zoneName;
+	public String getZoneNo() {
+		return zoneNo;
 	}
 
-	public void setZoneName(String zoneName) {
-		this.zoneName = zoneName;
+	public Integer getZoneRank() {
+		return zoneRank;
+	}
+
+	public void setZoneNo(String zoneNo) {
+		this.zoneNo = zoneNo;
+	}
+
+	public void setZoneRank(Integer zoneRank) {
+		this.zoneRank = zoneRank;
 	}
 	
 }

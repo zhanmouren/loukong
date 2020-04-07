@@ -7,6 +7,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.util.StringUtil;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
@@ -36,67 +37,80 @@ public class GisZoneServiceImpl implements GisZoneService {
 	@Override
 	public List<ZoneInfo> querySubZoneNos(SessionFactory factory, String zoneNo) {
 		List<ZoneInfo> list =  new ArrayList<>();
-		if(("FL01").equals(zoneNo)) {
+		if(StringUtil.isEmpty(zoneNo)) {
 			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("SL01001");
-			zoneInfo.setZoneName("SL01001二级分区");
+			zoneInfo.setZoneNo("FL01");
+			zoneInfo.setZoneName("FL01一级分区");
 			list.add(zoneInfo);
 			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("SL01002");
-			zoneInfo1.setZoneName("SL01002二级分区");
+			zoneInfo1.setZoneNo("FL02");
+			zoneInfo1.setZoneName("FL02一级分区");
 			list.add(zoneInfo);
-			list.add(zoneInfo1);
-		}else if(("FL02").equals(zoneNo)) {
-			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("SL02001");
-			zoneInfo.setZoneName("SL02001二级分区");
-			list.add(zoneInfo);
-			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("SL02002");
-			zoneInfo1.setZoneName("SL02002二级分区");
-			list.add(zoneInfo);
-			list.add(zoneInfo1);
-		}else if(("SL01001").equals(zoneNo)) {
-			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("DM01001001");
-			zoneInfo.setZoneName("DM01001001二级分区");
-			list.add(zoneInfo);
-			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("DM01001002");
-			zoneInfo1.setZoneName("DM01001002二级分区");
-			list.add(zoneInfo);
-			list.add(zoneInfo1);
-		}else if(("SL01002").equals(zoneNo)) {
-			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("DM01002001");
-			zoneInfo.setZoneName("DM01002001二级分区");
-			list.add(zoneInfo);
-			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("DM01002002");
-			zoneInfo1.setZoneName("DM01002002二级分区");
-			list.add(zoneInfo);
-			list.add(zoneInfo1);
-		}else if(("SL02001").equals(zoneNo)) {
-			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("DM02001001");
-			zoneInfo.setZoneName("DM02001001二级分区");
-			list.add(zoneInfo);
-			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("DM02001002");
-			zoneInfo1.setZoneName("DM02001002二级分区");
-			list.add(zoneInfo);
-			list.add(zoneInfo1);
-		}else if(("SL02002").equals(zoneNo)) {
-			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("DM02002001");
-			zoneInfo.setZoneName("DM02002001二级分区");
-			list.add(zoneInfo);
-			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("DM02002002");
-			zoneInfo1.setZoneName("DM02002002二级分区");
-			list.add(zoneInfo);
-			list.add(zoneInfo1);
+			list.add(zoneInfo1);	
+		}else {
+			if(("FL01").equals(zoneNo)) {
+				ZoneInfo zoneInfo = new ZoneInfo();
+				zoneInfo.setZoneNo("SL01001");
+				zoneInfo.setZoneName("SL01001二级分区");
+				list.add(zoneInfo);
+				ZoneInfo zoneInfo1 = new ZoneInfo();
+				zoneInfo1.setZoneNo("SL01002");
+				zoneInfo1.setZoneName("SL01002二级分区");
+				list.add(zoneInfo);
+				list.add(zoneInfo1);
+			}else if(("FL02").equals(zoneNo)) {
+				ZoneInfo zoneInfo = new ZoneInfo();
+				zoneInfo.setZoneNo("SL02001");
+				zoneInfo.setZoneName("SL02001二级分区");
+				list.add(zoneInfo);
+				ZoneInfo zoneInfo1 = new ZoneInfo();
+				zoneInfo1.setZoneNo("SL02002");
+				zoneInfo1.setZoneName("SL02002二级分区");
+				list.add(zoneInfo);
+				list.add(zoneInfo1);
+			}else if(("SL01001").equals(zoneNo)) {
+				ZoneInfo zoneInfo = new ZoneInfo();
+				zoneInfo.setZoneNo("DM01001001");
+				zoneInfo.setZoneName("DM01001001二级分区");
+				list.add(zoneInfo);
+				ZoneInfo zoneInfo1 = new ZoneInfo();
+				zoneInfo1.setZoneNo("DM01001002");
+				zoneInfo1.setZoneName("DM01001002二级分区");
+				list.add(zoneInfo);
+				list.add(zoneInfo1);
+			}else if(("SL01002").equals(zoneNo)) {
+				ZoneInfo zoneInfo = new ZoneInfo();
+				zoneInfo.setZoneNo("DM01002001");
+				zoneInfo.setZoneName("DM01002001二级分区");
+				list.add(zoneInfo);
+				ZoneInfo zoneInfo1 = new ZoneInfo();
+				zoneInfo1.setZoneNo("DM01002002");
+				zoneInfo1.setZoneName("DM01002002二级分区");
+				list.add(zoneInfo);
+				list.add(zoneInfo1);
+			}else if(("SL02001").equals(zoneNo)) {
+				ZoneInfo zoneInfo = new ZoneInfo();
+				zoneInfo.setZoneNo("DM02001001");
+				zoneInfo.setZoneName("DM02001001二级分区");
+				list.add(zoneInfo);
+				ZoneInfo zoneInfo1 = new ZoneInfo();
+				zoneInfo1.setZoneNo("DM02001002");
+				zoneInfo1.setZoneName("DM02001002二级分区");
+				list.add(zoneInfo);
+				list.add(zoneInfo1);
+			}else if(("SL02002").equals(zoneNo)) {
+				ZoneInfo zoneInfo = new ZoneInfo();
+				zoneInfo.setZoneNo("DM02002001");
+				zoneInfo.setZoneName("DM02002001二级分区");
+				list.add(zoneInfo);
+				ZoneInfo zoneInfo1 = new ZoneInfo();
+				zoneInfo1.setZoneNo("DM02002002");
+				zoneInfo1.setZoneName("DM02002002二级分区");
+				list.add(zoneInfo);
+				list.add(zoneInfo1);
+			}
 		}
+		
 		return list;
 	}
 
