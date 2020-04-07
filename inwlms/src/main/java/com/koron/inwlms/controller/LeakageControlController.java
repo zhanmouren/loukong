@@ -15,6 +15,7 @@ import org.swan.bean.MessageBean;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
@@ -25,11 +26,13 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
+import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
+import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
-import com.koron.inwlms.service.impl.UserServiceImpl;
 import com.koron.inwlms.service.leakageControl.AlarmMessageService;
 import com.koron.inwlms.service.leakageControl.AlarmProcessService;
+import com.koron.inwlms.service.leakageControl.StatisticalAnalysisService;
 import com.koron.inwlms.service.leakageControl.WarningSchemeService;
 import com.koron.util.Constant;
 
@@ -53,21 +56,35 @@ public class LeakageControlController {
 	private AlarmProcessService aps;
 	@Autowired
 	private WarningSchemeService wss;
+	@Autowired
+	private StatisticalAnalysisService sas;
 
 	@RequestMapping(value = "/queryAlarmMessage.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息接口", notes = "查询预警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryAlarmMessage(@RequestBody WarningInfDTO warningInfDTO) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		if(warningInfDTO.getStartTime() == null) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!开始时间为空");
+	        return msg.toJson();
+		}
+		if(warningInfDTO.getEndTime() == null) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!结束时间为空");
+	        return msg.toJson();
+		}
+		
 		if(warningInfDTO.getFirstPartion().equals("全部")) {
 			warningInfDTO.setAreaCode(null); 
 		}
-		//通过分区编码查询出所属的所有0级分区编码，将参数分区编码设置为0级分区编码
+		//TODO 通过分区编码查询出所属的所有0级分区编码，将参数分区编码设置为0级分区编码
 		
 		try {
 			List<AlarmMessageVO> alarmMessageList = ADOConnection.runTask(ams, "queryAlarmMessage", List.class, warningInfDTO);
 			if(alarmMessageList != null && alarmMessageList.size() != 0) {
-				//转化枚举类型key为value
+				//TODO 转化枚举类型key为value
 				
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(alarmMessageList);
@@ -87,11 +104,17 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmMessageByRref.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询主报警ID下的预警信息接口", notes = "查询主报警ID下的预警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmMessageByRref(Integer id) {
+    public String queryAlarmMessageByRref(Integer code) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
+		if(code == null) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("主报警ID为空");
+	        return msg.toJson();
+		}
+		
 		try {
-			List<AlarmMessageVO> alarmMessageList = ADOConnection.runTask(ams, "queryAlarmMessageByRref", List.class, id);
+			List<AlarmMessageVO> alarmMessageList = ADOConnection.runTask(ams, "queryAlarmMessageByRref", List.class, code);
 			if(alarmMessageList != null && alarmMessageList.size() != 0) {
 				msg.setData(alarmMessageList);
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -483,6 +506,42 @@ public class LeakageControlController {
 	        msg.setDescription("查询历史数据失败");
 		}
 		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/queryProcessingStatistics.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "漏控处理统计接口", notes = "漏控处理统计接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryProcessingStatistics(@RequestBody ProcessingStatisticsDTO processingStatisticsDTO) {
+		MessageBean<ProcessingStatisticsVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ProcessingStatisticsVO.class);
+		if(processingStatisticsDTO.getStartTime() == null || processingStatisticsDTO.getEndTime() == null) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("时间段为空");
+			return msg.toJson();
+		}
+		
+		try {
+			ProcessingStatisticsVO processingStatisticsVO = ADOConnection.runTask(sas, "queryProcessingStatistics",ProcessingStatisticsVO.class,processingStatisticsDTO);
+			
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(processingStatisticsVO);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("漏控处理信息统计失败");
+		}
+		
+		return msg.toJson();
+	}
+	
+	
+	@RequestMapping(value = "/queryPartitionInvest.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "分区投资曲线查询接口", notes = "分区投资曲线查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPartitionInvest() {
+		MessageBean<PartitionInvestVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PartitionInvestVO.class);
+		
+		
+		return null;
 	}
 	
 }
