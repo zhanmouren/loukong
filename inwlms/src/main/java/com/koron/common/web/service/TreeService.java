@@ -13,7 +13,7 @@ import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
-import com.koron.inwlms.mapper.master.sysManager.UserMapper;
+import com.koron.inwlms.mapper.sysManager.UserMapper;
 
 /**<pre>
  * 树形结构：
