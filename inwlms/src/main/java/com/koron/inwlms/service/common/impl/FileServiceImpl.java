@@ -5,7 +5,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
-import com.koron.inwlms.mapper.master.common.FileMapper;
+import com.koron.inwlms.mapper.common.FileMapper;
 import com.koron.inwlms.service.common.FileService;
 
 
