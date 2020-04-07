@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.koron.inwlms.mapper.master.sysManager.UserMapper">
+<mapper namespace="com.koron.inwlms.mapper.sysManager.UserMapper">
    <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">  
         insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime")
         values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime})     
@@ -19,6 +19,7 @@
    	    <if test="status != null"> and "user".status ='${status}'</if>
    	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>          
 	  </trim>
+	   order by "user"."createTime" desc
     </select>
     
     <update id="updateUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
@@ -65,6 +66,7 @@
        from  "SM_userRoleRelation" as "userRela"
        left join  "SM_userRole" as "userRole" on "userRole".id="userRela"."roleID"
        where "userRela"."roleID"=#{roleId}
+       order by "userRole"."createTime" desc
     </select>
     
     <!-- 批量删除角色信息 -->
@@ -84,12 +86,14 @@
        left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
 	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"
        where "userRela"."roleID"=#{roleId}
+       order by "user"."createTime" desc
     </select>
     
     <!--查询所有角色列表 -->
     <select id="queryAllRole"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
        select id as "roleId",name as "roleName",remark as "roleRemark","createBy","createTime","updateBy","updateTime" 
        from "SM_userRole" 
+       order by "createTime" desc
     </select>
     
     <!--遍历插入职员与角色的关系 -->
@@ -116,7 +120,8 @@
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
 	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
-	   where "user".id not in(select "userrela"."userID" from "SM_userRoleRelation" as "userrela" where "userrela"."roleID" =#{roleId})	 
+	   where "user".id not in(select "userrela"."userID" from "SM_userRoleRelation" as "userrela" where "userrela"."roleID" =#{roleId})	
+	   order by "user"."createTime" desc 
      </select>
      
       <!-- 部门弹窗选择职员 -->
@@ -126,7 +131,8 @@
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
 	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
-	   where "user".id not in(select "deptuser"."userID" from "SM_userDept" as "deptuser" where "deptuser"."deptID" =#{depId})	 
+	   where "user".id not in(select "deptuser"."userID" from "SM_userDept" as "deptuser" where "deptuser"."deptID" =#{depId})
+	   order by "user"."createTime" desc	 
      </select>
      
      <!--遍历插入职员与部门的关系 -->
@@ -320,5 +326,23 @@
         </set>
 		where  id=#{depId}
 	   </update>
+	   
+	    <!-- 根据Code查询组织-->
+      <select id="queryOrgByCode"  resultType="com.koron.inwlms.bean.VO.sysManager.OrgVO">
+          select  id as "orgId",code as "orgCode",name as "orgName",type as "orgType"
+          from "SM_organize"  
+          where    code=#{orgCode}
+      </select>
+      
+        <!-- 根据部门Code查询部门人员-->
+      <select id="queryDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+          select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."Email" is null then '' else "user"."Email" end,"user".name,case when "user".position is null then -1 else "user".position end,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
+		  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+		   from "SM_user" as "user"       
+		   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
+		   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"   
+          where "dept".code=#{depCode}
+          order by "user"."createTime" desc
+      </select>
     
 </mapper>

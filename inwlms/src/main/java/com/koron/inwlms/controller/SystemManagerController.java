@@ -30,8 +30,9 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
-import com.koron.inwlms.service.impl.TestServiceImpl;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
 import com.koron.util.Constant;
@@ -330,10 +331,8 @@ public class SystemManagerController {
     @ApiOperation(value = "根据角色ID加载角色人员接口", notes = "根据角色ID加载角色人员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryUserByRoleId(@RequestBody RoleDTO roleDTO) {
-		//可以不传角色Id,默认为超级管理员
 		 if(roleDTO.getRoleId()==null) {
-			 //测试中暂时设定id为3的为超级管理员
-			 roleDTO.setRoleId(3);
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
 		 }
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		//执行删除角色的操作
@@ -358,27 +357,27 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-24
-     * funtion:查询所有角色接口以及相关职员(默认第一次进入角色的时候)
+     * funtion:查询所有角色接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/queryAllRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询所有角色接口以及相关职员", notes = "查询所有角色接口以及相关职员", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/queryAllRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询所有角色接口", notes = "查询所有角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryAllRoleUser(@RequestBody RoleDTO roleDTO) {		
-		 MessageBean<RoleAndUserVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, RoleAndUserVO.class);	       
+	public String queryAllRole() {		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
-			  RoleAndUserVO roleAndUserVO=ADOConnection.runTask(new UserServiceImpl(), "queryAllRoleUser", RoleAndUserVO.class, roleDTO);		 
-			  if(roleAndUserVO!=null) {				 
+			  List<RoleVO> roleList=ADOConnection.runTask(new UserServiceImpl(), "queryAllRole", List.class);		 
+			  if(roleList.size()>0) {				 
 					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					 msg.setDescription("查询到所有角色和相关职员信息列表"); 
-					 msg.setData(roleAndUserVO);
+					 msg.setDescription("查询到所有角色列表"); 
+					 msg.setData(roleList);
 			 }else {
 				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				     msg.setDescription("没有查询到所有角色和相关职员信息列表"); 
+				     msg.setDescription("没有查询到所有角色"); 
 			 }
 	        }catch(Exception e){
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("查询角色职员失败");
+	            msg.setDescription("查询角色失败");
 	        }
 		
 	     return msg.toJson();
@@ -1116,15 +1115,15 @@ public class SystemManagerController {
 	}
 	 /*
      * date:2020-03-30
-     * funtion:组织下添加部门
+     * funtion:组织下添加部门,部门下添加部门
      * author:xiaozhan
      */
 	@RequestMapping(value = "/addTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "组织下添加部门接口", notes = "组织下添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "添加部门接口", notes = "添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addTreeDept(@RequestBody  TreeDTO parentBean) {
 		if(parentBean.getId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "组织Id不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "父部门Id不能为空", Integer.class).toJson();
 		}	
 		if(parentBean.getDepName()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
@@ -1134,39 +1133,36 @@ public class SystemManagerController {
 		}	
 		if(parentBean.getType()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树的类型不能为空", Integer.class).toJson();
-		}	
+		}
+		//0代表组织添加部门,1代表部门下添加部门
+		if(parentBean.getAddType()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "添加类型不能为空", Integer.class).toJson();
+		}
 		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
 		  try{			
 				  //组织下添加部门的话，先插入SM_department，SM_orgDept表数据		
 			      OrgAndDeptDTO orgDeptDTO=new OrgAndDeptDTO();
 			      orgDeptDTO.setOrgId(parentBean.getId());
-			      orgDeptDTO.setDepName(parentBean.getDepName());			      
-				  String deptCode=ADOConnection.runTask(new UserServiceImpl(), "addTreeDept", String.class, orgDeptDTO);
-				  if(deptCode==null) {
-					   //生成失败
-			        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-			            msg.setDescription("生成部门失败");
+			      orgDeptDTO.setDepName(parentBean.getDepName());	
+			      Integer finalRes=null;
+			      if(parentBean.getAddType()==0) {
+			    	finalRes=ADOConnection.runTask(new UserServiceImpl(), "addTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());
+			      }else {
+			    	finalRes=ADOConnection.runTask(new UserServiceImpl(), "deptAddTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());  
+			      }				  
+			      if(finalRes!=null) {
+			    	  if (finalRes==1){
+						msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+						msg.setDescription("添加部门成功");					  
+			    	  }else {
+			    		  msg.setCode(Constant.MESSAGE_INT_ERROR);
+						  msg.setDescription("添加部门失败"); 
+			    	  }
 				  }else {
-				  //组装child,主要两个参数，一个type，一个是foreignkey	
-					  LongTreeBean child=new LongTreeBean();
-					  child.setForeignkey(deptCode);
-					  child.setType(0);
-					  //根据treeParentId获取node
-					  LongTreeBean parent=ADOConnection.runTask(new TreeService(), "getNode", LongTreeBean.class, parentBean.getType().intValue(),parentBean.getForeignKey());
-					    if(parent!=null) {
-					      //生成根节点
-						  LongTreeBean longTreeBean=ADOConnection.runTask(new TreeService(), "addNode", LongTreeBean.class, parent,child);				 
-						  if(longTreeBean!=null) {
-						     msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
-						     msg.setDescription("生成部门成功");
-						     msg.setData(longTreeBean);		  
-						  }else {
-							 msg.setCode(Constant.MESSAGE_INT_ERROR);
-					         msg.setDescription("生成部门失败");
-						  }
-					    }
-				  }
-			 
+					 msg.setCode(Constant.MESSAGE_INT_ERROR);
+					 msg.setDescription("添加部门失败");
+				 }
+		 
 			 
 	        }catch(Exception e){
 	        	//生成失败
@@ -1177,64 +1173,6 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
-	 /*
-     * date:2020-03-30
-     * funtion:部门下添加部门
-     * author:xiaozhan
-     */
-	@RequestMapping(value = "/deptAddTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "部门下添加部门接口", notes = "部门下添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
-    @ResponseBody
-	public String deptAddTreeDept(@RequestBody  TreeDTO parentBean) {
-		if(parentBean.getId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "组织Id不能为空", Integer.class).toJson();
-		}	
-		if(parentBean.getDepName()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
-		}
-		
-		
-		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
-		  try{			
-				  //部门下添加部门的话，先插入SM_department表数据		
-			      OrgAndDeptDTO orgDeptDTO=new OrgAndDeptDTO();
-			      orgDeptDTO.setOrgId(parentBean.getId());
-			      orgDeptDTO.setDepName(parentBean.getDepName());			      
-				  String deptCode=ADOConnection.runTask(new UserServiceImpl(), "deptAddTreeDept", String.class, orgDeptDTO);
-				  if(deptCode==null) {
-					   //生成失败
-			        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-			            msg.setDescription("生成部门失败");
-				  }else {
-				  //组装child,主要两个参数，一个type，一个是foreignkey	
-					  LongTreeBean child=new LongTreeBean();
-					  child.setForeignkey(deptCode);
-					  child.setType(0);
-					  //根据treeParentId获取node
-					  LongTreeBean parent=ADOConnection.runTask(new TreeService(), "getNode", LongTreeBean.class, parentBean.getType().intValue(),parentBean.getForeignKey());
-					  if(parent!=null) {
-						  //生成子部门
-						  LongTreeBean longTreeBean=ADOConnection.runTask(new TreeService(), "addNode", LongTreeBean.class, parent,child);				 
-						  if(longTreeBean!=null) {
-						     msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
-						     msg.setDescription("部门下添加部门成功");
-						     msg.setData(longTreeBean);		  
-						  }else {
-							 msg.setCode(Constant.MESSAGE_INT_ERROR);
-					         msg.setDescription("部门添加部门失败");
-						  }
-					 }
-				  }
-			 
-			 
-	        }catch(Exception e){
-	        	//生成失败
-	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("生成部门失败");
-	        }
-		
-	     return msg.toJson();
-	}
 	 /*
      * date:2020-03-30
      * funtion:删除树结构的部门
@@ -1248,9 +1186,6 @@ public class SystemManagerController {
 		if(type==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson();
 		}	
-		if(longTreeBean.getSeq()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "节点序列号不能为空", Integer.class).toJson();
-		}
 		if(longTreeBean.getForeignkey()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "节点外键不能为空", Integer.class).toJson();
 		}
@@ -1260,40 +1195,23 @@ public class SystemManagerController {
 			  DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
 			  deptAndUserDTO.setDepCode(longTreeBean.getForeignkey());
 			  //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除，根据外键Code
-			  Integer res=ADOConnection.runTask(new UserServiceImpl(), "judgeExistUser", Integer.class, deptAndUserDTO);
-			  if(res!=null && res==0) {
-				  //判断下级数据是不是存在,就是不能强删除(下面这步才执行的是删除树结构节点的操作) 
-				  Integer delRes=ADOConnection.runTask(new TreeService(), "forceDeleteNode", Integer.class, longTreeBean.getType(),longTreeBean.getSeq(),false);
-				  if(delRes!=null && delRes!=-1) {
-						//删除数结构部门成功，执行删除部门的操作(物理删除),根据外键Code
-					   Integer delDeptRes=ADOConnection.runTask(new UserServiceImpl(), "deleteTreeDept", Integer.class, deptAndUserDTO);
-					   if(delDeptRes!=null) {
-						   if(delDeptRes==-1) {
-							   //删除数结构部门失败
-						        msg.setCode(Constant.MESSAGE_INT_DELERROR);
-						        msg.setDescription("物理删除数结构部门失败");  
-						   }else {
-							    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
-							    msg.setDescription("删除部门成功"); 
-						   }
-					   }else {
-						   //删除数结构部门失败
-					        msg.setCode(Constant.MESSAGE_INT_DELERROR);
-					        msg.setDescription("物理删除数结构部门失败");  
-					   }
-					  }else {
-					    //删除数结构部门失败
-				        msg.setCode(Constant.MESSAGE_INT_DELERROR);
-				        msg.setDescription("存在下级结构，删除数结构部门失败");
-					  } 
-			   }else {
-				  //删除数结构部门失败
-			        msg.setCode(Constant.MESSAGE_INT_DELERROR);
-			        msg.setDescription("该部门存在下级职员，删除数结构部门失败"); 
-			    }
-			 		  
+			  Integer res=ADOConnection.runTask(new UserServiceImpl(), "judgeExistUser", Integer.class, deptAndUserDTO,longTreeBean.getType(),longTreeBean.getForeignkey(),false);			  
+				if(res==0){
+					   msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					   msg.setDescription("删除部门成功"); 
+				}else if(res==-2) {
+					   msg.setCode(Constant.MESSAGE_INT_DELERROR);
+					   msg.setDescription("部门下存在职员,请先删除职员");  
+				}else if(res==-3) {
+					   msg.setCode(Constant.MESSAGE_INT_DELERROR);
+					   msg.setDescription("该部门存在下级单位");  
+				}else {
+						//删除数结构部门失败
+						  msg.setCode(Constant.MESSAGE_INT_DELERROR);
+						  msg.setDescription("删除数结构部门失败");  
+				} 					 						 		  
 	        }catch(Exception e){
-	        	//生成失败
+	        	//删除失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("删除失败");
 	        }
@@ -1333,6 +1251,74 @@ public class SystemManagerController {
 	        	//更新失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("修改失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
+     * date:2020-04-01
+     * funtion:查看组织树结构(展开所有)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryTreeOrg.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查看组织树接口", notes = "查看组织树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryTreeOrg(@RequestBody TreeDTO treeDTO) {
+		Integer type=Integer.valueOf(treeDTO.getType());
+		if(type==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
+		}	
+		if(treeDTO.getForeignKey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<TreeDeptVO> treeBeanList=ADOConnection.runTask(new TreeService(), "descendantByCode", List.class,treeDTO.getType(),treeDTO.getForeignKey());	
+			  if(treeBeanList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询组织树成功"); 
+					msg.setData(treeBeanList);
+				  }else {
+					//查询失败
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询组织树失败"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
+     * date:2020-04-03
+     * funtion:根据部门Code查询部门职员
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据部门Code查询职员接口", notes = "根据部门Code查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryDeptUser(@RequestBody DeptDTO deptDTO) {		
+		if(deptDTO.getDepCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<UserVO> deptUserList=ADOConnection.runTask(new UserServiceImpl(), "queryDeptUser", List.class,deptDTO);	
+			  if(deptUserList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询职员成功"); 
+					msg.setData(deptUserList);
+				  }else {
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("没有查询到相关职员"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
 	        }
 		
 	     return msg.toJson();

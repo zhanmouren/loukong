@@ -14,7 +14,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
-import com.koron.inwlms.mapper.master.leakageControl.AlarmProcessMapper;
+import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.util.TimeUtil;
 
 public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisService{

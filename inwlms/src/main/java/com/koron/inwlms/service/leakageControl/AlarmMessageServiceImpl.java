@@ -10,8 +10,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
-import com.koron.inwlms.mapper.master.TestMapper;
-import com.koron.inwlms.mapper.master.leakageControl.AlarmMessageMapper;
+import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
 
 @Service
 public class AlarmMessageServiceImpl implements AlarmMessageService {

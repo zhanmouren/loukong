@@ -9,22 +9,17 @@ package com.koron.inwlms.bean.DTO.apparentLoss;
 public class QueryALDTO{
 
 	/**
-	 * 一级分区
+	 * 分区编号
 	 */
-	public String firstLevelZone;
+	public String zoneNo;
 	
 	/**
-	 * 二级分许
+	 * 分区等级
 	 */
-	public String secondeLevelZone;
+	private Integer zoneRank;
 	
 	/**
-	 * DMA编号
-	 */
-	public String dmaNo;
-	
-	/**
-	 * 时间类型（0：分 ，1：时，2：日，3：月，4：年）
+	 * 时间类型（3：月，4：年）
 	 */
 	public Integer timeType;
 	
@@ -38,18 +33,6 @@ public class QueryALDTO{
 	 */
 	public Integer endTime;
 
-	public String getFirstLevelZone() {
-		return firstLevelZone;
-	}
-
-	public String getSecondeLevelZone() {
-		return secondeLevelZone;
-	}
-
-	public String getDmaNo() {
-		return dmaNo;
-	}
-
 	public Integer getTimeType() {
 		return timeType;
 	}
@@ -62,18 +45,6 @@ public class QueryALDTO{
 		return endTime;
 	}
 
-	public void setFirstLevelZone(String firstLevelZone) {
-		this.firstLevelZone = firstLevelZone;
-	}
-
-	public void setSecondeLevelZone(String secondeLevelZone) {
-		this.secondeLevelZone = secondeLevelZone;
-	}
-
-	public void setDmaNo(String dmaNo) {
-		this.dmaNo = dmaNo;
-	}
-
 	public void setTimeType(Integer timeType) {
 		this.timeType = timeType;
 	}
@@ -84,6 +55,22 @@ public class QueryALDTO{
 
 	public void setEndTime(Integer endTime) {
 		this.endTime = endTime;
+	}
+
+	public String getZoneNo() {
+		return zoneNo;
+	}
+
+	public Integer getZoneRank() {
+		return zoneRank;
+	}
+
+	public void setZoneNo(String zoneNo) {
+		this.zoneNo = zoneNo;
+	}
+
+	public void setZoneRank(Integer zoneRank) {
+		this.zoneRank = zoneRank;
 	}
 	
 }

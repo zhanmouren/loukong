@@ -1,4 +1,4 @@
-package com.koron.inwlms.mapper.master.leakageControl;
+package com.koron.inwlms.mapper.leakageControl;
 
 import java.util.List;
 

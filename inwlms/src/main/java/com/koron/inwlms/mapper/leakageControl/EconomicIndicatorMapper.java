@@ -1,4 +1,4 @@
-package com.koron.inwlms.mapper.master.leakageControl;
+package com.koron.inwlms.mapper.leakageControl;
 
 import org.koron.ebs.mybatis.EnvSource;
 import org.springframework.stereotype.Repository;

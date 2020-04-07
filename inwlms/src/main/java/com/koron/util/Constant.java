@@ -397,4 +397,30 @@ public class Constant {
 	 */
 	public final static String USER_TYPE_OT =  "W101770005";
 	
+	/**
+	 * 用水可疑关键字，
+	 */
+	public final static String USE_PRI1 = "公司,有限,农贸,商业,工商,制造,养殖,厂";
+	
+	/**
+	 * 用水可疑关键字,特种类型
+	 */
+	public final static String USE_PRI2 = "公洗浴,洗车,饮料,酒吧,游泳,酒店,宾馆,歌舞,娱乐,茶艺,高尔夫,美容美发,桑拿,浴足,健身,水疗,休闲会所";
+
+	/**
+	 * 分区等级1
+	 */
+	public final static Integer RANK_F = 1;
+	
+	/**
+	 * 分区等级2
+	 */
+	public final static Integer RANK_S = 2;
+	
+	/**
+	 * 分区等级3
+	 */
+	public final static Integer RANK_T = 3;
+	
+
 }

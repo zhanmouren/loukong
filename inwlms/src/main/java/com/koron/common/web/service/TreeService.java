@@ -5,9 +5,15 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
+import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
+import com.koron.inwlms.bean.VO.sysManager.OrgVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.inwlms.mapper.master.sysManager.UserMapper;
 
 /**<pre>
  * 树形结构：
@@ -18,6 +24,8 @@ import com.koron.common.web.mapper.TreeMapper;
  *
  */
 public class TreeService {
+	
+	
 	/**
 	 * 根据序号获取对应的层级数据
 	 */
@@ -89,6 +97,37 @@ public class TreeService {
 		return mapper.getDescendant(seq,type,mask,parentMask);
 	}
 	/**
+	 * 获取节点下所有子节点(节点名称)
+	 * @param factory
+	 * @param type 类型
+	 * @param foreignKey 外键
+	 * 
+	 * @return
+	 */
+	@TaskAnnotation("descendantByCode")
+	public static List<TreeDeptVO> descendantByCode(SessionFactory factory,int type,String foreignKey){
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		UserMapper userMapper = factory.getMapper(UserMapper.class);	
+		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+		List<TreeDeptVO> deptList=mapper.getDescendantName(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+		//查询Code为Org001的组织的详细信息
+		//TODO
+		String orgCode="Org001";
+		List <OrgVO> orgList=userMapper.queryOrgByCode(orgCode);
+		if(deptList.size()>0 && orgList.size()>0) {
+			for(int i=0;i<deptList.size();i++) {
+				//说明是组织
+				if(orgCode.equals(deptList.get(i).getForeignkey())) {
+					deptList.get(i).setDepId(orgList.get(0).getOrgId());
+					deptList.get(i).setDepName(orgList.get(0).getOrgName());
+					deptList.get(i).setDepCode(orgList.get(0).getOrgCode());
+					break;
+				}
+			}
+		}
+		return deptList;
+	}
+	/**
 	 * 获取节点路径.
 	 * 从最上层节点到当前节点
 	 * @param factory
@@ -125,10 +164,32 @@ public class TreeService {
 	 * @return
 	 */
 	@TaskAnnotation("forceDeleteNode")
-	public static final Integer forceDelete(SessionFactory factory, int type,long seq, boolean force) {
+	public static final int forceDelete(SessionFactory factory, int type,long seq, boolean force) {
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
 		LongTreeBean node = mapper.getBySeq(seq, type);
 		List<LongTreeBean> list = getDescendant(factory,type,seq,node.getMask(),node.getParentMask());
+		if(!force && list.size() > 1)
+			return -1;
+		for (LongTreeBean longTreeBean : list) {
+			mapper.delete(longTreeBean.getType(),longTreeBean.getSeq());			
+		}
+		return list.size();
+	}
+	/**
+	 * <pre>	
+	 * 删除节点.
+	 * 如果force为真，且其下有子节点，则子节点一起删除
+	 * </pre>
+	 * 
+	 * @param node 被删除的节点
+	 * @param force 是否强制删除节点
+	 * @return
+	 */
+	@TaskAnnotation("forceDelNode")
+	public static final Integer forceDelNode(SessionFactory factory, int type,String foreignkey, boolean force) {
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		LongTreeBean node = mapper.getByFor(foreignkey, type);
+		List<LongTreeBean> list = getDescendant(factory,type,node.getSeq(),node.getMask(),node.getParentMask());
 		Integer i=null;
 		if(!force && list.size() > 1) {
 			i=-1;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.koron.inwlms.mapper.master.apparentLoss.ApparentLossMapper">
+<mapper namespace="com.koron.inwlms.mapper.apparentLoss.ApparentLossMapper">
 
 	<select id="queryMALOverviewData" parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO"
 		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO">
@@ -17,8 +17,7 @@
 		FROM (
 		select
 		<!-- 全网 -->
-		<if test="(firstLevelZone == null or firstLevelZone == '') and (secondeLevelZone == null or secondeLevelZone == '') 
-		and (dmaNo == null or dmaNo == '')">
+		<if test="(zoneNo == null or zoneNo == '') and (zoneRank == null or zoneRank == '')">
 			sum(case when b.code='WNMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='WNMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
 			sum(case when b.code='WNMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
@@ -30,7 +29,7 @@
 			sum(case when b.code='WNMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b."yearMonth" as time
 		</if>
-		<if test="dmaNo != null and dmaNo != ''">
+		<if test="zoneNo != null and zoneNo != '' and zoneRank == 3">
 			<!-- DMA/PMA -->
 			sum(case when b.code='DMMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='DMMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -43,7 +42,7 @@
 			sum(case when b.code='DMMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b."yearMonth" as time
 		</if>
-		<if test="secondeLevelZone != null and secondeLevelZone != ''">
+		<if test="zoneNo != null and zoneNo != '' and zoneRank == 2">
 			<!-- 二级分区 -->
 			sum(case when b.code='SLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='SLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -56,7 +55,7 @@
 			sum(case when b.code='SLMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b."yearMonth" as time
 		</if>
-		<if test="firstLevelZone != null and firstLevelZone != ''">
+		<if test="zoneNo != null and zoneNo != '' and zoneRank == 1">
 			<!-- 一级分区 -->
 			sum(case when b.code='FLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='FLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -74,14 +73,8 @@
 		from (
 			select id,"yearMonth",code,value from "ANA_apparent_month"
 			where 1= 1
-			<if test="dmaNo != null and dmaNo != ''">
-			and "zoneNo" = #{dmaNo}
-			</if>
-			<if test="secondeLevelZone != null and secondeLevelZone != ''">
-			and "zoneNo" = #{secondeLevelZone}
-			</if>
-			<if test="firstLevelZone != null and firstLevelZone != ''">
-			and "zoneNo" = #{firstLevelZone}
+			<if test="zoneNo != null and zoneNo != ''">
+			and "zoneNo" = #{zoneNo}
 			</if>
 		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
 		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{startTime} 
@@ -103,8 +96,7 @@
 		round( avg(c."nonBasicInfoMeterRate") :: NUMERIC, 4 ) as "nonBasicInfoMeterRate"
 		FROM (
 		select
-		<if test="(firstLevelZone == null or firstLevelZone == '') and (secondeLevelZone == null or secondeLevelZone == '') 
-		and (dmaNo == null or dmaNo == '')">
+		<if test="(zoneNo == null or zoneNo == '') and (zoneRank == null or zoneRank == '')">
 			<!-- 全网 -->
 			sum(case when b.code='WNYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='WNYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -117,7 +109,7 @@
 			sum(case when b.code='WNYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b.year as time
 		</if>
-		<if test="dmaNo != null and dmaNo != ''">
+		<if test="zoneNo != null and zoneNo != '' and zoneRank == 3">
 			<!-- DMA/PMA -->
 			sum(case when b.code='DMYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='DMYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -130,7 +122,7 @@
 			sum(case when b.code='DMYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b.year as time
 		</if>
-		<if test="secondeLevelZone != null and secondeLevelZone != ''">
+		<if test="zoneNo != null and zoneNo != '' and zoneRank == 2">
 			<!-- 二级分区 -->
 			sum(case when b.code='SLYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='SLYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -143,7 +135,7 @@
 			sum(case when b.code='SLYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b.year as time
 		</if>
-		<if test="firstLevelZone != null and firstLevelZone != ''">
+		<if test="zoneNo != null and zoneNo != '' and zoneRank == 1">
 			<!-- 一级分区 -->
 			sum(case when b.code='FLYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='FLYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -161,14 +153,8 @@
 		from (
 			select id,year,code,value from "ANA_apparent_year"
 			where year &gt;= #{startTime} and year &lt;= #{endTime}
-			<if test="dmaNo != null and dmaNo != ''">
-			and "zoneNo" = #{dmaNo}
-			</if>
-			<if test="secondeLevelZone != null and secondeLevelZone != ''">
-			and "zoneNo" = #{secondeLevelZone}
-			</if>
-			<if test="firstLevelZone != null and firstLevelZone != ''">
-			and "zoneNo" = #{firstLevelZone}
+			<if test="zoneNo != null and zoneNo != ''">
+			and "zoneNo" = #{zoneNo}
 			</if>
 		) a,"LC_APP_dim_indicator" where ind.code = a.code 
 		) b
@@ -177,9 +163,8 @@
 
 	<select id="queryMALList" resultType="com.koron.inwlms.bean.VO.apparentLoss.ALListVO">
 		select
-		<!-- 全网 -->
-		<if test="(qaDTO.firstLevelZone == null or qaDTO.firstLevelZone == '') and (qaDTO.secondeLevelZone == null or qaDTO.secondeLevelZone == '') 
-		and (qaDTO.dmaNo == null or qaDTO.dmaNo == '')">
+		<if test="(qaDTO.zoneNo == null or  qaDTO.zoneNo == '') and (qaDTO.zoneRank == null or qaDTO.zoneRank == '')">
+			<!-- 一级分区 -->
 			b."zoneNo" as "zoneNo",
 			sum(case when b.code='FLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='FLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -192,7 +177,7 @@
 			sum(case when b.code='FLMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b."yearMonth" as time
 		</if>
-		<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != '' or (qaDTO.secondeLevelZone != null and qaDTO.secondeLevelZone != '')">
+		<if test="qaDTO.zoneRank != null and (qaDTO.zoneRank == 2 or qaDTO.zoneRank == 3)">
 			<!-- DMA/PMA -->
 			b."zoneNo" as "zoneNo",
 			sum(case when b.code='DMMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
@@ -206,8 +191,8 @@
 			sum(case when b.code='DMMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b."yearMonth" as time
 		</if>
-		<if test="qaDTO.firstLevelZone != null and qaDTO.firstLevelZone != ''">
-			<!-- 一级分区 -->
+		<if test="qaDTO.zoneRank != null and qaDTO.zoneRank == 1">
+			<!-- 二级分区 -->
 			b."zoneNo" as "zoneNo",
 			sum(case when b.code='SLMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='SLMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -225,9 +210,6 @@
 		from (
 			select id,"yearMonth",code,value, "zoneNo" from "ANA_apparent_month"
 			where 1= 1
-			<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != ''">
-				and "zoneNo" = #{qaDTO.dmaNo}
-			</if>
 			<if test="lists != null and lists.size > 0">
 				and "zoneNo" in 
 				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
@@ -245,9 +227,6 @@
 		select count(1) from (select b."yearMonth", b."zoneNo" from 
 		(select a.id,a."yearMonth",a.code,a."zoneNo" from
 		(select id,"yearMonth",code,value,"zoneNo" from "ANA_apparent_month" where 1= 1
-			<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != ''">
-				and "zoneNo" = #{qaDTO.dmaNo}
-			</if>
 			<if test="lists != null and lists.size > 0">
 				and "zoneNo" in 
 				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
@@ -262,8 +241,7 @@
 	<select id="queryYALList" resultType="com.koron.inwlms.bean.VO.apparentLoss.ALListVO">
 		select
 		<!-- 全网 -->
-		<if test="(qaDTO.firstLevelZone == null or qaDTO.firstLevelZone == '') and (qaDTO.secondeLevelZone == null or qaDTO.secondeLevelZone == '') 
-		and (qaDTO.dmaNo == null or qaDTO.dmaNo == '')">
+		<if test="(qaDTO.zoneNo == null or  qaDTO.zoneNo == '') and (qaDTO.zoneRank == null or qaDTO.zoneRank == '')">
 			b."zoneNo" as "zoneNo",
 			sum(case when b.code='FLYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
 			sum(case when b.code='FLYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
@@ -276,7 +254,7 @@
 			sum(case when b.code='FLYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b.year as time
 		</if>
-		<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != '' or (qaDTO.secondeLevelZone != null and qaDTO.secondeLevelZone != '')">
+		<if test="qaDTO.zoneRank != null and (qaDTO.zoneRank == 2 or qaDTO.zoneRank == 3)">
 			<!-- DMA/PMA -->
 			b."zoneNo" as "zoneNo",
 			sum(case when b.code='DMYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
@@ -290,7 +268,7 @@
 			sum(case when b.code='DMYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
 			b.year as time
 		</if>
-		<if test="qaDTO.firstLevelZone != null and qaDTO.firstLevelZone != ''">
+		<if test="qaDTO.zoneRank != null and qaDTO.zoneRank == 1">
 			<!-- 一级分区 -->
 			b."zoneNo" as "zoneNo",
 			sum(case when b.code='SLYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
@@ -309,9 +287,6 @@
 		from (
 			select id,year,code,value, "zoneNo" from "ANA_apparent_year"
 			where year &gt;= #{qaDTO.startTime} and year &lt;= #{qaDTO.endTime}
-			<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != ''">
-				and "zoneNo" = #{qaDTO.dmaNo}
-			</if>
 			<if test="lists != null and lists.size > 0">
 				and "zoneNo" in 
 				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
@@ -330,16 +305,11 @@
 		from (
 			select id,year,code,value from "ANA_apparent_year"
 			where year &gt;= #{qaDTO.startTime} and year &lt;= #{qaDTO.endTime}
-			<if test="qaDTO.dmaNo != null and qaDTO.dmaNo != ''">
-				and "zoneNo" = #{qaDTO.dmaNo}
-			</if>
-			<if test="qaDTO.secondeLevelZone != null and qaDTO.secondeLevelZone != '' or (qaDTO.firstLevelZone != null and qaDTO.firstLevelZone != '')">
-				<if test="lists != null and lists.size > 0">
-					and "zoneNo" in 
-					<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
-						#{item.zoneNo}    
-					</foreach> 
-				</if>
+			<if test="lists != null and lists.size > 0">
+				and "zoneNo" in 
+				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+					#{item.zoneNo}    
+				</foreach> 
 			</if>
 		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
 		) b 
@@ -387,12 +357,9 @@
 		group by month) c
 	</select>
 	
-	<select id="queryMeterReadLoss" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterReadData">
-	</select>
-	
 	<select id="queryFsMeterReadData" resultType="java.lang.String">
 		select code
-		from "gdh_month_flux_C001_jc" 
+		from "gdh_month_flux_C001_jc" where
 		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
@@ -404,10 +371,10 @@
 	    group by code;
 	</select>
 	
-	<select id="queryTotalMFlow" resultType="java.lang.String">
+	<select id="queryTotalMFlow" resultType="java.lang.Double">
 		select round( sum(flux) :: NUMERIC, 2 ) as mFlow
 		from "gdh_month_flux_C001_jc" where
-		month == #{time} || ''
+		month = #{time} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
 			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
@@ -427,7 +394,7 @@
 				#{item}    
 			</foreach> 
 		</if>
-	    order by code;
+	    order by code,month asc;
 	</select>
 	
 	<select id="queryMeterMZeroFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
@@ -473,4 +440,18 @@
 	    group by code;
 	</select>
 	
+	<select id="queryMeterErrUseData" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlMeterErrUseData">
+		select code as meterNo,
+		avg(flux)-3*stddev(flux) as minV,
+		avg(flux)+3*stddev(flux) as maxV
+		from "gdh_month_flux_C001_jc" where
+		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
+		<if test="lists != null and lists.size > 0">
+			and code in 
+			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+	    group by code;
+	</select>
 </mapper>

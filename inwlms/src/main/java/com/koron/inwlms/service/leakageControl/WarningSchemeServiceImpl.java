@@ -11,8 +11,8 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
-import com.koron.inwlms.mapper.master.leakageControl.AlarmMessageMapper;
-import com.koron.inwlms.mapper.master.leakageControl.WarningSchemeMapper;
+import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
+import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 
 @Service
 public class WarningSchemeServiceImpl implements WarningSchemeService {

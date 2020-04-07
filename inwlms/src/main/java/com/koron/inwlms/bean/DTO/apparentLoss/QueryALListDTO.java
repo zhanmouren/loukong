@@ -10,45 +10,36 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 public class QueryALListDTO extends BaseDTO{
 
 	/**
-	 * 一级分区
+	 * zone编号
 	 */
-	public String firstLevelZone;
+	private String zoneNo;
 	
 	/**
-	 * 二级分区
+	 * 分区等级
 	 */
-	public String secondeLevelZone;
+	private Integer zoneRank;
 	
 	/**
-	 * DMA编号
+	 * 时间类型（3：月，4：年）
 	 */
-	public String dmaNo;
-	
-	/**
-	 * 时间类型（0：分 ，1：时，2：日，3：月，4：年）
-	 */
-	public Integer timeType;
+	private Integer timeType;
 	
 	/**
 	 * 开始时间
 	 */
-	public Integer startTime;
+	private Integer startTime;
 	
 	/**
 	 * 结束时间
 	 */
-	public Integer endTime;
+	private Integer endTime;
 
-	public String getFirstLevelZone() {
-		return firstLevelZone;
+	public String getZoneNo() {
+		return zoneNo;
 	}
 
-	public String getSecondeLevelZone() {
-		return secondeLevelZone;
-	}
-
-	public String getDmaNo() {
-		return dmaNo;
+	public Integer getZoneRank() {
+		return zoneRank;
 	}
 
 	public Integer getTimeType() {
@@ -63,16 +54,12 @@ public class QueryALListDTO extends BaseDTO{
 		return endTime;
 	}
 
-	public void setFirstLevelZone(String firstLevelZone) {
-		this.firstLevelZone = firstLevelZone;
+	public void setZoneNo(String zoneNo) {
+		this.zoneNo = zoneNo;
 	}
 
-	public void setSecondeLevelZone(String secondeLevelZone) {
-		this.secondeLevelZone = secondeLevelZone;
-	}
-
-	public void setDmaNo(String dmaNo) {
-		this.dmaNo = dmaNo;
+	public void setZoneRank(Integer zoneRank) {
+		this.zoneRank = zoneRank;
 	}
 
 	public void setTimeType(Integer timeType) {
@@ -86,5 +73,5 @@ public class QueryALListDTO extends BaseDTO{
 	public void setEndTime(Integer endTime) {
 		this.endTime = endTime;
 	}
-	
+
 }

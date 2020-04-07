@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
- <mapper namespace="com.koron.inwlms.mapper.master.leakageControl.AlarmMessageMapper">
+ <mapper namespace="com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper">
   
   <select id="queryAlarmMessage" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
   select c.id as id, c.r_ref as r_ref, c."alarmNum" as "alarmNum", c."warningId" as "warningId", c."alarmType" as "alarmType", c."objectId" as "objectId", c."areaCode" as "areaCode",

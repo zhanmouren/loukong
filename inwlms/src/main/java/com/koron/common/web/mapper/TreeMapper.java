@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.*;
 
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
+
 public interface TreeMapper {
     /**
      * 根据序号获取对应的层级数据
@@ -14,6 +16,15 @@ public interface TreeMapper {
      */
     @Select("select * from \"SM_treeDet\" where type = #{type} and seq = #{seq}")
     public LongTreeBean getBySeq(@Param("seq") long seq, @Param("type") int type);
+    /**
+     * 根据外键获取对应的层级数据
+     *
+     * @param seq  序号
+     * @param type 类型
+     * @return 对应的节点
+     */
+    @Select("select * from \"SM_treeDet\" where type = #{type} and foreignkey = #{foreignkey}")
+    public LongTreeBean getByFor(@Param("foreignkey") String foreignkey, @Param("type") int type);
 
     /**
      * 根据ID获取对应的层级数据
@@ -39,8 +50,8 @@ public interface TreeMapper {
      * @param bean 节点
      * @return 节点集合
      */
-    @Select("select * from \"SM_treeDet\" where (seq & ~((1 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
-            + "and (seq & ((1 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
+    @Select("select * from \"SM_treeDet\" where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
+            + "and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
     List<LongTreeBean> getChildren(LongTreeBean bean);
 
     /**
@@ -49,8 +60,17 @@ public interface TreeMapper {
      * @param bean 节点
      * @return 节点集合
      */
-    @Select("select * from \"SM_treeDet\" where (seq & ~((1 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and type = #{type} order by seq")
+    @Select("select * from \"SM_treeDet\" where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and type = #{type} order by seq")
     public List<LongTreeBean> getDescendant(@Param("seq") long seq, @Param("type") int type, @Param("mask") int mask, @Param("parentMask") int parentMask);
+
+    /**
+     * 获取节点之下所有节点和节点名称(组织部门)
+     *
+     * @param bean 节点
+     * @return 节点集合
+     */
+    @Select("select \"SM_treeDet\".*, \"SM_department\".id \"depId\", \"SM_department\".name \"depName\",\"SM_department\".code \"depCode\",\"SM_department\".status \"depstatus\" from \"SM_treeDet\"  left join \"SM_department\"  on \"SM_treeDet\".foreignkey=\"SM_department\".code where (\"SM_treeDet\".seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and \"SM_treeDet\".type = #{type} order by \"SM_treeDet\".seq")
+    public List<TreeDeptVO> getDescendantName(@Param("seq") long seq, @Param("type") int type, @Param("mask") int mask, @Param("parentMask") int parentMask);
 
     /**
      * 获取节点的兄弟节点
@@ -58,8 +78,8 @@ public interface TreeMapper {
      * @param bean 节点
      * @return 节点集合
      */
-	@Select("select * from \"SM_treeDet\" " + "where (seq & ~((1 << (62 - #{bean.parentMask}))-1)) = (#{bean.seq} & ~((1 << (62 - #{bean.parentMask}))-1))"
-			+ " and (seq & ((1 << (62 - #{bean.parentMask}+#{bean.mask}))-1)) = 0")
+	@Select("select * from \"SM_treeDet\" " + "where (seq & ~((1::int8 << (62 - #{bean.parentMask}))-1)) = (#{bean.seq} & ~((1::int8 << (62 - #{bean.parentMask}))-1))"
+			+ " and (seq & ((1::int8 << (62 - #{bean.parentMask}+#{bean.mask}))-1)) = 0")
     public List<LongTreeBean> getSibling(@Param("bean") LongTreeBean bean);
 
     /**
@@ -68,7 +88,7 @@ public interface TreeMapper {
      * @param bean 节点
      * @return 节点集合
      */
-	@Select("select * from \"SM_treeDet\" where (#{seq} & ~((1 << (62 - parentmask-mask))-1)) = seq and type = #{type} order by seq")
+	@Select("select * from \"SM_treeDet\" where (#{seq} & ~((1::int8 << (62 - parentmask-mask))-1)) = seq and type = #{type} order by seq")
     public List<LongTreeBean> getPath(@Param("type") int type, @Param("seq") long seq);
 
     /**
@@ -109,7 +129,7 @@ public interface TreeMapper {
      * @param type  类型
      * @return
      */
-	@Select("select count(0) from \"SM_treeDet\" where type = #{type} and seq >= #{lower} and seq < #{upper} and seq & ((1 << #{mask}) -1) = 0")
+	@Select("select count(0) from \"SM_treeDet\" where type = #{type} and seq >= #{lower} and seq < #{upper} and seq & ((1::int8 << #{mask}) -1) = 0")
     public int getCount(@Param("lower") long lower, @Param("upper") long upper, @Param("mask") int mask, @Param("type") int type);
 
     /**
@@ -143,7 +163,7 @@ public interface TreeMapper {
     /**
      * @return
      */
-	@Select("select COALESCE(max(key),0) from (select row_number() over() as key,a.seq >> (62-parentmask-mask)  & (1 << mask )-1 as value from \"SM_treeDet\" a where a.type = #{type} and seq > #{lower} and seq < #{upper} and (seq & ((1 << #{mask}) -1)) = 0) as t where t.key = t.value")
+	@Select("select COALESCE(max(key),0) from (select row_number() over() as key,a.seq >> (62-parentmask-mask)  & (1::int8 << mask )-1 as value from \"SM_treeDet\" a where a.type = #{type} and seq > #{lower} and seq < #{upper} and (seq & ((1::int8 << #{mask}) -1)) = 0) as t where t.key = t.value")
     public int getAvailable(@Param("lower") long lower, @Param("upper") long upper, @Param("mask") int mask, @Param("type") int type);
 
     /**
@@ -160,10 +180,10 @@ public interface TreeMapper {
     @Select("select * from \"SM_treeDet\" where type = #{type} and foreignkey = #{foreign}")
     public LongTreeBean getBeanByForeignIdType(@Param("type") int type, @Param("foreign") String foreignKey);
 
-	@Select("select * from \"SM_treeDet\" where (#{seq} & ~((1 << (62 - parentmask - mask))-1)) = seq and type = #{type} order by seq desc limit 1,1")
+	@Select("select * from \"SM_treeDet\" where (#{seq} & ~((1::int8 << (62 - parentmask - mask))-1)) = seq and type = #{type} order by seq desc limit 1,1")
     public LongTreeBean getParant(LongTreeBean bean);
 
 	@Select("select \"SM_treeDet\".seq,\"SM_treeDet\".parentmask from \"SM_treeDet\" " + "inner join (" + "	select \"SM_treeDet\".* from \"SM_treeDet\" "
-			+ "where type = #{type} and seq =#{seq}) a on (\"SM_treeDet\".seq & ~((1 << (62 - a.parentMask-a.mask))-1)) = a.seq")
+			+ "where type = #{type} and seq =#{seq}) a on (\"SM_treeDet\".seq & ~((1::int8 << (62 - a.parentMask-a.mask))-1)) = a.seq")
     public List<LongTreeBean> getDescendantByParentId(@Param("seq") Long seq, @Param("type") String type);
 }

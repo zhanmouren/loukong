@@ -16,7 +16,16 @@ public class TreeDTO {
    private String foreignKey;
   //树的类型
    private Integer type;
+   
+   //组织下添加树还是部门下添加部门
+   private Integer addType;
 
+public Integer getAddType() {
+	return addType;
+}
+public void setAddType(Integer addType) {
+	this.addType = addType;
+}
 public String getForeignKey() {
 	return foreignKey;
 }
