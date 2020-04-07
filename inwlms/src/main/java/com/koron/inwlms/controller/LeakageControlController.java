@@ -141,7 +141,7 @@ public class LeakageControlController {
 		try {
 			List<AlarmProcessVO> alarmProcessList = ADOConnection.runTask(aps,"queryAlarmProcess",List.class,alarmProcessDTO);
 			if(alarmProcessList != null && alarmProcessList.size() != 0) {
-				//转化枚举类型key为value
+				//TODO 转化枚举类型key为value
 				
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(alarmProcessList);

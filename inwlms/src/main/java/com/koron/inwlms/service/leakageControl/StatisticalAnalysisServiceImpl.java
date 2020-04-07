@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
@@ -17,6 +18,7 @@ import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.util.TimeUtil;
 
+@Service
 public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisService{
 	
 	@TaskAnnotation("queryProcessingStatistics")
