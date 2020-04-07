@@ -28,7 +28,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
-import com.koron.inwlms.mapper.master.sysManager.UserMapper;
+import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.RandomCodeUtil;
 import com.koron.util.Constant;

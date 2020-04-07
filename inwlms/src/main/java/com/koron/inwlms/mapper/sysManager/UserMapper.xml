@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.koron.inwlms.mapper.master.sysManager.UserMapper">
+<mapper namespace="com.koron.inwlms.mapper.sysManager.UserMapper">
    <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">  
         insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime")
         values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime})     
