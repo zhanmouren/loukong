@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 * @Date 2020.03.24
 */
 public class RoleVO {
+      	//角色Code
+	    private String roleCode;
 	    //角色Id
 		private Integer roleId;
 		//角色名称
@@ -22,6 +24,12 @@ public class RoleVO {
 		private String updateBy;
 		//修改时间
 		private Timestamp updateTime;
+		public String getRoleCode() {
+			return roleCode;
+		}
+		public void setRoleCode(String roleCode) {
+			this.roleCode = roleCode;
+		}
 		public Integer getRoleId() {
 			return roleId;
 		}

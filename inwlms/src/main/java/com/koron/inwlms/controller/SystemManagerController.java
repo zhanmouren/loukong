@@ -79,17 +79,23 @@ public class SystemManagerController {
 		//执行插入职员的操作
 		  try{
 			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addUser", Integer.class, userDTO);		 
-			  if(insertRes!=null) {
 				  if(insertRes==1) {
 					//添加用户成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("添加用户成功");
-				  }else {
+				  }else if(insertRes==-2) {
+					msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("登录名已经存在,请重新设置登录名");
+				  }else if(insertRes==-3) {
+				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("工号已经存在，请重新设置工号");  
+				  }
+				  else {
 				    //插入失败
 			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 			        msg.setDescription("添加用户失败");
 				  }
-			  }
+			  
 	        }catch(Exception e){
 	        	//插入失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -139,8 +145,8 @@ public class SystemManagerController {
     @ApiOperation(value = "修改职员信息接口", notes = "修改职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateUser(@RequestBody UserDTO userDTO) {
-		if(userDTO.getUserId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的Id不能为空", Integer.class).toJson();
+		if(userDTO.getCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员编码不能为空", Integer.class).toJson();
 		}
 		if(userDTO.getName()==null || StringUtils.isBlank(userDTO.getName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员名不能为空", Integer.class).toJson();
@@ -184,8 +190,8 @@ public class SystemManagerController {
     @ApiOperation(value = "删除职员信息接口", notes = "删除职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String  deleteUser(@RequestBody UserDTO userDTO) {
-		if(userDTO.getUserId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的Id不能为空", Integer.class).toJson();
+		if(userDTO.getCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除职员的操作
@@ -224,20 +230,24 @@ public class SystemManagerController {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色名称不能为空", Integer.class).toJson();
 		}	
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
-		//执行插入职员的操作
+		//执行插入角色的操作
 		  try{
 			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addNewRole", Integer.class, roleDTO);		 
-			  if(insertRes!=null) {
 				  if(insertRes==1) {
-					//添加用户成功
+					//添加角色成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("添加新角色成功");
-				  }else {
+				  }else if(insertRes==-2) {
+					  //插入失败
+				     msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				     msg.setDescription("角色名称重复");
+				  }
+				  else {
 				    //插入失败
 			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 			        msg.setDescription("添加新角色失败");
 				  }
-			  }
+			  
 	        }catch(Exception e){
 	        	//插入失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -256,30 +266,26 @@ public class SystemManagerController {
     @ApiOperation(value = "修改角色属性接口", notes = "修改角色属性接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateRoleAttr(@RequestBody RoleDTO roleDTO) {
-		if(roleDTO.getRoleId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		if(roleDTO.getRoleCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
 		if(roleDTO.getRoleName()==null || StringUtils.isBlank(roleDTO.getRoleName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色名称不能为空", Integer.class).toJson();
 		}	
 		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
-		//执行修改职员的操作
 		  try{
 			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateRoleAttr", Integer.class, roleDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
-					//修改用户成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("修改角色属性成功");
 				  }else {
-				    //修改用户失败
 			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 			        msg.setDescription("修改角色属性失败");
 				  }
 			  }
 	        }catch(Exception e){
-	        	//修改用户失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("修改角色属性失败");
 	        }
@@ -296,8 +302,8 @@ public class SystemManagerController {
     @ApiOperation(value = "批量删除角色接口", notes = "批量删除角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteRoleAttr(@RequestBody RoleDTO roleDTO) {
-		if(roleDTO.getRoleIdList().size()<1) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色列表Id不能为空", Integer.class).toJson();
+		if(roleDTO.getRoleCodeList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色列表code不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色的操作
@@ -327,20 +333,20 @@ public class SystemManagerController {
      * funtion:根据角色ID加载角色人员接口
      * author:xiaozhan
      */  	
-	@RequestMapping(value = "/queryUserByRoleId.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "根据角色ID加载角色人员接口", notes = "根据角色ID加载角色人员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/queryUserByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据角色code加载角色人员接口", notes = "根据角色ID加载角色人员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryUserByRoleId(@RequestBody RoleDTO roleDTO) {
-		 if(roleDTO.getRoleId()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		 if(roleDTO.getRoleCode()==null) {
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		 }
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		//执行删除角色的操作
 		  try{
-			  List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryUserByRoleId", List.class, roleDTO);		 
+			  List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryUserByRoleCode", List.class, roleDTO);		 
 			  if(userList.size()>0) {				 
 					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					 msg.setDescription("根据角色Id查询到相关职员信息列表"); 
+					 msg.setDescription("根据角色code查询到相关职员信息列表"); 
 					 msg.setData(userList);
 			 }else {
 				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -392,11 +398,11 @@ public class SystemManagerController {
     @ApiOperation(value = "插入职员(批量)和角色的关系", notes = "插入职员(批量)和角色的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
-		if(roleUserDTO.getRoleId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		if(roleUserDTO.getRoleCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
-		if(roleUserDTO.getUserList().size()<1) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户列表不能为空", Integer.class).toJson();
+		if(roleUserDTO.getUserCodeList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加用户和角色关系的操作
@@ -428,11 +434,11 @@ public class SystemManagerController {
     @ApiOperation(value = "删除角色中职员接口", notes = "删除角色中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
-		if(roleUserDTO.getRoleId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		if(roleUserDTO.getRoleCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
-		if(roleUserDTO.getUserList().size()<1) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户列表不能为空", Integer.class).toJson();
+		if(roleUserDTO.getUserCodeList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色中职员(批量)操作
@@ -464,8 +470,8 @@ public class SystemManagerController {
     @ApiOperation(value = "查询角色其他职员接口", notes = "查询角色其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryExceptRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {
-		if(roleUserDTO.getRoleId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		if(roleUserDTO.getRoleCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		 //执行查询职员
@@ -498,8 +504,8 @@ public class SystemManagerController {
     @ApiOperation(value = "查询部门其他职员接口", notes = "查询部门其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryExceptDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {
-		if(deptUserDTO.getDepId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门Id不能为空", Integer.class).toJson();
+		if(deptUserDTO.getDepCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		 //执行查询职员
@@ -1314,6 +1320,70 @@ public class SystemManagerController {
 				  }else {
 			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
 			        msg.setDescription("没有查询到相关职员"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-04-07
+     * funtion:通过此接口生成菜单模块。
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/addMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "生成菜单模块接口", notes = "生成菜单模块接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addMenu(@RequestBody RoleDTO roleDTO) {		
+		if(roleDTO.getRoleId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<UserVO> menuList=ADOConnection.runTask(new UserServiceImpl(), "addMenu", List.class,roleDTO);	
+			  if(menuList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("添加菜单成功"); 
+					msg.setData(menuList);
+				  }else {
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("添加菜单失败"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加菜单失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-04-07(未开发)
+     * funtion:通过此接口加载该角色所有菜单以及打勾的权限。
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryRoleMenuByRoleId.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "加载角色菜单权限接口", notes = "加载角色菜单权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryRoleMenuByRoleId(@RequestBody RoleDTO roleDTO) {		
+		if(roleDTO.getRoleId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<UserVO> menuList=ADOConnection.runTask(new UserServiceImpl(), "queryRoleMenuByRoleId", List.class,roleDTO);	
+			  if(menuList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询角色菜单权限成功"); 
+					msg.setData(menuList);
+				  }else {
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("没有查询到角色菜单权限"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败

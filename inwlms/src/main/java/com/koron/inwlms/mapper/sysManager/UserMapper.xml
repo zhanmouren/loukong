@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.sysManager.UserMapper">
+   <!-- 插入职员信息 -->
    <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">  
-        insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime")
-        values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime})     
+        insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code")
+        values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime},#{code})     
     </insert>
-    
+     <!-- 查询相关职员信息 -->
     <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
       select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname","user".code  as code    
 	   from "SM_user" as "user"       
-	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
-	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"       
+	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   
+	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"      
        <trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user".name like '%${name}%'</if>  
    	    <if test="depName != null  and depName !='' "> and "dept".name like '%${depName}%'</if>
    	    <if test="userId != null"> and "user".id ='${userId}'</if>  
    	    <if test="status != null"> and "user".status ='${status}'</if>
-   	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>          
+   	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>
+   	    <if test="code != null"> and "user".code = #{code}</if> 
+   	    <if test="loginName != null"> and "user"."loginName" = #{loginName}</if> 
+   	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if>           
 	  </trim>
 	   order by "user"."createTime" desc
     </select>
-    
+    <!-- 修改职员信息 -->
     <update id="updateUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
 		update "SM_user" 
 		<set>	    
@@ -34,22 +38,30 @@
              <if test="updateTime != null" > "updateTime" = #{updateTime},</if>  
              <if test="status != null" > status = #{status},  </if>               
 		</set>
-		where id=#{userId}
+		where code=#{code}
      </update>
-     
+     <!-- 修改用户信息,删除 -->
     <update id="deleteUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
 		update "SM_user" 
 		<set>	                                 
              <if test="whetUse != null" > "whetUse" = #{whetUse},</if> 
         </set>
-		where id=#{userId}
+		where code=#{code}
      </update>
-     
-      <insert id="addNewRole" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">  
-        insert into "SM_userRole"(name,remark,"createBy","createTime","updateBy","updateTime")
-        values(#{roleName},#{roleRemark},#{createBy},#{createTime},#{updateBy},#{updateTime})     
+      <!-- 添加新角色 -->
+     <insert id="addNewRole" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">  
+        insert into "SM_userRole"(name,remark,"createBy","createTime","updateBy","updateTime",code)
+        values(#{roleName},#{roleRemark},#{createBy},#{createTime},#{updateBy},#{updateTime},#{roleCode})     
     </insert>
     
+     <!-- 查询添加的新角色名称是否重复 -->
+    <select id="queryRoleByName"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
+       select "role".name as "roleName","role".code as "roleCode"
+       from  "SM_userRole" as "role"
+       where "role"."name"=#{roleName}
+    </select>
+    
+     <!-- 修改角色属性 -->
     <update id="updateRoleAttr" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">   
 		update "SM_userRole" 
 		<set>	                                 
@@ -58,56 +70,56 @@
              <if test="updateBy != null and updateBy!=''" > "updateBy" = #{updateBy},</if>                        
              <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
         </set>
-		where id=#{roleId}
+		where code=#{roleCode}
      </update>
-     
+     <!-- 查询该角色下有没有绑定职员 -->
      <select id="queryRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleMsgVO">
        select "userRole".name as roleName
        from  "SM_userRoleRelation" as "userRela"
-       left join  "SM_userRole" as "userRole" on "userRole".id="userRela"."roleID"
-       where "userRela"."roleID"=#{roleId}
+       left join  "SM_userRole" as "userRole" on "userRole".code="userRela"."roleCode"
+       where "userRela"."roleCode"=#{roleCode}
        order by "userRole"."createTime" desc
     </select>
     
     <!-- 批量删除角色信息 -->
-    <delete id="delRole" parameterType="int">
-        delete from "SM_userRole" where id in
+    <delete id="delRole" parameterType="String">
+        delete from "SM_userRole" where code in
         <foreach item="roleItem" collection="list" open="(" separator="," close=")">
             #{roleItem}
         </foreach>
     </delete>
     
-    <!--根据角色ID加载角色人员列表接口 -->
-     <select id="queryUserByRoleId"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+    <!--根据角色Code加载角色人员列表接口 -->
+     <select id="queryUserByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
        select "user".id as "userId","user"."loginName","user".passWord,"user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"
+	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname","user".code as code
        from "SM_userRoleRelation" as "userRela"
-       left join "SM_user" as "user" on "userRela"."userID"="user".id
-       left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
-	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID"
-       where "userRela"."roleID"=#{roleId}
+       left join "SM_user" as "user" on "userRela"."userCode"="user".code
+       left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
+	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
+       where "userRela"."roleCode"=#{roleCode}
        order by "user"."createTime" desc
     </select>
     
     <!--查询所有角色列表 -->
     <select id="queryAllRole"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
-       select id as "roleId",name as "roleName",remark as "roleRemark","createBy","createTime","updateBy","updateTime" 
+       select id as "roleId",name as "roleName",remark as "roleRemark","createBy","createTime","updateBy","updateTime",code as "roleCode" 
        from "SM_userRole" 
        order by "createTime" desc
     </select>
     
     <!--遍历插入职员与角色的关系 -->
     <insert id="addRoleUser" parameterType="java.util.List">  
-        insert into "SM_userRoleRelation"("userID", "roleID","createBy","createTime","updateBy","updateTime")values
+        insert into "SM_userRoleRelation"("userCode", "roleCode","createBy","createTime","updateBy","updateTime")values
 		<foreach collection="list" item="roleuser"  index="index" separator=",">
-			(${roleuser.userId}, ${roleuser.roleId}, #{roleuser.createBy}, #{roleuser.createTime}, #{roleuser.updateBy}, #{roleuser.updateTime})
+			(#{roleuser.userCode}, #{roleuser.roleCode}, #{roleuser.createBy}, #{roleuser.createTime}, #{roleuser.updateBy}, #{roleuser.updateTime})
 		</foreach>
     </insert>
     
      <!-- 批量删除角色中员工信息 -->
     <delete id="deleteRoleUser">
-        delete from "SM_userRoleRelation" where "roleID"=#{roleId} 
-        and "userID" in
+        delete from "SM_userRoleRelation" where "roleCode"=#{roleCode} 
+        and "userCode" in
         <foreach item="userItem" collection="list" open="(" separator="," close=")">
             #{userItem}
         </foreach>
@@ -116,22 +128,22 @@
      <!-- 角色弹窗选择职员 -->
      <select id="queryExceptRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
        select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname","user".code as code     
 	   from "SM_user" as "user"       
-	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
-	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
-	   where "user".id not in(select "userrela"."userID" from "SM_userRoleRelation" as "userrela" where "userrela"."roleID" =#{roleId})	
+	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
+	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
+	   where "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	
 	   order by "user"."createTime" desc 
      </select>
      
       <!-- 部门弹窗选择职员 -->
      <select id="queryExceptDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
        select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname"      
+	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname" ,"user".code     
 	   from "SM_user" as "user"       
-	   left join "SM_userDept" as "userdept" on "userdept"."userID"="user".id    
-	   left join "SM_department" as "dept"   on "dept".id="userdept"."deptID" 
-	   where "user".id not in(select "deptuser"."userID" from "SM_userDept" as "deptuser" where "deptuser"."deptID" =#{depId})
+	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
+	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
+	   where "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})
 	   order by "user"."createTime" desc	 
      </select>
      

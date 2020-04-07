@@ -10,6 +10,12 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 */
 
 public class QueryUserDTO extends BaseDTO{
+	//职员code
+	private String code;
+	//登录名
+	private String loginName;
+	//工号
+	private String workNo;
 	//职员Id
 	private Integer userId;
 	//职员名
@@ -21,6 +27,24 @@ public class QueryUserDTO extends BaseDTO{
 	  private Integer whetUse;
 	  //状态（0 在职，-1 离职）
 	  private Integer status;
+	public String getLoginName() {
+		return loginName;
+	}
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
+	}
+	public String getWorkNo() {
+		return workNo;
+	}
+	public void setWorkNo(String workNo) {
+		this.workNo = workNo;
+	}
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
 	public Integer getWhetUse() {
 		return whetUse;
 	}

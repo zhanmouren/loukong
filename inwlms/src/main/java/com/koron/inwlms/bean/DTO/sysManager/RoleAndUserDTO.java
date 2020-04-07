@@ -9,6 +9,12 @@ import java.util.List;
 * @Date 2020.03.24
 */
 public class RoleAndUserDTO {
+	//角色Code
+	private String roleCode;
+	//角色Code列表
+	private List<String> userCodeList;
+	//用户Code
+	private String userCode;
 	//角色Id
 	private Integer roleId;
 	//存储userId的List
@@ -24,6 +30,25 @@ public class RoleAndUserDTO {
 	//修改时间
 	private Timestamp updateTime;
 	
+	public String getUserCode() {
+		return userCode;
+	}
+	public void setUserCode(String userCode) {
+		this.userCode = userCode;
+	}
+	public String getRoleCode() {
+		return roleCode;
+	}
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
+	}
+	
+	public List<String> getUserCodeList() {
+		return userCodeList;
+	}
+	public void setUserCodeList(List<String> userCodeList) {
+		this.userCodeList = userCodeList;
+	}
 	public String getCreateBy() {
 		return createBy;
 	}

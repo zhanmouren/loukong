@@ -46,7 +46,25 @@ public class UserServiceImpl implements UserService{
 		userDTO.setCreateTime(timeNow);
 		userDTO.setUpdateBy("xiaozhan");
 		userDTO.setUpdateTime(timeNow);
-		Integer addResult=userMapper.addUser(userDTO);
+		//随机获取uuid,赋值给Code
+		userDTO.setCode(new RandomCodeUtil().getUUID32());	
+		//添加用户的时候判断工号和登录名称是否存在
+		QueryUserDTO queryUserDTO=new QueryUserDTO();
+		queryUserDTO.setLoginName(userDTO.getLoginName());		
+		List<UserVO> loginNameList=userMapper.queryUser(queryUserDTO);
+		Integer addResult=null;
+		if(loginNameList.size()>0) {
+			addResult=-2;
+			return addResult;
+		}
+		QueryUserDTO queryUserDTONew=new QueryUserDTO();
+		queryUserDTONew.setWorkNo(userDTO.getWorkNo());
+		List<UserVO> workNoList=userMapper.queryUser(queryUserDTONew);
+		if(workNoList.size()>0) {
+			addResult=-3;
+			return addResult;
+		}
+	    addResult=userMapper.addUser(userDTO);
 		return addResult;
 	}
 	
@@ -92,7 +110,18 @@ public class UserServiceImpl implements UserService{
 		roleDTO.setCreateTime(timeNow);
 		roleDTO.setUpdateBy("xiaozhan");
 		roleDTO.setUpdateTime(timeNow);
-		Integer addResult=userMapper.addNewRole(roleDTO);
+		//随机获取uuid,赋值给Code
+		roleDTO.setRoleCode(new RandomCodeUtil().getUUID32());	
+		//添加新角色的时候，判断名称是否重复
+		RoleDTO roleDTONew=new RoleDTO();
+		roleDTONew.setRoleName(roleDTO.getRoleName());
+		List<RoleVO> roleVOList=userMapper.queryRoleByName(roleDTONew);
+		Integer addResult=null;
+		if(roleVOList.size()>0) {
+			addResult=-2;
+			return addResult;
+		}
+	    addResult=userMapper.addNewRole(roleDTO);
 		return addResult;
 	}
     
@@ -117,9 +146,9 @@ public class UserServiceImpl implements UserService{
 		Integer delResult;
 		RoleMsgVO roleMsgVO=new RoleMsgVO();
 		//根据角色查询是否该角色绑定职员
-		for(Integer roleId:roleDTO.getRoleIdList()) {
+		for(String roleCode:roleDTO.getRoleCodeList()) {
 	      RoleDTO roleDTONew=new RoleDTO();
-	      roleDTONew.setRoleId(roleId);
+	      roleDTONew.setRoleCode(roleCode);
 		  List<RoleMsgVO> userList=userMapper.queryRoleUser(roleDTONew);
 		  //说明这条角色RoleId存在用户
 		  if(userList.size()>0) {
@@ -129,7 +158,7 @@ public class UserServiceImpl implements UserService{
 		  }
 		}
 		//执行批量删除角色的操作		
-		  delResult=userMapper.delRole(roleDTO.getRoleIdList());
+		  delResult=userMapper.delRole(roleDTO.getRoleCodeList());
 		  roleMsgVO.setMessage("批量删除成功");
 		  roleMsgVO.setResult(delResult);
 		  return roleMsgVO;
@@ -137,11 +166,11 @@ public class UserServiceImpl implements UserService{
 	}
 
 	//根据角色Id加载角色人员接口 2020/03/24
-	@TaskAnnotation("queryUserByRoleId")
+	@TaskAnnotation("queryUserByRoleCode")
 	@Override
-	public List<UserVO> queryUserByRoleId(SessionFactory factory, RoleDTO roleDTO) {			
+	public List<UserVO> queryUserByRoleCode(SessionFactory factory, RoleDTO roleDTO) {			
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		List<UserVO> userList=userMapper.queryUserByRoleId(roleDTO);
+		List<UserVO> userList=userMapper.queryUserByRoleCode(roleDTO);
 		return userList;
 	}
 
@@ -165,10 +194,10 @@ public class UserServiceImpl implements UserService{
 		//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
 		List<RoleAndUserDTO> roleAndUserDTOList=new ArrayList<RoleAndUserDTO>();
 		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-		for(int i=0;i<roleUserDTO.getUserList().size();i++) {
+		for(int i=0;i<roleUserDTO.getUserCodeList().size();i++) {
 			RoleAndUserDTO roleUserDTONew=new RoleAndUserDTO();
-			roleUserDTONew.setRoleId(roleUserDTO.getRoleId());
-			roleUserDTONew.setUserId(roleUserDTO.getUserList().get(i));
+			roleUserDTONew.setRoleCode(roleUserDTO.getRoleCode());
+			roleUserDTONew.setUserCode(roleUserDTO.getUserCodeList().get(i));
 			roleUserDTONew.setCreateTime(timeNow);
 			roleUserDTONew.setUpdateTime(timeNow);
 			roleUserDTONew.setCreateBy("小詹");
@@ -185,7 +214,7 @@ public class UserServiceImpl implements UserService{
 	public Integer deleteRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		//执行批量删除角色职员的操作
-		Integer delResult=userMapper.deleteRoleUser(roleUserDTO.getRoleId(),roleUserDTO.getUserList());
+		Integer delResult=userMapper.deleteRoleUser(roleUserDTO.getRoleCode(),roleUserDTO.getUserCodeList());
 		return delResult;
 	}
 

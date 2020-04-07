@@ -38,8 +38,8 @@ public interface UserService {
 	Integer updateRoleAttr(SessionFactory factory, RoleDTO roleDTO);
 	 //修改角色属性(物理删除)
 	RoleMsgVO deleteRoleAttr(SessionFactory factory, RoleDTO roleDTO);	
-	//根据角色Id加载角色人员接口
-	List<UserVO> queryUserByRoleId(SessionFactory factory, RoleDTO roleDTO);
+	//根据角色Code加载角色人员接口
+	List<UserVO> queryUserByRoleCode(SessionFactory factory, RoleDTO roleDTO);
 	//查询所有角色接口
 	 List<RoleVO> queryAllRole(SessionFactory factory);
 	//添加用户(批量)和角色关系的操作

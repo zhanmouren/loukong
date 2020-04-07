@@ -1,6 +1,7 @@
 package com.koron.inwlms.util;
 
 import java.util.Date;
+import java.util.UUID;
 
 //生成随机的Code
 public class RandomCodeUtil {
@@ -24,8 +25,12 @@ public class RandomCodeUtil {
     	  //2.部门
     	  if(type==2) {
     		 code="dept"+ toHex(new Date().getTime()); 
-    	  }      
+    	  }
     	  return code;
+       }
+       //获取32位的UUID
+       public static String getUUID32() {
+    	   return UUID.randomUUID().toString().replace("-", "").toLowerCase();
        }
        
 }

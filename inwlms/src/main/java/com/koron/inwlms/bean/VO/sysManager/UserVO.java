@@ -10,6 +10,8 @@ import java.sql.Timestamp;
 */
 
 public class UserVO {
+	 //职员code
+	 private String code;
 	 //职员id
 	  private Integer userId;
 	  //职员名称
@@ -43,6 +45,12 @@ public class UserVO {
 	  
 	  //部门名称
 	  private String depName;
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
 	public String getDepName() {
 		return depName;
 	}

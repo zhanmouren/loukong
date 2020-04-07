@@ -9,6 +9,10 @@ import java.util.List;
 * @Date 2020.03.23
 */
 public class RoleDTO {
+	//角色Code
+	private String roleCode;
+	//角色Code List
+	private List<String> roleCodeList;
 	//角色Id List
 	private List<Integer> roleIdList;
 	//角色Id
@@ -26,6 +30,18 @@ public class RoleDTO {
 	//修改时间
 	private Timestamp updateTime;
 	
+	public List<String> getRoleCodeList() {
+		return roleCodeList;
+	}
+	public void setRoleCodeList(List<String> roleCodeList) {
+		this.roleCodeList = roleCodeList;
+	}
+	public String getRoleCode() {
+		return roleCode;
+	}
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
+	}
 	public List<Integer> getRoleIdList() {
 		return roleIdList;
 	}

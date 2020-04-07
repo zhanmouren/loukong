@@ -44,17 +44,19 @@ public interface UserMapper {
     
     //新建新角色
     public Integer addNewRole(RoleDTO roleDTO);
+    //查询角色名称是否存在
+    public List<RoleVO> queryRoleByName(RoleDTO roleDTO);
   	 //修改角色属性
     public Integer updateRoleAttr(RoleDTO roleDTO);
     
     //删除角色
-    public Integer  delRole(List<Integer> roleList);
+    public Integer  delRole(List<String> roleCodeList);
     
     //查询该角色是否存在职员
     public List<RoleMsgVO>  queryRoleUser(RoleDTO roleDTO);
     
    //根据角色Id加载角色人员接口
-  	public List<UserVO> queryUserByRoleId(RoleDTO roleDTO);
+  	public List<UserVO> queryUserByRoleCode(RoleDTO roleDTO);
   	
   	//加载所有角色
 	public List<RoleVO> queryAllRole();
@@ -63,7 +65,7 @@ public interface UserMapper {
 	public Integer addRoleUser(List<RoleAndUserDTO> roleAndUserDTOList);
 	
 	//删除角色中职员(批量)
-	public Integer  deleteRoleUser(@Param("roleId") Integer roleId,@Param("list") List<Integer> userList);
+	public Integer  deleteRoleUser(@Param("roleCode") String roleCode,@Param("list") List<String> userCodeList);
 	
 	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
 	public List<UserVO> queryExceptRoleUser(RoleAndUserDTO roleUserDTO);

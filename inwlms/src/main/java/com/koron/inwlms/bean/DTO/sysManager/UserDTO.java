@@ -11,6 +11,8 @@ import java.sql.Timestamp;
 
 
 public class UserDTO {
+  //职员编码
+  private String code;
   //职员id
   private Integer userId;
   //职员名称
@@ -46,6 +48,12 @@ public class UserDTO {
   //状态（0 在职，-1 离职）
   private Integer status;
   
+public String getCode() {
+	return code;
+}
+public void setCode(String code) {
+	this.code = code;
+}
 public Integer getWhetUse() {
 	return whetUse;
 }
