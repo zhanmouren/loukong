@@ -1,11 +1,13 @@
 package com.koron.inwlms.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -28,6 +30,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrDealAdviseVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrMeterAnaDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrMeterManageVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrTotalAnalysisDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnZeroFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
@@ -675,5 +678,47 @@ public class ApparentLossController {
     		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
     	}
 		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/downloadDrQuestionList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载诊断报告问题清单列表", notes = "下载诊断报告问题清单列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downloadDrQuestionList(HttpServletResponse response, HttpServletRequest request) {
+		try{
+			String objValue = request.getParameter("objValue"); // 获取导出数据查询条件bean
+			String titleInfos = request.getParameter("titleInfos"); // 获取导出列表数据表头
+			String labelId = request.getParameter("labelId"); // 获取labelId
+			if(StringUtil.isEmpty(labelId)) return null;
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryALDTO queryALDTO = jsonValue.fromJson(objValue, QueryALDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryALDTO == null) {
+				return null;
+			}
+			// 查询到导出数据结果
+			DrqlVO data = ADOConnection.runTask(als, "queryDrQuestionList", DrqlVO.class,queryALDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			if("1".equals(labelId)) {
+				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlBDnZeroFlowData(), jsonArray);
+			}else if("2".equals(labelId)) {
+				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlBDnLHFlowData(), jsonArray);
+			}else if("3".equals(labelId)) {
+				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlBDnErrFlowData(), jsonArray);
+			}else if("4".equals(labelId)) {
+				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlSusUseData(), jsonArray);
+			}else if("5".equals(labelId)) {
+				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlsDnZeroFlowData(), jsonArray);
+			}else if("6".equals(labelId)) {
+				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlsDnLHFlowData(), jsonArray);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
