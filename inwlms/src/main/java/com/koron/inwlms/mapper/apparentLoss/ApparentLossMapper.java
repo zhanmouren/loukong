@@ -1,4 +1,4 @@
-package com.koron.inwlms.mapper.master.apparentLoss;
+package com.koron.inwlms.mapper.apparentLoss;
 
 import java.util.List;
 

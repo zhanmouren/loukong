@@ -59,7 +59,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneRankData;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.common.SysConfigVO;
-import com.koron.inwlms.mapper.master.apparentLoss.ApparentLossMapper;
+import com.koron.inwlms.mapper.apparentLoss.ApparentLossMapper;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.service.common.impl.CommonServiceImpl;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;

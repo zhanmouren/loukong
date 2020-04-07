@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.koron.inwlms.mapper.master.apparentLoss.ApparentLossMapper">
+<mapper namespace="com.koron.inwlms.mapper.apparentLoss.ApparentLossMapper">
 
 	<select id="queryMALOverviewData" parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO"
 		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO">

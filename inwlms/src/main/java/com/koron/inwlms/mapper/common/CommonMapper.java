@@ -1,4 +1,4 @@
-package com.koron.inwlms.mapper.master.common;
+package com.koron.inwlms.mapper.common;
 
 
 import java.util.List;
