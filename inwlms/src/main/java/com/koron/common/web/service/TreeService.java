@@ -147,6 +147,25 @@ public class TreeService {
 		return menuList;
 	}
 	/**
+	 * 获取节点下级子节点(菜单)
+	 * @param factory
+	 * @param type 类型
+	 * @param seq 顺序值
+	 * @param mask 掩码位数
+	 * @param parentMask 父级掩码位数
+	 * 
+	 * @return
+	 */
+	@TaskAnnotation("childMenu")
+	public static List<TreeMenuVO> childMenu(SessionFactory factory,int type,String foreignKey){
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		UserMapper userMapper = factory.getMapper(UserMapper.class);	
+		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+		List<TreeMenuVO> menuList=mapper.getMenuChildren(node);
+		return menuList;
+	}
+	
+	/**
 	 * 获取节点路径.
 	 * 从最上层节点到当前节点
 	 * @param factory

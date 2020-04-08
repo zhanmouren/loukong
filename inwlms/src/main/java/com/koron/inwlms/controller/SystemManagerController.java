@@ -1369,7 +1369,7 @@ public class SystemManagerController {
 	}
 	
 	 /*
-     * date:2020-04-01
+     * date:2020-04-08
      * funtion:查看菜单目录结构(展开所有)
      * author:xiaozhan
      */
@@ -1407,7 +1407,45 @@ public class SystemManagerController {
 	}
 	
 	 /*
-     * date:2020-04-07(未开发)
+     * date:2020-04-08
+     * funtion:查看菜单目录结构(查看下级的菜单)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryChildTreeMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查看下级菜单树接口", notes = "查看下级菜单树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryChildTreeMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
+		Integer type=Integer.valueOf(menuTreeDTO.getType());
+		if(type==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
+		}	
+		if(menuTreeDTO.getForeignKey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<TreeDeptVO> treeBeanList=ADOConnection.runTask(new TreeService(), "childMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  if(treeBeanList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询下级目录树成功"); 
+					msg.setData(treeBeanList);
+				  }else {
+					//查询失败
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询下级目录树失败"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-04-08
      * funtion:通过此接口加载该角色所有菜单以及打勾的权限。
      * author:xiaozhan
      */

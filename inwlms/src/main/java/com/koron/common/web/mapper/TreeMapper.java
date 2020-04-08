@@ -54,6 +54,17 @@ public interface TreeMapper {
     @Select("select * from \"SM_treeDet\" where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
             + "and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
     List<LongTreeBean> getChildren(LongTreeBean bean);
+    
+    /**
+     * 获取节点的直接下级节点(目录菜单)
+     *
+     * @param bean 节点
+     * @return 节点集合
+     */
+    @Select("select \"SM_treeDet\".*,\"SM_moduleMenu\".code \"menuCode\",\"SM_moduleMenu\".id \"menuId\",\"SM_moduleMenu\".\"moduleNo\",\"SM_moduleMenu\".\"moduleName\",\"SM_moduleMenu\".\"linkAddress\" from \"SM_treeDet\" left join \"SM_moduleMenu\" on  \"SM_moduleMenu\".code=\"SM_treeDet\".foreignkey where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
+            + "and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and \"SM_treeDet\".type = #{type}")
+    List<TreeMenuVO> getMenuChildren(LongTreeBean bean);
+
 
     /**
      * 获取节点之下所有节点
