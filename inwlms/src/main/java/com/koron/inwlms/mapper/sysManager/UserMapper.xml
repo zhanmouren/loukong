@@ -9,7 +9,7 @@
      <!-- 查询相关职员信息 -->
     <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
       select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname","user".code  as code    
+	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname","user".code  as code    
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"      
@@ -128,7 +128,7 @@
      <!-- 角色弹窗选择职员 -->
      <select id="queryExceptRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
        select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname","user".code as code     
+	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname","user".code as code     
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
@@ -139,7 +139,7 @@
       <!-- 部门弹窗选择职员 -->
      <select id="queryExceptDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
        select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname" ,"user".code     
+	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname" ,"user".code     
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
@@ -149,16 +149,16 @@
      
      <!--遍历插入职员与部门的关系 -->
     <insert id="addDeptUser" parameterType="java.util.List">  
-        insert into "SM_userDept"("userID", "deptID","createBy","createTime")values
+        insert into "SM_userDept"("userCode", "deptCode","createBy","createTime","updateBy","updateTime")values
 		<foreach collection="list" item="deptuser"  index="index" separator=",">
-			(${deptuser.userId}, ${deptuser.depId}, #{deptuser.createBy}, #{deptuser.createTime})
+			(#{deptuser.userCode}, #{deptuser.depCode}, #{deptuser.createBy}, #{deptuser.createTime}, #{deptuser.updateBy}, #{deptuser.updateTime})
 		</foreach>
     </insert>
     
      <!-- 批量删除部门中员工信息 -->
     <delete id="deleteDeptUser">
-        delete from "SM_userDept" where "deptID"=#{depId} 
-        and "userID" in
+        delete from "SM_userDept" where "deptCode"=#{depCode} 
+        and "userCode" in
         <foreach item="userItem" collection="list" open="(" separator="," close=")">
             #{userItem}
         </foreach>
@@ -167,20 +167,21 @@
     
     <!-- 遍历插入数据字典主表信息一条记录 -->
     <insert id="addDataDic" parameterType="java.util.List">  
-        insert into "SM_dataDictionary"(name,remark,parent,key,value,seq,"createBy","createTime","updateBy","updateTime")values
+        insert into "SM_dataDictionary"(cn,en,remark,parent,key,value,seq,"createBy","createTime","updateBy","updateTime")values
         <foreach collection="list" index="index" separator="," item="item">
-          (#{item.dicName},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime})  
+          (#{item.dicCn},#{item.dicEn},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime})  
         </foreach>      
     </insert>
     
      <!-- 查询数据字典 主标识明细的信息-->
       <select id="queryDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
-          select "dic".id as dicId,"dic".parent as dicParent,"dic".name as dicName,"dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
 			<if test="dicParent != null"> and "dic".parent like '%${dicParent}%'</if>  
-	   	    <if test="dicName != null"> and "dic".name like '%${dicName}%'</if>
+	   	    <if test="dicEn != null"> and "dic".en like '%${dicEn}%'</if>
+	   	    <if test="dicCn != null"> and "dic".cn like '%${dicCn}%'</if>
 	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
 	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
 	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
@@ -189,7 +190,7 @@
       </select>
        <!-- 查询数据字典 是否已经存在该Parent的信息-->
       <select id="queryParentDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
-          select "dic".id as dicId,"dic".parent as dicParent,"dic".name as dicName,"dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 			<if test="dicParent != null"> and "dic".parent = '${dicParent}'</if>          
@@ -198,12 +199,13 @@
       
         <!-- 查询数据字典 主标识主的信息-->
       <select id="queryMainDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
-          select "dic".id as dicId,"dic".parent as dicParent,"dic".name as dicName,"dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
 			<if test="dicParent != null"> and "dic".parent like '%${dicParent}%'</if>  
-	   	    <if test="dicName != null"> and "dic".name like '%${dicName}%'</if>
+	   	    <if test="dicEn != null"> and "dic".en like '%${dicEn}%'</if>
+	   	    <if test="dicCn != null"> and "dic".cn like '%${dicCn}%'</if>
 	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
 	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
 	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
@@ -215,9 +217,10 @@
        <update id="updateDicById" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
 		update "SM_dataDictionary" 
 		<set>	                                 
-             <if test="dicName != null" > name= #{dicName},</if>            
-             <if test="dicRemark != null" > remark= #{dicRemark},</if>
-             <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
+             <if test="dicEn != null"> en = #{dicEn},</if>
+	   	     <if test="dicCn != null"> cn = #{dicCn},</if>
+	   	     <if test="dicRemark != null">  remark =#{dicRemark},</if>  
+             <if test="updateBy != null" >  "updateBy" = #{updateBy},</if>                        
              <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
         </set>
 		where  parent=#{dicParent}
@@ -279,7 +282,7 @@
 		left join "SM_specialDay" as sp on sp."spDate"=yearmonth.orderdate
       </select>
       
-      <!-- 根据Id删除特征日 -->
+      <!-- 根据日期删除特征日 -->
      <delete id="deleteSpecialDate">
          delete from "SM_specialDay" 
          where "spDate"=#{spDate}

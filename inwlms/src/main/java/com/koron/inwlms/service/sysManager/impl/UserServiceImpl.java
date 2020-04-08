@@ -245,12 +245,14 @@ public class UserServiceImpl implements UserService{
 			//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
 			List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
 			Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-			for(int i=0;i<deptUserDTO.getUserList().size();i++) {
+			for(int i=0;i<deptUserDTO.getUserCodeList().size();i++) {
 				DeptAndUserDTO deptUserDTONew=new DeptAndUserDTO();
-				deptUserDTONew.setDepId(deptUserDTO.getDepId());
-				deptUserDTONew.setUserId(deptUserDTO.getUserList().get(i));
+				deptUserDTONew.setDepCode(deptUserDTO.getDepCode());
+				deptUserDTONew.setUserCode(deptUserDTO.getUserCodeList().get(i));
 				deptUserDTONew.setCreateTime(timeNow);
 				deptUserDTONew.setCreateBy("小詹");
+				deptUserDTONew.setUpdateTime(timeNow);
+				deptUserDTONew.setUpdateBy("小詹");
 				deptUserDTOList.add(deptUserDTONew);
 			}
 			Integer addResult=userMapper.addDeptUser(deptUserDTOList);
@@ -263,7 +265,7 @@ public class UserServiceImpl implements UserService{
 		public Integer deleteDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {			
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
 			//执行批量删除角色职员的操作
-			Integer delResult=userMapper.deleteDeptUser(deptUserDTO.getDepId(),deptUserDTO.getUserList());
+			Integer delResult=userMapper.deleteDeptUser(deptUserDTO.getDepCode(),deptUserDTO.getUserCodeList());
 			return delResult;
 		}
 		
@@ -289,7 +291,8 @@ public class UserServiceImpl implements UserService{
 					//插入i条
 					for(int i=0;i<dataDicDTO.getDataDicDTOList().size();i++) {
 						DataDicDTO dataDicDTONew=new DataDicDTO();
-						dataDicDTONew.setDicName(dataDicDTO.getDicName());
+						dataDicDTONew.setDicCn(dataDicDTO.getDicCn());
+						dataDicDTONew.setDicEn(dataDicDTO.getDicEn());
 						dataDicDTONew.setDicParent(dataDicDTO.getDicParent());
 						dataDicDTONew.setDicRemark(dataDicDTO.getDicRemark());
 						dataDicDTONew.setDicKey(dataDicDTO.getDataDicDTOList().get(i).getDicKey());

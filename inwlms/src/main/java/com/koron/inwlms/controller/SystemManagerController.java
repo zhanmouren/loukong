@@ -538,11 +538,11 @@ public class SystemManagerController {
     @ApiOperation(value = "插入职员(批量)和部门的关系", notes = "插入职员(批量)和部门的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
-		if(deptUserDTO.getDepId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门Id不能为空", Integer.class).toJson();
+		if(deptUserDTO.getDepCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
-		if(deptUserDTO.getUserList().size()<1) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户列表不能为空", Integer.class).toJson();
+		if(deptUserDTO.getUserCodeList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加用户和部门关系的操作
@@ -574,11 +574,11 @@ public class SystemManagerController {
     @ApiOperation(value = "删除部门中职员接口", notes = "删除部门中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
-		if(deptUserDTO.getDepId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门Id不能为空", Integer.class).toJson();
+		if(deptUserDTO.getDepCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
-		if(deptUserDTO.getUserList().size()<1) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户列表不能为空", Integer.class).toJson();
+		if(deptUserDTO.getUserCodeList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除部门中职员(批量)操作
@@ -655,8 +655,11 @@ public class SystemManagerController {
     @ApiOperation(value = "新建数据字典接口", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addDataDic(@RequestBody DataDicDTO dataDicDTO) {
-		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
+		if(dataDicDTO.getDicCn()==null || StringUtils.isBlank(dataDicDTO.getDicCn())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表中文名称不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicEn()==null || StringUtils.isBlank(dataDicDTO.getDicEn())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表英文名称不能为空", Integer.class).toJson();
 		}
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
@@ -773,14 +776,15 @@ public class SystemManagerController {
     @ApiOperation(value = "通过字典主表ID修改数据字典接口(主表信息))接口", notes = "通过字典主表ID修改数据字典接口(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateDicById(@RequestBody DataDicDTO dataDicDTO) {
-		if(dataDicDTO.getDicId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
-		}
+		
 		if(dataDicDTO.getDicParent()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
 		}
-		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
+		if(dataDicDTO.getDicCn()==null || StringUtils.isBlank(dataDicDTO.getDicCn())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表中文名称不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicEn()==null || StringUtils.isBlank(dataDicDTO.getDicEn())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表英文名称不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行查询数据字典
@@ -853,12 +857,6 @@ public class SystemManagerController {
 	public String updateDicDetById(@RequestBody DataDicDTO dataDicDTO) {
 		if(dataDicDTO.getDicId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
-		}
-		if(dataDicDTO.getDicParent()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
-		}
-		if(dataDicDTO.getDicName()==null || StringUtils.isBlank(dataDicDTO.getDicName())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表名称不能为空", Integer.class).toJson();
 		}
 		if(dataDicDTO.getDicKey()==null || StringUtils.isBlank(dataDicDTO.getDicKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表键不能为空", Integer.class).toJson();

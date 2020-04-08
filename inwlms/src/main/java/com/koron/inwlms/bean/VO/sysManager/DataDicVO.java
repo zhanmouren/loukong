@@ -15,8 +15,10 @@ public class DataDicVO {
 	private Integer dicId;
 	//数据字典标识
 	private String dicParent;
-	//数据字典名称
-	private String dicName;
+	//数据字典中文名称
+   private String dicCn;
+	//数据字典英文名称
+	private String dicEn;
 	//数据字典备注
 	private String dicRemark;
    
@@ -67,11 +69,18 @@ public class DataDicVO {
 		this.dicId = dicId;
 	}
 	
-	public String getDicName() {
-		return dicName;
+	
+	public String getDicCn() {
+		return dicCn;
 	}
-	public void setDicName(String dicName) {
-		this.dicName = dicName;
+	public void setDicCn(String dicCn) {
+		this.dicCn = dicCn;
+	}
+	public String getDicEn() {
+		return dicEn;
+	}
+	public void setDicEn(String dicEn) {
+		this.dicEn = dicEn;
 	}
 	public String getDicRemark() {
 		return dicRemark;

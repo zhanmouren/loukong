@@ -9,6 +9,10 @@ import java.util.List;
 * @Date 2020.03.25
 */
 public class DeptAndUserDTO {
+	     //存储userCode的List
+	    private List<String> userCodeList;
+	    //单个的userCode
+	    private String userCode;
 	    //部门Id
 		private Integer depId;
 		//部门名称
@@ -29,6 +33,18 @@ public class DeptAndUserDTO {
 		private String updateBy;
 		//修改时间
 		private Timestamp updateTime;
+		public String getUserCode() {
+			return userCode;
+		}
+		public void setUserCode(String userCode) {
+			this.userCode = userCode;
+		}
+		public List<String> getUserCodeList() {
+			return userCodeList;
+		}
+		public void setUserCodeList(List<String> userCodeList) {
+			this.userCodeList = userCodeList;
+		}
 		public Integer getDepId() {
 			return depId;
 		}

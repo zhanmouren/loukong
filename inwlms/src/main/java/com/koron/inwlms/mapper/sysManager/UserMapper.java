@@ -77,7 +77,7 @@ public interface UserMapper {
 	public Integer addDeptUser(List<DeptAndUserDTO> deptUserDTOList);
 	
 	//删除部门中职员(批量)
-	public Integer deleteDeptUser(@Param("depId") Integer depId,@Param("list") List<Integer> userList);
+	public Integer deleteDeptUser(@Param("depCode") String depCode,@Param("list") List<String> userCodeList);
 	
 	
 	/**下面是系统配置***/

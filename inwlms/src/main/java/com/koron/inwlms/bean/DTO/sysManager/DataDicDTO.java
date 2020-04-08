@@ -34,8 +34,10 @@ public class DataDicDTO {
 	private Integer dicId;
 	//数据字典标识
 	private String dicParent;
-	//数据字典名称
-	private String dicName;
+	//数据字典中文名称
+	private String dicCn;
+	//数据字典英文名称
+	private String dicEn;
 	//数据字典备注
 	private String dicRemark;
 	//创建人
@@ -117,11 +119,18 @@ public class DataDicDTO {
 	public void setDicParent(String dicParent) {
 		this.dicParent = dicParent;
 	}
-	public String getDicName() {
-		return dicName;
+	
+	public String getDicCn() {
+		return dicCn;
 	}
-	public void setDicName(String dicName) {
-		this.dicName = dicName;
+	public void setDicCn(String dicCn) {
+		this.dicCn = dicCn;
+	}
+	public String getDicEn() {
+		return dicEn;
+	}
+	public void setDicEn(String dicEn) {
+		this.dicEn = dicEn;
 	}
 	public String getDicRemark() {
 		return dicRemark;
