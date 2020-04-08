@@ -365,4 +365,17 @@
         insert into "SM_moduleMenu"(code,"moduleNo","moduleName","linkAddress","createBy","createTime","updateBy","updateTime")
         values(#{menuCode},#{moduleNo},#{moduleName},#{linkAddress},#{createBy},#{createTime},#{updateBy},#{updateTime})      
      </insert>
+     
+     <!--加载角色权限菜单-->
+     <select id="queryRoleMenuByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
+         select "menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress",
+		"role".code as "roleCode","role".name as "roleName",case when string_agg(to_char("rolemenu".op,'9'),',') is null then '' else string_agg(to_char("rolemenu".op,'9'),',') end as op
+		from "SM_moduleMenu" as "menu"
+		left join "SM_roleMenus" as "rolemenu" on "rolemenu"."moduleCode"="menu".code
+		left join "SM_userRole" as "role" on "role"."code"="rolemenu"."roleCode" and "role".code=#{roleCode}
+		GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo",
+		"menu"."moduleName" ,"menu"."linkAddress",
+		"role".code ,"role".name 
+      </select>
 </mapper>

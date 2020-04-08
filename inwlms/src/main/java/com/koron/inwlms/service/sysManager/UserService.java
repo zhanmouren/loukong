@@ -18,6 +18,7 @@ import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -112,4 +113,7 @@ public interface UserService {
 	    
 	    //生成菜单
 	     Integer addMenu(SessionFactory factory,MenuTreeDTO menuTreeDTO);
+	     
+	     //加载角色菜单权限
+	     List<RoleMenusVO> queryRoleMenuByRoleCode(SessionFactory factory,RoleDTO roleDTO);
 }

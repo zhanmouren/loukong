@@ -21,6 +21,7 @@ import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -147,5 +148,8 @@ public interface UserMapper {
 		
 		//添加菜单
 		Integer addMenu(MenuDTO menuDTO);
+		
+		//加载角色菜单权限
+	    List<RoleMenusVO> queryRoleMenuByRoleCode(RoleDTO roleDTO);
 
 }

@@ -3,6 +3,7 @@ package com.koron.inwlms.service.sysManager.impl;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,7 @@ import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -723,5 +725,15 @@ public class UserServiceImpl implements UserService{
 					      }
 					  }
 					  return addRes;
+				}
+
+				//加载角色菜单权限 2020/04/08
+				@TaskAnnotation("queryRoleMenuByRoleCode")
+				@Override			
+				public List<RoleMenusVO> queryRoleMenuByRoleCode(SessionFactory factory, RoleDTO roleDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<RoleMenusVO> roleMenusList=userMapper.queryRoleMenuByRoleCode(roleDTO);									
+					return roleMenusList;
 				}
 }

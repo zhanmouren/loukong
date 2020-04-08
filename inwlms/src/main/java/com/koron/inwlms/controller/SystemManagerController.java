@@ -30,6 +30,7 @@ import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
@@ -1449,16 +1450,16 @@ public class SystemManagerController {
      * funtion:通过此接口加载该角色所有菜单以及打勾的权限。
      * author:xiaozhan
      */
-	@RequestMapping(value = "/queryRoleMenuByRoleId.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/queryRoleMenuByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "加载角色菜单权限接口", notes = "加载角色菜单权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryRoleMenuByRoleId(@RequestBody RoleDTO roleDTO) {		
-		if(roleDTO.getRoleId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
+		if(roleDTO.getRoleCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<UserVO> menuList=ADOConnection.runTask(new UserServiceImpl(), "queryRoleMenuByRoleId", List.class,roleDTO);	
+			  List<RoleMenusVO> menuList=ADOConnection.runTask(new UserServiceImpl(), "queryRoleMenuByRoleCode", List.class,roleDTO);	
 			  if(menuList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询角色菜单权限成功"); 
