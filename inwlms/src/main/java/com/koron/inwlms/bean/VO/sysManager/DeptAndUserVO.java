@@ -1,6 +1,8 @@
 package com.koron.inwlms.bean.VO.sysManager;
 
 public class DeptAndUserVO {
+	//userCode;
+	private String userCode;
 	 //部门Id
 	private Integer depId;
 	//部门名称
@@ -15,6 +17,12 @@ public class DeptAndUserVO {
 	  private String name;
 	  //职员登录名称
 	  private String loginName;
+	public String getUserCode() {
+		return userCode;
+	}
+	public void setUserCode(String userCode) {
+		this.userCode = userCode;
+	}
 	public Integer getDepId() {
 		return depId;
 	}

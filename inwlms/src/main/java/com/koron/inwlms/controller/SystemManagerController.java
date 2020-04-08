@@ -1086,11 +1086,11 @@ public class SystemManagerController {
 		
 	 /*
      * date:2020-03-30
-     * funtion:生成组织的父节点
+     * funtion:生成父节点
      * author:xiaozhan
      */
 	@RequestMapping(value = "/addOrgParent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "生成组织的父节点接口", notes = "生成组织的父节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "生成父节点接口", notes = "生成父节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addOrgParent(@RequestBody  LongTreeBean child) {
 		Integer type=new Integer(child.getType());
@@ -1106,13 +1106,13 @@ public class SystemManagerController {
 			  LongTreeBean longTreeBean=ADOConnection.runTask(new TreeService(), "addNode", LongTreeBean.class, null,child);
 			  if(longTreeBean!=null) {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			        msg.setDescription("生成组织父节点成功");
+			        msg.setDescription("生成父节点成功");
 			        msg.setData(longTreeBean);
 			  }
 	        }catch(Exception e){
 	        	//生成失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("生成组织父节点失败");
+	            msg.setDescription("生成父节点失败");
 	        }
 		
 	     return msg.toJson();
@@ -1125,10 +1125,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加部门接口", notes = "添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addTreeDept(@RequestBody  TreeDTO parentBean) {
-		if(parentBean.getId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "父部门Id不能为空", Integer.class).toJson();
-		}	
+	public String addTreeDept(@RequestBody  TreeDTO parentBean) {	
 		if(parentBean.getDepName()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}
@@ -1146,7 +1143,7 @@ public class SystemManagerController {
 		  try{			
 				  //组织下添加部门的话，先插入SM_department，SM_orgDept表数据		
 			      OrgAndDeptDTO orgDeptDTO=new OrgAndDeptDTO();
-			      orgDeptDTO.setOrgId(parentBean.getId());
+			      orgDeptDTO.setOrgCode(parentBean.getForeignKey());
 			      orgDeptDTO.setDepName(parentBean.getDepName());	
 			      Integer finalRes=null;
 			      if(parentBean.getAddType()==0) {
@@ -1232,8 +1229,8 @@ public class SystemManagerController {
     @ResponseBody
 	public String updateTreeDept(@RequestBody DeptDTO deptDTO) {
 		//修改的只有部门名称
-		if(deptDTO.getDepId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门的Id不能为空", Integer.class).toJson();
+		if(deptDTO.getDepCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
 		if(deptDTO.getDepName()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();

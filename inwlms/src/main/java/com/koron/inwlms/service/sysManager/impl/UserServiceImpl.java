@@ -514,21 +514,24 @@ public class UserServiceImpl implements UserService{
 					UserMapper userMapper = factory.getMapper(UserMapper.class);	
 					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
 					orgDeptDTO.setCreateTime(timeNow);
+					orgDeptDTO.setUpdateTime(timeNow);
 					orgDeptDTO.setCreateBy("小詹");
 					orgDeptDTO.setUpdateBy("小詹");
 					//部门正常使用状态0,禁用状态-1
 					Integer finalRes=null;
 					orgDeptDTO.setDepStatus(0);
+					
 					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
-					String deptCode=randomCodeUtil.getCode(2);
+					//随机获取uuid,赋值给Code	
+					String deptCode=randomCodeUtil.getUUID32();
 					orgDeptDTO.setDepCode(deptCode);
 					orgDeptDTO.setUpdateTime(timeNow);
 					//先执行生成部门的操作(获取刚刚插入到部门表的Id)
 					Integer depId=userMapper.addDeptNew(orgDeptDTO);
 					//插入组织部门关系表
 					OrgAndDeptDTO orgDeptDTONew=new OrgAndDeptDTO();
-					orgDeptDTONew.setDepId(depId);
-					orgDeptDTONew.setOrgId(orgDeptDTO.getOrgId());
+					orgDeptDTONew.setDepCode(deptCode);
+					orgDeptDTONew.setOrgCode(orgDeptDTO.getOrgCode());
 					orgDeptDTONew.setCreateTime(timeNow);
 					orgDeptDTONew.setCreateBy("小詹");
 					orgDeptDTONew.setUpdateBy("小詹");										
@@ -572,7 +575,8 @@ public class UserServiceImpl implements UserService{
 					//部门正常使用状态0,禁用状态-1
 					orgDeptDTO.setDepStatus(0);
 					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
-					String deptCode=randomCodeUtil.getCode(2);
+					//随机获取uuid,赋值给Code	
+					String deptCode=randomCodeUtil.getUUID32();
 					orgDeptDTO.setDepCode(deptCode);
 					orgDeptDTO.setUpdateTime(timeNow);
 					Integer addRes=userMapper.deptAddTreeDept(orgDeptDTO);

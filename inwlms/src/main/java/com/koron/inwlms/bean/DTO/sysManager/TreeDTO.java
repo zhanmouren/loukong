@@ -10,6 +10,8 @@ package com.koron.inwlms.bean.DTO.sysManager;
 public class TreeDTO {
 	//组织Id
    private Integer Id;
+   //组织Code
+   private String orgCode;
    //部门名称
    private String depName;
    //父部门外键
@@ -17,7 +19,13 @@ public class TreeDTO {
   //树的类型
    private Integer type;
    
-   //组织下添加树还是部门下添加部门
+   public String getOrgCode() {
+	return orgCode;
+}
+public void setOrgCode(String orgCode) {
+	this.orgCode = orgCode;
+}
+//组织下添加树还是部门下添加部门
    private Integer addType;
 
 public Integer getAddType() {
