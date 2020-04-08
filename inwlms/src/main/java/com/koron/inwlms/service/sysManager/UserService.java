@@ -9,6 +9,7 @@ import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -108,4 +109,7 @@ public interface UserService {
 	    
 	    //根据部门Code查询部门职员
 	    List<UserVO> queryDeptUser(SessionFactory factory,DeptDTO deptDTO);
+	    
+	    //生成菜单
+	     Integer addMenu(SessionFactory factory,MenuTreeDTO menuTreeDTO);
 }

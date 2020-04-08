@@ -20,6 +20,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -1333,25 +1334,73 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "生成菜单模块接口", notes = "生成菜单模块接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addMenu(@RequestBody RoleDTO roleDTO) {		
-		if(roleDTO.getRoleId()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色Id不能为空", Integer.class).toJson();
-		}		
+	public String addMenu(@RequestBody MenuTreeDTO menuTreeDTO) {		
+		if(menuTreeDTO.getForeignKey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "父部门外键不能为空", Integer.class).toJson();
+		}
+		if(menuTreeDTO.getModuleName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块菜单名称不能为空", Integer.class).toJson();
+		}
+		if(menuTreeDTO.getModuleNo()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块编号不能为空", Integer.class).toJson();
+		}
+		if(menuTreeDTO.getType()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树类型不能为空", Integer.class).toJson();
+		}
+		if(menuTreeDTO.getLinkAddress()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "链接地址不能为空", Integer.class).toJson();
+		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<UserVO> menuList=ADOConnection.runTask(new UserServiceImpl(), "addMenu", List.class,roleDTO);	
-			  if(menuList.size()>0) {			 
+			  Integer addRes=ADOConnection.runTask(new UserServiceImpl(), "addMenu", Integer.class,menuTreeDTO);	
+			  if(addRes==1) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
-					msg.setDescription("添加菜单成功"); 
-					msg.setData(menuList);
-				  }else {
+					msg.setDescription("添加菜单成功"); 				
+			   }else {
 			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
 			        msg.setDescription("添加菜单失败"); 
+			   }		  
+	        }catch(Exception e){
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-04-01
+     * funtion:查看菜单目录结构(展开所有)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryTreeMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查看菜单树接口", notes = "查看菜单树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryTreeMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
+		Integer type=Integer.valueOf(menuTreeDTO.getType());
+		if(type==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
+		}	
+		if(menuTreeDTO.getForeignKey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<TreeDeptVO> treeBeanList=ADOConnection.runTask(new TreeService(), "descendantMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  if(treeBeanList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询目录树成功"); 
+					msg.setData(treeBeanList);
+				  }else {
+					//查询失败
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询目录树失败"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("添加菜单失败");
+	            msg.setDescription("查询失败");
 	        }
 		
 	     return msg.toJson();

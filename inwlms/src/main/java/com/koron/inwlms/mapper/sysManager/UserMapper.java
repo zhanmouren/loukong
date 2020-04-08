@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -142,5 +144,8 @@ public interface UserMapper {
 		
 		//根据部门Code查询部门人员
 		List<UserVO> queryDeptUser(DeptDTO deptDTO);
+		
+		//添加菜单
+		Integer addMenu(MenuDTO menuDTO);
 
 }

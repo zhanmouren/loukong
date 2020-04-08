@@ -2,7 +2,7 @@ package com.koron.inwlms.bean.DTO.sysManager;
 
 
 /**
- * 树状传参DTO
+ * 树状传参DTO 组织部门DTO
  *
 * @Author xiaozhan
 * @Date 2020.04.01

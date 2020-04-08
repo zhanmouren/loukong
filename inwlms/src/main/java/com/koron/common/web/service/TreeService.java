@@ -12,6 +12,7 @@ import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 
@@ -126,6 +127,24 @@ public class TreeService {
 			}
 		}
 		return deptList;
+	}
+	/**
+	 * 获取节点下所有子节点(菜单)
+	 * @param factory
+	 * @param type 类型
+	 * @param seq 顺序值
+	 * @param mask 掩码位数
+	 * @param parentMask 父级掩码位数
+	 * 
+	 * @return
+	 */
+	@TaskAnnotation("descendantMenu")
+	public static List<TreeMenuVO> descendantMenu(SessionFactory factory,int type,String foreignKey){
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		UserMapper userMapper = factory.getMapper(UserMapper.class);	
+		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+		List<TreeMenuVO> menuList=mapper.descendantMenu(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+		return menuList;
 	}
 	/**
 	 * 获取节点路径.

@@ -17,6 +17,8 @@ import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -539,6 +541,7 @@ public class UserServiceImpl implements UserService{
 					Integer addRes=userMapper.addOrgDept(orgDeptDTONew);
 					if(addRes==-1) {
 						finalRes=-1;
+						return finalRes;
 					}
 					else {
 					  //组装child,主要两个参数，一个type，一个是foreignkey	
@@ -582,6 +585,7 @@ public class UserServiceImpl implements UserService{
 					Integer addRes=userMapper.deptAddTreeDept(orgDeptDTO);
 					if(addRes==-1) {
 						finalRes=-1;
+						return finalRes;
 					}
 					else {
 					  //组装child,主要两个参数，一个type，一个是foreignkey	
@@ -665,12 +669,59 @@ public class UserServiceImpl implements UserService{
 					return updateRes;
 				}
 
-				//根据部门Code查询部门职员
+				//根据部门Code查询部门职员 2020/04/07
 				@TaskAnnotation("queryDeptUser")
 				@Override
 				public List<UserVO> queryDeptUser(SessionFactory factory, DeptDTO deptDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<UserVO> userList=userMapper.queryDeptUser(deptDTO);
 					return userList;
-				}						   	
+				}
+				
+				//生成菜单(单条记录) 2020/04/08
+				@TaskAnnotation("addMenu")
+				public Integer addMenu(SessionFactory factory,MenuTreeDTO menuTreeDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					MenuDTO menuDTO=new MenuDTO();
+					menuDTO.setLinkAddress(menuTreeDTO.getLinkAddress());
+					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					//随机获取uuid,赋值给Code	
+					String menuCode=randomCodeUtil.getUUID32();
+					menuDTO.setMenuCode(menuCode);
+					menuDTO.setModuleName(menuTreeDTO.getModuleName());
+					menuDTO.setModuleNo(menuTreeDTO.getModuleNo());
+					menuDTO.setCreateTime(timeNow);
+					menuDTO.setCreateBy("小詹");
+					menuDTO.setUpdateBy("小詹");
+					menuDTO.setUpdateTime(timeNow);
+					//先生成菜单
+					Integer addRes=userMapper.addMenu(menuDTO);
+					if(addRes==-1) {
+						addRes=-1;
+						return addRes;
+					}
+					//树状关系中插入一条记录
+					 TreeService treeService  =new TreeService();
+					 //组装child,主要两个参数，一个type，一个是foreignkey	
+					  LongTreeBean child=new LongTreeBean();
+					  child.setForeignkey(menuCode);
+					  child.setType(1);
+					  int type=1;
+					  LongTreeBean parent= treeService.getNode(factory, type, menuTreeDTO.getForeignKey());
+					  if(parent==null) {
+						  addRes=-1;
+						  return addRes;
+					  }else {
+						  //生成根节点
+					      LongTreeBean longTreeBean =treeService.add(factory, parent, child);
+					      if(longTreeBean==null) {
+					    	  addRes=-1;
+					      }else {
+					    	  addRes=1; 
+					      }
+					  }
+					  return addRes;
+				}
 }

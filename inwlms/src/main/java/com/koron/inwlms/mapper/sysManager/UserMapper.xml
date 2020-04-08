@@ -359,5 +359,10 @@
           where "dept".code=#{depCode}
           order by "user"."createTime" desc
       </select>
-    
+      
+     <!--添加菜单-->
+     <insert id="addMenu" parameterType="com.koron.inwlms.bean.DTO.sysManager.MenuDTO">  
+        insert into "SM_moduleMenu"(code,"moduleNo","moduleName","linkAddress","createBy","createTime","updateBy","updateTime")
+        values(#{menuCode},#{moduleNo},#{moduleName},#{linkAddress},#{createBy},#{createTime},#{updateBy},#{updateTime})      
+     </insert>
 </mapper>

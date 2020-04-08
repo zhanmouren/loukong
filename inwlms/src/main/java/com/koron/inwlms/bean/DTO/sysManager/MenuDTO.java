@@ -8,13 +8,13 @@ import java.sql.Timestamp;
 * @Author xiaozhan
 * @Date 2020.03.17
 */
-public class menuDTO {
+public class MenuDTO {
 	//模块Id
 	private Integer menuId;
 	//模块编号
 	private String menuCode;
 	//模块编号
-	private String mouduleNo;
+	private String moduleNo;
 	//模块名称
 	private String moduleName;
 	//链接地址
@@ -26,6 +26,19 @@ public class menuDTO {
 	//修改人
 	private String updateBy;
 	//修改时间
+	private Timestamp updateTime;
+	public String getModuleNo() {
+		return moduleNo;
+	}
+	public void setModuleNo(String moduleNo) {
+		this.moduleNo = moduleNo;
+	}
+	public Timestamp getUpdateTime() {
+		return updateTime;
+	}
+	public void setUpdateTime(Timestamp updateTime) {
+		this.updateTime = updateTime;
+	}
 	public Integer getMenuId() {
 		return menuId;
 	}
@@ -38,12 +51,7 @@ public class menuDTO {
 	public void setMenuCode(String menuCode) {
 		this.menuCode = menuCode;
 	}
-	public String getMouduleNo() {
-		return mouduleNo;
-	}
-	public void setMouduleNo(String mouduleNo) {
-		this.mouduleNo = mouduleNo;
-	}
+	
 	public String getModuleName() {
 		return moduleName;
 	}
