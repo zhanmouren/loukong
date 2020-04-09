@@ -1,13 +1,13 @@
-package com.koron.inwlms.bean.DTO.zoneLoss;
+package com.koron.inwlms.bean.VO.zoneLoss;
 
 import java.util.List;
 
 /**
- * 添加全网水平衡模板报表DTO
+ * 全网水平衡模板报表VO
  * @author csh
- * @Date 2020.03.09
+ * @Date 2020.04.08
  */
-public class AddWNWBTReportDTO{
+public class WNWBTReportDetailVO{
 
 	
 	/**
@@ -28,12 +28,12 @@ public class AddWNWBTReportDTO{
 	/**
 	 * 创建时间（时间戳）
 	 */
-	public Integer createTime;
+	public String createTime;
 	
 	/**
 	 * 修改时间（时间戳）
 	 */
-	public Integer updateTime;
+	public String updateTime;
 	
 	/**
 	 * 创建人
@@ -53,7 +53,7 @@ public class AddWNWBTReportDTO{
 	/**
 	 * 全网水平衡模板报表指标
 	 */
-	public List<WNWBTReportIndicatorDTO> indicators;
+	public List<WNWBTReportIndicator> indicators;
 
 	public Integer getId() {
 		return id;
@@ -67,13 +67,6 @@ public class AddWNWBTReportDTO{
 		return description;
 	}
 
-	public Integer getCreateTime() {
-		return createTime;
-	}
-
-	public Integer getUpdateTime() {
-		return updateTime;
-	}
 
 	public String getCreateBy() {
 		return createBy;
@@ -99,13 +92,6 @@ public class AddWNWBTReportDTO{
 		this.description = description;
 	}
 
-	public void setCreateTime(Integer createTime) {
-		this.createTime = createTime;
-	}
-
-	public void setUpdateTime(Integer updateTime) {
-		this.updateTime = updateTime;
-	}
 
 	public void setCreateBy(String createBy) {
 		this.createBy = createBy;
@@ -119,12 +105,28 @@ public class AddWNWBTReportDTO{
 		this.remarks = remarks;
 	}
 
-	public List<WNWBTReportIndicatorDTO> getIndicators() {
+	public List<WNWBTReportIndicator> getIndicators() {
 		return indicators;
 	}
 
-	public void setIndicators(List<WNWBTReportIndicatorDTO> indicators) {
+	public void setIndicators(List<WNWBTReportIndicator> indicators) {
 		this.indicators = indicators;
+	}
+
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public String getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+
+	public void setUpdateTime(String updateTime) {
+		this.updateTime = updateTime;
 	}
 
 }

@@ -1,11 +1,11 @@
-package com.koron.inwlms.bean.DTO.zoneLoss;
+package com.koron.inwlms.bean.VO.zoneLoss;
 
 /**
- * 全网水平衡报表指标信息DTO
+ * 全网水平报表指标
  * @author csh
- * @Date 2020.03.09
+ * @Date 2020.04.08
  */
-public class WNWBReportIndicatorDTO {
+public class WNWBReportIndicator {
 
 	/**
 	 * 主键id
@@ -107,5 +107,4 @@ public class WNWBReportIndicatorDTO {
 	public void setUpdateBy(String updateBy) {
 		this.updateBy = updateBy;
 	}
-	
 }

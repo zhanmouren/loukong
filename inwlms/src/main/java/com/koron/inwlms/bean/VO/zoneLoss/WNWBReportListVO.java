@@ -20,7 +20,7 @@ public class WNWBReportListVO {
 	
 	private String createTime;
 	
-	private String userName;
+	private String createBy;
 	
 	private String updateTime;
 
@@ -42,10 +42,6 @@ public class WNWBReportListVO {
 
 	public String getCreateTime() {
 		return createTime;
-	}
-
-	public String getUserName() {
-		return userName;
 	}
 
 	public String getUpdateTime() {
@@ -72,10 +68,6 @@ public class WNWBReportListVO {
 		this.createTime = createTime;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
 	}
@@ -86,6 +78,14 @@ public class WNWBReportListVO {
 
 	public void setReportTime(String reportTime) {
 		this.reportTime = reportTime;
+	}
+
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
 	}
 	
 }
