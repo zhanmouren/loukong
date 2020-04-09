@@ -18,6 +18,6 @@ public interface AlarmMessageService {
 			List<AlarmMessageVO> alarmMessageList);
 
 
-	List<AlarmMessageVO> queryAlarmMessageByRref(SessionFactory factory, Integer id);
+	List<AlarmMessageVO> queryAlarmMessageByPointCode(SessionFactory factory, String code);
 
 }

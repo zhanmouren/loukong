@@ -13,15 +13,25 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 public class WarningSchemeDTO extends BaseDTO{
 	
 	private Integer id;
-	
+	/**
+	 * 预警方案名称
+	 */
 	private String name;
-	
+	/**
+	 * 方案状态
+	 */
 	private String state;
-	
+	/**
+	 * 对象类型
+	 */
 	private String objectType;
-	
+	/**
+	 * 报警类型
+	 */
 	private String alarmType;
-	
+	/**
+	 * 
+	 */
 	private Integer objectId;
 	
 	private String firstPartion;
@@ -29,11 +39,17 @@ public class WarningSchemeDTO extends BaseDTO{
 	private String seconPartion;
 	
 	private String dmaCode;
-	
+	/**
+	 * 预警方案编码
+	 */
 	private String code;
-	
+	/**
+	 * 报警指标类型
+	 */
 	private String alarmIndex;
-	
+	/**
+	 * 预警规则信息
+	 */
 	private List<AlarmRuleDTO> alarmRuleList;
 	
 	private String createBy;
@@ -43,9 +59,13 @@ public class WarningSchemeDTO extends BaseDTO{
 	private String updateBy;
 	
 	private Date updateTime;
-	
+	/**
+	 * 预警级别
+	 */
 	private String alarmLevel;
-	
+	/**
+	 * 限值类型（固定限值或动态限值或无）
+	 */
 	private String paramType;
 	
 	

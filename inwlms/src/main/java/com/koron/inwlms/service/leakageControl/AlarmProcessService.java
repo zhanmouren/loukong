@@ -19,7 +19,7 @@ public interface AlarmProcessService {
 
 	Integer addAlarmProcess(SessionFactory factory, AlarmProcessVO alarmProcessVO);
 
-	Integer deleteAlarmProcess(SessionFactory factory, Integer id);
+	Integer deleteAlarmProcess(SessionFactory factory, String code);
 
 	TreatmentEffectVO queryTreatmentEffect(SessionFactory factory, TreatmentEffectDTO treatmentEffectDTO);
 

@@ -6,7 +6,7 @@ public class TreatmentEffectDTO {
 	
 	private String endTime;
 	
-	private Integer alarmId;
+	private String processCode;
 
 	public String getStartTime() {
 		return startTime;
@@ -24,14 +24,15 @@ public class TreatmentEffectDTO {
 		this.endTime = endTime;
 	}
 
-	public Integer getAlarmId() {
-		return alarmId;
+	public String getProcessCode() {
+		return processCode;
 	}
 
-	public void setAlarmId(Integer alarmId) {
-		this.alarmId = alarmId;
+	public void setProcessCode(String processCode) {
+		this.processCode = processCode;
 	}
-	
+
+
 	
 
 }

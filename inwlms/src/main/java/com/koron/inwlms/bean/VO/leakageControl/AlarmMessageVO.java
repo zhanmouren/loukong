@@ -14,22 +14,30 @@ public class AlarmMessageVO {
 	/**
 	 * 主报警ID
 	 */
-	private Integer r_ref;
+	private String pointCode;
 	/**
 	 * 报警编码
 	 */
-	private String alarmNum;
+	private String code;
 	/**
 	 * 预警方案ID
 	 */
-	private Integer warningId;
-	
-	private Integer objectId;
-	
-	private Integer areaId;
-	
+	private String schemeCode;
+	/**
+	 * 对象编码
+	 */
+	private String objectCode;
+	/**
+	 * 分区编码
+	 */
+	private String areaCode;
+	/**
+	 * 报警类型
+	 */
 	private String alarmType;
-	
+	/**
+	 * 报警详情
+	 */
 	private String content;
 	/**
 	 * 报警时间
@@ -41,13 +49,21 @@ public class AlarmMessageVO {
 	private String updateBy;
 	
 	private String createBy;
-	
+	/**
+	 * 对象类型
+	 */
 	private String ObjectType;
-	
+	/**
+	 * 预警方案名称
+	 */
 	private String alarmSchemeName;
-	
+	/**
+	 * 预警处理任务编码
+	 */
 	private String taskCode;
-	
+	/**
+	 * 预警处理任务状态
+	 */
 	private String taskState;
 	
 	
@@ -92,45 +108,23 @@ public class AlarmMessageVO {
 		this.id = id;
 	}
 
-	public Integer getR_ref() {
-		return r_ref;
+
+	public String getPointCode() {
+		return pointCode;
 	}
 
-	public void setR_ref(Integer r_ref) {
-		this.r_ref = r_ref;
+	public void setPointCode(String pointCode) {
+		this.pointCode = pointCode;
 	}
 
-	public String getAlarmNum() {
-		return alarmNum;
+	public String getSchemeCode() {
+		return schemeCode;
 	}
 
-	public void setAlarmNum(String alarmNum) {
-		this.alarmNum = alarmNum;
+	public void setSchemeCode(String schemeCode) {
+		this.schemeCode = schemeCode;
 	}
 
-	public Integer getWarningId() {
-		return warningId;
-	}
-
-	public void setWarningId(Integer warningId) {
-		this.warningId = warningId;
-	}
-
-	public Integer getObjectId() {
-		return objectId;
-	}
-
-	public void setObjectId(Integer objectId) {
-		this.objectId = objectId;
-	}
-
-	public Integer getAreaId() {
-		return areaId;
-	}
-
-	public void setAreaId(Integer areaId) {
-		this.areaId = areaId;
-	}
 
 	public String getAlarmType() {
 		return alarmType;
@@ -179,6 +173,31 @@ public class AlarmMessageVO {
 	public void setCreateBy(String createBy) {
 		this.createBy = createBy;
 	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getObjectCode() {
+		return objectCode;
+	}
+
+	public void setObjectCode(String objectCode) {
+		this.objectCode = objectCode;
+	}
+
+	public String getAreaCode() {
+		return areaCode;
+	}
+
+	public void setAreaCode(String areaCode) {
+		this.areaCode = areaCode;
+	}
+	
 	
 	
 }

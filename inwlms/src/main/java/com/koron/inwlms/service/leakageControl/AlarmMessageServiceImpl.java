@@ -42,11 +42,11 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 		
 	}
 	
-	@TaskAnnotation("queryAlarmMessageByRref")
+	@TaskAnnotation("queryAlarmMessageByPointCode")
 	@Override
-	public List<AlarmMessageVO> queryAlarmMessageByRref(SessionFactory factory,Integer id){
+	public List<AlarmMessageVO> queryAlarmMessageByPointCode(SessionFactory factory,String code){
 		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
-		List<AlarmMessageVO> list = mapper.queryAlarmMessageByRref(id);
+		List<AlarmMessageVO> list = mapper.queryAlarmMessageByPointCode(code);
 		return list;
 	}
 	

@@ -22,7 +22,7 @@ public interface WarningSchemeService {
 
 	Integer updateWarningScheme(SessionFactory factory, WarningSchemeDTO warningSchemeDTO);
 
-	Integer deleteWarningSchenme(SessionFactory factory, Integer id);
+	Integer deleteWarningSchenme(SessionFactory factory, String code);
 
 	List<AlarmRuleDTO> queryAlarmRuleByAlarmCode(SessionFactory factory, String alarmCode);
 

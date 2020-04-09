@@ -6,6 +6,8 @@
  
  <select id="queryWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO">
  select * from "APP_warningScheme"
+ <where>
+ </where>
  </select>
  
  <insert id="addWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO">
@@ -13,8 +15,8 @@
  values(#{name}, #{state}, #{code}, #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
  </insert>
  
- <delete id="deleteWarningScheme" parameterType="java.lang.Integer">
- delete from "APP_warningScheme" where id = #{id}
+ <delete id="deleteWarningScheme" parameterType="java.lang.String">
+ delete from "APP_warningScheme" where code = #{code}
  </delete>
  
  <update id="updateWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO">
@@ -26,12 +28,13 @@
  <if test="alarmIndex != null and alarmIndex != '' "> "alarmIndex" = #{alarmIndex}</if>
  <if test="paramType != null and paramType != '' "> "paramType" = #{paramType}</if>
  </set>
+ where code = #{code}
  </update>
  
  
  
  <select id="queryAlertNoticeSchemeByWarningId" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme">
- select * from "APP_alertNoticeScheme" where "warningCode" = #{code}
+ select * from "APP_alertNoticeScheme" where "schemeCode" = #{code}
  </select>
  
  <insert id="addAlarmRule" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO">
@@ -40,25 +43,26 @@
  </insert>
  
  <select id="queryAlarmRuleByAlarmCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO">
- select * from "APP_alarmRule"  where "alarmCode" = #{alarmCode}
+ select * from "APP_warningRule"  where "schemeCode" = #{schemeCode}
  </select>
  
  <delete id="deleteAlarmRuleByAlarmCode" parameterType="java.lang.String">
- delete from "APP_alarmRule" where "alarmCode" = #{alarmCode}
+ delete from "APP_warningRule" where "schemeCode" = #{schemeCode}
  </delete>
 
 <update id="updateAlarmRule" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO">
-update "APP_alarmRule"
+update "APP_warningRule"
 <set>
 <if test="constant != null and constant != '' "> constant = #{constant}</if>
 <if test="target != null and target != '' "> target = #{target}</if>
 <if test="arithmeticRule != null and arithmeticRule != '' "> "arithmeticRule" = #{arithmeticRule}</if>
 <if test="limitType != null and limitType != '' "> "limitType" = #{limitType}</if>
 </set>
+where "schemeCode" = #{schemeCode}
 </update>
 
  <select id="queryNoticeSchemeByWarningCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO">
- select * from "APP_alertNoticeScheme" where "warningCode" = #{code}
+ select * from "APP_alertNoticeScheme" where "schemeCode" = #{code}
  </select>
  
  </mapper>

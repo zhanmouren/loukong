@@ -46,9 +46,9 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	
 	@TaskAnnotation("deleteAlarmProcess")
 	@Override
-	public Integer deleteAlarmProcess(SessionFactory factory,Integer id) {
+	public Integer deleteAlarmProcess(SessionFactory factory,String code) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
-		Integer num = mapper.deleteAlarmProcess(id);
+		Integer num = mapper.deleteAlarmProcess(code);
 		return num;
 	}
 	
@@ -92,7 +92,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			//月份为开始至结束连续时间，末尾添加当前月的漏损量
 			while (dateStartL <= dateEndL) {
 				TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
-				//查询分区漏损月指标表，获取月漏损数据
+				//TODO 查询分区漏损月指标表，获取月漏损数据
 				
 				
 				//统计数据
@@ -111,7 +111,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		}
 		
 		
-		//供水量统计
+		//TODO 供水量统计
 		
 		
 		

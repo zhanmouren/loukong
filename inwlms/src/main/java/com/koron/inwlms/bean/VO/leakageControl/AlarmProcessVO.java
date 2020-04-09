@@ -9,12 +9,12 @@ public class AlarmProcessVO {
 	/**
 	 * 报警ID
 	 */
-	private Integer alarmId;
+	private String warningCode;
 	
 	/**
 	 * 处理人ID
 	 */
-	private Integer executorId;
+	private String executorCode;
 	
 	/**
 	 * 处理状态
@@ -34,7 +34,7 @@ public class AlarmProcessVO {
 	/**
 	 * 负责人ID
 	 */
-	private Integer leadingCadre;
+	private String leadingCadre;
 	
 	/**
 	 * 预计成本
@@ -90,13 +90,21 @@ public class AlarmProcessVO {
 	 * 修改时间
 	 */
 	private Date updateTime;
-
+    /**
+     * 报警信息详情
+     */
 	private String alarmContent;
-	
+	/**
+	 * 报警类型
+	 */
 	private String alarmType;
-	
+	/**
+	 * 对象类型
+	 */
 	private String objectType;
-	
+	/**
+	 * 预警处理任务编码
+	 */
 	private String taskCode;
 	
 	
@@ -133,28 +141,12 @@ public class AlarmProcessVO {
 		this.objectType = objectType;
 	}
 
-	public Integer getAlarmId() {
-		return alarmId;
-	}
-
-	public void setAlarmId(Integer alarmId) {
-		this.alarmId = alarmId;
-	}
-
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public Integer getExecutorId() {
-		return executorId;
-	}
-
-	public void setExecutorId(Integer executorId) {
-		this.executorId = executorId;
 	}
 
 	public String getState() {
@@ -179,14 +171,6 @@ public class AlarmProcessVO {
 
 	public void setRecommendStrategy(String recommendStrategy) {
 		this.recommendStrategy = recommendStrategy;
-	}
-
-	public Integer getLeadingCadre() {
-		return leadingCadre;
-	}
-
-	public void setLeadingCadre(Integer leadingCadre) {
-		this.leadingCadre = leadingCadre;
 	}
 
 	public Double getProjectCost() {
@@ -275,6 +259,30 @@ public class AlarmProcessVO {
 
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getWarningCode() {
+		return warningCode;
+	}
+
+	public void setWarningCode(String warningCode) {
+		this.warningCode = warningCode;
+	}
+
+	public String getExecutorCode() {
+		return executorCode;
+	}
+
+	public void setExecutorCode(String executorCode) {
+		this.executorCode = executorCode;
+	}
+
+	public String getLeadingCadre() {
+		return leadingCadre;
+	}
+
+	public void setLeadingCadre(String leadingCadre) {
+		this.leadingCadre = leadingCadre;
 	}
 	
 	

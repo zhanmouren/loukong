@@ -23,11 +23,11 @@ public interface WarningSchemeMapper {
 	List<WarningSchemeVO> queryWarningScheme(WarningSchemeDTO warningSchemeDTO);
 	List<AlertNoticeScheme> queryAlertNoticeSchemeByWarningId(String code);
 	Integer addWarningScheme(WarningSchemeDTO warningSchemeDTO);
-	Integer deleteWarningScheme(Integer id);
+	Integer deleteWarningScheme(String code);
 	Integer updateWarningScheme(WarningSchemeDTO warningSchemeDTO);
 	List<AlarmRuleDTO> queryAlarmRuleByAlarmCode(String alarmCode);
 	Integer addAlarmRule(AlarmRuleDTO alarmRuleDTO);
-	Integer deleteAlarmRuleByAlarmCode(String alarmCode);
+	Integer deleteAlarmRuleByAlarmCode(String schemeCode);
 	Integer updateAlarmRule(AlarmRuleDTO alarmRuleDTO);
 	
 	List<AlertNoticeSchemeVO> queryNoticeSchemeByWarningCode(String code);

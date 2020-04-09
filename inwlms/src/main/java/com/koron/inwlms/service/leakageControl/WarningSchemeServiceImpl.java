@@ -41,11 +41,14 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 		return num;
 	}
 	
-	@TaskAnnotation("updateWarningScheme")
+	@TaskAnnotation("deleteWarningScheme")
 	@Override
-	public Integer deleteWarningSchenme(SessionFactory factory,Integer id) {
+	public Integer deleteWarningSchenme(SessionFactory factory,String code) {
+		
 		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
-		Integer num = mapper.deleteWarningScheme(id);
+		//删除规则表数据
+		mapper.deleteAlarmRuleByAlarmCode(code);
+		Integer num = mapper.deleteWarningScheme(code);
 		return num; 
 	}
 	
@@ -96,9 +99,9 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 		WarningSchemeMapper warnMapper = factory.getMapper(WarningSchemeMapper.class);
 		List<AlertNoticeSchemeVO> alertNoticeSchemeList = warnMapper.queryNoticeSchemeByWarningCode(code);
 		
-		//通过角色ID查询用户
+		//TODO 通过角色ID查询用户
 		
-		//通过用户ID查询用户信息
+		//TODO 通过用户ID查询用户信息
 		
 		return alertNoticeSchemeList;
 	}
