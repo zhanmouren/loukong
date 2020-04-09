@@ -25,6 +25,7 @@ import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
@@ -1472,6 +1473,46 @@ public class SystemManagerController {
 	        	//查询失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	/*
+     * date:2020-04-08
+     * funtion:通过此接口修改该角色所有菜单以及打勾的权限。
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/updateRoleMenuByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改角色菜单权限接口", notes = "修改角色菜单权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateRoleMenuByRoleCode(@RequestBody RoleMenuDTO roleMenuDTO) {
+		if(roleMenuDTO.getRoleMenuList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "传参不能为空", Integer.class).toJson();
+		}
+		for(int i=0;i<roleMenuDTO.getRoleMenuList().size();i++) {
+			if(roleMenuDTO.getRoleMenuList().get(i).getRoleCode()==null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
+			}	
+			if(roleMenuDTO.getRoleMenuList().get(i).getModuleCode()==null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "菜单编码不能为空", Integer.class).toJson();
+			}
+			if(roleMenuDTO.getRoleMenuList().get(i).getOpList().size()<1) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "菜单权限列表不能为空", Integer.class).toJson();
+			}
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{				
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateRoleMenuByRoleCode", Integer.class,roleMenuDTO);	
+			  if(updateRes!=-1) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("修改角色菜单权限成功"); 					
+				  }else {
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("修改角色菜单权限失败"); 
+			 }		  
+	        }catch(Exception e){
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("修改失败");
 	        }
 		
 	     return msg.toJson();

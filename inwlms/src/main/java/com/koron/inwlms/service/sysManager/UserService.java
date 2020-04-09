@@ -14,6 +14,7 @@ import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
@@ -116,4 +117,7 @@ public interface UserService {
 	     
 	     //加载角色菜单权限
 	     List<RoleMenusVO> queryRoleMenuByRoleCode(SessionFactory factory,RoleDTO roleDTO);
+	     
+	     //根据角色Code修改菜单权限
+	     Integer updateRoleMenuByRoleCode(SessionFactory factory,RoleMenuDTO roleMenuDTO);
 }

@@ -17,6 +17,7 @@ import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
@@ -151,5 +152,13 @@ public interface UserMapper {
 		
 		//加载角色菜单权限
 	    List<RoleMenusVO> queryRoleMenuByRoleCode(RoleDTO roleDTO);
-
+	    
+	    //根据角色Code修改菜单权限
+	    Integer updateRoleMenuByRoleCode(RoleMenuDTO roleMenuDTO);
+	    
+	    //批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode)
+	    Integer deleteManyOP(List<RoleMenuDTO> roleMenuList);
+	    
+	    //批量插入SM_roleMenus数据
+	    Integer addManyRoleMenu(List<RoleMenuDTO> roleMenuList);
 }

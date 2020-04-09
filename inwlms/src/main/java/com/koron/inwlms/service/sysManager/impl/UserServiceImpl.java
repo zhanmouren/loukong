@@ -24,6 +24,7 @@ import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
@@ -731,9 +732,48 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("queryRoleMenuByRoleCode")
 				@Override			
 				public List<RoleMenusVO> queryRoleMenuByRoleCode(SessionFactory factory, RoleDTO roleDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<RoleMenusVO> roleMenusList=userMapper.queryRoleMenuByRoleCode(roleDTO);									
 					return roleMenusList;
+				}
+
+				//根据角色Code修改菜单权限
+				@TaskAnnotation("updateRoleMenuByRoleCode")
+				@Override
+				public Integer updateRoleMenuByRoleCode(SessionFactory factory, RoleMenuDTO roleMenuDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					//先执行批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode)
+					  List<RoleMenuDTO> roleMenuDTOList=new ArrayList<RoleMenuDTO>();
+					for(int i=0;i<roleMenuDTO.getRoleMenuList().size();i++) {
+						RoleMenuDTO roleMenuDTONew =new RoleMenuDTO();
+						roleMenuDTONew.setModuleCode(roleMenuDTO.getRoleMenuList().get(i).getModuleCode());
+						roleMenuDTONew.setRoleCode(roleMenuDTO.getRoleMenuList().get(i).getRoleCode());
+						roleMenuDTOList.add(roleMenuDTONew);
+					}
+					Integer delRes=userMapper.deleteManyOP(roleMenuDTOList);
+					Integer updateRes=null;
+					if(delRes==-1) {
+						updateRes=-1;
+						return updateRes;
+					}
+					List<RoleMenuDTO> roleMenuList=new ArrayList<RoleMenuDTO>();
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					//删除完成后遍历插入SM_roleMenus数据
+					for(int i=0;i<roleMenuDTO.getRoleMenuList().size();i++) {					
+						for(int j=0;j<roleMenuDTO.getRoleMenuList().get(i).getOpList().size();j++) {
+							RoleMenuDTO roleMenuNew =new RoleMenuDTO();
+							roleMenuNew.setModuleCode(roleMenuDTO.getRoleMenuList().get(i).getModuleCode());
+							roleMenuNew.setRoleCode(roleMenuDTO.getRoleMenuList().get(i).getRoleCode());
+							roleMenuNew.setOp(Integer.valueOf(roleMenuDTO.getRoleMenuList().get(i).getOpList().get(j)));
+							roleMenuNew.setCreateBy("小詹");
+							roleMenuNew.setUpdateBy("小詹");
+							roleMenuNew.setCreateTime(timeNow);
+							roleMenuNew.setUpdateTime(timeNow);
+							roleMenuList.add(roleMenuNew);
+						}
+					}
+				    updateRes=userMapper.addManyRoleMenu(roleMenuList);					
+					return updateRes;
 				}
 }

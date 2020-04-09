@@ -165,7 +165,7 @@
     </delete>
     
     
-    <!-- 遍历插入数据字典主表信息一条记录 -->
+    <!-- 遍历插入数据字典主表信息记录 -->
     <insert id="addDataDic" parameterType="java.util.List">  
         insert into "SM_dataDictionary"(cn,en,remark,parent,key,value,seq,"createBy","createTime","updateBy","updateTime")values
         <foreach collection="list" index="index" separator="," item="item">
@@ -372,10 +372,26 @@
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress",
 		"role".code as "roleCode","role".name as "roleName",case when string_agg(to_char("rolemenu".op,'9'),',') is null then '' else string_agg(to_char("rolemenu".op,'9'),',') end as op
 		from "SM_moduleMenu" as "menu"
-		left join "SM_roleMenus" as "rolemenu" on "rolemenu"."moduleCode"="menu".code
+		left join "SM_roleMenus" as "rolemenu" on "rolemenu"."moduleCode"="menu".code and "rolemenu"."roleCode"=#{roleCode}
 		left join "SM_userRole" as "role" on "role"."code"="rolemenu"."roleCode" and "role".code=#{roleCode}
 		GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo",
 		"menu"."moduleName" ,"menu"."linkAddress",
 		"role".code ,"role".name 
       </select>
+      
+       <!-- 批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode) -->
+     <delete id="deleteManyOP">
+         delete from "SM_roleMenus" where ("roleCode","moduleCode") in
+         <foreach item="item" index="index" collection="list" separator="," open="(" close=")">
+           (#{item.roleCode},#{item.moduleCode})
+          </foreach>
+     </delete>
+     
+     <!-- 遍历插入角色菜单权限明细表SM_roleMenus信息记录 -->
+    <insert id="addManyRoleMenu" parameterType="java.util.List">  
+        insert into "SM_roleMenus"("roleCode","moduleCode",op,"createBy","createTime","updateBy","updateTime")values
+        <foreach collection="list" index="index" separator="," item="item">
+          (#{item.roleCode},#{item.moduleCode},#{item.op},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime})  
+        </foreach>      
+    </insert>
 </mapper>
