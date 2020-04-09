@@ -28,6 +28,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -52,7 +53,8 @@ public class UserServiceImpl implements UserService{
 		userDTO.setUpdateBy("xiaozhan");
 		userDTO.setUpdateTime(timeNow);
 		//随机获取uuid,赋值给Code
-		userDTO.setCode(new RandomCodeUtil().getUUID32());	
+		String userCode=new RandomCodeUtil().getUUID32();
+		userDTO.setCode(userCode);	
 		//添加用户的时候判断工号和登录名称是否存在
 		QueryUserDTO queryUserDTO=new QueryUserDTO();
 		queryUserDTO.setLoginName(userDTO.getLoginName());		
@@ -69,7 +71,22 @@ public class UserServiceImpl implements UserService{
 			addResult=-3;
 			return addResult;
 		}
-	    addResult=userMapper.addUser(userDTO);
+	     addResult=userMapper.addUser(userDTO);
+	    //获取usercode
+	    if(addResult==1 && userDTO.getDepCode()!=null) {
+	    	 //准备数据
+		    DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
+		    deptAndUserDTO.setDepCode(userDTO.getDepCode());
+		    deptAndUserDTO.setUserCode(userCode);
+		    deptAndUserDTO.setCreateBy("xiaozhan");
+		    deptAndUserDTO.setUpdateBy("xiaozhan");
+		    deptAndUserDTO.setCreateTime(timeNow);
+		    deptAndUserDTO.setUpdateTime(timeNow);
+		    List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
+		    deptUserDTOList.add(deptAndUserDTO);
+		    //添加用户(批量)和部门关系的操作
+		    addResult=userMapper.addDeptUser(deptUserDTOList);
+	    }    
 		return addResult;
 	}
 	
@@ -775,5 +792,15 @@ public class UserServiceImpl implements UserService{
 					}
 				    updateRes=userMapper.addManyRoleMenu(roleMenuList);					
 					return updateRes;
+				}
+
+				//模糊查询部门接口
+				@TaskAnnotation("queryDept")
+				@Override
+				public List<DeptVO> queryDept(SessionFactory factory, DeptDTO deptDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<DeptVO> deptList=userMapper.queryDept(deptDTO);
+					return deptList;
 				}
 }

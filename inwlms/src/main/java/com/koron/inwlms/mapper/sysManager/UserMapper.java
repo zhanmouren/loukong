@@ -21,6 +21,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -35,7 +36,7 @@ import com.koron.inwlms.bean.VO.sysManager.UserVO;
 @EnvSource("_default")
 public interface UserMapper {
    //添加职员
-	public Integer addUser(UserDTO userDTO);
+	 Integer addUser(UserDTO userDTO);
 	
 	//查询职员
 	public List<UserVO> queryUser(QueryUserDTO userDTO);
@@ -161,4 +162,7 @@ public interface UserMapper {
 	    
 	    //批量插入SM_roleMenus数据
 	    Integer addManyRoleMenu(List<RoleMenuDTO> roleMenuList);
+	    
+	    //模糊查询部门接口
+	    List<DeptVO> queryDept(DeptDTO deptDTO);
 }

@@ -30,6 +30,7 @@ import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -78,6 +79,9 @@ public class SystemManagerController {
 		if(userDTO.getWorkNo()==null || StringUtils.isBlank(userDTO.getWorkNo())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "工号不能为空", Integer.class).toJson();
 		}
+		if(userDTO.getSex()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "性别不能为空", Integer.class).toJson();
+		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行插入职员的操作
 		  try{
@@ -102,7 +106,7 @@ public class SystemManagerController {
 	        }catch(Exception e){
 	        	//插入失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("添加用户失败");
+	            msg.setDescription("添加失败");
 	        }
 		
 	     return msg.toJson();
@@ -1511,6 +1515,35 @@ public class SystemManagerController {
 	        }catch(Exception e){
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("修改失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-04-09
+     * funtion:模糊查询部门接口
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryDept(@RequestBody DeptDTO deptDTO) {		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<DeptVO> deptList=ADOConnection.runTask(new UserServiceImpl(), "queryDept", List.class,deptDTO);	
+			  if(deptList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询部门成功"); 
+					msg.setData(deptList);
+				  }else {
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("没有查询到相关部门"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
 	        }
 		
 	     return msg.toJson();

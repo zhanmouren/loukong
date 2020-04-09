@@ -47,7 +47,15 @@ public class UserDTO {
   private Integer whetUse;
   //状态（0 在职，-1 离职）
   private Integer status;
+  //部门code
+  private String depCode;
   
+public String getDepCode() {
+	return depCode;
+}
+public void setDepCode(String depCode) {
+	this.depCode = depCode;
+}
 public String getCode() {
 	return code;
 }

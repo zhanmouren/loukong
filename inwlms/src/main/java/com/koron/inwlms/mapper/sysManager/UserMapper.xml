@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.sysManager.UserMapper">
    <!-- 插入职员信息 -->
-   <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">  
+   <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO" >  
         insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code")
-        values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime},#{code})     
+        values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime},#{code})   
     </insert>
      <!-- 查询相关职员信息 -->
     <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
@@ -394,4 +394,14 @@
           (#{item.roleCode},#{item.moduleCode},#{item.op},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime})  
         </foreach>      
     </insert>
+    
+     <!--模糊查询部门接口-->
+     <select id="queryDept"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DeptVO">
+         select "dept".id as "depId","dept"."name" as "depName","dept".code as "depCode","dept".status as "status"
+         from "SM_department" as "dept"
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="depName != null"> and "dept".name like '%${depName}%'</if>  
+		 <if test="status != null"> and "dept".status=#{status}</if>         
+	   </trim>
+      </select>
 </mapper>
