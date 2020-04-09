@@ -8,7 +8,7 @@
     </insert>
      <!-- 查询相关职员信息 -->
     <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-      select "user".id as "userId","user"."loginName","user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+      select "user".id as "userId","user"."loginName","user".phone,case when "user"."Email" is null then '' else "user"."Email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname","user".code  as code    
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   

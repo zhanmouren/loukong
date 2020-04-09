@@ -1496,9 +1496,7 @@ public class SystemManagerController {
 			if(roleMenuDTO.getRoleMenuList().get(i).getModuleCode()==null) {
 				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "菜单编码不能为空", Integer.class).toJson();
 			}
-			if(roleMenuDTO.getRoleMenuList().get(i).getOpList().size()<1) {
-				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "菜单权限列表不能为空", Integer.class).toJson();
-			}
+			
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{				

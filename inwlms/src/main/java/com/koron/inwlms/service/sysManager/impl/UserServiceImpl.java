@@ -756,7 +756,7 @@ public class UserServiceImpl implements UserService{
 					if(delRes==-1) {
 						updateRes=-1;
 						return updateRes;
-					}
+					}					
 					List<RoleMenuDTO> roleMenuList=new ArrayList<RoleMenuDTO>();
 					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
 					//删除完成后遍历插入SM_roleMenus数据
