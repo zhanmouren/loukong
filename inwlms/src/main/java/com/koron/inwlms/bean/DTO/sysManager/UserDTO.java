@@ -26,8 +26,11 @@ public class UserDTO {
   //职员Email	
   private String Email;
   //职员职位
-  private String position;
-  //职员性别
+  private Integer position;
+  public void setPosition(Integer position) {
+	this.position = position;
+}
+//职员性别
   private Integer sex;
   //职员电话
   private String photo;
@@ -134,12 +137,7 @@ public String getEmail() {
 public void setEmail(String email) {
 	Email = email;
 }
-public String getPosition() {
-	return position;
-}
-public void setPosition(String position) {
-	this.position = position;
-}
+
 
 public Integer getSex() {
 	return sex;

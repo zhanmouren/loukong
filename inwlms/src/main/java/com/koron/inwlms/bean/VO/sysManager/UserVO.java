@@ -25,7 +25,7 @@ public class UserVO {
 	  //职员Email	
 	  private String Email;
 	  //职员职位
-	  private String position;
+	  private Integer position;
 	  //职员性别
 	  private String sex;
 	  //职员电话
@@ -93,10 +93,11 @@ public class UserVO {
 	public void setEmail(String email) {
 		Email = email;
 	}
-	public String getPosition() {
+	
+	public Integer getPosition() {
 		return position;
 	}
-	public void setPosition(String position) {
+	public void setPosition(Integer position) {
 		this.position = position;
 	}
 	public String getSex() {
