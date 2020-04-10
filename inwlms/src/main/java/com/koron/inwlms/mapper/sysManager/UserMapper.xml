@@ -368,15 +368,19 @@
      
      <!--加载角色权限菜单-->
      <select id="queryRoleMenuByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
-         select "menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+         select "SM_treeDet".*,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress",
 		"role".code as "roleCode","role".name as "roleName",case when string_agg(to_char("rolemenu".op,'9'),',') is null then '' else string_agg(to_char("rolemenu".op,'9'),',') end as op
 		from "SM_moduleMenu" as "menu"
-		left join "SM_roleMenus" as "rolemenu" on "rolemenu"."moduleCode"="menu".code and "rolemenu"."roleCode"=#{roleCode}
+		left join "SM_treeDet" on "SM_treeDet".foreignkey="menu".code
+		left join "SM_roleMenus" as "rolemenu" on "rolemenu"."moduleCode"="menu".code and "rolemenu"."roleCode"=
+		#{roleCode}
 		left join "SM_userRole" as "role" on "role"."code"="rolemenu"."roleCode" and "role".code=#{roleCode}
 		GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo",
 		"menu"."moduleName" ,"menu"."linkAddress",
-		"role".code ,"role".name 
+		"role".code ,"role".name,
+		"SM_treeDet".seq,"SM_treeDet".childmask,"SM_treeDet".foreignkey,"SM_treeDet".mask,
+		"SM_treeDet".parentmask,"SM_treeDet".id
       </select>
       
        <!-- 批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode) -->
@@ -404,4 +408,28 @@
 		 <if test="status != null"> and "dept".status=#{status}</if>         
 	   </trim>
       </select>
+      
+       <!--通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限-->
+     <select id="queryRoleMenuByRoleMenu"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
+         	select "SM_treeDet".*, "menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress",
+		"role".code as "roleCode","role".name as "roleName",case when string_agg(to_char("rolemenu".op,'9'),',') is null then '' else string_agg(to_char("rolemenu".op,'9'),',') end as op
+		from (
+		select * from  "SM_moduleMenu" where code in 
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        )
+		as "menu"
+		left join "SM_treeDet" on "SM_treeDet".foreignkey="menu".code
+		left join "SM_roleMenus" as "rolemenu" on "rolemenu"."moduleCode"="menu".code  and "rolemenu"."roleCode"=#{roleMenuDTO.roleCode}
+		left join "SM_userRole" as "role" on "role"."code"="rolemenu"."roleCode"  and "role"."code"=#{roleMenuDTO.roleCode}
+		GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo",
+		"menu"."moduleName" ,"menu"."linkAddress",
+		"role".code ,"role".name,"SM_treeDet".seq,"SM_treeDet".childmask,"SM_treeDet".foreignkey,"SM_treeDet".mask,
+		"SM_treeDet".parentmask,"SM_treeDet".id
+      </select>
+      
+
+      
 </mapper>

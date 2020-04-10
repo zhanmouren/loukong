@@ -15,6 +15,8 @@ public class RoleMenuDTO {
     private String roleCode;
     //菜单code
     private String moduleCode;
+    //菜单CodeList
+    private List<String> moduleCodeList;
     //单个的操作权限
     private Integer op;
     //操作列表
@@ -27,6 +29,12 @@ public class RoleMenuDTO {
   	private String updateBy;
   	//修改时间
   	private Timestamp updateTime;
+	public List<String> getModuleCodeList() {
+		return moduleCodeList;
+	}
+	public void setModuleCodeList(List<String> moduleCodeList) {
+		this.moduleCodeList = moduleCodeList;
+	}
 	public String getCreateBy() {
 		return createBy;
 	}

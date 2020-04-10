@@ -8,6 +8,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Repository;
 
+import com.koron.common.bean.LongTreeBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
@@ -26,6 +27,7 @@ import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 /*
@@ -151,7 +153,7 @@ public interface UserMapper {
 		//添加菜单
 		Integer addMenu(MenuDTO menuDTO);
 		
-		//加载角色菜单权限
+		//加载角色菜单权限(查看权限)
 	    List<RoleMenusVO> queryRoleMenuByRoleCode(RoleDTO roleDTO);
 	    
 	    //根据角色Code修改菜单权限
@@ -165,4 +167,7 @@ public interface UserMapper {
 	    
 	    //模糊查询部门接口
 	    List<DeptVO> queryDept(DeptDTO deptDTO);
+	    
+	   //通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限
+	    List<RoleMenusVO>  queryRoleMenuByRoleMenu(@Param("roleMenuDTO")  RoleMenuDTO roleMenuDTO,@Param("list") List<String> moduleList);
 }

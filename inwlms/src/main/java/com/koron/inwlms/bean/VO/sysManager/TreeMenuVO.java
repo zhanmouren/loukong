@@ -13,8 +13,58 @@ public class TreeMenuVO extends TreeBean.Long{
 		private String moduleName;
 		//链接地址
 		private String linkAddress;
+		//操作
+		private String op;
 		
 		
+		public java.lang.Integer getMenuId() {
+			return menuId;
+		}
+
+		public void setMenuId(java.lang.Integer menuId) {
+			this.menuId = menuId;
+		}
+
+		public String getMenuCode() {
+			return menuCode;
+		}
+
+		public void setMenuCode(String menuCode) {
+			this.menuCode = menuCode;
+		}
+
+		public String getModuleNo() {
+			return moduleNo;
+		}
+
+		public void setModuleNo(String moduleNo) {
+			this.moduleNo = moduleNo;
+		}
+
+		public String getModuleName() {
+			return moduleName;
+		}
+
+		public void setModuleName(String moduleName) {
+			this.moduleName = moduleName;
+		}
+
+		public String getLinkAddress() {
+			return linkAddress;
+		}
+
+		public void setLinkAddress(String linkAddress) {
+			this.linkAddress = linkAddress;
+		}
+
+		public String getOp() {
+			return op;
+		}
+
+		public void setOp(String op) {
+			this.op = op;
+		}
+
 		/**
 		 * 分级ID
 		 */

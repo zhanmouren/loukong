@@ -166,6 +166,27 @@ public class TreeService {
 	}
 	
 	/**
+	 * 获取节点下级子节点(菜单)并返回是否查看的权限
+	 * @param factory
+	 * @param type 类型
+	 * @param seq 顺序值
+	 * @param mask 掩码位数
+	 * @param parentMask 父级掩码位数
+	 * 
+	 * @return
+	 */
+	@TaskAnnotation("queryChildOneMenu")
+	public static List<TreeMenuVO> queryChildOneMenu(SessionFactory factory,int type,String foreignKey){
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		UserMapper userMapper = factory.getMapper(UserMapper.class);	
+		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+		//TODO 测试使用，默认userCode
+		String userCode="c545d2c156834f1b9eea9136620726b3";
+		List<TreeMenuVO> menuList=mapper.queryChildOneMenu(node,userCode);
+		return menuList;
+	}
+	
+	/**
 	 * 获取节点路径.
 	 * 从最上层节点到当前节点
 	 * @param factory

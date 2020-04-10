@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.swan.bean.MessageBean;
 
+import com.koron.authority.ValidatePermission;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.TestBean;
@@ -36,6 +37,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
@@ -163,6 +165,9 @@ public class SystemManagerController {
 		}
 		if(userDTO.getPassword()==null || StringUtils.isBlank(userDTO.getPassword())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "密码不能为空", Integer.class).toJson();
+		}
+		if(userDTO.getSex()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "性别不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行修改职员的操作
@@ -1431,7 +1436,7 @@ public class SystemManagerController {
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<TreeDeptVO> treeBeanList=ADOConnection.runTask(new TreeService(), "childMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(new TreeService(), "childMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
 			  if(treeBeanList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询下级目录树成功"); 
@@ -1452,11 +1457,11 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-04-08
-     * funtion:通过此接口加载该角色所有菜单以及打勾的权限。
+     * funtion:通过此接口加载该角色所有菜单以及可查看的权限。
      * author:xiaozhan
      */
 	@RequestMapping(value = "/queryRoleMenuByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "加载角色菜单权限接口", notes = "加载角色菜单权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "加载角色菜单查看权限接口", notes = "加载角色菜单查看权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryRoleMenuByRoleId(@RequestBody RoleDTO roleDTO) {		
 		if(roleDTO.getRoleCode()==null) {
@@ -1467,11 +1472,43 @@ public class SystemManagerController {
 			  List<RoleMenusVO> menuList=ADOConnection.runTask(new UserServiceImpl(), "queryRoleMenuByRoleCode", List.class,roleDTO);	
 			  if(menuList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
-					msg.setDescription("查询角色菜单权限成功"); 
+					msg.setDescription("查询角色菜单查看权限成功"); 
 					msg.setData(menuList);
 				  }else {
 			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-			        msg.setDescription("没有查询到角色菜单权限"); 
+			        msg.setDescription("没有查询到角色查看菜单权限"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-04-10
+     * funtion:通过角色code和模块code加载该角色所有菜单以及可操作的权限。
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryRoleMenuByRoleMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "加载角色菜单操作权限接口", notes = "加载角色菜单操作权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryRoleMenuByRoleMenu(@RequestBody RoleMenuDTO roleMenuDTO) {		
+		if(roleMenuDTO.getRoleCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
+		}
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<RoleMenusVO> menuCDUList=ADOConnection.runTask(new UserServiceImpl(), "queryRoleMenuByRoleMenu", List.class,roleMenuDTO);	
+			  if(menuCDUList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询角色菜单操作权限成功"); 
+					msg.setData(menuCDUList);
+				  }else {
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("没有查询到角色操作菜单权限"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败
@@ -1525,6 +1562,7 @@ public class SystemManagerController {
      * funtion:模糊查询部门接口
      * author:xiaozhan
      */
+	@ValidatePermission
 	@RequestMapping(value = "/queryDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1539,6 +1577,44 @@ public class SystemManagerController {
 				  }else {
 			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
 			        msg.setDescription("没有查询到相关部门"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	/*
+     * date:2020-04-08
+     * funtion:根据userCode可查看菜单目录结构(查看下级的菜单)加入菜单权限,类似查询一级菜单
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryChildOneMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查看一级菜单树接口", notes = "查看一级菜单树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryChildOneMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
+		Integer type=Integer.valueOf(menuTreeDTO.getType());
+		if(type==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
+		}	
+		if(menuTreeDTO.getForeignKey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
+		}
+		//TODO 测试用
+		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(new TreeService(), "queryChildOneMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  if(treeBeanList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询一级目录树成功"); 
+					msg.setData(treeBeanList);
+				  }else {
+					//查询失败
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询一级目录树失败"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败

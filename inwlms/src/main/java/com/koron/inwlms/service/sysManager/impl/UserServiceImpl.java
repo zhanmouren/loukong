@@ -14,6 +14,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.mapper.TreeMapper;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
@@ -33,6 +34,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.sysManager.UserService;
@@ -798,9 +800,22 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("queryDept")
 				@Override
 				public List<DeptVO> queryDept(SessionFactory factory, DeptDTO deptDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<DeptVO> deptList=userMapper.queryDept(deptDTO);
 					return deptList;
 				}
+				//通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限
+				@TaskAnnotation("queryRoleMenuByRoleMenu")
+				@Override
+				public List<RoleMenusVO>  queryRoleMenuByRoleMenu(SessionFactory factory,RoleMenuDTO roleMenuDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<RoleMenusVO> roleMenusList=userMapper.queryRoleMenuByRoleMenu(roleMenuDTO,roleMenuDTO.getModuleCodeList());					
+					//String转为List									
+					for(int  i=0;i<roleMenusList.size();i++) {					
+						 String str = roleMenusList.get(i).getOp().replace(" ", "");						 
+					     List<String> lis = Arrays.asList(str.split(","));						    
+					     roleMenusList.get(i).setOpList(lis);
+					}
+					return roleMenusList;					
+				}			
 }

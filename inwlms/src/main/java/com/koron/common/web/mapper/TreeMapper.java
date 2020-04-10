@@ -65,6 +65,25 @@ public interface TreeMapper {
             + "and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and \"SM_treeDet\".type = #{type}")
     List<TreeMenuVO> getMenuChildren(LongTreeBean bean);
 
+    /**
+     * 根据用户Code获取节点的直接下级节点(目录菜单)
+     *
+     * @param bean 节点
+     * @return 节点集合
+     */
+    @Select("select \"SM_treeDet\".*,\"SM_moduleMenu\".code \"menuCode\",\"SM_moduleMenu\".id \"menuId\",\"SM_moduleMenu\".\"moduleNo\",\"SM_moduleMenu\".\"moduleName\",\"SM_moduleMenu\".\"linkAddress\"\r\n" + 
+    		"		 ,\"role\".name ,case when string_agg(to_char(\"rolemenu\".op,'9'),',') is null then '' else string_agg(to_char(\"rolemenu\".op,'9'),',') end as op\r\n" + 
+    		"		 from \"SM_treeDet\"\r\n" + 
+    		"		 left join \"SM_moduleMenu\" on \"SM_moduleMenu\".code=\"SM_treeDet\".foreignkey\r\n" + 
+    		"		 left join \"SM_roleMenus\" \"rolemenu\" on \"rolemenu\".\"moduleCode\"=\"SM_moduleMenu\".code\r\n" + 
+    		"		 left join \"SM_userRole\"  \"role\" on  \"role\".code=\"rolemenu\".\"roleCode\"\r\n" + 
+    		"		 LEFT JOIN \"SM_userRoleRelation\" \"rela\" on  \"rela\".\"roleCode\"=\"role\".code\r\n" + 
+    		"		 left join \"SM_user\" \"user\" on \"user\".code=\"rela\".\"userCode\"\r\n" + 
+    		"		 where  (seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq}  and  (seq & ((1::int8 << (62 - #{bean.parentMask}-#{bean.mask} - #{bean.childMask}))-1)) = 0 and \"SM_treeDet\".type = 1  and \"user\".code=#{userCode}\r\n" + 
+    		"		 GROUP BY  \"SM_treeDet\".id,\"SM_treeDet\".childmask,\"SM_treeDet\".foreignkey,\"SM_treeDet\".mask,\"SM_treeDet\".parentmask,\r\n" + 
+    		"		 \"SM_treeDet\".seq,\"SM_treeDet\".\"type\",\"SM_moduleMenu\".code ,\"SM_moduleMenu\".id ,\"SM_moduleMenu\".\"moduleNo\",\"SM_moduleMenu\".\"moduleName\",\"SM_moduleMenu\".\"linkAddress\"\r\n" + 
+    		"		 ,\"role\".name")
+    List<TreeMenuVO> queryChildOneMenu(@Param("bean") LongTreeBean bean,@Param("userCode") String userCode);
 
     /**
      * 获取节点之下所有节点
