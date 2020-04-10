@@ -9,7 +9,7 @@ public class AlertNoticeSchemeVO {
 	/**
 	 * 预警方案编码
 	 */
-	private String warningCode;
+	private String schemeCode;
 	
 	/**
 	 * 通知方式
@@ -19,7 +19,7 @@ public class AlertNoticeSchemeVO {
 	/**
 	 * 需通知的角色ID
 	 */
-	private Integer userId;
+	private Integer roleCode;
 	
 	private String createBy;
 	
@@ -42,13 +42,6 @@ public class AlertNoticeSchemeVO {
 		this.id = id;
 	}
 
-	public String getWarningCode() {
-		return warningCode;
-	}
-
-	public void setWarningCode(String warningCode) {
-		this.warningCode = warningCode;
-	}
 
 	public String getType() {
 		return type;
@@ -58,13 +51,6 @@ public class AlertNoticeSchemeVO {
 		this.type = type;
 	}
 
-	public Integer getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Integer userId) {
-		this.userId = userId;
-	}
 
 	public String getCreateBy() {
 		return createBy;
@@ -104,6 +90,22 @@ public class AlertNoticeSchemeVO {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public String getSchemeCode() {
+		return schemeCode;
+	}
+
+	public void setSchemeCode(String schemeCode) {
+		this.schemeCode = schemeCode;
+	}
+
+	public Integer getRoleCode() {
+		return roleCode;
+	}
+
+	public void setRoleCode(Integer roleCode) {
+		this.roleCode = roleCode;
 	}
 	
 	

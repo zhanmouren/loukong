@@ -16,23 +16,27 @@ import org.swan.bean.MessageBean;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
+import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.service.leakageControl.AlarmMessageService;
 import com.koron.inwlms.service.leakageControl.AlarmProcessService;
+import com.koron.inwlms.service.leakageControl.EventInfoService;
 import com.koron.inwlms.service.leakageControl.StatisticalAnalysisService;
 import com.koron.inwlms.service.leakageControl.WarningSchemeService;
 import com.koron.util.Constant;
@@ -59,12 +63,14 @@ public class LeakageControlController {
 	private WarningSchemeService wss;
 	@Autowired
 	private StatisticalAnalysisService sas;
+	@Autowired
+	private EventInfoService eis;
 
 	@RequestMapping(value = "/queryAlarmMessage.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息接口", notes = "查询预警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryAlarmMessage(@RequestBody WarningInfDTO warningInfDTO) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<AlarmMessageReturnVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AlarmMessageReturnVO.class);
 		
 		if(warningInfDTO.getStartTime() == null) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -87,8 +93,10 @@ public class LeakageControlController {
 			if(alarmMessageList != null && alarmMessageList.size() != 0) {
 				//TODO 转化枚举类型key为value
 				
+				AlarmMessageReturnVO alarmMessageReturnVO = new AlarmMessageReturnVO();
+				alarmMessageReturnVO.setAlarmMessageList(alarmMessageList);
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				msg.setData(alarmMessageList);
+				msg.setData(alarmMessageReturnVO);
 			}else {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("预警信息无");
@@ -643,5 +651,126 @@ public class LeakageControlController {
 		
 		return null;
 	}
+	
+	@RequestMapping(value = "/queryqueryEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项列表查询接口", notes = "事项列表查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryqueryEventInfo(@RequestBody EventInfoDTO eventInfoDTO) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		if(eventInfoDTO.getStartTime() == null || eventInfoDTO.getStartTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("开始时间为空");
+	        return msg.toJson();
+		}
+		if(eventInfoDTO.getEndTime() == null || eventInfoDTO.getEndTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("结束时间为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			List<EventInfo> eventInfoList = ADOConnection.runTask(eis, "queryEventInfo",List.class,eventInfoDTO);
+			if(eventInfoList != null && eventInfoList.size() != 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setData(eventInfoList);
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("事项列表数据为空");
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项列表查询失败");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/deleteEventInfo.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项信息删除接口", notes = "事项信息删除接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteEventInfo(String code) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(code != null || code.equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项编码为空");
+		}
+		
+		try {
+			//删除事项表的数据
+			Integer num = ADOConnection.runTask(eis, "deleteEventInfo",Integer.class,code);
+			if(num > 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("事项信息删除成功");
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无事项信息可删除");
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项信息删除失败");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/updateEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项信息修改接口", notes = "事项信息修改接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateEventInfo(@RequestBody EventInfo eventInfo) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		if(eventInfo.getCode() != null || eventInfo.getCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项信息编码为空");
+	        return msg.toJson(); 
+		}
+		
+		try {
+			Integer num = ADOConnection.runTask(eis, "updateEventInfo",Integer.class,eventInfo);
+			if(num > 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("事项信息修改成功");
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无事项信息可修改");
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项信息修改失败");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/addEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项信息添加接口", notes = "事项信息添加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String addEventInfo(@RequestBody EventInfo eventInfo) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		//TODO 产生一个编码
+		
+		try {
+			Integer num = ADOConnection.runTask(eis, "addEventInfo",Integer.class,eventInfo);
+			if(num > 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("事项信息添加成功");
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无事项信息可添加");
+			}
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项信息创建失败");
+		}
+		
+		return msg.toJson();
+	}
+	
+	
 	
 }
