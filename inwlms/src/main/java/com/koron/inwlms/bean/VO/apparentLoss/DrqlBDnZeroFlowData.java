@@ -1,6 +1,7 @@
 package com.koron.inwlms.bean.VO.apparentLoss;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 诊断报告-问题清单-大口径零流量数据
@@ -14,39 +15,27 @@ public class DrqlBDnZeroFlowData extends DrqlBaseData{
 	 */
 	private String mReadDate;
 	
-	/**
-	 * 月时间集合
-	 */
-	private List<Integer> month;
 	
 	/**
-	 * 流量集合
+	 * 数据集合
 	 */
-	private List<Double> flow;
+	private List<Map<Integer,Double>> datas;
 
 
 	public String getmReadDate() {
 		return mReadDate;
 	}
 
-	public List<Integer> getMonth() {
-		return month;
-	}
-
-	public List<Double> getFlow() {
-		return flow;
-	}
-
 	public void setmReadDate(String mReadDate) {
 		this.mReadDate = mReadDate;
 	}
 
-	public void setMonth(List<Integer> month) {
-		this.month = month;
+	public List<Map<Integer, Double>> getDatas() {
+		return datas;
 	}
 
-	public void setFlow(List<Double> flow) {
-		this.flow = flow;
+	public void setDatas(List<Map<Integer, Double>> datas) {
+		this.datas = datas;
 	}
-	
+
 }

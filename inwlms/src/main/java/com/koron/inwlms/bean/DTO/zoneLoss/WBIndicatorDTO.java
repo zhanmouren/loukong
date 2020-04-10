@@ -2,6 +2,8 @@ package com.koron.inwlms.bean.DTO.zoneLoss;
 
 import java.util.List;
 
+import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
+
 /**
  * 水平衡指标DTO
  * @author csh
@@ -16,6 +18,8 @@ public class WBIndicatorDTO {
 	private Integer startTime;
 	
 	private Integer endTime;
+	
+	private List<ZoneInfo> zoneInfos;
 
 	public List<String> getCodes() {
 		return codes;
@@ -47,6 +51,14 @@ public class WBIndicatorDTO {
 
 	public void setEndTime(Integer endTime) {
 		this.endTime = endTime;
+	}
+
+	public List<ZoneInfo> getZoneInfos() {
+		return zoneInfos;
+	}
+
+	public void setZoneInfos(List<ZoneInfo> zoneInfos) {
+		this.zoneInfos = zoneInfos;
 	}
 	
 }

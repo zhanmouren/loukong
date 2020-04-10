@@ -12,6 +12,8 @@ public class WBIndicatorVO {
 	private Double value;
 	
 	private Integer timeId;
+	
+	private String zoneNo;
 
 	public String getCode() {
 		return code;
@@ -35,6 +37,14 @@ public class WBIndicatorVO {
 
 	public void setTimeId(Integer timeId) {
 		this.timeId = timeId;
+	}
+
+	public String getZoneNo() {
+		return zoneNo;
+	}
+
+	public void setZoneNo(String zoneNo) {
+		this.zoneNo = zoneNo;
 	}
 	
 }

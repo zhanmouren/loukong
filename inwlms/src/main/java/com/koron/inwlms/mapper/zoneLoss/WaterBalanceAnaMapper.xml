@@ -366,12 +366,18 @@
 		where "templateId" = #{id}
 	</select>
 	
-	<select id="queryWBMIndicatorData" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO" 
+	<select id="queryWBIndicatorData" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO" 
 	resultType="com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO">
 		select 
-		a.code,a.value,b."yearMonth" as "timeId"
-		from "ANA_zone_balance_month" a left join "APP_dim_month" b 
-		on a."yearMonth" = b.id
+		<if test="timeType != null and timeType == 3">
+			a.code,a.value,b."yearMonth" as "timeId"
+			from  "ANA_zone_balance_month" a left join "APP_dim_month" b 
+			on a."yearMonth" = b.id 
+		</if>
+		<if test="timeType != null and timeType == 4">
+			code,value,year as "timeId"
+			from "ANA_zone_balance_year"
+		</if>
 		where 1 = 1
 		<if test="lists != null and lists.size > 0">
 			and a.code in 
@@ -381,17 +387,4 @@
 		</if>
 	</select>
 	
-	<select id="queryWBYIndicatorData" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO" 
-	resultType="com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO">
-		select 
-		code,value,year as "timeId"
-		from "ANA_zone_balance_year"
-		where 1 = 1
-		<if test="lists != null and lists.size > 0">
-			and code in 
-			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
-				#{item}    
-			</foreach> 
-		</if>
-	</select>
 </mapper>

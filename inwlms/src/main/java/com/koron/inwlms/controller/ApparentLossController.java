@@ -95,7 +95,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -147,7 +147,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALListDTO.getZoneRank() != null && (Constant.RANK_F < queryALListDTO.getZoneRank() || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -198,7 +198,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -279,7 +279,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -330,7 +330,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -366,7 +366,8 @@ public class ApparentLossController {
 					}.getType());
 			// 导出excel文件
 			//导出list
-			return ExportDataUtil.getExcelDataFileInfoByList(lists, jsonArray);
+			HttpEntity<?> entity = ExportDataUtil.getExcelDataFileInfoByList(lists, jsonArray);
+			return entity;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -409,7 +410,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -460,7 +461,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -511,7 +512,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -562,7 +563,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -613,7 +614,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -664,7 +665,7 @@ public class ApparentLossController {
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
    	 	}
-		if(queryALDTO.getZoneRank() != null && (Constant.RANK_F < queryALDTO.getZoneRank() || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");

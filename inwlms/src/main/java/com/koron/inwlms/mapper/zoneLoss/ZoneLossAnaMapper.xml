@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.zoneLoss.ZoneLossAnaMapper">
+
+	<select id="queryBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			from "ANA_base_month" a left join (
+				select id,"yearMonth" from "APP_dim_month"
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id
+			left join "LC_APP_dim_indicator" c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from "ANA_base_year" a left join "LC_APP_dim_indicator" b on a.code = b.code
+			where a.year &gt;= #{startTime} 
+			and a.year &lt;= #{endTime}
+		</if>
+		where 1 = 1
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneInfos != null and zoneInfos.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneInfos" separator="," open="(" close=")" index="">    
+				#{item.zoneNo}    
+			</foreach> 
+		</if>
+	</select>
+	
+	<select id="queryWBBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value, 
+			b."yearMonth" as "timeId", a."zoneNo"
+			from "ANA_zone_balance_month" a left join(
+				select id,"yearMonth" from "APP_dim_month"
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id 
+			left join "LC_APP_dim_indicator" c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from "ANA_base_year" a left join "LC_APP_dim_indicator" b on a.code = b.code
+			where a.year &gt;= #{startTime} 
+			and a.year &lt;= #{endTime}
+		</if>
+		where 1 = 1
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneInfos != null and zoneInfos.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneInfos" separator="," open="(" close=")" index="">    
+				#{item.zoneNo}    
+			</foreach> 
+		</if>
+	</select>
+	
+	<select id="queryZoneLossIndicData" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
+			b."yearMonth" as "timeId",a."zoneNo"
+			from "ANA_zone_month" a left join(
+				select id,"yearMonth" from "APP_dim_month"
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id 
+			left join "LC_APP_dim_indicator" c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from "ANA_base_year" a left join "LC_APP_dim_indicator" b on a.code = b.code
+			where a.year &gt;= #{startTime} 
+			and a.year &lt;= #{endTime}
+		</if>
+		where 1 = 1
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneInfos != null and zoneInfos.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneInfos" separator="," open="(" close=")" index="">    
+				#{item.zoneNo}    
+			</foreach> 
+		</if>
+	</select>
+	<select id="queryIndicLevel2Info" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.zoneLoss.IndicatorInfo">
+		select code,name,level2 from "LC_APP_dim_indicator" where code = #{code};
+	</select>
+	
+</mapper>

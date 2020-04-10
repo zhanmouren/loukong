@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.github.pagehelper.util.StringUtil;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBTReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneWBLossDTO;
@@ -19,6 +20,8 @@ import com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportIndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WNWBTReportIndicatorDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.common.PageVO;
+import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBTReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO;
@@ -270,14 +273,8 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 	public List<WBIndicatorVO> queryWBIndicatorData(SessionFactory factory, WBIndicatorDTO wBIndicatorDTO) {
 		WaterBalanceAnaMapper mapper = factory.getMapper(WaterBalanceAnaMapper.class);
 		Integer timeType = wBIndicatorDTO.getTimeType();
-		List<WBIndicatorVO> lists = new ArrayList<>();
-		if(Constant.TIME_TYPE_M.equals(timeType)) {
-			//月指标数据
-			lists = mapper.queryWBMIndicatorData(wBIndicatorDTO);
-		}else {
-			//年指标数据
-			lists = mapper.queryWBYIndicatorData(wBIndicatorDTO);
-		}
+		List<WBIndicatorVO> lists = mapper.queryWBIndicatorData(wBIndicatorDTO);
 		return lists;
 	}
+	
 }

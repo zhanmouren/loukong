@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
+import com.koron.inwlms.bean.VO.zoneLoss.PositionInfoVO;
+import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
 
 /**
  * GIS分区接口（临时）
@@ -47,5 +50,29 @@ public interface GisZoneService {
 	 * @return
 	 */
 	String queryZoneNameByNo(SessionFactory factory,String zoneNo);
+	
+	/**
+	 * 查询分区定位信息
+	 * @param factory
+	 * @param queryZoneInfoDTO
+	 * @return
+	 */
+	PositionInfoVO queryZonePositionInfo(SessionFactory factory,QueryZoneInfoDTO queryZoneInfoDTO);
+
+	/**
+	 * 查询分区详情信息
+	 * @param factory
+	 * @param queryZoneInfoDTO
+	 * @return
+	 */
+	ZoneDetailInfoVO queryZoneDetailInfo(SessionFactory factory,QueryZoneInfoDTO queryZoneInfoDTO);
+
+	/**
+	 * 模糊查询分区信息
+	 * @param factory
+	 * @param queryZoneInfoDTO
+	 * @return
+	 */
+	List<ZoneInfo> queryFuzzyZoneInfo(SessionFactory factory,QueryZoneInfoDTO queryZoneInfoDTO);
 
 }

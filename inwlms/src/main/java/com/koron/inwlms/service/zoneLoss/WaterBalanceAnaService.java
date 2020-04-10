@@ -6,11 +6,14 @@ import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBTReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneWBLossDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO;
+import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBTReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO;
@@ -136,4 +139,5 @@ public interface WaterBalanceAnaService {
 	 * @return
 	 */
 	List<WBIndicatorVO> queryWBIndicatorData(SessionFactory factory,WBIndicatorDTO wBIndicatorDTO);
+
 }

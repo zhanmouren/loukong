@@ -18,7 +18,7 @@ public class QuerySZoneLossListDTO extends BaseDTO{
 	public Double maxUfwc;
 	
 	/**
-	 * 时间类型（0：分 ，1：时，2：日，3：月，4：年）
+	 * 时间类型（3：月，4：年）
 	 */
 	public Integer timeType;
 	
@@ -31,16 +31,6 @@ public class QuerySZoneLossListDTO extends BaseDTO{
 	 * 结束时间
 	 */
 	public Integer endTime;
-	
-	/**
-	 * 一级分区
-	 */
-	public String firstLevelZone;
-
-	/**
-	 * 二级分区
-	 */
-	public String  secondLevelZone;
 	
 	/**
 	 * 分区编码
@@ -80,14 +70,6 @@ public class QuerySZoneLossListDTO extends BaseDTO{
 		return endTime;
 	}
 
-	public String getFirstLevelZone() {
-		return firstLevelZone;
-	}
-
-	public String getSecondLevelZone() {
-		return secondLevelZone;
-	}
-
 	public String getZoneNo() {
 		return zoneNo;
 	}
@@ -122,14 +104,6 @@ public class QuerySZoneLossListDTO extends BaseDTO{
 
 	public void setEndTime(Integer endTime) {
 		this.endTime = endTime;
-	}
-
-	public void setFirstLevelZone(String firstLevelZone) {
-		this.firstLevelZone = firstLevelZone;
-	}
-
-	public void setSecondLevelZone(String secondLevelZone) {
-		this.secondLevelZone = secondLevelZone;
 	}
 
 	public void setZoneNo(String zoneNo) {

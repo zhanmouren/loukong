@@ -52,7 +52,12 @@ public class ALOverviewDataVO {
 	 * 水表基础信息不完善占比
 	 */
 	private Double nonBasicInfoMeterRate;
-
+	
+	/**
+	 * 时间
+	 */
+	private Integer time;
+	
 	public Double getAL() {
 		return AL;
 	}
@@ -123,6 +128,14 @@ public class ALOverviewDataVO {
 
 	public void setNonBasicInfoMeterRate(Double nonBasicInfoMeterRate) {
 		this.nonBasicInfoMeterRate = nonBasicInfoMeterRate;
+	}
+
+	public Integer getTime() {
+		return time;
+	}
+
+	public void setTime(Integer time) {
+		this.time = time;
 	}
 	
 }

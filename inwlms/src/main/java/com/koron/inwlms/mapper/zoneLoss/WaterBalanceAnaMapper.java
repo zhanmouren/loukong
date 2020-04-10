@@ -10,6 +10,7 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBTReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneWBLossDTO;
@@ -19,6 +20,7 @@ import com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportIndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WNWBTReportIndicatorDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
+import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReporFileListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportDetailVO;
@@ -197,12 +199,13 @@ public interface WaterBalanceAnaMapper {
 	 * @param wBIndicatorDTO
 	 * @return
 	 */
-	List<WBIndicatorVO> queryWBMIndicatorData(WBIndicatorDTO wBIndicatorDTO);
+	List<WBIndicatorVO> queryWBIndicatorData(WBIndicatorDTO wBIndicatorDTO);
 	
 	/**
-	 * 查询水平衡年指标数据
-	 * @param wBIndicatorDTO
+	 * 查询一级分区列表
+	 * @param queryFZoneLossListDTO
 	 * @return
 	 */
-	List<WBIndicatorVO> queryWBYIndicatorData(WBIndicatorDTO wBIndicatorDTO);
+	List<FZoneLossListVO> queryFZoneLossList(QueryFZoneLossListDTO queryFZoneLossListDTO);
+	
 }

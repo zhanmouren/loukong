@@ -15,22 +15,23 @@ public class QueryZoneInfoDTO {
 	/**
 	 * 分区类型（1：一级、2：二级、3：DMA/PMA，4：虚拟分区）
 	 */
-	public String zoneType;
+	public Integer zoneType;
 
 	public String getZoneNo() {
 		return zoneNo;
-	}
-
-	public String getZoneType() {
-		return zoneType;
 	}
 
 	public void setZoneNo(String zoneNo) {
 		this.zoneNo = zoneNo;
 	}
 
-	public void setZoneType(String zoneType) {
+	public Integer getZoneType() {
+		return zoneType;
+	}
+
+	public void setZoneType(Integer zoneType) {
 		this.zoneType = zoneType;
 	}
+	
 	
 }

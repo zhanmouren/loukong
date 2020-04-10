@@ -10,6 +10,12 @@ public class ZoneInfo {
 	private String zoneNo;
 	
 	private String zoneName;
+	
+	private String pZoneNo;
+	
+	private String pZoneName;
+	
+	private String address;
 
 	public String getZoneNo() {
 		return zoneNo;
@@ -25,6 +31,32 @@ public class ZoneInfo {
 
 	public void setZoneName(String zoneName) {
 		this.zoneName = zoneName;
+	}
+
+
+	public String getAddress() {
+		return address;
+	}
+
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getpZoneNo() {
+		return pZoneNo;
+	}
+
+	public String getpZoneName() {
+		return pZoneName;
+	}
+
+	public void setpZoneNo(String pZoneNo) {
+		this.pZoneNo = pZoneNo;
+	}
+
+	public void setpZoneName(String pZoneName) {
+		this.pZoneName = pZoneName;
 	}
 	
 }
