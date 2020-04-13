@@ -352,6 +352,10 @@ public class UserServiceImpl implements UserService{
 					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<DataDicVO> dataDicVOList=userMapper.queryDataDic(dataDicDTO);
+					//如果只是刚刚添加了数据字典主信息，就不返回了，返回个空的就行
+					if(dataDicVOList.size()>0  && dataDicVOList.get(0).getDicKey()==null) {
+						dataDicVOList=new  ArrayList<DataDicVO>();
+					}
 					return dataDicVOList;
 				}
 				//查询数据字典接口(查询明细信息主表) 2020/03/26

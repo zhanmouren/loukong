@@ -1,5 +1,6 @@
 package com.koron.inwlms.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -813,7 +814,13 @@ public class SystemManagerController {
     @ApiOperation(value = "查询数据字典接口(明细信息)", notes = "查询数据字典接口(明细信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDataDic(@RequestBody DataDicDTO dataDicDTO) {
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	 
+		 if(dataDicDTO.getDicParent()==null) {
+			 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+		     msg.setDescription("查询到相关数据字典键值的信息"); 
+		     msg.setData(new ArrayList<DataDicVO>());
+		     return msg.toJson();
+		 }
 		 //执行查询数据字典
 		 try {
 			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryDataDic", List.class, dataDicDTO);
@@ -824,7 +831,7 @@ public class SystemManagerController {
 			 }else {
 			   //没查询到数据
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			     msg.setDescription("没有查询到相关数据字典的信息"); 
+			     msg.setDescription("没有查询到该数据字典键值的信息"); 
 			 }
 		 }catch(Exception e){
 	     	//查询失败
