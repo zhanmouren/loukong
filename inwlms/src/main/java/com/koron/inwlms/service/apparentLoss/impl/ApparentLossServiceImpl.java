@@ -57,6 +57,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.TrendAnalysisData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneDatas;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneRankData;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.common.SysConfigVO;
 import com.koron.inwlms.mapper.apparentLoss.ApparentLossMapper;
@@ -113,7 +114,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	 */
 	@TaskAnnotation("queryALList")
 	@Override
-	public PageALListVO queryALList(SessionFactory factory, QueryALListDTO queryALListDTO) {
+	public PageListVO<List<ALListVO>> queryALList(SessionFactory factory, QueryALListDTO queryALListDTO) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		Integer timeType = queryALListDTO.getTimeType();
 		String zoneNo = queryALListDTO.getZoneNo();
@@ -143,7 +144,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			rowNumber = mapper.countYALList(queryALListDTO, lists);
 		}
 		// 返回数据结果
-		PageALListVO result = new PageALListVO();
+		PageListVO<List<ALListVO>> result = new PageListVO<>();
 		result.setDataList(alLists);
 		// 插入分页信息
 		PageVO pageVO = PageUtil.getPageBean(queryALListDTO.getPage(), queryALListDTO.getPageCount(), rowNumber);
@@ -220,7 +221,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		queryALListDTO.setTimeType(queryALDTO.getTimeType());
 		queryALListDTO.setPage(1);
 		queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
-		PageALListVO queryALList = queryALList(factory, queryALListDTO);
+		PageListVO<List<ALListVO>> queryALList = queryALList(factory, queryALListDTO);
 		List<ALListVO> dataList = queryALList.getDataList();
 		if (dataList == null)
 			return aLMapDataVO;
@@ -567,7 +568,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		queryALListDTO.setTimeType(queryALDTO.getTimeType());
 		queryALListDTO.setPage(1);
 		queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
-		PageALListVO queryALList = queryALList(factory, queryALListDTO);
+		PageListVO<List<ALListVO>> queryALList = queryALList(factory, queryALListDTO);
 		List<ALListVO> dataList = queryALList.getDataList();
 		if (dataList != null) {
 			ZoneDatas zrALIList = new ZoneDatas();

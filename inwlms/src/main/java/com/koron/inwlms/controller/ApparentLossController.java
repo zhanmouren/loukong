@@ -35,6 +35,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.util.Constant;
@@ -116,7 +117,7 @@ public class ApparentLossController {
     @ApiOperation(value = "查询表观漏损数据列表", notes = "查询表观漏损数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryALList(@RequestBody QueryALListDTO queryALListDTO) {
-		MessageBean<PageALListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageALListVO.class);
+		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		if(queryALListDTO.getTimeType() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
@@ -154,7 +155,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			PageALListVO data = ADOConnection.runTask(als, "queryALList", PageALListVO.class,queryALListDTO);
+			PageListVO data = ADOConnection.runTask(als, "queryALList", PageListVO.class,queryALListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);

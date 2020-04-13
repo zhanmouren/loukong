@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
+import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrCurrentMeterDataVO;
@@ -19,6 +20,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 
 /**
  * 表观漏损接口
@@ -42,7 +44,7 @@ public interface ApparentLossService {
 	 * @param queryALListDTO
 	 * @return
 	 */
-	PageALListVO queryALList(SessionFactory factory,QueryALListDTO queryALListDTO);
+	PageListVO<List<ALListVO>> queryALList(SessionFactory factory,QueryALListDTO queryALListDTO);
 
 	/**
 	 * 查询表观漏损图表数据
