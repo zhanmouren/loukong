@@ -13,10 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.swan.bean.MessageBean;
 
-import com.koron.authority.ValidatePermission;
+
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
-import com.koron.inwlms.bean.DTO.TestBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
@@ -718,7 +717,7 @@ public class SystemManagerController {
 	
 	/*
      * date:2020-03-25
-     * funtion:新建数据字典
+     * funtion:新建数据字典(主表)
      * author:xiaozhan
      */  
 	@RequestMapping(value = "/addMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -762,7 +761,7 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
-	 
+	
 	
 	 /*
      * date:2020-03-25
@@ -1644,8 +1643,7 @@ public class SystemManagerController {
      * date:2020-04-09
      * funtion:模糊查询部门接口
      * author:xiaozhan
-     */
-	
+     */	
 	@RequestMapping(value = "/queryDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
