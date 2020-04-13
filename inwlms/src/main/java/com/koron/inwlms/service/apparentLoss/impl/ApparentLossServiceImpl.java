@@ -1141,8 +1141,8 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drMeterAnaDataVO.setMraLists(mralists);
 
 		// 2、大口径，小口径，大口径（除消防表）的运行情况统计
-		ALMapDataVO aLMapDataVO = queryALMapData(factory, queryALDTO);
-		drMeterAnaDataVO.setaLMapDataVO(aLMapDataVO);
+		MeterAnalysisMapVO meterAnalysisMapVO = queryMeterRunAnalysisMapData(factory, queryALDTO);
+		drMeterAnaDataVO.setMeterAnalysisMapVO(meterAnalysisMapVO);
 
 		// 3、消防水表读数数据
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);

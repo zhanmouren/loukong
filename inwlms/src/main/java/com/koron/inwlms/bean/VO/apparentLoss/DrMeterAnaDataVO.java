@@ -17,7 +17,7 @@ public class DrMeterAnaDataVO {
 	/**
 	 * 小口径，大口径，大口径（除消防表）的饼图统计数据
 	 */
-	private ALMapDataVO aLMapDataVO;
+	private MeterAnalysisMapVO meterAnalysisMapVO;
 	
 	/**
 	 * 消防表的分析数据
@@ -35,9 +35,6 @@ public class DrMeterAnaDataVO {
 	private List<DrSmallDnAnaData> dsdaLists;
 
 
-	public ALMapDataVO getaLMapDataVO() {
-		return aLMapDataVO;
-	}
 
 	public FsMeterReadData getFsMeterReadData() {
 		return fsMeterReadData;
@@ -51,9 +48,6 @@ public class DrMeterAnaDataVO {
 		return dsdaLists;
 	}
 
-	public void setaLMapDataVO(ALMapDataVO aLMapDataVO) {
-		this.aLMapDataVO = aLMapDataVO;
-	}
 
 	public void setFsMeterReadData(FsMeterReadData fsMeterReadData) {
 		this.fsMeterReadData = fsMeterReadData;
@@ -73,6 +67,14 @@ public class DrMeterAnaDataVO {
 
 	public void setMraLists(List<MeterRunAnalysisVO> mraLists) {
 		this.mraLists = mraLists;
+	}
+
+	public MeterAnalysisMapVO getMeterAnalysisMapVO() {
+		return meterAnalysisMapVO;
+	}
+
+	public void setMeterAnalysisMapVO(MeterAnalysisMapVO meterAnalysisMapVO) {
+		this.meterAnalysisMapVO = meterAnalysisMapVO;
 	}
 	
 	

@@ -184,10 +184,10 @@
 		VALUES
 		(#{templateId,jdbcType=INTEGER},
 		#{reportName,jdbcType=VARCHAR},
-		#{dateType,jdbcType=INTEGER},
+		#{timeType,jdbcType=INTEGER},
 		#{reportTime,jdbcType=INTEGER},
 		#{description,jdbcType=VARCHAR},
-		#{remark,jdbcType=VARCHAR},
+		#{remarks,jdbcType=VARCHAR},
 		#{createBy,jdbcType=VARCHAR},
 		current_timestamp,
 		#{updateBy,jdbcType=VARCHAR},
@@ -207,7 +207,7 @@
 		"updateTime")
 		VALUES
 		(#{reportId,jdbcType=INTEGER},
-		#{templateId,jdbcType=INTEGER},
+		#{templateIndicatorId,jdbcType=INTEGER},
 		#{value,jdbcType=DOUBLE},
 		#{createBy,jdbcType=VARCHAR},
 		current_timestamp,
@@ -235,22 +235,22 @@
 	</insert>
 	
 	  <update id="updateWNWBReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO" >
-      	   update APP_company_report 
+      	   update "APP_company_report" 
       	   set 
       	   "reportName"=#{reportName},
       	   description=#{description},
-      	   remark = #{remark}, 
+      	   remark = #{remarks}, 
       	   "updateTime"= current_timestamp,
       	   "updateBy"=#{updateBy} 
       	   where id=#{id}
       </update>
       
       <delete id="deleteReportIndicatorById">
-           delete from APP_company_report_indicator where "reportId" = #{id}
+           delete from "APP_company_report_indicator" where "reportId" = #{id}
       </delete>
       
       <delete id="deleteReportFileById">
-           delete from APP_company_report_attach where "reportId" = #{id}
+           delete from "APP_company_report_attach" where "reportId" = #{id}
       </delete>
       
       <select id="queryWNWBReporFileList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO"
@@ -263,7 +263,7 @@
 	
 	<select id="queryWNWBReportById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportDetailVO">
 		select 
-		id,"reportName","dateType" as "timeType","reportTime",description,
+		id,"reportName","dateType" as "timeType","reportTime","templateId",description,
 		"createTime","createBy","updateTime" 
 		from "APP_company_report"
 		where status = 1 and id = #{id}
@@ -299,7 +299,7 @@
 		VALUES
 		(#{reportName,jdbcType=VARCHAR},
 		#{description,jdbcType=VARCHAR},
-		#{remark,jdbcType=VARCHAR},
+		#{remarks,jdbcType=VARCHAR},
 		#{createBy,jdbcType=VARCHAR},
 		current_timestamp,
 		#{updateBy,jdbcType=VARCHAR},
@@ -336,18 +336,18 @@
 	</insert>
 	
 	 <update id="updateWNWBTReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO" >
-      	   update APP_company_t_report 
+      	   update "APP_company_t_report" 
       	   set 
       	   "templateName"=#{reportName},
       	   description=#{description},
-      	   remark = #{remark}, 
+      	   remark = #{remarks}, 
       	   "updateTime"= current_timestamp,
       	   "updateBy"=#{updateBy} 
       	   where id=#{id}
       </update>
       
       <delete id="deleteTReportIndicatorById">
-           delete from APP_company_t_report_indicator where "templateId" = #{id}
+           delete from "APP_company_t_report_indicator" where "templateId" = #{id}
       </delete>
       
       <select id="queryWNWBTReportById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportDetailVO">
