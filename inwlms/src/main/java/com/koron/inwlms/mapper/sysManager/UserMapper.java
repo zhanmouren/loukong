@@ -100,14 +100,23 @@ public interface UserMapper {
 		//查询数据字典(查询是否已经存在值域)
 		public List<DataDicVO> queryParentDic(DataDicDTO dataDicDTO);
 		
+		//根据parent查询数据字典主的详细信息
+		public List<DataDicVO> queryDic(DataDicDTO dataDicDTO);
+		
 		//查询数据字典(查询主信息键值)
 		public List<DataDicVO> queryMainDataDic(DataDicDTO dataDicDTO);
 		
 		//修改数据字典主表(批量修改主表信息)
 		public Integer updateDicById(DataDicDTO dataDicDTO);
 		
-		//删除数据字典主表(删除主表信息)
+		//删除数据字典主表(删除主表信息批量)
 		public Integer deleteDicById(List<DataDicDTO> dataDicDTOList);
+		
+		//删除数据字典主表信息(一条)key,value为空的
+		public Integer deleteOneDic(DataDicDTO dataDicDTO);
+		
+		//插入一条数据字典明细信息
+		public Integer addOneDataDet(DataDicDTO dataDicDTO);
 		
 		//修改数据字典明细的操作(单条)
 	    public Integer updateDicDetById(DataDicDTO dataDicDTO);

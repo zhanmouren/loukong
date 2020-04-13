@@ -761,7 +761,48 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
-	
+	/*
+     * date:2020-03-25
+     * funtion:新建数据字典(明细信息)
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/addDetDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "新建数据字典明细接口", notes = "新建数据字典明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addDetDataDic(@RequestBody DataDicDTO dataDicDTO) {
+		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicKey()==null || StringUtils.isBlank(dataDicDTO.getDicKey())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicValue()==null || StringUtils.isBlank(dataDicDTO.getDicValue())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典值不能为空", Integer.class).toJson();
+		}
+			
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行新数据字典功能的操作
+		  try{
+			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addDetDataDic", Integer.class, dataDicDTO);		 
+			  if(insertRes!=null) {
+				  if(insertRes==-1) {
+					//添加数据字典功能失败
+				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("添加数据字典失败");
+				  }else {
+				    //插入成功
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("添加数据字典成功");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//插入失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加数据字典失败");
+	        }
+		
+	     return msg.toJson();
+	}
 	
 	 /*
      * date:2020-03-25

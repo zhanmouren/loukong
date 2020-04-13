@@ -175,8 +175,14 @@
     
     <!-- 插入数据字典主表信息记录 -->
     <insert id="addMainDataDic" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
-        insert into "SM_dataDictionary"(cn,en,remark,parent,"createBy","createTime","updateBy","updateTime")values
+        insert into "SM_dataDictionary"(cn,en,remark,parent,"createBy","createTime","updateBy","updateTime")
         values  (#{dicCn},#{dicEn},#{dicRemark},#{dicParent},#{createBy},#{createTime},#{updateBy},#{updateTime})            
+    </insert>
+    
+     <!-- 插入数据字典明细信息一条记录 -->
+    <insert id="addOneDataDet" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
+        insert into "SM_dataDictionary"(cn,en,remark,parent,key,value,seq,"createBy","createTime","updateBy","updateTime")
+        values  (#{dicCn},#{dicEn},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicSeq},#{createBy},#{createTime},#{updateBy},#{updateTime})            
     </insert>
     
      <!-- 查询数据字典 主标识明细的信息-->
@@ -201,6 +207,13 @@
 	      <trim prefix="where" prefixOverrides="and|or">
 			<if test="dicParent != null"> and "dic".parent = '${dicParent}'</if>          
 		  </trim>
+      </select>
+      
+       <!-- 根据parent查询数据字典主信息-->
+      <select id="queryDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          from "SM_dataDictionary" as "dic"	      
+		  where  "dic".parent = #{dicParent}       	  
       </select>
       
         <!-- 查询数据字典 主标识主的信息-->
@@ -238,6 +251,11 @@
           <foreach item="dicitem" collection="list" open="(" separator="," close=")">
             #{dicitem.dicParent}
           </foreach>
+     </delete>
+      <!-- 删除数据字典(通过parent) -->
+      <delete id="deleteOneDic">
+         delete from "SM_dataDictionary" where "parent" =#{dicParent}
+         and "key" is null and "value" is null
      </delete>
      
       <!-- 修改数据字典主的信息 根据Id-->

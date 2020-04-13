@@ -856,5 +856,33 @@ public class UserServiceImpl implements UserService{
 					return addResult;
 				}
 
+				//添加数据字典明细信息  2020/04/13
+				@TaskAnnotation("addDetDataDic") 
+				@Override
+				public Integer addDetDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					//根据parent查询主表信息
+					List<DataDicVO>  dataList=userMapper.queryDic(dataDicDTO);
+					if(dataList.size()>0) {
+						dataDicDTO.setDicCn(dataList.get(0).getDicCn());
+						dataDicDTO.setDicEn(dataList.get(0).getDicEn());
+						dataDicDTO.setDicRemark(dataList.get(0).getDicRemark());
+					}
+					//先执行删除主表信息的操作(键值为空的)
+					Integer delRes=userMapper.deleteOneDic(dataDicDTO);
+					//插入数据字典的操作(一条)
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					dataDicDTO.setUpdateBy("小詹");
+					dataDicDTO.setCreateBy("小詹");
+					dataDicDTO.setCreateTime(timeNow);
+					dataDicDTO.setUpdateTime(timeNow);
+					if(dataDicDTO.getDicSeq()==null) {
+						dataDicDTO.setDicSeq(1);
+					}
+					Integer addRes=userMapper.addOneDataDet(dataDicDTO);
+					return addRes;
+				}
+
 					
 }
