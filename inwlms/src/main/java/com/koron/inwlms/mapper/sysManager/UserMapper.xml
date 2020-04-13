@@ -24,6 +24,7 @@
    	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if>           
 	  </trim>
 	   order by "user"."createTime" desc
+	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
     <!-- 修改职员信息 -->
     <update id="updateUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
@@ -218,7 +219,7 @@
       
         <!-- 查询数据字典 主标识主的信息-->
       <select id="queryMainDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
-          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          select distinct "dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
@@ -228,8 +229,8 @@
 	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
 	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
 	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
-		  </trim>
-		  limit 1
+		  </trim>	  
+		 group by "dic".parent ,"dic".cn ,"dic".en ,"dic".remark
       </select>
       
        <!-- 修改数据字典主的信息 根据parent-->

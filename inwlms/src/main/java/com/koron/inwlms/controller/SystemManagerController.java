@@ -702,7 +702,7 @@ public class SystemManagerController {
 					 msg.setDescription("您添加的值域已经存在,不能重复添加");
 				  }else {
 				    //插入成功
-			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("添加数据字典成功");
 				  }
 			  }
@@ -748,7 +748,7 @@ public class SystemManagerController {
 					 msg.setDescription("您添加的值域已经存在,不能重复添加");
 				  }else {
 				    //插入成功
-			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("添加数据字典成功");
 				  }
 			  }
@@ -791,7 +791,7 @@ public class SystemManagerController {
 				    msg.setDescription("添加数据字典失败");
 				  }else {
 				    //插入成功
-			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("添加数据字典成功");
 				  }
 			  }

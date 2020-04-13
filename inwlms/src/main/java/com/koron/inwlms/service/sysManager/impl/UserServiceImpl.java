@@ -43,6 +43,8 @@ import com.koron.util.Constant;
 
 @Service
 public class UserServiceImpl implements UserService{
+	Integer page=0;
+	Integer pageCount=10;
 	//管理员添加职员 2020/03/18	
 	@TaskAnnotation("addUser")
 	@Override
@@ -97,8 +99,12 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public List<UserVO> queryUser(SessionFactory factory,QueryUserDTO userDTO) {		
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		//todo
-		
+		if(userDTO.getPage()==null) {
+			userDTO.setPage(page);
+		}
+		if(userDTO.getPageCount()==null) {
+			userDTO.setPageCount(pageCount);
+		}
 		List<UserVO> userList=userMapper.queryUser(userDTO);
 		return userList;
 	}
