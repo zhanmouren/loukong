@@ -282,6 +282,13 @@
 		left join "SM_specialDay" as sp on sp."spDate"=yearmonth.orderdate
       </select>
       
+        <!-- 查询根据某日日期查询特征日信息-->
+      <select id="querySpecialDateByDay"  parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.SpecialDayVO">
+         select "sp".id as "spId","sp".Name as "spName",case when "sp".remark is null then '' else "sp".remark end as "spRemark","sp"."spDate" as "spDate"
+         from "SM_specialDay" as "sp"
+         where "sp"."spDate" =#{spDate}
+      </select>
+      
       <!-- 根据日期删除特征日 -->
      <delete id="deleteSpecialDate">
          delete from "SM_specialDay" 

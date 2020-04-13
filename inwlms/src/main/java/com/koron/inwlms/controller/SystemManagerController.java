@@ -1019,6 +1019,41 @@ public class SystemManagerController {
 	}
 	
 	 /*
+     * date:2020-03-27
+     * funtion:根据日期查询特征日接口
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/querySpecialDateByDay.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据日期查询特征日接口", notes = "根据日期查询特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String querySpecialDateByDay(@RequestBody SpecialDayDTO specialDayDTO) {
+		if(specialDayDTO.getSpDate()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
+		}
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		//执行查询某个特征日的操作
+		  try{
+			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(new UserServiceImpl(), "querySpecialDateByDay", List.class, specialDayDTO);		 
+			  if(specialDayDTOList.size()>0) {			 
+					//查询特征日成功
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("查询特征日成功");
+				    msg.setData(specialDayDTOList);
+			   }else {
+				    //查询特征日失败
+			        msg.setCode(Constant.MESSAGE_INT_ERROR);
+			        msg.setDescription("查询特征日失败");
+				}
+			  
+	        }catch(Exception e){
+	        	//查询特征日失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询特征日失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
      * date:2020-03-30
      * funtion:删除特征日接口功能描述
      * author:xiaozhan

@@ -120,6 +120,9 @@ public interface UserMapper {
 	  	//查询某年某月特征日 2020/03/27
 		public  List<SpecialDayDTO> querySpecialDate(SpecialDayDTO specialDayDTO);
 		
+		//根据某日日期查询特征日信息
+		public  List<SpecialDayDTO> querySpecialDateByDay(SpecialDayDTO specialDayDTO);
+		
 		//根据日期删除特征日
 		public  Integer deleteSpecialDate(SpecialDayDTO specialDayDTO);
 		

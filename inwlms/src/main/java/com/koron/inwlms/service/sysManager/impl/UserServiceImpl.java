@@ -511,6 +511,15 @@ public class UserServiceImpl implements UserService{
 					List<SpecialDayDTO> spList=userMapper.querySpecialDate(specialDayDTO);
 					return spList;
 				}
+				
+				@TaskAnnotation("querySpecialDateByDay")
+				@Override
+				public List<SpecialDayDTO> querySpecialDateByDay(SessionFactory factory, SpecialDayDTO specialDayDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<SpecialDayDTO> specialDayDTOList=userMapper.querySpecialDateByDay(specialDayDTO);
+					return specialDayDTOList;
+				}		
 
 				//根据日期删除特征日 2020/03/30
 				@TaskAnnotation("deleteSpecialDate")
@@ -817,5 +826,7 @@ public class UserServiceImpl implements UserService{
 					     roleMenusList.get(i).setOpList(lis);
 					}
 					return roleMenusList;					
-				}			
+				}
+
+					
 }
