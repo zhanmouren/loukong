@@ -660,7 +660,7 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-25
-     * funtion:新建数据字典
+     * funtion:新建数据字典(主明细信息同时插入)
      * author:xiaozhan
      */  
 	@RequestMapping(value = "/addDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -715,6 +715,54 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	
+	/*
+     * date:2020-03-25
+     * funtion:新建数据字典
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/addMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "新建数据字典接口(主表)", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addMainDataDic(@RequestBody DataDicDTO dataDicDTO) {
+		if(dataDicDTO.getDicCn()==null || StringUtils.isBlank(dataDicDTO.getDicCn())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表中文名称不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicEn()==null || StringUtils.isBlank(dataDicDTO.getDicEn())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表英文名称不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
+		}			
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行新数据字典功能的操作
+		  try{
+			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addMainDataDic", Integer.class, dataDicDTO);		 
+			  if(insertRes!=null) {
+				  if(insertRes==-1) {
+					//添加数据字典功能失败
+				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("添加数据字典失败");
+				  }else if(insertRes==-2){
+					//添加数据字典功能失败
+					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+					 msg.setDescription("您添加的值域已经存在,不能重复添加");
+				  }else {
+				    //插入成功
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("添加数据字典成功");
+				  }
+			  }
+	        }catch(Exception e){
+	        	//插入失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加数据字典失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 
 	
 	 /*
      * date:2020-03-25
@@ -1524,7 +1572,7 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-04-10
-     * funtion:通过角色code和模块code加载该角色所有菜单以及可操作的权限。
+     * funtion:通过角色code和模块code加载该角色所有菜单以及可操作的权限。(选择第二个框的时候)
      * author:xiaozhan
      */
 	@RequestMapping(value = "/queryRoleMenuByRoleMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1597,7 +1645,7 @@ public class SystemManagerController {
      * funtion:模糊查询部门接口
      * author:xiaozhan
      */
-	@ValidatePermission
+	
 	@RequestMapping(value = "/queryDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody

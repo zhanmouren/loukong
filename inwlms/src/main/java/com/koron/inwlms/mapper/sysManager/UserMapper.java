@@ -88,8 +88,11 @@ public interface UserMapper {
 	
 	
 	/**下面是系统配置***/
-	//添加数据字典主表
+	   //添加数据字典主表
 		public Integer addDataDic(List<DataDicDTO> dataDicDTOList);
+		
+		//添加数据字典主表信息
+		public Integer addMainDataDic(DataDicDTO dataDicDTO);
 		
 		//查询数据字典(查询明细信息键值)
 		public List<DataDicVO> queryDataDic(DataDicDTO dataDicDTO);

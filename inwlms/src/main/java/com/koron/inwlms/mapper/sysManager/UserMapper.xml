@@ -173,6 +173,12 @@
         </foreach>      
     </insert>
     
+    <!-- 插入数据字典主表信息记录 -->
+    <insert id="addMainDataDic" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
+        insert into "SM_dataDictionary"(cn,en,remark,parent,"createBy","createTime","updateBy","updateTime")values
+        values  (#{dicCn},#{dicEn},#{dicRemark},#{dicParent},#{createBy},#{createTime},#{updateBy},#{updateTime})            
+    </insert>
+    
      <!-- 查询数据字典 主标识明细的信息-->
       <select id="queryDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 

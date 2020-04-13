@@ -65,6 +65,9 @@ public interface UserService {
 	
 	  //添加数据字典
 		Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
+		//添加数据字典主表信息
+		Integer addMainDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
+		
 		//查询数据字典(查询明细信息键值)
 		List<DataDicVO> queryDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
 		//查询数据字典(查询明细信息主)

@@ -97,6 +97,8 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public List<UserVO> queryUser(SessionFactory factory,QueryUserDTO userDTO) {		
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		//todo
+		
 		List<UserVO> userList=userMapper.queryUser(userDTO);
 		return userList;
 	}
@@ -826,6 +828,32 @@ public class UserServiceImpl implements UserService{
 					     roleMenusList.get(i).setOpList(lis);
 					}
 					return roleMenusList;					
+				}
+				
+				//添加数据字典主表信息  2020/04/13
+				@TaskAnnotation("addMainDataDic") 
+				@Override
+				public Integer addMainDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					DataDicDTO dicDTO=new DataDicDTO();
+					dicDTO.setDicParent(dataDicDTO.getDicParent());
+					//添加之前先判断dicParent是否已经存在
+					List<DataDicVO>  parentList=userMapper.queryParentDic(dicDTO);
+					Integer addResult=null;
+					if(parentList.size()>0) {
+					  //说明已经存在
+						addResult=-2;
+						return addResult;
+					}
+					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					dataDicDTO.setUpdateBy("小詹");
+					dataDicDTO.setCreateBy("小詹");
+					dataDicDTO.setCreateTime(timeNow);
+					dataDicDTO.setUpdateTime(timeNow);
+					// 插入主表信息					
+					 addResult=userMapper.addMainDataDic(dataDicDTO);
+					return addResult;
 				}
 
 					
