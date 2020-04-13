@@ -166,7 +166,7 @@ public class TreeService {
 	}
 	
 	/**
-	 * 获取节点下级子节点(菜单)并返回是否查看的权限
+	 * 获取节点下级子节点(菜单)并返回是否查看的权限，类似一级菜单
 	 * @param factory
 	 * @param type 类型
 	 * @param seq 顺序值
@@ -183,6 +183,26 @@ public class TreeService {
 		//TODO 测试使用，默认userCode
 		String userCode="c545d2c156834f1b9eea9136620726b3";
 		List<TreeMenuVO> menuList=mapper.queryChildOneMenu(node,userCode);
+		return menuList;
+	}
+	/**
+	 * 根据userCode可查看菜单目录结构(查看所有下级的菜单)加入菜单权限,类似查询一级菜单下所有下级菜单
+	 * @param factory
+	 * @param type 类型
+	 * @param seq 顺序值
+	 * @param mask 掩码位数
+	 * @param parentMask 父级掩码位数
+	 * 
+	 * @return
+	 */
+	@TaskAnnotation("queryChildAllMenu")
+	public static List<TreeMenuVO> queryChildAllMenu(SessionFactory factory,int type,String foreignKey){
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		UserMapper userMapper = factory.getMapper(UserMapper.class);	
+		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+		//TODO 测试使用，默认userCode
+		String userCode="c545d2c156834f1b9eea9136620726b3";
+		List<TreeMenuVO> menuList=mapper.queryChildAllMenu(node,userCode);
 		return menuList;
 	}
 	

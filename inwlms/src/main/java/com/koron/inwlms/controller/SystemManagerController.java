@@ -1381,7 +1381,7 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-04-08
-     * funtion:查看菜单目录结构(展开所有)
+     * funtion:查看菜单目录结构(展开所有)(测试使用)
      * author:xiaozhan
      */
 	@RequestMapping(value = "/queryTreeMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1419,7 +1419,7 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-04-08
-     * funtion:查看菜单目录结构(查看下级的菜单)
+     * funtion:查看菜单目录结构(查看下级的菜单)(测试使用)
      * author:xiaozhan
      */
 	@RequestMapping(value = "/queryChildTreeMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1615,6 +1615,45 @@ public class SystemManagerController {
 					//查询失败
 			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
 			        msg.setDescription("查询一级目录树失败"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-04-08
+     * funtion:根据userCode可查看菜单目录结构(查看所有下级的菜单)加入菜单权限,类似查询一级菜单下所有下级菜单
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryChildAllMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查看一级菜单下可查看所有下级树接口", notes = "查看一级菜单下可查看所有下级树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryChildAllMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
+		Integer type=Integer.valueOf(menuTreeDTO.getType());
+		if(type==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
+		}	
+		if(menuTreeDTO.getForeignKey()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
+		}
+		//TODO 测试用
+		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(new TreeService(), "queryChildAllMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  if(treeBeanList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询所有下级树成功"); 
+					msg.setData(treeBeanList);
+				  }else {
+					//查询失败
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询所有下级树失败"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败
