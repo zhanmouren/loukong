@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.zoneLoss.PositionInfoVO;
+import com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
 
 /**
@@ -75,4 +77,11 @@ public interface GisZoneService {
 	 */
 	List<ZoneInfo> queryFuzzyZoneInfo(SessionFactory factory,QueryZoneInfoDTO queryZoneInfoDTO);
 
+	/**
+	 * 查询虚拟分区信息
+	 * @param factory
+	 * @param queryVZoneInfoDTO
+	 * @return
+	 */
+	List<VZoneInfoVO> queryVZoneInfo(SessionFactory factory,QueryVZoneInfoDTO queryVZoneInfoDTO);
 }

@@ -26,6 +26,11 @@ public class AddWNWBReportDTO{
 	public String description;
 	
 	/**
+	 * 报表时间
+	 */
+	private Integer reportTime;
+	
+	/**
 	 * 模板id
 	 */
 	public Integer templateId;
@@ -202,6 +207,14 @@ public class AddWNWBReportDTO{
 
 	public void setFiles(List<WNWBReportFileDTO> files) {
 		this.files = files;
+	}
+
+	public Integer getReportTime() {
+		return reportTime;
+	}
+
+	public void setReportTime(Integer reportTime) {
+		this.reportTime = reportTime;
 	}
 	
 }

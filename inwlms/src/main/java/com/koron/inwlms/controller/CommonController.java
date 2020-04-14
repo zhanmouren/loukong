@@ -1,10 +1,10 @@
 package com.koron.inwlms.controller;
 
 import com.koron.common.StaffAttribute;
-import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
-import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
+import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
@@ -238,4 +238,39 @@ public class CommonController {
 		msg.setData(lists);
 		return msg.toJson();
 	}
+	
+	/**
+	 * （临时接口）
+	 * 根据指定的分区编号查询所有子分区编号
+	 * @param zoneNo 分区编号
+	 * @return 
+	 */
+	@RequestMapping(value = "/queryFuzzyZoneInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "模糊查询分区信息", notes = "模糊查询分区信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryFuzzyZoneInfo(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO) {
+		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(queryZoneInfoDTO.getZoneType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("分区类型为空");
+			return msg.toJson();
+		}
+		if(queryZoneInfoDTO.getZoneType() != null && (queryZoneInfoDTO.getZoneType() < 1 || queryZoneInfoDTO.getZoneType() > 4)) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("分区类型数值错误");
+			return msg.toJson();
+		}
+		try{
+			List<ZoneInfo> data = ADOConnection.runTask(new GisZoneServiceImpl(), "queryFuzzyZoneInfo", List.class,queryZoneInfoDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
+		return msg.toJson();
+	}
+	
+	
 }

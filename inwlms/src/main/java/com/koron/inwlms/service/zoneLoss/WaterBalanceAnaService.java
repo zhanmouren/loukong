@@ -4,23 +4,20 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 
+import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO;
-import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBTReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneWBLossDTO;
-import com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO;
-import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBReportListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBTReportListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO;
+import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReporFileListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportDetailVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportDetailVO;
+import com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO;
 
 /**
@@ -45,7 +42,7 @@ public interface WaterBalanceAnaService {
 	 * @param queryWNWBReportListDTO
 	 * @return
 	 */
-	PageWNWBReportListVO queryWNWBReportList(SessionFactory factory,QueryWNWBReportListDTO queryWNWBReportListDTO);
+	PageListVO<List<WNWBReportListVO>> queryWNWBReportList(SessionFactory factory,QueryWNWBReportListDTO queryWNWBReportListDTO);
 
 	/**
 	 * 删除报表
@@ -60,7 +57,7 @@ public interface WaterBalanceAnaService {
 	 * @param queryWNWBTReportListDTO
 	 * @return
 	 */
-	PageWNWBTReportListVO queryWNWBTReportList(SessionFactory factory,QueryWNWBTReportListDTO queryWNWBTReportListDTO);
+	PageListVO<List<WNWBTReportListVO>> queryWNWBTReportList(SessionFactory factory,QueryWNWBTReportListDTO queryWNWBTReportListDTO);
 
 	/**
 	 * 删除报表模板
@@ -138,6 +135,6 @@ public interface WaterBalanceAnaService {
 	 * @param wBIndicatorDTO
 	 * @return
 	 */
-	List<WBIndicatorVO> queryWBIndicatorData(SessionFactory factory,WBIndicatorDTO wBIndicatorDTO);
+	List<IndicatorVO> queryWBIndicatorData(SessionFactory factory,IndicatorDTO indicatorDTO);
 
 }

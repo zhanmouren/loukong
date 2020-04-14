@@ -25,7 +25,7 @@ public class PageUtil {
         result.setPage(page);
         result.setPageCount(pageCount);
         result.setRowNumber(size);
-        result.setTotalPage((int) Math.ceil(Double.valueOf(size / pageCount)));
+        result.setTotalPage((int) Math.ceil(Double.valueOf(size / pageCount))+1);
         return result;
     }
 }

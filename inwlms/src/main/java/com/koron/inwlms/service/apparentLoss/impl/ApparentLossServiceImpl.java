@@ -30,9 +30,6 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrFlowMeterData;
 import com.koron.inwlms.bean.VO.apparentLoss.DrMeterAnaDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrMeterManageVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrTotalAnalysisDataVO;
-import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnErrFlowData;
-import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnLHFlowData;
-import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnZeroFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlMeterErrUseData;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.FSMeterData;
@@ -513,8 +510,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	 */
 	@TaskAnnotation("queryDrTotalAnalysisData")
 	@Override
-	public DrTotalAnalysisDataVO queryDrTotalAnalysisData(SessionFactory factory, QueryALDTO queryALDTO) {
-		DrTotalAnalysisDataVO drTotalAnalysisDataVO = new DrTotalAnalysisDataVO();
+	public DrTotalAnalysisDataVO queryDrTotalAnalysisData(SessionFactory factory, QueryALDTO queryALDTO) {		DrTotalAnalysisDataVO drTotalAnalysisDataVO = new DrTotalAnalysisDataVO();
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		GisZoneServiceImpl gisZoneServiceImpl = new GisZoneServiceImpl();
 		String anaRange = "";
@@ -1389,7 +1385,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 							drFlowMeterData.setAddress(meterInfo.getAddress());
 							drFlowMeterData.setMeterNo(meterInfo.getMeterNo());
 							drFlowMeterData.setMeterDn(meterInfo.getMeterDn());
-							drFlowMeterData.sethMFlow(maxFList.size()>0?maxFList.get(0):0);
+							drFlowMeterData.sethMFlow(maxFList.size()>0?maxFList.get(0):0.0);
 							int changeDn = getChangeDn(qh,qhMaxMinMap); //获取更换的口径
 							drFlowMeterData.setChangeMeterDn(changeDn);
 							if(meterInfo.getMeterDn() < Constant.METER_DN_SIZE) {
@@ -1526,12 +1522,12 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		Integer startTime = queryALDTO.getStartTime();
 		Integer endTime = queryALDTO.getEndTime();
 		DrqlVO drqlVO = new DrqlVO();
-		List<DrqlBDnZeroFlowData> drqlBDnZeroFlowDataList = new ArrayList<>();
-		List<DrqlBDnLHFlowData> drqlBDnLHFlowDataList = new ArrayList<>();
-		List<DrqlBDnErrFlowData> drqlBDnErrFlowDataList = new ArrayList<>();
-		List<DrqlBDnZeroFlowData> drqlSusUseDataList = new ArrayList<>();
-		List<DrqlBDnZeroFlowData> drqlSDnZeroFlowDataList = new ArrayList<>();
-		List<DrqlBDnLHFlowData> drqlSDnLHFlowDataList = new ArrayList<>();
+		List<Map<Object,Object>> drqlBDnZeroFlowDataList = new ArrayList<>();
+		List<Map<Object,Object>> drqlBDnLHFlowDataList = new ArrayList<>();
+		List<Map<Object,Object>> drqlBDnErrFlowDataList = new ArrayList<>();
+		List<Map<Object,Object>> drqlSusUseDataList = new ArrayList<>();
+		List<Map<Object,Object>> drqlSDnZeroFlowDataList = new ArrayList<>();
+		List<Map<Object,Object>> drqlSDnLHFlowDataList = new ArrayList<>();
 		
 		//调用gis接口获取分区的水表信息
 		List<MeterInfo> lists = getMeterInfo(factory, queryALDTO);
@@ -1569,54 +1565,48 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			double qh = Double.parseDouble(meterQH.getQh());
 			for (MeterInfo meterInfo : lists) {
 				if (meterInfo.getMeterNo().equals(meterQH.getMeterNo())) {
+					Map<Object,Object> maps = new HashMap<>();
+					maps.put("meterNo", meterInfo.getMeterNo());
+					maps.put("accName", meterInfo.getAccName());
+					maps.put("accNo", meterInfo.getAccNo());
+					maps.put("useType", meterInfo.getUseType());
+					maps.put("address", meterInfo.getAddress());
+					maps.put("meterDn", meterInfo.getMeterDn());
+					
 					//计算水表月份的流量
 					List<Map<Integer,Double>> datas = getMFlowList(meterInfo.getMeterNo(),queryMeterMFlow,monthsList);
+					for (Map<Integer, Double> map : datas) {
+						maps.putAll(map);
+					}
+					
 					// 判断流量QH是否小0.001，是则为零流量水表
 					if (qh < 0.001) {
-						DrqlBDnZeroFlowData drqlBDnZeroFlowData = new DrqlBDnZeroFlowData();
-						drqlBDnZeroFlowData.setMeterNo(meterInfo.getMeterNo());
-						drqlBDnZeroFlowData.setAccName(meterInfo.getAccName());
-						drqlBDnZeroFlowData.setAccNo(meterInfo.getAccNo());
-						drqlBDnZeroFlowData.setAddress(meterInfo.getAddress());
-						drqlBDnZeroFlowData.setMeterDn(meterInfo.getMeterDn());
-						drqlBDnZeroFlowData.setmReadDate(meterInfo.getmReadDate());
-						drqlBDnZeroFlowData.setUseType(meterInfo.getUseType());
-						drqlBDnZeroFlowData.setDatas(datas);
-
 						//零流量
 						if(meterInfo.getMeterDn() < Constant.METER_DN_SIZE) {
 							//小口径零流量
-							drqlSDnZeroFlowDataList.add(drqlBDnZeroFlowData);
+							drqlSDnZeroFlowDataList.add(maps);
 						}else {
 							//大口径零流量
-							drqlBDnZeroFlowDataList.add(drqlBDnZeroFlowData);
+							drqlBDnZeroFlowDataList.add(maps);
 						}
 					} else {
 						// 计算低流量/过载水表
 						MeterDNParam meterDNParam = getMeterDNParam(qhMaxMinMap, meterInfo.getMeterDn());
-						DrqlBDnLHFlowData DrqlBDnLHFlowData = new DrqlBDnLHFlowData();
-						DrqlBDnLHFlowData.setMeterNo(meterInfo.getMeterNo());
-						DrqlBDnLHFlowData.setAccName(meterInfo.getAccName());
-						DrqlBDnLHFlowData.setAccNo(meterInfo.getAccNo());
-						DrqlBDnLHFlowData.setAddress(meterInfo.getAddress());
-						DrqlBDnLHFlowData.setMeterDn(meterInfo.getMeterDn());
-						DrqlBDnLHFlowData.setUseType(meterInfo.getUseType());
-						DrqlBDnLHFlowData.setFsMeterStatus(meterInfo.getMeterType()==Constant.FS_METER?1:0);
-						DrqlBDnLHFlowData.setDatas(datas);
+						maps.put("fsMeterStatus", (meterInfo.getMeterType()==Constant.FS_METER?1:0));
 						if (qh < Double.parseDouble(meterDNParam.getMinQ())) {
 							//低流量
-							DrqlBDnLHFlowData.setAnaResult("低流量");
+							maps.put("anaResult", "低流量");
 						} else if (qh >= Double.parseDouble(meterDNParam.getMaxQ())) {
 							//过载
-							DrqlBDnLHFlowData.setAnaResult("过载");
+							maps.put("anaResult", "过载");
 						} 
 						//零流量
 						if(meterInfo.getMeterDn() < Constant.METER_DN_SIZE) {
 							//小口径零流量
-							drqlSDnLHFlowDataList.add(DrqlBDnLHFlowData);
+							drqlSDnLHFlowDataList.add(maps);
 						}else {
 							//大口径零流量
-							drqlBDnLHFlowDataList.add(DrqlBDnLHFlowData);
+							drqlBDnLHFlowDataList.add(maps);
 						}
 					}
 				}
@@ -1633,23 +1623,26 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 					//异常用水
 					for (MeterInfo meterInfo : lists) {
 						if(meterInfo.getMeterNo().equals(dmeud.getMeterNo())) {
-							DrqlBDnErrFlowData drqlBDnErrFlowData = new DrqlBDnErrFlowData();
-							drqlBDnErrFlowData.setMeterNo(meterInfo.getMeterNo());
-							drqlBDnErrFlowData.setAccName(meterInfo.getAccName());
-							drqlBDnErrFlowData.setAccNo(meterInfo.getAccNo());
-							drqlBDnErrFlowData.setAddress(meterInfo.getAddress());
-							drqlBDnErrFlowData.setMeterDn(meterInfo.getMeterDn());
-							drqlBDnErrFlowData.setmReadDate(meterInfo.getmReadDate());
-							drqlBDnErrFlowData.setUseType(meterInfo.getUseType());
+							Map<Object,Object> maps = new HashMap<>();
+							maps.put("meterNo", meterInfo.getMeterNo());
+							maps.put("accName", meterInfo.getAccName());
+							maps.put("accNo", meterInfo.getAccNo());
+							maps.put("useType", meterInfo.getUseType());
+							maps.put("address", meterInfo.getAddress());
+							maps.put("meterDn", meterInfo.getMeterDn());
+							maps.put("mReadDate", meterInfo.getmReadDate());
 							List<Map<Integer,Double>> datas = getMFlowList(meterInfo.getMeterNo(),queryMeterMFlow,monthsList);
-							drqlBDnErrFlowData.setDatas(datas);
+							for (Map<Integer, Double> map : datas) {
+								maps.putAll(map);
+							}
+							
 							for (MeterQH meterQH : queryMeterQH) {
 								if(meterQH.getMeterNo().equals(meterInfo.getMeterNo())) {
 									int changeDn = getChangeDn(Double.parseDouble(meterQH.getQh()),qhMaxMinMap); //获取更换的口径
-									drqlBDnErrFlowData.setChangeDn(changeDn);
+									maps.put("changeDn", changeDn);
 								}
 							}
-							drqlBDnErrFlowDataList.add(drqlBDnErrFlowData);
+							drqlBDnErrFlowDataList.add(maps);
 						}
 					}
 				}
@@ -1676,17 +1669,19 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				}
 			}
 			if(susUseFlag) {
-				DrqlBDnZeroFlowData drqlBDnZeroFlowData = new DrqlBDnZeroFlowData();
-				drqlBDnZeroFlowData.setMeterNo(meterInfo.getMeterNo());
-				drqlBDnZeroFlowData.setAccName(meterInfo.getAccName());
-				drqlBDnZeroFlowData.setAccNo(meterInfo.getAccNo());
-				drqlBDnZeroFlowData.setAddress(meterInfo.getAddress());
-				drqlBDnZeroFlowData.setMeterDn(meterInfo.getMeterDn());
-				drqlBDnZeroFlowData.setmReadDate(meterInfo.getmReadDate());
-				drqlBDnZeroFlowData.setUseType(meterInfo.getUseType());
+				Map<Object,Object> maps = new HashMap<>();
+				maps.put("meterNo", meterInfo.getMeterNo());
+				maps.put("accName", meterInfo.getAccName());
+				maps.put("accNo", meterInfo.getAccNo());
+				maps.put("useType", meterInfo.getUseType());
+				maps.put("address", meterInfo.getAddress());
+				maps.put("meterDn", meterInfo.getMeterDn());
+				maps.put("mReadDate", meterInfo.getmReadDate());
 				List<Map<Integer,Double>> datas = getMFlowList(meterInfo.getMeterNo(),queryMeterMFlow,monthsList);
-				drqlBDnZeroFlowData.setDatas(datas);
-				drqlSusUseDataList.add(drqlBDnZeroFlowData);
+				for (Map<Integer, Double> map : datas) {
+					maps.putAll(map);
+				}
+				drqlSusUseDataList.add(maps);
 				susUseFlag = false;
 			}
 		}
@@ -1696,7 +1691,6 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drqlVO.setDrqlsDnLHFlowData(drqlSDnLHFlowDataList);
 		drqlVO.setDrqlsDnZeroFlowData(drqlSDnZeroFlowDataList);
 		drqlVO.setDrqlSusUseData(drqlSusUseDataList);
-		
 		return drqlVO;
 	}
 	

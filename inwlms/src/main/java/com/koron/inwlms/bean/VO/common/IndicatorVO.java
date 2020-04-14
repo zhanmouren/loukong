@@ -1,11 +1,11 @@
-package com.koron.inwlms.bean.VO.zoneLoss;
+package com.koron.inwlms.bean.VO.common;
 
 /**
- * 水平衡指标VO
+ * 指标VO
  * @author csh
- * @Date 2020/04/08
+ * @Date 2020/04/014
  */
-public class WBIndicatorVO {
+public class IndicatorVO {
 
 	private String code;
 	

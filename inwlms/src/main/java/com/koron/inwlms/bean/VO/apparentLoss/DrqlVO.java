@@ -1,6 +1,7 @@
 package com.koron.inwlms.bean.VO.apparentLoss;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 诊断报告-问题清单VO
@@ -13,79 +14,80 @@ public class DrqlVO {
 	/**
 	 * 大口径零流量
 	 */
-	private List<DrqlBDnZeroFlowData> drqlBDnZeroFlowData;
+	private List<Map<Object,Object>> drqlBDnZeroFlowData;
 	
 	/**
 	 * 大口径低流量、过载
 	 */
-	private List<DrqlBDnLHFlowData> drqlBDnLHFlowData;
+	private List<Map<Object,Object>> drqlBDnLHFlowData;
 	
 	/**
 	 * 大口径用水异常
 	 */
-	private List<DrqlBDnErrFlowData> drqlBDnErrFlowData;
+	private List<Map<Object,Object>> drqlBDnErrFlowData;
 	
 	/**
 	 * 用水性质可疑
 	 */
-	private List<DrqlBDnZeroFlowData> drqlSusUseData;
+	private List<Map<Object,Object>> drqlSusUseData;
 	
 	/**
 	 * 小口径零流量
 	 */
-	private List<DrqlBDnZeroFlowData> drqlsDnZeroFlowData;
+	private List<Map<Object,Object>> drqlsDnZeroFlowData;
 	
 	/**
 	 * 小口径低流量、过载
 	 */
-	private List<DrqlBDnLHFlowData> drqlsDnLHFlowData;
+	private List<Map<Object,Object>> drqlsDnLHFlowData;
 
-	public List<DrqlBDnZeroFlowData> getDrqlBDnZeroFlowData() {
+	public List<Map<Object, Object>> getDrqlBDnZeroFlowData() {
 		return drqlBDnZeroFlowData;
 	}
 
-	public List<DrqlBDnLHFlowData> getDrqlBDnLHFlowData() {
+	public List<Map<Object, Object>> getDrqlBDnLHFlowData() {
 		return drqlBDnLHFlowData;
 	}
 
-	public List<DrqlBDnErrFlowData> getDrqlBDnErrFlowData() {
+	public List<Map<Object, Object>> getDrqlBDnErrFlowData() {
 		return drqlBDnErrFlowData;
 	}
 
-	public List<DrqlBDnZeroFlowData> getDrqlSusUseData() {
+	public List<Map<Object, Object>> getDrqlSusUseData() {
 		return drqlSusUseData;
 	}
 
-	public List<DrqlBDnZeroFlowData> getDrqlsDnZeroFlowData() {
+	public List<Map<Object, Object>> getDrqlsDnZeroFlowData() {
 		return drqlsDnZeroFlowData;
 	}
 
-	public List<DrqlBDnLHFlowData> getDrqlsDnLHFlowData() {
+	public List<Map<Object, Object>> getDrqlsDnLHFlowData() {
 		return drqlsDnLHFlowData;
 	}
 
-	public void setDrqlBDnZeroFlowData(List<DrqlBDnZeroFlowData> drqlBDnZeroFlowData) {
+	public void setDrqlBDnZeroFlowData(List<Map<Object, Object>> drqlBDnZeroFlowData) {
 		this.drqlBDnZeroFlowData = drqlBDnZeroFlowData;
 	}
 
-	public void setDrqlBDnLHFlowData(List<DrqlBDnLHFlowData> drqlBDnLHFlowData) {
+	public void setDrqlBDnLHFlowData(List<Map<Object, Object>> drqlBDnLHFlowData) {
 		this.drqlBDnLHFlowData = drqlBDnLHFlowData;
 	}
 
-	public void setDrqlBDnErrFlowData(List<DrqlBDnErrFlowData> drqlBDnErrFlowData) {
+	public void setDrqlBDnErrFlowData(List<Map<Object, Object>> drqlBDnErrFlowData) {
 		this.drqlBDnErrFlowData = drqlBDnErrFlowData;
 	}
 
-	public void setDrqlSusUseData(List<DrqlBDnZeroFlowData> drqlSusUseData) {
+	public void setDrqlSusUseData(List<Map<Object, Object>> drqlSusUseData) {
 		this.drqlSusUseData = drqlSusUseData;
 	}
 
-	public void setDrqlsDnZeroFlowData(List<DrqlBDnZeroFlowData> drqlsDnZeroFlowData) {
+	public void setDrqlsDnZeroFlowData(List<Map<Object, Object>> drqlsDnZeroFlowData) {
 		this.drqlsDnZeroFlowData = drqlsDnZeroFlowData;
 	}
 
-	public void setDrqlsDnLHFlowData(List<DrqlBDnLHFlowData> drqlsDnLHFlowData) {
+	public void setDrqlsDnLHFlowData(List<Map<Object, Object>> drqlsDnLHFlowData) {
 		this.drqlsDnLHFlowData = drqlsDnLHFlowData;
 	}
+
 
 }

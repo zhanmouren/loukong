@@ -8,29 +8,31 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.util.StringUtil;
+import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBTReportListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneWBLossDTO;
-import com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportIndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WNWBTReportIndicatorDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
+import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBTReportListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReporFileListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportDetailVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportDetailVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO;
+import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.zoneLoss.WaterBalanceAnaMapper;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.service.zoneLoss.WaterBalanceAnaService;
@@ -89,7 +91,7 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 
 	@TaskAnnotation("queryWNWBReportList")
 	@Override
-	public PageWNWBReportListVO queryWNWBReportList(SessionFactory factory,
+	public PageListVO<List<WNWBReportListVO>> queryWNWBReportList(SessionFactory factory,
 			QueryWNWBReportListDTO queryWNWBReportListDTO) {
 		WaterBalanceAnaMapper mapper = factory.getMapper(WaterBalanceAnaMapper.class);
 		// 查询列表数据
@@ -97,7 +99,7 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 		// 查询总条数
 		int rowNumber = mapper.countWNWBReportList(queryWNWBReportListDTO);
 		// 返回数据结果
-		PageWNWBReportListVO result = new PageWNWBReportListVO();
+		PageListVO<List<WNWBReportListVO>> result = new PageListVO<>();
 		result.setDataList(dataLists);
 		// 插入分页信息
 		PageVO pageVO = PageUtil.getPageBean(queryWNWBReportListDTO.getPage(), queryWNWBReportListDTO.getPageCount(), rowNumber);
@@ -117,7 +119,7 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 
 	@TaskAnnotation("queryWNWBTReportList")
 	@Override
-	public PageWNWBTReportListVO queryWNWBTReportList(SessionFactory factory,
+	public PageListVO<List<WNWBTReportListVO>> queryWNWBTReportList(SessionFactory factory,
 			QueryWNWBTReportListDTO queryWNWBTReportListDTO) {
 		WaterBalanceAnaMapper mapper = factory.getMapper(WaterBalanceAnaMapper.class);
 		// 查询列表数据
@@ -125,7 +127,7 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 		// 查询总条数
 		int rowNumber = mapper.countWNWBTReportList(queryWNWBTReportListDTO);
 		// 返回数据结果
-		PageWNWBTReportListVO result = new PageWNWBTReportListVO();
+		PageListVO<List<WNWBTReportListVO>> result = new PageListVO<>();
 		result.setDataList(dataLists);
 		// 插入分页信息
 		PageVO pageVO = PageUtil.getPageBean(queryWNWBTReportListDTO.getPage(), queryWNWBTReportListDTO.getPageCount(), rowNumber);
@@ -270,10 +272,9 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 
 	@TaskAnnotation("queryWBIndicatorData")
 	@Override
-	public List<WBIndicatorVO> queryWBIndicatorData(SessionFactory factory, WBIndicatorDTO wBIndicatorDTO) {
-		WaterBalanceAnaMapper mapper = factory.getMapper(WaterBalanceAnaMapper.class);
-		Integer timeType = wBIndicatorDTO.getTimeType();
-		List<WBIndicatorVO> lists = mapper.queryWBIndicatorData(wBIndicatorDTO);
+	public List<IndicatorVO> queryWBIndicatorData(SessionFactory factory, IndicatorDTO indicatorDTO) {
+		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
+		List<IndicatorVO> lists = mapper.queryWBBaseIndicData(indicatorDTO);
 		return lists;
 	}
 	

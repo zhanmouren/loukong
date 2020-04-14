@@ -8,11 +8,13 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.util.StringUtil;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.zoneLoss.PositionInfoVO;
+import com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
 import com.koron.inwlms.service.common.GisZoneService;
 import com.koron.util.Constant;
@@ -318,6 +320,50 @@ public class GisZoneServiceImpl implements GisZoneService {
 		zoneInfo1.setZoneName("FL02一级分区");
 		lists.add(zoneInfo);
 		lists.add(zoneInfo1);	
+		return lists;
+	}
+
+	@TaskAnnotation("queryVZoneInfo")
+	@Override
+	public List<VZoneInfoVO> queryVZoneInfo(SessionFactory factory, QueryVZoneInfoDTO queryVZoneInfoDTO) {
+		List<VZoneInfoVO> lists = new ArrayList<>();
+		if(queryVZoneInfoDTO.getZoneType().equals(1)) {
+			//虚拟分区（合并）
+			VZoneInfoVO vZoneInfoVO = new VZoneInfoVO();
+			vZoneInfoVO.setZoneNo("VCZ001");
+			vZoneInfoVO.setZoneName("合并虚拟分区001");
+			vZoneInfoVO.setAddress("地址001");
+			vZoneInfoVO.setcZoneNo("AT001,AT002");
+			vZoneInfoVO.setpZoneNo("Z003");
+			vZoneInfoVO.setpZoneName("实际分区003");
+			VZoneInfoVO vZoneInfoVO1 = new VZoneInfoVO();
+			vZoneInfoVO1.setZoneNo("VCZ002");
+			vZoneInfoVO1.setZoneName("合并虚拟分区002");
+			vZoneInfoVO1.setAddress("地址002");
+			vZoneInfoVO1.setcZoneNo("AT003,AT004");
+			vZoneInfoVO1.setpZoneNo("Z004");
+			vZoneInfoVO1.setpZoneName("实际分区004");
+			lists.add(vZoneInfoVO);
+			lists.add(vZoneInfoVO1);
+		}else if(queryVZoneInfoDTO.getZoneType().equals(2)){
+			//虚拟分区（相减）
+			VZoneInfoVO vZoneInfoVO = new VZoneInfoVO();
+			vZoneInfoVO.setZoneNo("VSZ001");
+			vZoneInfoVO.setZoneName("相减虚拟分区001");
+			vZoneInfoVO.setAddress("地址001");
+			vZoneInfoVO.setcZoneNo("AT001,AT002");
+			vZoneInfoVO.setpZoneNo("Z001");
+			vZoneInfoVO.setpZoneName("实际分区001");
+			VZoneInfoVO vZoneInfoVO1 = new VZoneInfoVO();
+			vZoneInfoVO1.setZoneNo("VSZ002");
+			vZoneInfoVO1.setZoneName("相减虚拟分区002");
+			vZoneInfoVO1.setAddress("地址002");
+			vZoneInfoVO1.setcZoneNo("AT003,AT004");
+			vZoneInfoVO1.setpZoneNo("Z002");
+			vZoneInfoVO1.setpZoneName("实际分区002");
+			lists.add(vZoneInfoVO);
+			lists.add(vZoneInfoVO1);
+		}
 		return lists;
 	}
 }

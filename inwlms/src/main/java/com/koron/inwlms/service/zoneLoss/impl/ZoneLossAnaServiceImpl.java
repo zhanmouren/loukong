@@ -7,25 +7,22 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
-import com.github.pagehelper.util.StringUtil;
+import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryDmaZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QuerySZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneHstDataDTO;
-import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
-import com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneHstDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneHstIndicData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
+import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.zoneLoss.DmaZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.IndicatorInfo;
-import com.koron.inwlms.bean.VO.zoneLoss.PageDmaZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageSZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.SZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO;
+import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.zoneLoss.ZoneLossAnaMapper;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.service.zoneLoss.ZoneLossAnaService;
@@ -44,57 +41,64 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 
 	@TaskAnnotation("queryFZoneLossList")
 	@Override
-	public PageFZoneLossListVO queryFZoneLossList(SessionFactory factory,
+	public PageListVO<List<FZoneLossListVO>> queryFZoneLossList(SessionFactory factory,
 			QueryFZoneLossListDTO queryFZoneLossListDTO) {
 		//查询一级分区信息
 		GisZoneServiceImpl gzsImpl = new GisZoneServiceImpl();
-		List<ZoneInfo> zoneInfos = new ArrayList<>();
-		List<ZoneInfo> zoneInfoTemp = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_F);
-		if(StringUtil.isEmpty(queryFZoneLossListDTO.getZoneNo())) {
-			zoneInfos = zoneInfoTemp;
-		}else {
-			for(ZoneInfo zoneInfo : zoneInfoTemp) {
-				if(zoneInfo.getZoneNo().equals(queryFZoneLossListDTO.getZoneNo())) {
-					zoneInfos.add(zoneInfo);
-					break;
-				}
-			}
+		List<String> zoneNos = new ArrayList<>();
+		List<ZoneInfo> zoneInfos = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_F);
+		for(ZoneInfo zoneInfo : zoneInfos) {
+			zoneNos.add(zoneInfo.getZoneNo());
 		}
-		ZoneLossAnaMapper mapper = factory.getMapper(ZoneLossAnaMapper.class);
-		WBIndicatorDTO wBIndicatorDTO = new WBIndicatorDTO();
-		wBIndicatorDTO.setStartTime(queryFZoneLossListDTO.getStartTime());
-		wBIndicatorDTO.setEndTime(queryFZoneLossListDTO.getEndTime());
-		wBIndicatorDTO.setZoneInfos(zoneInfos);
-		wBIndicatorDTO.setTimeType(queryFZoneLossListDTO.getTimeType());
+		
+		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setStartTime(queryFZoneLossListDTO.getStartTime());
+		indicatorDTO.setEndTime(queryFZoneLossListDTO.getEndTime());
+		indicatorDTO.setZoneCodes(zoneNos);
+		indicatorDTO.setTimeType(queryFZoneLossListDTO.getTimeType());
 		List<String> baseCodes = new ArrayList<>(); //基础指标编码集合
 		List<String> wbCodes = new ArrayList<>(); //水平衡基础指标编码集合
-//		List<String> zoneCodes = new ArrayList<>();  //分区漏损指标编码集合
+		List<String> zoneCodes = new ArrayList<>();  //分区漏损指标编码集合
 		if(Constant.TIME_TYPE_M.equals(queryFZoneLossListDTO.getTimeType())) {
 			baseCodes.add("FLMNOCM"); //一级分区月用户数指标编码
 			baseCodes.add("FLMFTPL"); //一级分区月管长数指标编码
 			wbCodes.add("FLMFWSSITDF"); //一级分区月供水量指标编码
 			wbCodes.add("FLMBC"); //一级分区月计费用水量指标编码
 			wbCodes.add("FLMWL"); //一级分区月漏损量指标编码
+			zoneCodes.add("FLMLCA"); //一级分区月单位户数漏损量
+			zoneCodes.add("FLMLPL"); //一级分区月单位管长漏损量
+			zoneCodes.add("FLMWLR"); //一级分区月漏损率
+			zoneCodes.add("FLMMNF"); //一级分区月MNF
+			//TODO 月指标没有MNF TIME
+			zoneCodes.add("FLMMNFTDF"); //一级分区月MNF/TDF
+			
 		}else {
 			baseCodes.add("FLYNOCM");//一级分区年用户数指标编码
 			baseCodes.add("FLYFTPL");//一级分区年管长数指标编码
 			wbCodes.add("FLYFWSSITDF"); //一级分区年供水量指标编码
 			wbCodes.add("FLYBC"); //一级分区年计费用水量指标编码
 			wbCodes.add("FLYWL"); //一级分区年漏损量指标编码
+			zoneCodes.add("FLYLCA"); //一级分区年单位户数漏损量
+			zoneCodes.add("FLYLPL"); //一级分区年单位管长漏损量
+			zoneCodes.add("FLYWLR"); //一级分区年漏损率
+			zoneCodes.add("FLYMNF"); //一级分区年MNF
+			//TODO 月指标没有MNF TIME
+			zoneCodes.add("FLYMNFTDF"); //一级分区年MNF/TDF
 		}
 		//查询基础指标数据
-		wBIndicatorDTO.setCodes(baseCodes);
-		List<WBIndicatorVO> baseIndics = mapper.queryBaseIndicData(wBIndicatorDTO);
+		indicatorDTO.setCodes(baseCodes);
+		List<IndicatorVO> baseIndics = mapper.queryBaseIndicData(indicatorDTO);
 		
 		//查询水平衡指标数据
-		wBIndicatorDTO.setCodes(wbCodes);
-		List<WBIndicatorVO> wbBaseIndics = mapper.queryWBBaseIndicData(wBIndicatorDTO);
+		indicatorDTO.setCodes(wbCodes);
+		List<IndicatorVO> wbBaseIndics = mapper.queryWBBaseIndicData(indicatorDTO);
 		
 		//查询分区指标数据
-//		wBIndicatorDTO.setCodes(zoneCodes);
-//		mapper.queryZoneLossIndicData(wBIndicatorDTO);
+		indicatorDTO.setCodes(zoneCodes);
+		List<IndicatorVO> zoneIndics = mapper.queryZoneLossIndicData(indicatorDTO);
 		
-		List<Integer> timeList = TimeUtil.getMonthsList(wBIndicatorDTO.getStartTime(),wBIndicatorDTO.getEndTime());
+		List<Integer> timeList = TimeUtil.getMonthsList(indicatorDTO.getStartTime(),indicatorDTO.getEndTime());
 		int timeNum = timeList.size();
 		
 		List<FZoneLossListVO> dataList = new ArrayList<>();
@@ -116,8 +120,14 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			double flow = 0;
 			double useFlow = 0;
 			double lossFlow = 0;
+			double perUserLossFlow = 0; //一级分区月单位户数漏损量
+			double perLengthLossFlow = 0; //一级分区月单位管长漏损量
+			double lossRate = 0; //一级分区月漏损率
+			double mnf = 0; //一级分区月MNF
+			double mnfTime = 0; //一级分区月MNF TIME
+			double mnfTdf = 0; //一级分区月MNF/TDF
 			if(Constant.TIME_TYPE_M.equals(queryFZoneLossListDTO.getTimeType())) {
-				for(WBIndicatorVO baseIndic : baseIndics) {
+				for(IndicatorVO baseIndic : baseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "FLMNOCM".equals(baseIndic.getCode())) {
 						meterNum += baseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "FLMFTPL".equals(baseIndic.getCode())) {
@@ -125,7 +135,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				
-				for(WBIndicatorVO wbBaseIndic : wbBaseIndics) {
+				for(IndicatorVO wbBaseIndic : wbBaseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "FLMFWSSITDF".equals(wbBaseIndic.getCode())) {
 						flow += wbBaseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "FLMBC".equals(wbBaseIndic.getCode())) {
@@ -134,8 +144,21 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						lossFlow += wbBaseIndic.getValue();
 					}
 				}
+				for(IndicatorVO zoneIndic: zoneIndics) {
+					if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLMLCA".equals(zoneIndic.getCode())) {
+						perUserLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLMLPL".equals(zoneIndic.getCode())) {
+						perLengthLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLMWLR".equals(zoneIndic.getCode())) {
+						lossRate += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLMMNF".equals(zoneIndic.getCode())) {
+						mnf += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLMMNFTDF".equals(zoneIndic.getCode())) {
+						mnfTdf += zoneIndic.getValue();
+					}
+				}
 			}else {
-				for(WBIndicatorVO baseIndic : baseIndics) {
+				for(IndicatorVO baseIndic : baseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "FLYNOCM".equals(baseIndic.getCode())) {
 						meterNum += baseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "FLYFTPL".equals(baseIndic.getCode())) {
@@ -143,7 +166,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				
-				for(WBIndicatorVO wbBaseIndic : wbBaseIndics) {
+				for(IndicatorVO wbBaseIndic : wbBaseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "FLYFWSSITDF".equals(wbBaseIndic.getCode())) {
 						flow += wbBaseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "FLYBC".equals(wbBaseIndic.getCode())) {
@@ -152,16 +175,35 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						lossFlow += wbBaseIndic.getValue();
 					}
 				}
+				
+				for(IndicatorVO zoneIndic: zoneIndics) {
+					if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLYLCA".equals(zoneIndic.getCode())) {
+						perUserLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLYLPL".equals(zoneIndic.getCode())) {
+						perLengthLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLYWLR".equals(zoneIndic.getCode())) {
+						lossRate += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLYMNF".equals(zoneIndic.getCode())) {
+						mnf += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLYMNFTDF".equals(zoneIndic.getCode())) {
+						mnfTdf += zoneIndic.getValue();
+					}
+				}
 			}
 			fZoneLossListVO.setMeterNum(meterNum/timeNum);
 			fZoneLossListVO.setPipeLength(pipeLength/timeNum);
 			fZoneLossListVO.setFlow(flow);
 			fZoneLossListVO.setUseFlow(useFlow);
 			fZoneLossListVO.setLossFlow(lossFlow);
+			fZoneLossListVO.setPerUserLossFlow(perUserLossFlow/timeNum);
+			fZoneLossListVO.setPerLengthLossFlow(perLengthLossFlow/timeNum);
+			fZoneLossListVO.setLossRate(lossRate/timeNum);
+			fZoneLossListVO.setMnf(mnf);
+			fZoneLossListVO.setMnfTdf(mnfTdf/timeNum);
 			dataList.add(fZoneLossListVO);
 			
 		}
-		PageFZoneLossListVO result = new PageFZoneLossListVO();
+		PageListVO<List<FZoneLossListVO>> result = new PageListVO<>();
 		result.setDataList(dataList);
 		// 插入分页信息
 		PageVO pageVO = PageUtil.getPageBean(queryFZoneLossListDTO.getPage(), queryFZoneLossListDTO.getPageCount(), zoneInfos.size());
@@ -174,56 +216,61 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 
 	@TaskAnnotation("querySZoneLossList")
 	@Override
-	public PageSZoneLossListVO querySZoneLossList(SessionFactory factory, QuerySZoneLossListDTO querySZoneLossListDTO) {
+	public PageListVO<List<SZoneLossListVO>> querySZoneLossList(SessionFactory factory, QuerySZoneLossListDTO querySZoneLossListDTO) {
 		//查询二级分区信息
 		GisZoneServiceImpl gzsImpl = new GisZoneServiceImpl();
-		List<ZoneInfo> zoneInfos = new ArrayList<>();
-		List<ZoneInfo> zoneInfoTemp = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_S);
-		if(StringUtil.isEmpty(querySZoneLossListDTO.getZoneNo())) {
-			zoneInfos = zoneInfoTemp;
-		}else {
-			for(ZoneInfo zoneInfo : zoneInfoTemp) {
-				if(zoneInfo.getZoneNo().equals(querySZoneLossListDTO.getZoneNo())) {
-					zoneInfos.add(zoneInfo);
-					break;
-				}
-			}
+		List<String> zoneNos = new ArrayList<>();
+		List<ZoneInfo> zoneInfos = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_S);
+		for(ZoneInfo zoneInfo : zoneInfos) {
+			zoneNos.add(zoneInfo.getZoneNo());
 		}
-		ZoneLossAnaMapper mapper = factory.getMapper(ZoneLossAnaMapper.class);
-		WBIndicatorDTO wBIndicatorDTO = new WBIndicatorDTO();
-		wBIndicatorDTO.setStartTime(querySZoneLossListDTO.getStartTime());
-		wBIndicatorDTO.setEndTime(querySZoneLossListDTO.getEndTime());
-		wBIndicatorDTO.setZoneInfos(zoneInfos);
-		wBIndicatorDTO.setTimeType(querySZoneLossListDTO.getTimeType());
+		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setStartTime(querySZoneLossListDTO.getStartTime());
+		indicatorDTO.setEndTime(querySZoneLossListDTO.getEndTime());
+		indicatorDTO.setCodes(zoneNos);
+		indicatorDTO.setTimeType(querySZoneLossListDTO.getTimeType());
 		List<String> baseCodes = new ArrayList<>(); //基础指标编码集合
 		List<String> wbCodes = new ArrayList<>(); //水平衡基础指标编码集合
-//		List<String> zoneCodes = new ArrayList<>();  //分区漏损指标编码集合
+		List<String> zoneCodes = new ArrayList<>();  //分区漏损指标编码集合
 		if(Constant.TIME_TYPE_M.equals(querySZoneLossListDTO.getTimeType())) {
-			baseCodes.add("SLMNOCM"); //一级分区月用户数指标编码
-			baseCodes.add("SLMFTPL"); //一级分区月管长数指标编码
-			wbCodes.add("SLMFWSSITDF"); //一级分区月供水量指标编码
-			wbCodes.add("SLMBC"); //一级分区月计费用水量指标编码
-			wbCodes.add("SLMWL"); //一级分区月漏损量指标编码
+			baseCodes.add("SLMNOCM"); //二级分区月用户数指标编码
+			baseCodes.add("SLMFTPL"); //二级分区月管长数指标编码
+			wbCodes.add("SLMFWSSITDF"); //二级分区月供水量指标编码
+			wbCodes.add("SLMBC"); //二级分区月计费用水量指标编码
+			wbCodes.add("SLMWL"); //二级分区月漏损量指标编码
+			zoneCodes.add("SLMLCA"); //二级分区月单位户数漏损量
+			zoneCodes.add("SLMLPL"); //二级分区月单位管长漏损量
+			zoneCodes.add("SLMWLR"); //二级分区月漏损率
+			zoneCodes.add("SLMMNF"); //二级分区月MNF
+			//TODO 月指标没有MNF TIME
+			zoneCodes.add("SLMMNFTDF"); //二级分区月MNF/TDF
 		}else {
-			baseCodes.add("SLYNOCM");//一级分区年用户数指标编码
-			baseCodes.add("SLYFTPL");//一级分区年管长数指标编码
-			wbCodes.add("SLYFWSSITDF"); //一级分区年供水量指标编码
-			wbCodes.add("SLYBC"); //一级分区年计费用水量指标编码
-			wbCodes.add("SLYWL"); //一级分区年漏损量指标编码
+			baseCodes.add("SLYNOCM");//二级分区年用户数指标编码
+			baseCodes.add("SLYFTPL");//二级分区年管长数指标编码
+			wbCodes.add("SLYFWSSITDF"); //二级分区年供水量指标编码
+			wbCodes.add("SLYBC"); //二级分区年计费用水量指标编码
+			wbCodes.add("SLYWL"); //二级分区年漏损量指标编码
+			zoneCodes.add("SLYLCA"); //二级分区年单位户数漏损量
+			zoneCodes.add("SLYLPL"); //二级分区年单位管长漏损量
+			zoneCodes.add("SLYWLR"); //二级分区年漏损率
+			zoneCodes.add("SLYMNF"); //二级分区年MNF
+			//TODO 月指标没有MNF TIME
+			zoneCodes.add("SLYMNFTDF"); //二级分区年MNF/TDF
 		}
 		//查询基础指标数据
-		wBIndicatorDTO.setCodes(baseCodes);
-		List<WBIndicatorVO> baseIndics = mapper.queryBaseIndicData(wBIndicatorDTO);
+		indicatorDTO.setCodes(baseCodes);
+		List<IndicatorVO> baseIndics = mapper.queryBaseIndicData(indicatorDTO);
 		
 		//查询水平衡指标数据
-		wBIndicatorDTO.setCodes(wbCodes);
-		List<WBIndicatorVO> wbBaseIndics = mapper.queryWBBaseIndicData(wBIndicatorDTO);
+		indicatorDTO.setCodes(wbCodes);
+		List<IndicatorVO> wbBaseIndics = mapper.queryWBBaseIndicData(indicatorDTO);
 		
 		//查询分区指标数据
-//		wBIndicatorDTO.setCodes(zoneCodes);
-//		mapper.queryZoneLossIndicData(wBIndicatorDTO);
+		indicatorDTO.setCodes(zoneCodes);
+		List<IndicatorVO> zoneIndics = mapper.queryZoneLossIndicData(indicatorDTO);
 		
-		List<Integer> timeList = TimeUtil.getMonthsList(wBIndicatorDTO.getStartTime(),wBIndicatorDTO.getEndTime());
+		List<Integer> timeList = TimeUtil.getMonthsList(indicatorDTO.getStartTime(),indicatorDTO.getEndTime());
 		int timeNum = timeList.size();
 		
 		List<SZoneLossListVO> dataList = new ArrayList<>();
@@ -245,8 +292,14 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			double flow = 0;
 			double useFlow = 0;
 			double lossFlow = 0;
+			double perUserLossFlow = 0; //二级分区月单位户数漏损量
+			double perLengthLossFlow = 0; //二级分区月单位管长漏损量
+			double lossRate = 0; //二级分区月漏损率
+			double mnf = 0; //二级分区月MNF
+			double mnfTime = 0; //二级分区月MNF TIME
+			double mnfTdf = 0; //二级分区月MNF/TDF
 			if(Constant.TIME_TYPE_M.equals(querySZoneLossListDTO.getTimeType())) {
-				for(WBIndicatorVO baseIndic : baseIndics) {
+				for(IndicatorVO baseIndic : baseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "SLMNOCM".equals(baseIndic.getCode())) {
 						meterNum += baseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "SLMFTPL".equals(baseIndic.getCode())) {
@@ -254,7 +307,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				
-				for(WBIndicatorVO wbBaseIndic : wbBaseIndics) {
+				for(IndicatorVO wbBaseIndic : wbBaseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "SLMFWSSITDF".equals(wbBaseIndic.getCode())) {
 						flow += wbBaseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "SLMBC".equals(wbBaseIndic.getCode())) {
@@ -263,8 +316,22 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						lossFlow += wbBaseIndic.getValue();
 					}
 				}
+				
+				for(IndicatorVO zoneIndic: zoneIndics) {
+					if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLMLCA".equals(zoneIndic.getCode())) {
+						perUserLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLMLPL".equals(zoneIndic.getCode())) {
+						perLengthLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLMWLR".equals(zoneIndic.getCode())) {
+						lossRate += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLMMNF".equals(zoneIndic.getCode())) {
+						mnf += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLMMNFTDF".equals(zoneIndic.getCode())) {
+						mnfTdf += zoneIndic.getValue();
+					}
+				}
 			}else {
-				for(WBIndicatorVO baseIndic : baseIndics) {
+				for(IndicatorVO baseIndic : baseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "SLYNOCM".equals(baseIndic.getCode())) {
 						meterNum += baseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "SLYFTPL".equals(baseIndic.getCode())) {
@@ -272,7 +339,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				
-				for(WBIndicatorVO wbBaseIndic : wbBaseIndics) {
+				for(IndicatorVO wbBaseIndic : wbBaseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "SLYFWSSITDF".equals(wbBaseIndic.getCode())) {
 						flow += wbBaseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "SLYBC".equals(wbBaseIndic.getCode())) {
@@ -281,16 +348,35 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						lossFlow += wbBaseIndic.getValue();
 					}
 				}
+				
+				for(IndicatorVO zoneIndic: zoneIndics) {
+					if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLYLCA".equals(zoneIndic.getCode())) {
+						perUserLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLYLPL".equals(zoneIndic.getCode())) {
+						perLengthLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLYWLR".equals(zoneIndic.getCode())) {
+						lossRate += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLYMNF".equals(zoneIndic.getCode())) {
+						mnf += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "SLYMNFTDF".equals(zoneIndic.getCode())) {
+						mnfTdf += zoneIndic.getValue();
+					}
+				}
 			}
 			sZoneLossListVO.setMeterNum(meterNum/timeNum);
 			sZoneLossListVO.setPipeLength(pipeLength/timeNum);
 			sZoneLossListVO.setFlow(flow);
 			sZoneLossListVO.setUseFlow(useFlow);
 			sZoneLossListVO.setLossFlow(lossFlow);
+			sZoneLossListVO.setPerUserLossFlow(perUserLossFlow/timeNum);
+			sZoneLossListVO.setPerLengthLossFlow(perLengthLossFlow/timeNum);
+			sZoneLossListVO.setLossRate(lossRate/timeNum);
+			sZoneLossListVO.setMnf(mnf);
+			sZoneLossListVO.setMnfTdf(mnfTdf/timeNum);
 			dataList.add(sZoneLossListVO);
 			
 		}
-		PageSZoneLossListVO result = new PageSZoneLossListVO();
+		PageListVO<List<SZoneLossListVO>> result = new PageListVO<>();
 		result.setDataList(dataList);
 		// 插入分页信息
 		PageVO pageVO = PageUtil.getPageBean(querySZoneLossListDTO.getPage(), querySZoneLossListDTO.getPageCount(), zoneInfos.size());
@@ -303,57 +389,63 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 
 	@TaskAnnotation("queryDmaZoneLossList")
 	@Override
-	public PageDmaZoneLossListVO queryDmaZoneLossList(SessionFactory factory,
+	public PageListVO<List<DmaZoneLossListVO>> queryDmaZoneLossList(SessionFactory factory,
 			QueryDmaZoneLossListDTO queryDmaZoneLossListDTO) {
 		//查询dma分区信息
 		GisZoneServiceImpl gzsImpl = new GisZoneServiceImpl();
-		List<ZoneInfo> zoneInfos = new ArrayList<>();
-		List<ZoneInfo> zoneInfoTemp = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_T);
-		if(StringUtil.isEmpty(queryDmaZoneLossListDTO.getDmaNo())) {
-			zoneInfos = zoneInfoTemp;
-		}else {
-			for(ZoneInfo zoneInfo : zoneInfoTemp) {
-				if(zoneInfo.getZoneNo().equals(queryDmaZoneLossListDTO.getDmaNo())) {
-					zoneInfos.add(zoneInfo);
-					break;
-				}
-			}
+		List<String> zoneNos = new ArrayList<>();
+		List<ZoneInfo> zoneInfos = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_T);
+		for(ZoneInfo zoneInfo : zoneInfos) {
+			zoneNos.add(zoneInfo.getZoneNo());
 		}
-		ZoneLossAnaMapper mapper = factory.getMapper(ZoneLossAnaMapper.class);
-		WBIndicatorDTO wBIndicatorDTO = new WBIndicatorDTO();
-		wBIndicatorDTO.setStartTime(queryDmaZoneLossListDTO.getStartTime());
-		wBIndicatorDTO.setEndTime(queryDmaZoneLossListDTO.getEndTime());
-		wBIndicatorDTO.setZoneInfos(zoneInfos);
-		wBIndicatorDTO.setTimeType(queryDmaZoneLossListDTO.getTimeType());
+		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setStartTime(queryDmaZoneLossListDTO.getStartTime());
+		indicatorDTO.setEndTime(queryDmaZoneLossListDTO.getEndTime());
+		indicatorDTO.setCodes(zoneNos);
+		indicatorDTO.setTimeType(queryDmaZoneLossListDTO.getTimeType());
 		List<String> baseCodes = new ArrayList<>(); //基础指标编码集合
 		List<String> wbCodes = new ArrayList<>(); //水平衡基础指标编码集合
-//		List<String> zoneCodes = new ArrayList<>();  //分区漏损指标编码集合
+		List<String> zoneCodes = new ArrayList<>();  //分区漏损指标编码集合
 		if(Constant.TIME_TYPE_M.equals(queryDmaZoneLossListDTO.getTimeType())) {
-			baseCodes.add("DMMNOCM"); //一级分区月用户数指标编码
-			baseCodes.add("DMMFTPL"); //一级分区月管长数指标编码
-			wbCodes.add("DMMFWSSITDF"); //一级分区月供水量指标编码
-			wbCodes.add("DMMBC"); //一级分区月计费用水量指标编码
-			wbCodes.add("DMMWL"); //一级分区月漏损量指标编码
+			baseCodes.add("DMMNOCM"); //MDA分区月用户数指标编码
+			baseCodes.add("DMMFTPL"); //MDA分区月管长数指标编码
+			wbCodes.add("DMMFWSSITDF"); //MDA分区月供水量指标编码
+			wbCodes.add("DMMBC"); //MDA分区月计费用水量指标编码
+			wbCodes.add("DMMWL"); //MDA分区月漏损量指标编码
+			zoneCodes.add("DMMLCA"); //MDA分区月单位户数漏损量
+			zoneCodes.add("DMMLPL"); //MDA分区月单位管长漏损量
+			zoneCodes.add("DMMWLR"); //MDA分区月漏损率
+			zoneCodes.add("DMMMNF"); //MDA分区月MNF
+			//TODO 月指标没有MNF TIME
+			zoneCodes.add("DMMMNFTDF"); //MDA分区月MNF/TDF
 		}else {
-			baseCodes.add("DMYNOCM");//一级分区年用户数指标编码
-			baseCodes.add("DMYFTPL");//一级分区年管长数指标编码
-			wbCodes.add("DMYFWSSITDF"); //一级分区年供水量指标编码
-			wbCodes.add("DMYBC"); //一级分区年计费用水量指标编码
-			wbCodes.add("DMYWL"); //一级分区年漏损量指标编码
+			baseCodes.add("DMYNOCM");//MDA分区年用户数指标编码
+			baseCodes.add("DMYFTPL");//MDA分区年管长数指标编码
+			wbCodes.add("DMYFWSSITDF"); //MDA分区年供水量指标编码
+			wbCodes.add("DMYBC"); //MDA分区年计费用水量指标编码
+			wbCodes.add("DMYWL"); //MDA分区年漏损量指标编码
+			zoneCodes.add("DMYLCA"); //MDA分区月单位户数漏损量
+			zoneCodes.add("DMYLPL"); //MDA分区月单位管长漏损量
+			zoneCodes.add("DMYWLR"); //MDA分区月漏损率
+			zoneCodes.add("DMYMNF"); //MDA分区月MNF
+			//TODO 月指标没有MNF TIME
+			zoneCodes.add("DMYMNFTDF"); //MDA分区月MNF/TDF
 		}
 		//查询基础指标数据
-		wBIndicatorDTO.setCodes(baseCodes);
-		List<WBIndicatorVO> baseIndics = mapper.queryBaseIndicData(wBIndicatorDTO);
+		indicatorDTO.setCodes(baseCodes);
+		List<IndicatorVO> baseIndics = mapper.queryBaseIndicData(indicatorDTO);
 		
 		//查询水平衡指标数据
-		wBIndicatorDTO.setCodes(wbCodes);
-		List<WBIndicatorVO> wbBaseIndics = mapper.queryWBBaseIndicData(wBIndicatorDTO);
+		indicatorDTO.setCodes(wbCodes);
+		List<IndicatorVO> wbBaseIndics = mapper.queryWBBaseIndicData(indicatorDTO);
 		
 		//查询分区指标数据
-//		wBIndicatorDTO.setCodes(zoneCodes);
-//		mapper.queryZoneLossIndicData(wBIndicatorDTO);
+		indicatorDTO.setCodes(zoneCodes);
+		List<IndicatorVO> zoneIndics = mapper.queryZoneLossIndicData(indicatorDTO);
 		
-		List<Integer> timeList = TimeUtil.getMonthsList(wBIndicatorDTO.getStartTime(),wBIndicatorDTO.getEndTime());
+		
+		List<Integer> timeList = TimeUtil.getMonthsList(indicatorDTO.getStartTime(),indicatorDTO.getEndTime());
 		int timeNum = timeList.size();
 		
 		List<DmaZoneLossListVO> dataList = new ArrayList<>();
@@ -375,8 +467,14 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			double flow = 0;
 			double useFlow = 0;
 			double lossFlow = 0;
+			double perUserLossFlow = 0; //DMA分区月单位户数漏损量
+			double perLengthLossFlow = 0; //DMA分区月单位管长漏损量
+			double lossRate = 0; //DMA分区月漏损率
+			double mnf = 0; //DMA分区月MNF
+			double mnfTime = 0; //DMA分区月MNF TIME
+			double mnfTdf = 0; //DMA分区月MNF/TDF
 			if(Constant.TIME_TYPE_M.equals(queryDmaZoneLossListDTO.getTimeType())) {
-				for(WBIndicatorVO baseIndic : baseIndics) {
+				for(IndicatorVO baseIndic : baseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "DMMNOCM".equals(baseIndic.getCode())) {
 						meterNum += baseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "DMMFTPL".equals(baseIndic.getCode())) {
@@ -384,7 +482,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				
-				for(WBIndicatorVO wbBaseIndic : wbBaseIndics) {
+				for(IndicatorVO wbBaseIndic : wbBaseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "DMMFWSSITDF".equals(wbBaseIndic.getCode())) {
 						flow += wbBaseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "DMMBC".equals(wbBaseIndic.getCode())) {
@@ -393,8 +491,22 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						lossFlow += wbBaseIndic.getValue();
 					}
 				}
+				
+				for(IndicatorVO zoneIndic: zoneIndics) {
+					if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMMLCA".equals(zoneIndic.getCode())) {
+						perUserLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMMLPL".equals(zoneIndic.getCode())) {
+						perLengthLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMMWLR".equals(zoneIndic.getCode())) {
+						lossRate += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMMMNF".equals(zoneIndic.getCode())) {
+						mnf += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMMMNFTDF".equals(zoneIndic.getCode())) {
+						mnfTdf += zoneIndic.getValue();
+					}
+				}
 			}else {
-				for(WBIndicatorVO baseIndic : baseIndics) {
+				for(IndicatorVO baseIndic : baseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "DMYNOCM".equals(baseIndic.getCode())) {
 						meterNum += baseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(baseIndic.getZoneNo()) && "DMYFTPL".equals(baseIndic.getCode())) {
@@ -402,7 +514,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				
-				for(WBIndicatorVO wbBaseIndic : wbBaseIndics) {
+				for(IndicatorVO wbBaseIndic : wbBaseIndics) {
 					if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "DMYFWSSITDF".equals(wbBaseIndic.getCode())) {
 						flow += wbBaseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "DMYBC".equals(wbBaseIndic.getCode())) {
@@ -411,15 +523,34 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						lossFlow += wbBaseIndic.getValue();
 					}
 				}
+				
+				for(IndicatorVO zoneIndic: zoneIndics) {
+					if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMYLCA".equals(zoneIndic.getCode())) {
+						perUserLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMYLPL".equals(zoneIndic.getCode())) {
+						perLengthLossFlow += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMYWLR".equals(zoneIndic.getCode())) {
+						lossRate += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMYMNF".equals(zoneIndic.getCode())) {
+						mnf += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "DMYMNFTDF".equals(zoneIndic.getCode())) {
+						mnfTdf += zoneIndic.getValue();
+					}
+				}
 			}
 			dmaZoneLossListVO.setMeterNum(meterNum/timeNum);
 			dmaZoneLossListVO.setPipeLength(pipeLength/timeNum);
 			dmaZoneLossListVO.setFlow(flow);
 			dmaZoneLossListVO.setUseFlow(useFlow);
 			dmaZoneLossListVO.setLossFlow(lossFlow);
+			dmaZoneLossListVO.setPerUserLossFlow(perUserLossFlow/timeNum);
+			dmaZoneLossListVO.setPerLengthLossFlow(perLengthLossFlow/timeNum);
+			dmaZoneLossListVO.setLossRate(lossRate/timeNum);
+			dmaZoneLossListVO.setMnf(mnf);
+			dmaZoneLossListVO.setMnfTdf(mnfTdf/timeNum);
 			dataList.add(dmaZoneLossListVO);
 		}
-		PageDmaZoneLossListVO result = new PageDmaZoneLossListVO();
+		PageListVO<List<DmaZoneLossListVO>> result = new PageListVO<>();
 		result.setDataList(dataList);
 		// 插入分页信息
 		PageVO pageVO = PageUtil.getPageBean(queryDmaZoneLossListDTO.getPage(), queryDmaZoneLossListDTO.getPageCount(), zoneInfos.size());
@@ -433,34 +564,33 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 	@TaskAnnotation("queryZoneHstData")
 	@Override
 	public ZoneHstDataVO queryZoneHstData(SessionFactory factory, QueryZoneHstDataDTO queryZoneHstDataDTO) {
-		ZoneLossAnaMapper mapper = factory.getMapper(ZoneLossAnaMapper.class);
+		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
+		ZoneLossAnaMapper zoneLossMapper = factory.getMapper(ZoneLossAnaMapper.class);
 		List<Integer> timeList = TimeUtil.getMonthsList(queryZoneHstDataDTO.getStartTime(),queryZoneHstDataDTO.getEndTime());
 		String code = queryZoneHstDataDTO.getCodes();
-		WBIndicatorDTO wBIndicatorDTO = new WBIndicatorDTO();
-		wBIndicatorDTO.setStartTime(queryZoneHstDataDTO.getStartTime());
-		wBIndicatorDTO.setEndTime(queryZoneHstDataDTO.getEndTime());
-		wBIndicatorDTO.setTimeType(queryZoneHstDataDTO.getTimeType());
-		List<ZoneInfo> zoneInfos = new ArrayList<>();
-		ZoneInfo zoneInfo = new ZoneInfo();
-		zoneInfo.setZoneNo(queryZoneHstDataDTO.getZoneNo());
-		zoneInfos.add(zoneInfo);
-		wBIndicatorDTO.setZoneInfos(zoneInfos);
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setStartTime(queryZoneHstDataDTO.getStartTime());
+		indicatorDTO.setEndTime(queryZoneHstDataDTO.getEndTime());
+		indicatorDTO.setTimeType(queryZoneHstDataDTO.getTimeType());
+		List<String> zoneNos = new ArrayList<>();
+		zoneNos.add(queryZoneHstDataDTO.getZoneNo());
+		indicatorDTO.setZoneCodes(zoneNos);
 		List<String> codes = new ArrayList<>();
 		codes.add(code);
-		wBIndicatorDTO.setCodes(codes);
-		IndicatorInfo indicatorInfo = mapper.queryIndicLevel2Info(code);
+		indicatorDTO.setCodes(codes);
+		IndicatorInfo indicatorInfo = zoneLossMapper.queryIndicLevel2Info(code);
 		if(indicatorInfo == null) return null;
-		List<WBIndicatorVO> indicLists = new ArrayList<>();
+		List<IndicatorVO> indicLists = new ArrayList<>();
 		if(indicatorInfo.getLevel2() == 0) {
 			//基础指标
-			indicLists = mapper.queryBaseIndicData(wBIndicatorDTO);
+			indicLists = indicMapper.queryBaseIndicData(indicatorDTO);
 			
 		}else if(indicatorInfo.getLevel2() == 3) {
 			//水平衡指标
-			indicLists = mapper.queryWBBaseIndicData(wBIndicatorDTO);
+			indicLists = indicMapper.queryWBBaseIndicData(indicatorDTO);
 		}else if(indicatorInfo.getLevel2() == 4) {
 			//分区漏损
-//			indicLists = mapper.queryZoneLossIndicData(wBIndicatorDTO);
+			indicLists = indicMapper.queryZoneLossIndicData(indicatorDTO);
 		}
 		ZoneHstDataVO zoneHstDataVO = new ZoneHstDataVO();
 		zoneHstDataVO.setZoneNo(queryZoneHstDataDTO.getZoneNo());
@@ -472,7 +602,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		List<Double> value = new ArrayList<>();
 		for(Integer  time : timeList) {
 			boolean valueFlag = false;
-			for (WBIndicatorVO wbIndicatorVO : indicLists) {
+			for (IndicatorVO wbIndicatorVO : indicLists) {
 				if(time.equals(wbIndicatorVO.getTimeId())) {
 					valueFlag = true; 
 					value.add(wbIndicatorVO.getValue());

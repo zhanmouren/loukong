@@ -365,26 +365,4 @@
 		from "APP_company_t_report_indicator"
 		where "templateId" = #{id}
 	</select>
-	
-	<select id="queryWBIndicatorData" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WBIndicatorDTO" 
-	resultType="com.koron.inwlms.bean.VO.zoneLoss.WBIndicatorVO">
-		select 
-		<if test="timeType != null and timeType == 3">
-			a.code,a.value,b."yearMonth" as "timeId"
-			from  "ANA_zone_balance_month" a left join "APP_dim_month" b 
-			on a."yearMonth" = b.id 
-		</if>
-		<if test="timeType != null and timeType == 4">
-			code,value,year as "timeId"
-			from "ANA_zone_balance_year"
-		</if>
-		where 1 = 1
-		<if test="lists != null and lists.size > 0">
-			and a.code in 
-			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
-				#{item}    
-			</foreach> 
-		</if>
-	</select>
-	
 </mapper>
