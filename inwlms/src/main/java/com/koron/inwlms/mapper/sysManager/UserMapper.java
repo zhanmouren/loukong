@@ -14,6 +14,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -23,6 +24,7 @@ import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -205,4 +207,10 @@ public interface UserMapper {
 	    
 	   //通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限
 		public List<RoleMenusVO>  queryRoleMenuByRoleMenu(@Param("roleMenuDTO")  RoleMenuDTO roleMenuDTO,@Param("list") List<String> moduleList);
+		
+		//根据moduleName 查询moduleCode 2020/04/14
+		public List<ModuleMenuVO> queryMenuOP(ModuleMenuDTO moduleMenuDTO);
+		
+		//通过模块菜单Code和角色code查询该模块菜单操作权限
+		public List<RoleMenusVO> queryOPByCode(RoleMenuDTO roleMenuDTO);
 }

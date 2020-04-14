@@ -10,6 +10,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -20,6 +21,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -135,7 +137,14 @@ public interface UserService {
         //模糊查询部门接口
 	     PageListVO<List<DeptVO>> queryDept(SessionFactory factory,DeptDTO deptDTO);
 		 
-		 //通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限。
-		 List<RoleMenusVO> queryRoleMenuByRoleMenu(SessionFactory factory,RoleMenuDTO roleMenuDTO);		
+		 //通过模块菜单Code和角色加载该角色所有选中菜单以及可操作的权限。
+		 List<RoleMenusVO> queryRoleMenuByRoleMenu(SessionFactory factory,RoleMenuDTO roleMenuDTO);	
+		 
+		 //根据moduleName 查询moduleCode
+		 List<ModuleMenuVO> queryMenuOP(SessionFactory factory,ModuleMenuDTO moduleMenuDTO);
+		 
+		 //通过模块菜单Code和角色code查询该模块菜单操作权限
+		 List<RoleMenusVO>  queryOPByCode(SessionFactory factory,RoleMenuDTO roleMenuDTO);
+		 
 		 
 }

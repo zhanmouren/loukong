@@ -9,6 +9,8 @@ import java.util.List;
 * @Date 2020.03.23
 */
 public class RoleMenuDTO {
+	//用户Code
+	private String userCode;
 	//角色菜单List
 	private List<RoleMenuDTO> roleMenuList;
 	//角色code
@@ -29,6 +31,12 @@ public class RoleMenuDTO {
   	private String updateBy;
   	//修改时间
   	private Timestamp updateTime;
+	public String getUserCode() {
+		return userCode;
+	}
+	public void setUserCode(String userCode) {
+		this.userCode = userCode;
+	}
 	public List<String> getModuleCodeList() {
 		return moduleCodeList;
 	}

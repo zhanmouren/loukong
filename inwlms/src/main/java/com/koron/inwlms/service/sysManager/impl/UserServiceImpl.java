@@ -21,6 +21,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
@@ -33,6 +34,7 @@ import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -980,6 +982,25 @@ public class UserServiceImpl implements UserService{
 					}
 					Integer addRes=userMapper.addOneDataDet(dataDicDTO);
 					return addRes;
+				}
+
+				//根据moduleName 查询moduleCode 2020/04/14
+				@TaskAnnotation("queryMenuOP") 
+				@Override
+				public List<ModuleMenuVO> queryMenuOP(SessionFactory factory, ModuleMenuDTO moduleMenuDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<ModuleMenuVO> moduleMenuList=userMapper.queryMenuOP(moduleMenuDTO);
+					return moduleMenuList;
+				}
+
+				//通过模块菜单Code和角色code查询该模块菜单操作权限
+				@TaskAnnotation("queryOPByCode") 
+				@Override
+				public List<RoleMenusVO> queryOPByCode(SessionFactory factory, RoleMenuDTO roleMenuDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<RoleMenusVO> roleMenusList=userMapper.queryOPByCode(roleMenuDTO);
+					return roleMenusList;
 				}
 
 					

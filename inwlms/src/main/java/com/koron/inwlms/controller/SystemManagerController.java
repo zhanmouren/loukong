@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.swan.bean.MessageBean;
 
-
+import com.koron.authority.ValidatePermission;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
@@ -66,7 +66,7 @@ public class SystemManagerController {
      * date:2020-03-18
      * funtion:管理员添加新职员接口
      * author:xiaozhan
-     */  	
+     */
 	@RequestMapping(value = "/addUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "管理员添加新职员接口", notes = "管理员添加新职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1694,6 +1694,7 @@ public class SystemManagerController {
      * funtion:模糊查询部门接口
      * author:xiaozhan
      */	
+	//@ValidatePermission("首页下的-query")
 	@RequestMapping(value = "/queryDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1744,7 +1745,7 @@ public class SystemManagerController {
 					msg.setData(treeBeanList);
 				  }else {
 					//查询失败
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("查询一级目录树失败"); 
 			 }		  
 	        }catch(Exception e){
@@ -1783,7 +1784,7 @@ public class SystemManagerController {
 					msg.setData(treeBeanList);
 				  }else {
 					//查询失败
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("查询所有下级树失败"); 
 			 }		  
 	        }catch(Exception e){
