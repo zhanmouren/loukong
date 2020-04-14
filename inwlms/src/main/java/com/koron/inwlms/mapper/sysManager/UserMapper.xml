@@ -29,8 +29,10 @@
     
     <!-- 查询相关职员信息总条数 -->
     <select id="getUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO" resultType="java.lang.Integer">
-        select count(*) from "SM_user"
-        <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>
+        select count(*) from "SM_user" as "user"
+         <trim prefix="where" prefixOverrides="and|or">
+          <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>
+         </trim>
     </select>
     
     <!-- 修改职员信息 -->
