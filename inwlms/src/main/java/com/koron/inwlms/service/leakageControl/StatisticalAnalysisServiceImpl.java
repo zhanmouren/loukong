@@ -26,8 +26,13 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 	public ProcessingStatisticsVO queryProcessingStatistics(SessionFactory factory,ProcessingStatisticsDTO processingStatisticsDTO) throws ParseException {
 		ProcessingStatisticsVO processingStatisticsVO = new ProcessingStatisticsVO();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		//1获取漏损变化
+		//1获取漏损变化 
+		//获取指标编码
+		  //TODO 查询分区级别
+		String code = "";
+		
 		//TODO  1.1处理前后最小夜间流量
+		
 		//TODO  1.2处理前后漏损水量
 		
 		//2获取漏损处理情况统计

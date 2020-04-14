@@ -7,6 +7,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
+import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.mapper.leakageControl.EventInfoMapper;
 
@@ -45,6 +46,14 @@ public class EventInfoServiceImpl implements EventInfoService{
 		Integer num = mapper.addEventInfo(eventInfo);
 		return num;
 		
+	}
+	
+	@TaskAnnotation("querychildKey")
+	@Override
+	public List<DataDicRelationVO> querychildKey(SessionFactory factory,String parentKey){
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		List<DataDicRelationVO> list = mapper.querychildKey(parentKey);
+		return list;
 	}
 	
 	

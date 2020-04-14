@@ -3,6 +3,7 @@ package com.koron.inwlms.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,14 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.PolicyDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
@@ -29,16 +34,23 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
+import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
+import com.koron.inwlms.bean.VO.leakageControl.Policy;
+import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
+import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.service.leakageControl.AlarmMessageService;
 import com.koron.inwlms.service.leakageControl.AlarmProcessService;
+import com.koron.inwlms.service.leakageControl.EconomicIndicatorServiceImpl;
 import com.koron.inwlms.service.leakageControl.EventInfoService;
+import com.koron.inwlms.service.leakageControl.PolicyService;
 import com.koron.inwlms.service.leakageControl.StatisticalAnalysisService;
 import com.koron.inwlms.service.leakageControl.WarningSchemeService;
+import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -65,6 +77,8 @@ public class LeakageControlController {
 	private StatisticalAnalysisService sas;
 	@Autowired
 	private EventInfoService eis;
+	@Autowired
+	private PolicyService ps;
 
 	@RequestMapping(value = "/queryAlarmMessage.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息接口", notes = "查询预警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -91,7 +105,6 @@ public class LeakageControlController {
 		try {
 			List<AlarmMessageVO> alarmMessageList = ADOConnection.runTask(ams, "queryAlarmMessage", List.class, warningInfDTO);
 			if(alarmMessageList != null && alarmMessageList.size() != 0) {
-				//TODO 转化枚举类型key为value
 				
 				AlarmMessageReturnVO alarmMessageReturnVO = new AlarmMessageReturnVO();
 				alarmMessageReturnVO.setAlarmMessageList(alarmMessageList);
@@ -645,8 +658,19 @@ public class LeakageControlController {
     @ApiOperation(value = "分区投资曲线查询接口", notes = "分区投资曲线查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryPartitionInvest() {
-		//TODO
-		MessageBean<PartitionInvestVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PartitionInvestVO.class);
+		
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		try {
+			List<PartitionInvestVO> List = ADOConnection.runTask(new EconomicIndicatorServiceImpl(), "queryPartitionInvest",List.class);
+			if(List != null && List.size() != 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setData(List);
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("分区投资曲线查询失败");
+		}
 		
 		
 		return null;
@@ -771,6 +795,219 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/queryPolicy.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "控漏损策略设置查询接口", notes = "控漏损策略查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPolicy(@RequestBody PolicySchemeDTO policySchemeDTO) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		if(policySchemeDTO.getCode() == null || policySchemeDTO.getCode().equals("")) {
+			if(!policySchemeDTO.getState().equals("0")) {
+				msg.setCode(Constant.MESSAGE_INT_ERROR);
+		        msg.setDescription("漏损控制策略方案编码为空");
+		        return msg.toJson();
+			}
+		}
+
+		try {
+			List<PolicySchemeVO> policySchemeList = ADOConnection.runTask(ps, "queryPolicyScheme",List.class,policySchemeDTO);
+			if(policySchemeList != null && policySchemeList.size() != 0) {
+				List<Policy> policyList = ADOConnection.runTask(ps, "queryPolicySetting",List.class,policySchemeList.get(0).getCode());
+				if(policyList != null && policyList.size() != 0) {
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setData(policyList);
+				}else {
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("无策略方案设置信息");
+				}
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无策略方案信息");
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("漏损控制策略方案查询失败");	
+		}
+		
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/addPolicy.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "控漏损策略设置增加接口", notes = "控漏损策略增加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String addPolicy(@RequestBody PolicyDTO policyDTO) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		PolicySchemeDTO policySchemeDTO = policyDTO.getPolicySchemeDTO();
+		List<PolicySettingDTO> policySettingDTOList = policyDTO.getPolicySettingDTOList();
+		if(policySchemeDTO.getName() != null || policySchemeDTO.getName().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("方案名称为空");
+	        return msg.toJson();
+		}
+		if(policySchemeDTO.getState() != null || policySchemeDTO.getState().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("方案状态为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			//产生编码
+			String code = UUID.randomUUID().toString();
+			policySchemeDTO.setCode(code);
+			Integer schemeNum = ADOConnection.runTask(ps, "addPolicyScheme",Integer.class,policySchemeDTO);
+			if(schemeNum > 0) {
+				for(PolicySettingDTO policySettingDTO : policySettingDTOList) {
+					policySettingDTO.setPolicyCode(code);
+					Integer settingNum = ADOConnection.runTask(ps, "addPolicySetting",Integer.class,policySettingDTO);
+					if(settingNum > 0) {
+						msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+						msg.setDescription("添加成功");
+					}else {
+						msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+						msg.setDescription("无策略设置信息添加");
+					}
+				}
+				
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无策略方案信息添加");
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("策略方案添加失败");
+		}
+		
+		return msg.toJson();
+	}
+    
+	@RequestMapping(value = "/deletePolicy.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "控漏损策略删除接口", notes = "控漏损策略删除接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deletePolicy(String code) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		
+		if(code != null || code.equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("方案编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			//删除方案表
+			Integer schemeNum = ADOConnection.runTask(ps, "deletePolicyScheme",Integer.class,code);
+			if(schemeNum > 0) {
+				Integer settingNum = ADOConnection.runTask(ps, "deletePolicySetting",Integer.class,code);
+				if(settingNum > 0) {
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("删除成功");
+				}else {
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("无策略设置信息删除");
+				}
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无策略方案信息删除");
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("策略方案删除失败");
+		}
+		
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/updatePolicy.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "控漏损策略修改接口", notes = "控漏损策略修改接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updatePolicy(@RequestBody List<PolicySettingDTO> policySettingDTOList) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		
+		try {
+			for(PolicySettingDTO policySettingDTO : policySettingDTOList) {
+				if(policySettingDTO.getPolicyCode() != null || policySettingDTO.getPolicyCode().equals("")) {
+					msg.setCode(Constant.MESSAGE_INT_ERROR);
+			        msg.setDescription("方案编码为空");
+			        return msg.toJson();
+				}
+				
+				Integer num = ADOConnection.runTask(ps, "updatePolicySetting",Integer.class,policySettingDTO);
+				if(num > 0) {
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("修改成功");
+				}else {
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("无数据修改");
+				}
+			}
+			
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("策略方案修改失败");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/queryEventType.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项类型查询接口", notes = "事项类型查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryEventType() {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		try {
+			//通过值域查询出所有事项类型
+			DataDicDTO dataDicDTO = new DataDicDTO();
+			dataDicDTO.setDicParent("");
+			List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
+			if(dataDicVoList != null && dataDicVoList.size() != 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setData(dataDicVoList);
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无数据");
+			}
+			
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询事项类型失败");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/queryEventSubtype.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项子类型查询接口", notes = "事项子类型查询接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryEventSubtype(String code) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(code != null || code.equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项类型编码为空");
+		}
+		
+		try {
+			//查询关联的子级key
+			List<DataDicRelationVO> dataDicRelationVoList = ADOConnection.runTask(eis, "querychildKey",List.class,code);
+			for(DataDicRelationVO dataDicRelationVO : dataDicRelationVoList) {
+				//TODO 查询子级key的value
+				DataDicDTO dataDicDTO = new DataDicDTO();
+				dataDicDTO.setDicKey(dataDicRelationVO.getChildKey());
+				List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
+			}
+			
+		}catch(Exception e) {
+			
+		}
+		return null;
+	}
+    
 	
 	
 }

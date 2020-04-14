@@ -1,16 +1,17 @@
 package com.koron.inwlms.mapper.leakageControl;
 
-import java.util.List;
-
 import org.koron.ebs.mybatis.EnvSource;
 import org.springframework.stereotype.Repository;
 
-import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
-
+/**
+ * 
+ * @author 刘刚
+ *
+ */
 @Repository
 @EnvSource("_default")
-public interface EconomicIndicatorMapper {
+public interface StatisticalAnalysisMapper {
 	
-	List<PartitionInvestVO> queryPartitionInvest();
+	
 
 }

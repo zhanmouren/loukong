@@ -38,4 +38,9 @@
  where code = #{code}
  </update>
  
+ <select id="querychildKey" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO">
+ select * from "SM_dataDictionaryRelation" where "parentKey" = #{parentKey}
+ </select>
+ 
+ 
 </mapper>

@@ -6,6 +6,7 @@ import org.koron.ebs.mybatis.EnvSource;
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
+import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 
 /**
@@ -24,6 +25,6 @@ public interface EventInfoMapper {
 	Integer updateEventInfo(EventInfo eventInfo); 
 	
 	Integer addEventInfo(EventInfo eventInfo);
-	
+	List<DataDicRelationVO> querychildKey(String parentKey);
 	
 }
