@@ -344,7 +344,7 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-24
-     * funtion:根据角色ID加载角色人员接口
+     * funtion:根据角色code加载角色人员接口
      * author:xiaozhan
      */  	
 	@RequestMapping(value = "/queryUserByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
