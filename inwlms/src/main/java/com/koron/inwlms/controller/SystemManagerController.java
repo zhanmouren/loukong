@@ -3,6 +3,7 @@ package com.koron.inwlms.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -123,14 +125,14 @@ public class SystemManagerController {
     @ApiOperation(value = "查询职员接口", notes = "查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryUser(@RequestBody QueryUserDTO userDTO) {
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
-			 List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryUser", List.class, userDTO);
-			 if(userList.size()>0) {
+			 PageListVO user=ADOConnection.runTask(new UserServiceImpl(), "queryUser", PageListVO.class, userDTO);
+			 if(user!=null  && user.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关职员的信息"); 
-			     msg.setData(userList);
+			     msg.setData(user);
 			 }else {
 			   //没查询到数据
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -216,7 +218,7 @@ public class SystemManagerController {
 				    msg.setDescription("删除用户成功");
 				  }else {
 				    //删除用户失败
-			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+			        msg.setCode(Constant.MESSAGE_INT_DELERROR);
 			        msg.setDescription("删除用户失败");
 				  }
 			  }
@@ -352,14 +354,14 @@ public class SystemManagerController {
 		 if(roleDTO.getRoleCode()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		 }
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		//执行删除角色的操作
 		  try{
-			  List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryUserByRoleCode", List.class, roleDTO);		 
-			  if(userList.size()>0) {				 
+			  PageListVO userVO=ADOConnection.runTask(new UserServiceImpl(), "queryUserByRoleCode", PageListVO.class, roleDTO);		 
+			  if(userVO!=null && userVO.getRowNumber()>0) {				 
 					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 					 msg.setDescription("根据角色code查询到相关职员信息列表"); 
-					 msg.setData(userList);
+					 msg.setData(userVO);
 			 }else {
 				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				     msg.setDescription("该角色未查询到相关职员信息列表"); 
@@ -475,7 +477,7 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-24
-     * funtion:给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
+     * funtion:给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)分页
      * author:xiaozhan
      */
 	@RequestMapping(value = "/queryExceptRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -485,14 +487,14 @@ public class SystemManagerController {
 		if(roleUserDTO.getRoleCode()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
-			 List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryExceptRoleUser", List.class, roleUserDTO);
-			 if(userList.size()>0) {
+			 PageListVO userVO=ADOConnection.runTask(new UserServiceImpl(), "queryExceptRoleUser", PageListVO.class, roleUserDTO);
+			 if(userVO!=null && userVO.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("该角色查询到其他相关职员的信息"); 
-			     msg.setData(userList);
+			     msg.setData(userVO);
 			 }else {
 			   //没查询到数据
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -519,14 +521,14 @@ public class SystemManagerController {
 		if(deptUserDTO.getDepCode()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
-			 List<UserVO> userList=ADOConnection.runTask(new UserServiceImpl(), "queryExceptDeptUser", List.class, deptUserDTO);
-			 if(userList.size()>0) {
+			 PageListVO userVO=ADOConnection.runTask(new UserServiceImpl(), "queryExceptDeptUser", PageListVO.class, deptUserDTO);
+			 if(userVO!=null && userVO.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("该部门查询到其他相关职员的信息"); 
-			     msg.setData(userList);
+			     msg.setData(userVO);
 			 }else {
 			   //没查询到数据
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -845,21 +847,21 @@ public class SystemManagerController {
 
 	 /*
     * date:2020-03-26
-    * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是主表信息)
+    * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是主表信息) 分页
     * author:xiaozhan
     */
 	@RequestMapping(value = "/queryMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
    @ApiOperation(value = "查询数据字典接口(主表信息)", notes = "查询数据字典接口(主表信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
    @ResponseBody
 	public String queryMainDataDic(@RequestBody DataDicDTO dataDicDTO) {
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询数据字典
 		 try {
-			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryMainDataDic", List.class, dataDicDTO);
-			 if(dicList.size()>0) {
+			 PageListVO dicVO=ADOConnection.runTask(new UserServiceImpl(), "queryMainDataDic", PageListVO.class, dataDicDTO);
+			 if(dicVO!=null) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关数据字典的信息"); 
-			     msg.setData(dicList);
+			     msg.setData(dicVO);
 			 }else {
 			   //没查询到数据
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1437,7 +1439,7 @@ public class SystemManagerController {
 	}
 	 /*
      * date:2020-04-03
-     * funtion:根据部门Code查询部门职员
+     * funtion:根据部门Code查询部门职员 分页
      * author:xiaozhan
      */
 	@RequestMapping(value = "/queryDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1447,15 +1449,15 @@ public class SystemManagerController {
 		if(deptDTO.getDepCode()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}		
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{				
-			  List<UserVO> deptUserList=ADOConnection.runTask(new UserServiceImpl(), "queryDeptUser", List.class,deptDTO);	
-			  if(deptUserList.size()>0) {			 
+			  PageListVO pageListVO=ADOConnection.runTask(new UserServiceImpl(), "queryDeptUser", PageListVO.class,deptDTO);	
+			  if(pageListVO!=null && pageListVO.getRowNumber()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询职员成功"); 
-					msg.setData(deptUserList);
+					msg.setData(pageListVO);
 				  }else {
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("没有查询到相关职员"); 
 			 }		  
 	        }catch(Exception e){
@@ -1696,15 +1698,15 @@ public class SystemManagerController {
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDept(@RequestBody DeptDTO deptDTO) {		
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{				
-			  List<DeptVO> deptList=ADOConnection.runTask(new UserServiceImpl(), "queryDept", List.class,deptDTO);	
-			  if(deptList.size()>0) {			 
+			  PageListVO pageListVO=ADOConnection.runTask(new UserServiceImpl(), "queryDept", PageListVO.class,deptDTO);	
+			  if(pageListVO!=null && pageListVO.getRowNumber()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询部门成功"); 
-					msg.setData(deptList);
+					msg.setData(pageListVO);
 				  }else {
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("没有查询到相关部门"); 
 			 }		  
 	        }catch(Exception e){

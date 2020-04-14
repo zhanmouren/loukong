@@ -3,12 +3,14 @@ package com.koron.inwlms.bean.DTO.sysManager;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * 角色DTO
 * @Author xiaozhan
 * @Date 2020.03.23
 */
-public class RoleDTO {
+public class RoleDTO extends BaseDTO{
 	//角色Code
 	private String roleCode;
 	//角色Code List

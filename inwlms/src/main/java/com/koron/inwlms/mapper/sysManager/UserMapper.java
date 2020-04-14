@@ -43,6 +43,9 @@ public interface UserMapper {
 	//查询职员
 	public List<UserVO> queryUser(QueryUserDTO userDTO);
 	
+	//查询职员条数
+	public int getUserCount(QueryUserDTO userDTO);
+	
 	//修改职员
     public Integer updateUser(UserDTO userDTO);
     
@@ -62,8 +65,11 @@ public interface UserMapper {
     //查询该角色是否存在职员
     public List<RoleMsgVO>  queryRoleUser(RoleDTO roleDTO);
     
-   //根据角色Id加载角色人员接口
+   //根据角色Code加载角色人员接口
   	public List<UserVO> queryUserByRoleCode(RoleDTO roleDTO);
+  	
+  	//根据角色code查询人员总条数
+  	public int getRoleUserCount(RoleDTO roleDTO);
   	
   	//加载所有角色
 	public List<RoleVO> queryAllRole();
@@ -77,8 +83,14 @@ public interface UserMapper {
 	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
 	public List<UserVO> queryExceptRoleUser(RoleAndUserDTO roleUserDTO);
 	
+	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员) 查询总条数
+	public int getExceptRoleUserCount(RoleAndUserDTO roleUserDTO);
+	
 	//给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员) 2020/03/25	
 	public List<UserVO> queryExceptDeptUser(DeptAndUserDTO deptUserDTO);
+	
+	//给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员) 2020/03/25	
+	public int getExceptDeptUserCount(DeptAndUserDTO deptUserDTO);
 	
 	//添加用户(批量)和部门关系的操作
 	public Integer addDeptUser(List<DeptAndUserDTO> deptUserDTOList);
@@ -105,6 +117,9 @@ public interface UserMapper {
 		
 		//查询数据字典(查询主信息键值)
 		public List<DataDicVO> queryMainDataDic(DataDicDTO dataDicDTO);
+		
+		//查询数据字典(查询主信息键值)获取总条数
+		public int getDataDicCount();
 		
 		//修改数据字典主表(批量修改主表信息)
 		public Integer updateDicById(DataDicDTO dataDicDTO);
@@ -160,29 +175,34 @@ public interface UserMapper {
 		public Integer updateTreeDept(DeptDTO deptDTO);
 		
 		//根据Code查询组织
-		List <OrgVO> queryOrgByCode(@Param("orgCode") String orgCode);
+		public List <OrgVO> queryOrgByCode(@Param("orgCode") String orgCode);
 		
 		//根据部门Code查询部门人员
-		List<UserVO> queryDeptUser(DeptDTO deptDTO);
+		public List<UserVO> queryDeptUser(DeptDTO deptDTO);
+		
+		//根据部门Code查询部门人员 查询总人数
+		public int getDeptUserCount(DeptDTO deptDTO);
 		
 		//添加菜单
-		Integer addMenu(MenuDTO menuDTO);
+		public Integer addMenu(MenuDTO menuDTO);
 		
 		//加载角色菜单权限(查看权限)
-	    List<RoleMenusVO> queryRoleMenuByRoleCode(RoleDTO roleDTO);
+		public List<RoleMenusVO> queryRoleMenuByRoleCode(RoleDTO roleDTO);
 	    
 	    //根据角色Code修改菜单权限
-	    Integer updateRoleMenuByRoleCode(RoleMenuDTO roleMenuDTO);
+		public Integer updateRoleMenuByRoleCode(RoleMenuDTO roleMenuDTO);
 	    
 	    //批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode)
-	    Integer deleteManyOP(List<RoleMenuDTO> roleMenuList);
+		public Integer deleteManyOP(List<RoleMenuDTO> roleMenuList);
 	    
 	    //批量插入SM_roleMenus数据
-	    Integer addManyRoleMenu(List<RoleMenuDTO> roleMenuList);
+		public Integer addManyRoleMenu(List<RoleMenuDTO> roleMenuList);
 	    
 	    //模糊查询部门接口
-	    List<DeptVO> queryDept(DeptDTO deptDTO);
+		public List<DeptVO> queryDept(DeptDTO deptDTO);
+	    //查询部门接口 总数量
+		public int getDeptCount(DeptDTO deptDTO);
 	    
 	   //通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限
-	    List<RoleMenusVO>  queryRoleMenuByRoleMenu(@Param("roleMenuDTO")  RoleMenuDTO roleMenuDTO,@Param("list") List<String> moduleList);
+		public List<RoleMenusVO>  queryRoleMenuByRoleMenu(@Param("roleMenuDTO")  RoleMenuDTO roleMenuDTO,@Param("list") List<String> moduleList);
 }

@@ -17,6 +17,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -32,7 +33,7 @@ public interface UserService {
 	//管理员添加职员
 	Integer addUser(SessionFactory factory, UserDTO userDTO);
 	//查询职员（名称或部门）
-	List<UserVO> queryUser(SessionFactory factory, QueryUserDTO userDTO);
+	PageListVO<List<UserVO>> queryUser(SessionFactory factory, QueryUserDTO userDTO);
 	//修改职员
     Integer  updateUser(SessionFactory factory, UserDTO userDTO);
     //删除职员（不物理删除）
@@ -44,7 +45,7 @@ public interface UserService {
 	 //修改角色属性(物理删除)
 	RoleMsgVO deleteRoleAttr(SessionFactory factory, RoleDTO roleDTO);	
 	//根据角色Code加载角色人员接口
-	List<UserVO> queryUserByRoleCode(SessionFactory factory, RoleDTO roleDTO);
+	PageListVO<List<UserVO>> queryUserByRoleCode(SessionFactory factory, RoleDTO roleDTO);
 	//查询所有角色接口
 	 List<RoleVO> queryAllRole(SessionFactory factory);
 	//添加用户(批量)和角色关系的操作
@@ -52,9 +53,9 @@ public interface UserService {
 	//删除角色中职员(批量)接口
 	Integer deleteRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
 	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
-	List<UserVO> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
+	PageListVO<List<UserVO>> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO);
 	//给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员) 2020/03/25			
-    List<UserVO> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO);
+	PageListVO<List<UserVO>> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO);
 	//添加用户(批量)和部门关系的操作
 	Integer addDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO);
 	//删除部门中职员(批量)接口
@@ -73,7 +74,7 @@ public interface UserService {
 		//查询数据字典(查询明细信息键值)
 		List<DataDicVO> queryDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
 		//查询数据字典(查询明细信息主)
-	    List<DataDicVO> queryMainDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
+		PageListVO<List<DataDicVO>> queryMainDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
 		
 	    //修改数据字典(通过parent)
 	    Integer updateDicById(SessionFactory factory, DataDicDTO dataDicDTO);
@@ -119,7 +120,8 @@ public interface UserService {
 	    Integer updateTreeDept(SessionFactory factory,DeptDTO deptDTO);
 	    
 	    //根据部门Code查询部门职员
-	    List<UserVO> queryDeptUser(SessionFactory factory,DeptDTO deptDTO);
+	    PageListVO<List<UserVO>> queryDeptUser(SessionFactory factory,DeptDTO deptDTO);
+	    
 	    
 	    //生成菜单
 	     Integer addMenu(SessionFactory factory,MenuTreeDTO menuTreeDTO);
@@ -131,7 +133,7 @@ public interface UserService {
 	     Integer updateRoleMenuByRoleCode(SessionFactory factory,RoleMenuDTO roleMenuDTO);
 	     
         //模糊查询部门接口
-		 List<DeptVO> queryDept(SessionFactory factory,DeptDTO deptDTO);
+	     PageListVO<List<DeptVO>> queryDept(SessionFactory factory,DeptDTO deptDTO);
 		 
 		 //通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限。
 		 List<RoleMenusVO> queryRoleMenuByRoleMenu(SessionFactory factory,RoleMenuDTO roleMenuDTO);		

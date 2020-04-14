@@ -3,6 +3,8 @@ package com.koron.inwlms.bean.DTO.sysManager;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 
 
 /**
@@ -12,7 +14,7 @@ import java.util.List;
 * @Date 2020.03.18
 */
 
-public class DataDicDTO {
+public class DataDicDTO extends BaseDTO{
 	//装数据字典的标识parent的List集合
 	private List<String> dicParentList;
 	//装数据字典的的Id集合

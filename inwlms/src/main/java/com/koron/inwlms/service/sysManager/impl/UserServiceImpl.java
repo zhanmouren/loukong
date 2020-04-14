@@ -28,6 +28,9 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -38,13 +41,13 @@ import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.sysManager.UserService;
+import com.koron.inwlms.util.PageUtil;
 import com.koron.inwlms.util.RandomCodeUtil;
 import com.koron.util.Constant;
 
 @Service
 public class UserServiceImpl implements UserService{
-	Integer page=0;
-	Integer pageCount=10;
+
 	//管理员添加职员 2020/03/18	
 	@TaskAnnotation("addUser")
 	@Override
@@ -97,16 +100,24 @@ public class UserServiceImpl implements UserService{
 	//查询职员 2020/03/19	
 	@TaskAnnotation("queryUser")
 	@Override
-	public List<UserVO> queryUser(SessionFactory factory,QueryUserDTO userDTO) {		
-		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		if(userDTO.getPage()==null) {
-			userDTO.setPage(page);
-		}
-		if(userDTO.getPageCount()==null) {
-			userDTO.setPageCount(pageCount);
-		}
+	public PageListVO<List<UserVO>>  queryUser(SessionFactory factory,QueryUserDTO userDTO) {		
+		UserMapper userMapper = factory.getMapper(UserMapper.class);	
 		List<UserVO> userList=userMapper.queryUser(userDTO);
-		return userList;
+		// 查询总条数
+		QueryUserDTO userDTONew=new QueryUserDTO();
+		//0代表在职
+		userDTONew.setWhetUse(0);
+		int rowNumber = userMapper.getUserCount(userDTO);
+		// 返回数据结果
+		PageListVO<List<UserVO>> result = new PageListVO<>();
+		result.setDataList(userList);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(userDTO.getPage(), userDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
 	}
 	//修改职员 2020/03/20
 	@TaskAnnotation("updateUser")
@@ -197,13 +208,26 @@ public class UserServiceImpl implements UserService{
 		  
 	}
 
-	//根据角色Id加载角色人员接口 2020/03/24
+	//根据角色Code加载角色人员接口 2020/03/24 分页
 	@TaskAnnotation("queryUserByRoleCode")
 	@Override
-	public List<UserVO> queryUserByRoleCode(SessionFactory factory, RoleDTO roleDTO) {			
+	public PageListVO<List<UserVO>> queryUserByRoleCode(SessionFactory factory, RoleDTO roleDTO) {			
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<UserVO> userList=userMapper.queryUserByRoleCode(roleDTO);
-		return userList;
+		//查询总条数
+		RoleDTO roleDTONew=new RoleDTO();
+		roleDTONew.setRoleCode(roleDTO.getRoleCode());
+		int rowNumber = userMapper.getRoleUserCount(roleDTONew);
+		// 返回数据结果
+		PageListVO<List<UserVO>> result = new PageListVO<>();
+		result.setDataList(userList);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(roleDTO.getPage(), roleDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;		
 	}
 
 	//根据角色Id加载角色接口 2020/03/24
@@ -250,22 +274,50 @@ public class UserServiceImpl implements UserService{
 		return delResult;
 	}
 
-	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员) 2020/03/24
+	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员) 2020/03/24  分页
 	@TaskAnnotation("queryExceptRoleUser")
 	@Override
-	public List<UserVO> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {		
+	public PageListVO<List<UserVO>> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {		
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<UserVO> userList=userMapper.queryExceptRoleUser(roleUserDTO);
-		return userList;
+		//查询总条数
+		RoleAndUserDTO roleDTONew=new RoleAndUserDTO();
+		roleDTONew.setRoleCode(roleDTONew.getRoleCode());
+		int rowNumber = userMapper.getExceptRoleUserCount(roleUserDTO);
+		// 返回数据结果
+		PageListVO<List<UserVO>> result = new PageListVO<>();
+		result.setDataList(userList);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(roleUserDTO.getPage(), roleUserDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;		
+		
 	}
 	
-	//给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员) 2020/03/25
+	//给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员) 2020/03/25 分页
 		@TaskAnnotation("queryExceptDeptUser")
 		@Override
-		public List<UserVO> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {			
+		public PageListVO<List<UserVO>> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {			
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
 			List<UserVO> userList=userMapper.queryExceptDeptUser(deptUserDTO);
-			return userList;
+			//查询总条数
+			DeptAndUserDTO deptUserDTONew=new DeptAndUserDTO();
+			deptUserDTONew.setDepCode(deptUserDTO.getDepCode());
+			int rowNumber = userMapper.getExceptDeptUserCount(deptUserDTONew);
+			// 返回数据结果
+			PageListVO<List<UserVO>> result = new PageListVO<>();
+			result.setDataList(userList);
+			// 插入分页信息
+			PageVO pageVO = PageUtil.getPageBean(deptUserDTO.getPage(), deptUserDTO.getPageCount(), rowNumber);
+			result.setTotalPage(pageVO.getTotalPage());
+			result.setRowNumber(pageVO.getRowNumber());
+			result.setPageCount(pageVO.getPageCount());
+			result.setPage(pageVO.getPage());
+			return result;	
+			
 		}
 
 		//添加用户(批量)和部门关系的操作 2020/03/25
@@ -358,14 +410,26 @@ public class UserServiceImpl implements UserService{
 					}
 					return dataDicVOList;
 				}
-				//查询数据字典接口(查询明细信息主表) 2020/03/26
+				//查询数据字典接口(查询明细信息主表) 2020/03/26 分页
 				@TaskAnnotation("queryMainDataDic")
 				@Override
-				public List<DataDicVO> queryMainDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {					
+				public PageListVO<List<DataDicVO>> queryMainDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					//只需要返回第一条主的信息就行
+					//只需要返回第一条主的信息集合就行
 					List<DataDicVO> dataDicVOList=userMapper.queryMainDataDic(dataDicDTO);
-					return dataDicVOList;
+					// 查询总条数								
+					int rowNumber = userMapper.getDataDicCount();
+					// 返回数据结果
+					PageListVO<List<DataDicVO>> result = new PageListVO<>();
+					result.setDataList(dataDicVOList);
+					// 插入分页信息
+					PageVO pageVO = PageUtil.getPageBean(dataDicDTO.getPage(), dataDicDTO.getPageCount(), rowNumber);
+					result.setTotalPage(pageVO.getTotalPage());
+					result.setRowNumber(pageVO.getRowNumber());
+					result.setPageCount(pageVO.getPageCount());
+					result.setPage(pageVO.getPage());
+					return result;
+					
 				}
 
 			    //修改数据字典(通过parent,修改一条就要修改多条主的信息) 2020/03/27
@@ -712,13 +776,26 @@ public class UserServiceImpl implements UserService{
 					return updateRes;
 				}
 
-				//根据部门Code查询部门职员 2020/04/07
-				@TaskAnnotation("queryDeptUser")
+				//根据部门Code查询部门职员 2020/04/07  分页
+				@TaskAnnotation("queryDeptUser") 
 				@Override
-				public List<UserVO> queryDeptUser(SessionFactory factory, DeptDTO deptDTO) {
+				public PageListVO<List<UserVO>> queryDeptUser(SessionFactory factory, DeptDTO deptDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<UserVO> userList=userMapper.queryDeptUser(deptDTO);
-					return userList;
+					// 查询总条数
+					//0代表在职
+					int rowNumber = userMapper.getDeptUserCount(deptDTO);
+					// 返回数据结果
+					PageListVO<List<UserVO>> result = new PageListVO<>();
+					result.setDataList(userList);
+					// 插入分页信息
+					PageVO pageVO = PageUtil.getPageBean(deptDTO.getPage(), deptDTO.getPageCount(), rowNumber);
+					result.setTotalPage(pageVO.getTotalPage());
+					result.setRowNumber(pageVO.getRowNumber());
+					result.setPageCount(pageVO.getPageCount());
+					result.setPage(pageVO.getPage());
+					return result;
+					
 				}
 				
 				//生成菜单(单条记录) 2020/04/08
@@ -817,13 +894,24 @@ public class UserServiceImpl implements UserService{
 					return updateRes;
 				}
 
-				//模糊查询部门接口
-				@TaskAnnotation("queryDept")
+				//模糊查询部门接口 分页
+				@TaskAnnotation("queryDept") 
 				@Override
-				public List<DeptVO> queryDept(SessionFactory factory, DeptDTO deptDTO) {
+				public PageListVO<List<DeptVO>> queryDept(SessionFactory factory, DeptDTO deptDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<DeptVO> deptList=userMapper.queryDept(deptDTO);
-					return deptList;
+					// 查询部门总条数
+					int rowNumber = userMapper.getDeptCount(deptDTO);
+					// 返回数据结果
+					PageListVO<List<DeptVO>> result = new PageListVO<>();
+					result.setDataList(deptList);
+					// 插入分页信息
+					PageVO pageVO = PageUtil.getPageBean(deptDTO.getPage(), deptDTO.getPageCount(), rowNumber);
+					result.setTotalPage(pageVO.getTotalPage());
+					result.setRowNumber(pageVO.getRowNumber());
+					result.setPageCount(pageVO.getPageCount());
+					result.setPage(pageVO.getPage());
+					return result;
 				}
 				//通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限
 				@TaskAnnotation("queryRoleMenuByRoleMenu")

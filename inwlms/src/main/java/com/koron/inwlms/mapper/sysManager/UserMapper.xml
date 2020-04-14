@@ -26,6 +26,13 @@
 	   order by "user"."createTime" desc
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
+    
+    <!-- 查询相关职员信息总条数 -->
+    <select id="getUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO" resultType="java.lang.Integer">
+        select count(*) from "SM_user"
+        <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>
+    </select>
+    
     <!-- 修改职员信息 -->
     <update id="updateUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
 		update "SM_user" 
@@ -92,14 +99,25 @@
     
     <!--根据角色Code加载角色人员列表接口 -->
      <select id="queryUserByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-       select "user".id as "userId","user"."loginName","user".passWord,"user".phone,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime","dept".name as "depname","user".code as code
+       select "user".id as "userId","user"."loginName","user".passWord,"user".phone,case when "user"."Email" is null then '' else "user"."Email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
+	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when  "dept".name is null then '' else "dept".name end as "depname","user".code as code
        from "SM_userRoleRelation" as "userRela"
        left join "SM_user" as "user" on "userRela"."userCode"="user".code
        left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
-       where "userRela"."roleCode"=#{roleCode}
+       where "userRela"."roleCode"=#{roleCode} and "user"."whetUse"=0
        order by "user"."createTime" desc
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+    
+     <!--根据角色Code加载角色人员总条数 -->
+     <select id="getRoleUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="java.lang.Integer">
+       select count(*) 
+       from "SM_userRoleRelation" as "userRela"
+       left join "SM_user" as "user" on "userRela"."userCode"="user".code
+       left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
+	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
+       where "userRela"."roleCode"=#{roleCode}     
     </select>
     
     <!--查询所有角色列表 -->
@@ -134,7 +152,17 @@
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
 	   where "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	
+	   and "user"."whetUse"=0
 	   order by "user"."createTime" desc 
+	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+     </select>
+     <!-- 角色弹窗选择职员 查询总条数 -->
+     <select id="getExceptRoleUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="java.lang.Integer">
+       select count(*) 
+	   from "SM_user" as "user"       
+	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
+	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
+	   where "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})		   
      </select>
      
       <!-- 部门弹窗选择职员 -->
@@ -145,7 +173,19 @@
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
 	   where "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})
-	   order by "user"."createTime" desc	 
+	   and "user"."whetUse"=0
+	   order by "user"."createTime" desc	
+	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1); 
+     </select>
+     
+      <!-- 部门弹窗选择职员 查询总条数 -->
+     <select id="getExceptDeptUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="java.lang.Integer">
+       select count(*)
+	   from "SM_user" as "user"       
+	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
+	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
+	   where "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})
+	   	 
      </select>
      
      <!--遍历插入职员与部门的关系 -->
@@ -231,6 +271,15 @@
 	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
 		  </trim>	  
 		 group by "dic".parent ,"dic".cn ,"dic".en ,"dic".remark
+		 order by "dic"."parent" desc
+		 limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+      </select>
+        <!-- 查询数据字典 主标识主的信息 总条数-->
+      <select id="getDataDicCount"     resultType="java.lang.Integer">
+          select count(*)
+          from (select distinct "dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark
+          from "SM_dataDictionary" as "dic"	  
+		  group by "dic".parent ,"dic".cn ,"dic".en ,"dic".remark) as "dic"
       </select>
       
        <!-- 修改数据字典主的信息 根据parent-->
@@ -388,8 +437,17 @@
 		   from "SM_user" as "user"       
 		   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 		   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"   
-          where "dept".code=#{depCode}
+          where "dept".code=#{depCode} and "user"."whetUse"=0
           order by "user"."createTime" desc
+          limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+      </select>
+      <!--根据角色Code加载角色人员总条数 -->
+     <select id="getDeptUserCount"   resultType="java.lang.Integer">
+         select count(*)
+           from "SM_user" as "user"       
+		   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
+		   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"   
+          where "dept".code=#{depCode}  and "user"."whetUse"=0
       </select>
       
      <!--添加菜单-->
@@ -439,8 +497,14 @@
 		 <if test="depName != null"> and "dept".name like '%${depName}%'</if>  
 		 <if test="status != null"> and "dept".status=#{status}</if>         
 	   </trim>
+	    limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
       </select>
-      
+       <!--模糊查询部门接口部门总数量-->
+      <select id="getDeptCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="java.lang.Integer">
+         select count(*)
+         from "SM_department" as "dept"      
+      </select>
+          
        <!--通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限-->
      <select id="queryRoleMenuByRoleMenu"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
          	select "SM_treeDet".*, "menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",

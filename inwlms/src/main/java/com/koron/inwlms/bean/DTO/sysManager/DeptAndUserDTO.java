@@ -3,12 +3,14 @@ package com.koron.inwlms.bean.DTO.sysManager;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  *  部门和用户DTO
 * @Author xiaozhan
 * @Date 2020.03.25
 */
-public class DeptAndUserDTO {
+public class DeptAndUserDTO extends BaseDTO{
 	     //存储userCode的List
 	    private List<String> userCodeList;
 	    //单个的userCode

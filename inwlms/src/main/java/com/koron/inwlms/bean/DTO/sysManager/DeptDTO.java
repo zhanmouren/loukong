@@ -2,6 +2,8 @@ package com.koron.inwlms.bean.DTO.sysManager;
 
 import java.sql.Timestamp;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * 1 添加部门bean
  * 2 修改部门bean
@@ -9,7 +11,7 @@ import java.sql.Timestamp;
 * @Date 2020.03.17
 */
 
-public class DeptDTO {
+public class DeptDTO extends BaseDTO{
 	//部门Id
 	private Integer depId;
 	//部门名称
