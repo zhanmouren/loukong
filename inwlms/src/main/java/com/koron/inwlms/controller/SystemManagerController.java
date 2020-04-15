@@ -198,6 +198,9 @@ public class SystemManagerController {
     @ApiOperation(value = "批量重置职员密码接口", notes = "批量重置职员密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateUserPassword(@RequestBody UserDTO userDTO) {
+		if(userDTO.getUserCodeList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员编码列表参数不能为空", Integer.class).toJson();
+		}
 		if(userDTO.getUserCodeList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员编码列表不能为空", Integer.class).toJson();
 		}
@@ -343,6 +346,9 @@ public class SystemManagerController {
     @ApiOperation(value = "批量删除角色接口", notes = "批量删除角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteRoleAttr(@RequestBody RoleDTO roleDTO) {
+		if(roleDTO.getRoleCodeList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色列表code参数不能为空", Integer.class).toJson();
+		}	
 		if(roleDTO.getRoleCodeList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色列表code不能为空", Integer.class).toJson();
 		}		
@@ -442,6 +448,9 @@ public class SystemManagerController {
 		if(roleUserDTO.getRoleCode()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
+		if(roleUserDTO.getUserCodeList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表参数不能为空", Integer.class).toJson();
+		}
 		if(roleUserDTO.getUserCodeList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
 		}
@@ -477,6 +486,9 @@ public class SystemManagerController {
 	public String deleteRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
 		if(roleUserDTO.getRoleCode()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
+		}
+		if(roleUserDTO.getUserCodeList()==null) {
+		    return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表参数不能为空", Integer.class).toJson();
 		}
 		if(roleUserDTO.getUserCodeList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
@@ -582,6 +594,9 @@ public class SystemManagerController {
 		if(deptUserDTO.getDepCode()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
+		if(deptUserDTO.getUserCodeList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表参数不能为空", Integer.class).toJson();
+		}
 		if(deptUserDTO.getUserCodeList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
 		}
@@ -617,6 +632,9 @@ public class SystemManagerController {
 	public String deleteDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
 		if(deptUserDTO.getDepCode()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
+		}
+		if(deptUserDTO.getUserCodeList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表参数不能为空", Integer.class).toJson();
 		}
 		if(deptUserDTO.getUserCodeList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
@@ -704,6 +722,9 @@ public class SystemManagerController {
 		}
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDataDicDTOList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键值参数不能为空", Integer.class).toJson();
 		}
 		if(dataDicDTO.getDataDicDTOList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键值不能为空", Integer.class).toJson();
@@ -954,7 +975,10 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "主表parent删除数据字典详情(主表信息)接口", notes = "主表parent删除数据字典详情(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDicById(@RequestBody DataDicDTO dataDicDTO) {		
+	public String deleteDicById(@RequestBody DataDicDTO dataDicDTO) {	
+		if(dataDicDTO.getDicParentList()==null) {
+			  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域参数不能为空", Integer.class).toJson();
+			}	
 		if(dataDicDTO.getDicParentList().size()<1) {
 		  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
 		}	
@@ -1033,9 +1057,12 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteDetDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "主表ID删除数据字典详情(明细信息)接口", notes = "主表ID删除数据字典详情(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDetDicById(@RequestBody DataDicDTO dataDicDTO) {		
+	public String deleteDetDicById(@RequestBody DataDicDTO dataDicDTO) {
+		if(dataDicDTO.getDicIdList()==null) {
+			  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID参数不能为空", Integer.class).toJson();
+			}	
 		if(dataDicDTO.getDicIdList().size()<1) {
-		  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
+		  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID列表不能为空", Integer.class).toJson();
 		}	
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行删除数据字典
@@ -1686,6 +1713,9 @@ public class SystemManagerController {
     @ApiOperation(value = "修改角色菜单权限接口", notes = "修改角色菜单权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateRoleMenuByRoleCode(@RequestBody RoleMenuDTO roleMenuDTO) {
+		if(roleMenuDTO.getRoleMenuList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "传参不能为空", Integer.class).toJson();
+		}
 		if(roleMenuDTO.getRoleMenuList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "传参不能为空", Integer.class).toJson();
 		}
