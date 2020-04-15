@@ -6,6 +6,8 @@ public class PartitionInvestVO {
 	
 	private Integer id;
 	
+	private String Type;
+	
 	/**
 	 * 口径
 	 */
@@ -33,6 +35,16 @@ public class PartitionInvestVO {
 	private String updateBy;
 	
 	private Date updateTime;
+	
+	
+
+	public String getType() {
+		return Type;
+	}
+
+	public void setType(String type) {
+		Type = type;
+	}
 
 	public Integer getId() {
 		return id;

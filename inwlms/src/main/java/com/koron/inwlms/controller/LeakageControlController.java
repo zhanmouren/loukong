@@ -41,6 +41,7 @@ import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
+import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.service.leakageControl.AlarmMessageService;
@@ -280,10 +281,10 @@ public class LeakageControlController {
 		
 	}
 	
-	@RequestMapping(value = "/queryWarningScheme.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/queryWarningSchemeList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警方案查询接口", notes = "预警方案查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryWarningScheme(@RequestBody WarningSchemeDTO warningSchemeDTO) {
+    public String queryWarningSchemeList(@RequestBody WarningSchemeDTO warningSchemeDTO) {
 		
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
@@ -301,7 +302,7 @@ public class LeakageControlController {
 			}
 			
 		}catch(Exception e) {
-			//添加失败
+			
 	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询预警方案失败");
 	        return msg.toJson();
@@ -345,6 +346,44 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/queryWarningScheme.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "预警方案查询接口", notes = "预警方案查询接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryWarningScheme(String code) {
+		MessageBean<WarningSchemeDateVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, WarningSchemeDateVO.class);
+		if(code == null || code.equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("预警方案编码为空");
+			return msg.toJson();
+		}
+		WarningSchemeDateVO warningSchemeDateVO = new WarningSchemeDateVO();
+		WarningSchemeDTO warningSchemeDTO = new WarningSchemeDTO();
+		warningSchemeDTO.setCode(code);
+		try {
+			//查询预警方案信息
+			List<WarningSchemeVO> warningSchemeList = ADOConnection.runTask(wss, "queryWarningScheme", List.class,warningSchemeDTO);
+			if(warningSchemeList != null && warningSchemeList.size() != 0) {
+				List<AlarmRuleDTO> alarmRuleDTOLst = ADOConnection.runTask(wss, "queryAlarmRuleByAlarmCode", List.class,code);
+				warningSchemeDateVO.setAlarmRuleList(alarmRuleDTOLst);
+				warningSchemeDateVO.setWarningScheme(warningSchemeList.get(0));
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setData(warningSchemeDateVO);
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("未有预警方案信息");
+			}
+			
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询预警方案失败");
+	        return msg.toJson();
+		}
+		
+		
+		return msg.toJson();
+	}
+	
 	@RequestMapping(value = "/addWarningScheme.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警方案添加接口", notes = "预警方案添加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -377,7 +416,7 @@ public class LeakageControlController {
 			return msg.toJson();
 		}
 		
-		//TODO 产生一个方案编码
+		//TODO 产生一个方案编码,入库判断是否重复
 		String code = new Date()+"";
 		warningSchemeDTO.setCode(code);
 		
@@ -387,7 +426,7 @@ public class LeakageControlController {
 			if(num > 0) {
 				//插入报警规则表
 				for(AlarmRuleDTO alarmRule : alarmRuleList) {
-					alarmRule.setAlarmCode(code); 
+					alarmRule.setSchemeCode(code);
 					Integer ruleNum = ADOConnection.runTask(wss, "addAlarmRule", Integer.class, alarmRule);
 					if(ruleNum > 0) {
 						msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -640,6 +679,7 @@ public class LeakageControlController {
 		}
 		
 		try {
+			//TODO 数据统计
 			ProcessingStatisticsVO processingStatisticsVO = ADOConnection.runTask(sas, "queryProcessingStatistics",ProcessingStatisticsVO.class,processingStatisticsDTO);
 			
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -673,7 +713,7 @@ public class LeakageControlController {
 		}
 		
 		
-		return null;
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/queryqueryEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -853,7 +893,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			//产生编码
+			//产生编码 
 			String code = UUID.randomUUID().toString();
 			policySchemeDTO.setCode(code);
 			Integer schemeNum = ADOConnection.runTask(ps, "addPolicyScheme",Integer.class,policySchemeDTO);
@@ -987,7 +1027,7 @@ public class LeakageControlController {
     @ResponseBody
     public String queryEventSubtype(String code) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
-		if(code != null || code.equals("")) {
+		if(code != null || code.equals(" ")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("事项类型编码为空");
 		}
@@ -996,16 +1036,24 @@ public class LeakageControlController {
 			//查询关联的子级key
 			List<DataDicRelationVO> dataDicRelationVoList = ADOConnection.runTask(eis, "querychildKey",List.class,code);
 			for(DataDicRelationVO dataDicRelationVO : dataDicRelationVoList) {
-				//TODO 查询子级key的value
+				//查询子级key的value
 				DataDicDTO dataDicDTO = new DataDicDTO();
 				dataDicDTO.setDicKey(dataDicRelationVO.getChildKey());
 				List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
+				if(dataDicVoList != null && dataDicVoList.size() != 0) {
+					msg.setData(dataDicVoList);
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				}else {
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("无数据");
+				}
 			}
 			
 		}catch(Exception e) {
-			
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询事项子类型失败");
 		}
-		return null;
+		return msg.toJson();
 	}
     
 	

@@ -7,7 +7,7 @@ package com.koron.inwlms.bean.DTO.leakageControl;
  */
 public class AlarmRuleDTO {
 
-	private String alarmCode;
+	private String schemeCode;
 	
 	private Integer id;
 	
@@ -21,12 +21,14 @@ public class AlarmRuleDTO {
 	
 	
  
-	public String getAlarmCode() {
-		return alarmCode;
+	
+
+	public String getSchemeCode() {
+		return schemeCode;
 	}
 
-	public void setAlarmCode(String alarmCode) {
-		this.alarmCode = alarmCode;
+	public void setSchemeCode(String schemeCode) {
+		this.schemeCode = schemeCode;
 	}
 
 	public Integer getId() {

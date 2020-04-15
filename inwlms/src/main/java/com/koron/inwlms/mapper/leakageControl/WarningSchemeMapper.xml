@@ -6,8 +6,14 @@
  
  <select id="queryWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO">
  select * from "APP_warningScheme"
- <where>
- </where>
+ <trim prefix="where" prefixOverrides="and|or">
+ <if test="id != null"> id = #{id}</if>
+ <if test="code != null and code !='' "> code = #{code}</if>
+ <if test="state != null and state != '' "> state = #{state}</if>
+ <if test="objectType != null and objectType != '' "> "objectType" = #{objectType}</if>
+ <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType}</if>
+ <if test="dmaCode != null and dmaCode != '' "> "dmaCode" = #{dmaCode}</if>
+ </trim>
  </select>
  
  <insert id="addWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO">
@@ -38,8 +44,8 @@
  </select>
  
  <insert id="addAlarmRule" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO">
- insert into "APP_alarmRule"("alarmCode", constant, target, "arithmeticRule", "limitType")
- values(#{alarmCode}, #{constant}, #{target}, #{arithmeticRule}, #{limitType})
+ insert into "APP_alarmRule"("schemeCode", constant, target, "arithmeticRule", "limitType")
+ values(#{schemeCode}, #{constant}, #{target}, #{arithmeticRule}, #{limitType})
  </insert>
  
  <select id="queryAlarmRuleByAlarmCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO">

@@ -20,7 +20,7 @@ public class AlarmMessageVO {
 	 */
 	private String code;
 	/**
-	 * 预警方案ID
+	 * 预警方案编码
 	 */
 	private String schemeCode;
 	/**
