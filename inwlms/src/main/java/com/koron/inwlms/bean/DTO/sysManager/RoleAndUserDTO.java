@@ -11,6 +11,13 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 * @Date 2020.03.24
 */
 public class RoleAndUserDTO extends BaseDTO {
+	//人员名称
+	private String name;
+	//登录名称
+	private String loginName;
+	//
+	private Integer whetUse;
+	
 	//角色Code
 	private String roleCode;
 	//角色Code列表
@@ -32,6 +39,24 @@ public class RoleAndUserDTO extends BaseDTO {
 	//修改时间
 	private Timestamp updateTime;
 	
+	public Integer getWhetUse() {
+		return whetUse;
+	}
+	public void setWhetUse(Integer whetUse) {
+		this.whetUse = whetUse;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getLoginName() {
+		return loginName;
+	}
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
+	}
 	public String getUserCode() {
 		return userCode;
 	}

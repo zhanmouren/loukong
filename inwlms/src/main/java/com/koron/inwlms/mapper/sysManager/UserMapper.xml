@@ -152,9 +152,13 @@
 	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname","user".code as code     
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
-	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
-	   where "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	
-	   and "user"."whetUse"=0
+	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
+	   <trim prefix="where" prefixOverrides="and|or"> 
+	     <if test="loginName != null"> and "user"."loginName" like '%${loginName}%'</if> 
+	     <if test="name != null"> and "user"."name" like '%${name}%'</if> 
+	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
+	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
+	   </trim>
 	   order by "user"."createTime" desc 
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
      </select>
@@ -164,7 +168,12 @@
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
-	   where "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})		   
+	   <trim prefix="where" prefixOverrides="and|or"> 
+	     <if test="loginName != null"> and "user"."loginName" like '%${loginName}%'</if> 
+	     <if test="name != null"> and "user"."name" like '%${name}%'</if> 
+	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
+	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
+	   </trim>   
      </select>
      
       <!-- 部门弹窗选择职员 -->
@@ -174,8 +183,12 @@
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
-	   where "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})
-	   and "user"."whetUse"=0
+	   <trim prefix="where" prefixOverrides="and|or"> 
+	     <if test="loginName != null"> and "user"."loginName" like '%${loginName}%'</if> 
+	     <if test="name != null"> and "user"."name" like '%${name}%'</if> 
+	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
+	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
+	   </trim>
 	   order by "user"."createTime" desc	
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1); 
      </select>
@@ -186,8 +199,12 @@
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
-	   where "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})
-	   	 
+	  <trim prefix="where" prefixOverrides="and|or"> 
+	     <if test="loginName != null"> and "user"."loginName" like '%${loginName}%'</if> 
+	     <if test="name != null"> and "user"."name" like '%${name}%'</if> 
+	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
+	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
+	   </trim>
      </select>
      
      <!--遍历插入职员与部门的关系 -->

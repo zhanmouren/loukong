@@ -103,12 +103,10 @@ public class UserServiceImpl implements UserService{
 	@TaskAnnotation("queryUser")
 	@Override
 	public PageListVO<List<UserVO>>  queryUser(SessionFactory factory,QueryUserDTO userDTO) {		
-		UserMapper userMapper = factory.getMapper(UserMapper.class);	
-		List<UserVO> userList=userMapper.queryUser(userDTO);
-		// 查询总条数
-		QueryUserDTO userDTONew=new QueryUserDTO();
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		//0代表在职
-		userDTONew.setWhetUse(0);
+		userDTO.setWhetUse(0);
+		List<UserVO> userList=userMapper.queryUser(userDTO);	
 		int rowNumber = userMapper.getUserCount(userDTO);
 		// 返回数据结果
 		PageListVO<List<UserVO>> result = new PageListVO<>();
@@ -217,9 +215,7 @@ public class UserServiceImpl implements UserService{
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		List<UserVO> userList=userMapper.queryUserByRoleCode(roleDTO);
 		//查询总条数
-		RoleDTO roleDTONew=new RoleDTO();
-		roleDTONew.setRoleCode(roleDTO.getRoleCode());
-		int rowNumber = userMapper.getRoleUserCount(roleDTONew);
+		int rowNumber = userMapper.getRoleUserCount(roleDTO);
 		// 返回数据结果
 		PageListVO<List<UserVO>> result = new PageListVO<>();
 		result.setDataList(userList);
@@ -281,10 +277,9 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public PageListVO<List<UserVO>> queryExceptRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {		
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		roleUserDTO.setWhetUse(0);
 		List<UserVO> userList=userMapper.queryExceptRoleUser(roleUserDTO);
 		//查询总条数
-		RoleAndUserDTO roleDTONew=new RoleAndUserDTO();
-		roleDTONew.setRoleCode(roleDTONew.getRoleCode());
 		int rowNumber = userMapper.getExceptRoleUserCount(roleUserDTO);
 		// 返回数据结果
 		PageListVO<List<UserVO>> result = new PageListVO<>();
@@ -304,11 +299,10 @@ public class UserServiceImpl implements UserService{
 		@Override
 		public PageListVO<List<UserVO>> queryExceptDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {			
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			deptUserDTO.setWhetUse(0);
 			List<UserVO> userList=userMapper.queryExceptDeptUser(deptUserDTO);
 			//查询总条数
-			DeptAndUserDTO deptUserDTONew=new DeptAndUserDTO();
-			deptUserDTONew.setDepCode(deptUserDTO.getDepCode());
-			int rowNumber = userMapper.getExceptDeptUserCount(deptUserDTONew);
+			int rowNumber = userMapper.getExceptDeptUserCount(deptUserDTO);
 			// 返回数据结果
 			PageListVO<List<UserVO>> result = new PageListVO<>();
 			result.setDataList(userList);
