@@ -14,8 +14,8 @@
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"      
        <trim prefix="where" prefixOverrides="and|or">
-		<if test="name != null  and name !='' "> and "user".name like '%${name}%'</if>  
-   	    <if test="depName != null  and depName !='' "> and "dept".name like '%${depName}%'</if>
+		<if test="name != null  and name !='' "> and "user".name like '%'||#{name}||'%'</if>  
+   	    <if test="depName != null  and depName !='' "> and "dept".name like '%'||#{depName}||'%'</if>
    	    <if test="userId != null"> and "user".id ='${userId}'</if>  
    	    <if test="status != null"> and "user".status ='${status}'</if>
    	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>
@@ -30,9 +30,18 @@
     <!-- 查询相关职员信息总条数 -->
     <select id="getUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO" resultType="java.lang.Integer">
         select count(*) from "SM_user" as "user"
-         <trim prefix="where" prefixOverrides="and|or">
-          <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>
-         </trim>
+        left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   
+	    left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
+       <trim prefix="where" prefixOverrides="and|or">
+		<if test="name != null  and name !='' "> and "user".name like '%'||#{name}||'%'</if>  
+   	    <if test="depName != null  and depName !='' "> and "dept".name like '%'||#{depName}||'%'</if>
+   	    <if test="userId != null"> and "user".id ='${userId}'</if>  
+   	    <if test="status != null"> and "user".status ='${status}'</if>
+   	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>
+   	    <if test="code != null"> and "user".code = #{code}</if> 
+   	    <if test="loginName != null"> and "user"."loginName" = #{loginName}</if> 
+   	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if>           
+	  </trim>
     </select>
     
     <!-- 修改职员信息 -->
@@ -153,8 +162,8 @@
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
 	   <trim prefix="where" prefixOverrides="and|or"> 
-	     <if test="loginName != null"> and "user"."loginName" like '%${loginName}%'</if> 
-	     <if test="name != null"> and "user"."name" like '%${name}%'</if> 
+	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
+	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%' </if> 
 	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>
@@ -168,8 +177,8 @@
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
 	   <trim prefix="where" prefixOverrides="and|or"> 
-	     <if test="loginName != null"> and "user"."loginName" like '%${loginName}%'</if> 
-	     <if test="name != null"> and "user"."name" like '%${name}%'</if> 
+	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
+	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
 	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>   
@@ -183,8 +192,8 @@
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
 	   <trim prefix="where" prefixOverrides="and|or"> 
-	     <if test="loginName != null"> and "user"."loginName" like '%${loginName}%'</if> 
-	     <if test="name != null"> and "user"."name" like '%${name}%'</if> 
+	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
+	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
 	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>
@@ -199,8 +208,8 @@
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
 	  <trim prefix="where" prefixOverrides="and|or"> 
-	     <if test="loginName != null"> and "user"."loginName" like '%${loginName}%'</if> 
-	     <if test="name != null"> and "user"."name" like '%${name}%'</if> 
+	     <if test="loginName != null"> and "user"."loginName" like  '%'||#{loginName}||'%'</if> 
+	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
 	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>
@@ -250,9 +259,9 @@
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
-			<if test="dicParent != null"> and "dic".parent like '%${dicParent}%'</if>  
-	   	    <if test="dicEn != null"> and "dic".en like '%${dicEn}%'</if>
-	   	    <if test="dicCn != null"> and "dic".cn like '%${dicCn}%'</if>
+			<if test="dicParent != null"> and "dic".parent like '%'||#{dicParent}||'%'</if>  
+	   	    <if test="dicEn != null"> and "dic".en like '%'||#{dicEn}||'%'</if>
+	   	    <if test="dicCn != null"> and "dic".cn like '%'||#{dicCn}||'%'</if>
 	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
 	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
 	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
@@ -281,9 +290,9 @@
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
-			<if test="dicParent != null"> and "dic".parent like '%${dicParent}%'</if>  
-	   	    <if test="dicEn != null"> and "dic".en like '%${dicEn}%'</if>
-	   	    <if test="dicCn != null"> and "dic".cn like '%${dicCn}%'</if>
+			<if test="dicParent != null"> and "dic".parent like  '%'||#{dicParent}||'%'</if>  
+	   	    <if test="dicEn != null"> and "dic".en like  '%'||#{dicEn}||'%'</if>
+	   	    <if test="dicCn != null"> and "dic".cn like '%'||#{dicCn}||'%'</if>
 	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
 	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
 	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
@@ -512,7 +521,7 @@
          select "dept".id as "depId","dept"."name" as "depName","dept".code as "depCode","dept".status as "status"
          from "SM_department" as "dept"
         <trim prefix="where" prefixOverrides="and|or">
-		 <if test="depName != null"> and "dept".name like '%${depName}%'</if>  
+		 <if test="depName != null"> and "dept".name like '%'||#{depName}||'%'</if>  
 		 <if test="status != null"> and "dept".status=#{status}</if>         
 	   </trim>
 	    limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
