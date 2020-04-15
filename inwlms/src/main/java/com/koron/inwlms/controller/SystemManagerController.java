@@ -86,7 +86,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行插入职员的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addUser", Integer.class, userDTO);		 
+			  Integer insertRes=ADOConnection.runTask(userService, "addUser", Integer.class, userDTO);		 
 				  if(insertRes==1) {
 					//添加用户成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -125,7 +125,7 @@ public class SystemManagerController {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
-			 PageListVO user=ADOConnection.runTask(new UserServiceImpl(), "queryUser", PageListVO.class, userDTO);
+			 PageListVO user=ADOConnection.runTask(userService, "queryUser", PageListVO.class, userDTO);
 			 if(user!=null  && user.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关职员的信息"); 
@@ -168,7 +168,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行修改职员的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateUser", Integer.class, userDTO);		 
+			  Integer updateRes=ADOConnection.runTask(userService, "updateUser", Integer.class, userDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
 					//修改用户成功
@@ -204,7 +204,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行批量重置密码的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateUserPassword", Integer.class, userDTO);		 
+			  Integer updateRes=ADOConnection.runTask(userService, "updateUserPassword", Integer.class, userDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {					
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -237,7 +237,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除职员的操作
 		  try{
-			  Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "deleteUser", Integer.class, userDTO);		 
+			  Integer delRes=ADOConnection.runTask(userService, "deleteUser", Integer.class, userDTO);		 
 			  if(delRes!=null) {
 				  if(delRes==1) {
 					//删除用户成功
@@ -273,7 +273,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行插入角色的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addNewRole", Integer.class, roleDTO);		 
+			  Integer insertRes=ADOConnection.runTask(userService, "addNewRole", Integer.class, roleDTO);		 
 				  if(insertRes==1) {
 					//添加角色成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -316,7 +316,7 @@ public class SystemManagerController {
 		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateRoleAttr", Integer.class, roleDTO);		 
+			  Integer updateRes=ADOConnection.runTask(userService, "updateRoleAttr", Integer.class, roleDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -349,7 +349,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色的操作
 		  try{
-			  RoleMsgVO roleMsgVO=ADOConnection.runTask(new UserServiceImpl(), "deleteRoleAttr", RoleMsgVO.class, roleDTO);		 
+			  RoleMsgVO roleMsgVO=ADOConnection.runTask(userService, "deleteRoleAttr", RoleMsgVO.class, roleDTO);		 
 			  if(roleMsgVO!=null) {
 				  if(roleMsgVO.getResult()==-1) {
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
@@ -384,7 +384,7 @@ public class SystemManagerController {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		//执行删除角色的操作
 		  try{
-			  PageListVO userVO=ADOConnection.runTask(new UserServiceImpl(), "queryUserByRoleCode", PageListVO.class, roleDTO);		 
+			  PageListVO userVO=ADOConnection.runTask(userService, "queryUserByRoleCode", PageListVO.class, roleDTO);		 
 			  if(userVO!=null && userVO.getRowNumber()>0) {				 
 					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 					 msg.setDescription("根据角色code查询到相关职员信息列表"); 
@@ -413,7 +413,7 @@ public class SystemManagerController {
 	public String queryAllRole() {		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
-			  List<RoleVO> roleList=ADOConnection.runTask(new UserServiceImpl(), "queryAllRole", List.class);		 
+			  List<RoleVO> roleList=ADOConnection.runTask(userService, "queryAllRole", List.class);		 
 			  if(roleList.size()>0) {				 
 					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 					 msg.setDescription("查询到所有角色列表"); 
@@ -448,7 +448,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加用户和角色关系的操作
 		  try{
-			  Integer addResult=ADOConnection.runTask(new UserServiceImpl(), "addRoleUser", Integer.class, roleUserDTO);		 
+			  Integer addResult=ADOConnection.runTask(userService, "addRoleUser", Integer.class, roleUserDTO);		 
 			  if(addResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 					 msg.setDescription("插入职员和角色的关系失败"); 
@@ -484,7 +484,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色中职员(批量)操作
 		  try{
-			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "deleteRoleUser", Integer.class, roleUserDTO);		 
+			  Integer delResult=ADOConnection.runTask(userService, "deleteRoleUser", Integer.class, roleUserDTO);		 
 			  if(delResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
 					 msg.setDescription("删除角色中职员(批量)失败"); 
@@ -517,7 +517,7 @@ public class SystemManagerController {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
-			 PageListVO userVO=ADOConnection.runTask(new UserServiceImpl(), "queryExceptRoleUser", PageListVO.class, roleUserDTO);
+			 PageListVO userVO=ADOConnection.runTask(userService, "queryExceptRoleUser", PageListVO.class, roleUserDTO);
 			 if(userVO!=null && userVO.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("该角色查询到其他相关职员的信息"); 
@@ -551,7 +551,7 @@ public class SystemManagerController {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
-			 PageListVO userVO=ADOConnection.runTask(new UserServiceImpl(), "queryExceptDeptUser", PageListVO.class, deptUserDTO);
+			 PageListVO userVO=ADOConnection.runTask(userService, "queryExceptDeptUser", PageListVO.class, deptUserDTO);
 			 if(userVO!=null && userVO.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("该部门查询到其他相关职员的信息"); 
@@ -588,7 +588,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加用户和部门关系的操作
 		  try{
-			  Integer addResult=ADOConnection.runTask(new UserServiceImpl(), "addDeptUser", Integer.class, deptUserDTO);		 
+			  Integer addResult=ADOConnection.runTask(userService, "addDeptUser", Integer.class, deptUserDTO);		 
 			  if(addResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 					 msg.setDescription("插入职员和部门的关系失败"); 
@@ -624,7 +624,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除部门中职员(批量)操作
 		  try{
-			  Integer delResult=ADOConnection.runTask(new UserServiceImpl(), "deleteDeptUser", Integer.class, deptUserDTO);		 
+			  Integer delResult=ADOConnection.runTask(userService, "deleteDeptUser", Integer.class, deptUserDTO);		 
 			  if(delResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
 					 msg.setDescription("删除部门中职员(批量)失败"); 
@@ -666,7 +666,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行集成配置功能的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addIntegration", Integer.class, integrationConfDTO);		 
+			  Integer insertRes=ADOConnection.runTask(userService, "addIntegration", Integer.class, integrationConfDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==1) {
 					//添加集成配置功能成功
@@ -720,7 +720,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addDataDic", Integer.class, dataDicDTO);		 
+			  Integer insertRes=ADOConnection.runTask(userService, "addDataDic", Integer.class, dataDicDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
 					//添加数据字典功能失败
@@ -766,7 +766,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addMainDataDic", Integer.class, dataDicDTO);		 
+			  Integer insertRes=ADOConnection.runTask(userService, "addMainDataDic", Integer.class, dataDicDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
 					//添加数据字典功能失败
@@ -813,7 +813,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addDetDataDic", Integer.class, dataDicDTO);		 
+			  Integer insertRes=ADOConnection.runTask(userService, "addDetDataDic", Integer.class, dataDicDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
 					//添加数据字典功能失败
@@ -852,7 +852,7 @@ public class SystemManagerController {
 		 }
 		 //执行查询数据字典
 		 try {
-			 List<DataDicVO> dicList=ADOConnection.runTask(new UserServiceImpl(), "queryDataDic", List.class, dataDicDTO);
+			 List<DataDicVO> dicList=ADOConnection.runTask(userService, "queryDataDic", List.class, dataDicDTO);
 			 if(dicList.size()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关数据字典键值的信息"); 
@@ -884,7 +884,7 @@ public class SystemManagerController {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询数据字典
 		 try {
-			 PageListVO dicVO=ADOConnection.runTask(new UserServiceImpl(), "queryMainDataDic", PageListVO.class, dataDicDTO);
+			 PageListVO dicVO=ADOConnection.runTask(userService, "queryMainDataDic", PageListVO.class, dataDicDTO);
 			 if(dicVO!=null) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关数据字典的信息"); 
@@ -925,7 +925,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行查询数据字典
 		 try {
-			 Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateDicById", Integer.class, dataDicDTO);
+			 Integer updateRes=ADOConnection.runTask(userService, "updateDicById", Integer.class, dataDicDTO);
 			 if(updateRes!=null) {
 				  if(updateRes==-1) {
 					//修改数据字典失败
@@ -961,7 +961,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行删除数据字典
 		 try {
-			 Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "deleteDicById", Integer.class, dataDicDTO);
+			 Integer delRes=ADOConnection.runTask(userService, "deleteDicById", Integer.class, dataDicDTO);
 			 if(delRes!=null) {
 				  if(delRes==-1) {
 					//删除数据字典失败
@@ -1004,7 +1004,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行修改数据字典明细
 		 try {
-			 Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateDicDetById", Integer.class, dataDicDTO);
+			 Integer updateRes=ADOConnection.runTask(userService, "updateDicDetById", Integer.class, dataDicDTO);
 			 if(updateRes!=null) {
 				  if(updateRes==-1) {
 					//修改数据字典失败
@@ -1040,7 +1040,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行删除数据字典
 		 try {
-			 Integer delRes=ADOConnection.runTask(new UserServiceImpl(), "deleteDetDicById", Integer.class, dataDicDTO);
+			 Integer delRes=ADOConnection.runTask(userService, "deleteDetDicById", Integer.class, dataDicDTO);
 			 if(delRes!=null) {
 				  if(delRes==-1) {
 					//删除数据字典失败
@@ -1079,7 +1079,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加特征日的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(new UserServiceImpl(), "addSpecialDate", Integer.class, specialDayDTO);		 
+			  Integer insertRes=ADOConnection.runTask(userService, "addSpecialDate", Integer.class, specialDayDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
 					//添加特征日失败
@@ -1121,7 +1121,7 @@ public class SystemManagerController {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		//执行查询一个月特征日的操作
 		  try{
-			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(new UserServiceImpl(), "querySpecialDate", List.class, specialDayDTO);		 
+			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(userService, "querySpecialDate", List.class, specialDayDTO);		 
 			  if(specialDayDTOList.size()>0) {			 
 					//查询特征日成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1157,7 +1157,7 @@ public class SystemManagerController {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		//执行查询某个特征日的操作
 		  try{
-			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(new UserServiceImpl(), "querySpecialDateByDay", List.class, specialDayDTO);		 
+			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(userService, "querySpecialDateByDay", List.class, specialDayDTO);		 
 			  if(specialDayDTOList.size()>0) {			 
 					//查询特征日成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1192,7 +1192,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//根据日期执行删除特征日的操作
 		  try{
-			  Integer deleteRes=ADOConnection.runTask(new UserServiceImpl(), "deleteSpecialDate", Integer.class, specialDayDTO);		 
+			  Integer deleteRes=ADOConnection.runTask(userService, "deleteSpecialDate", Integer.class, specialDayDTO);		 
 			  if(deleteRes!=null) {
 				  if(deleteRes==-1) {
 					//删除特征日失败
@@ -1232,7 +1232,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//根据id执行修改特征日的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateSpecialDate", Integer.class, specialDayDTO);		 
+			  Integer updateRes=ADOConnection.runTask(userService, "updateSpecialDate", Integer.class, specialDayDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==-1) {
 					//修改特征日失败
@@ -1318,9 +1318,9 @@ public class SystemManagerController {
 			      orgDeptDTO.setDepName(parentBean.getDepName());	
 			      Integer finalRes=null;
 			      if(parentBean.getAddType()==0) {
-			    	finalRes=ADOConnection.runTask(new UserServiceImpl(), "addTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());
+			    	finalRes=ADOConnection.runTask(userService, "addTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());
 			      }else {
-			    	finalRes=ADOConnection.runTask(new UserServiceImpl(), "deptAddTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());  
+			    	finalRes=ADOConnection.runTask(userService, "deptAddTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());  
 			      }				  
 			      if(finalRes!=null) {
 			    	  if (finalRes==1){
@@ -1367,7 +1367,7 @@ public class SystemManagerController {
 			  DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
 			  deptAndUserDTO.setDepCode(longTreeBean.getForeignkey());
 			  //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除，根据外键Code
-			  Integer res=ADOConnection.runTask(new UserServiceImpl(), "judgeExistUser", Integer.class, deptAndUserDTO,longTreeBean.getType(),longTreeBean.getForeignkey(),false);			  
+			  Integer res=ADOConnection.runTask(userService, "judgeExistUser", Integer.class, deptAndUserDTO,longTreeBean.getType(),longTreeBean.getForeignkey(),false);			  
 				if(res==0){
 					   msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					   msg.setDescription("删除部门成功"); 
@@ -1408,7 +1408,7 @@ public class SystemManagerController {
 		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{				
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateTreeDept", Integer.class, deptDTO);	
+			  Integer updateRes=ADOConnection.runTask(userService, "updateTreeDept", Integer.class, deptDTO);	
 			  if(updateRes!=null) {
 				  if(updateRes!=-1) {
 					  msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
@@ -1478,7 +1478,7 @@ public class SystemManagerController {
 		}		
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{				
-			  PageListVO pageListVO=ADOConnection.runTask(new UserServiceImpl(), "queryDeptUser", PageListVO.class,deptDTO);	
+			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryDeptUser", PageListVO.class,deptDTO);	
 			  if(pageListVO!=null && pageListVO.getRowNumber()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询职员成功"); 
@@ -1522,7 +1522,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  Integer addRes=ADOConnection.runTask(new UserServiceImpl(), "addMenu", Integer.class,menuTreeDTO);	
+			  Integer addRes=ADOConnection.runTask(userService, "addMenu", Integer.class,menuTreeDTO);	
 			  if(addRes==1) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("添加菜单成功"); 				
@@ -1628,7 +1628,7 @@ public class SystemManagerController {
 		}		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<RoleMenusVO> menuList=ADOConnection.runTask(new UserServiceImpl(), "queryRoleMenuByRoleCode", List.class,roleDTO);	
+			  List<RoleMenusVO> menuList=ADOConnection.runTask(userService, "queryRoleMenuByRoleCode", List.class,roleDTO);	
 			  if(menuList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询角色菜单查看权限成功"); 
@@ -1660,7 +1660,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<RoleMenusVO> menuCDUList=ADOConnection.runTask(new UserServiceImpl(), "queryRoleMenuByRoleMenu", List.class,roleMenuDTO);	
+			  List<RoleMenusVO> menuCDUList=ADOConnection.runTask(userService, "queryRoleMenuByRoleMenu", List.class,roleMenuDTO);	
 			  if(menuCDUList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询角色菜单操作权限成功"); 
@@ -1700,7 +1700,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{				
-			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateRoleMenuByRoleCode", Integer.class,roleMenuDTO);	
+			  Integer updateRes=ADOConnection.runTask(userService, "updateRoleMenuByRoleCode", Integer.class,roleMenuDTO);	
 			  if(updateRes!=-1) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("修改角色菜单权限成功"); 					
@@ -1728,7 +1728,7 @@ public class SystemManagerController {
 	public String queryDept(@RequestBody DeptDTO deptDTO) {		
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{				
-			  PageListVO pageListVO=ADOConnection.runTask(new UserServiceImpl(), "queryDept", PageListVO.class,deptDTO);	
+			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryDept", PageListVO.class,deptDTO);	
 			  if(pageListVO!=null && pageListVO.getRowNumber()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询部门成功"); 
