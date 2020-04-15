@@ -4,7 +4,7 @@
    <!-- 插入职员信息 -->
    <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO" >  
         insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code")
-        values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},#{createTime},#{updateBy},#{updateTime},#{code})   
+        values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},Now(),#{updateBy},Now(),#{code})   
     </insert>
      <!-- 查询相关职员信息 -->
     <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
@@ -40,12 +40,11 @@
 		update "SM_user" 
 		<set>	    
              <if test="name != null  and name !=''" > name = #{name},  </if>                       
-             <if test="loginName != null and loginName !=''" > "loginName" = #{loginName},</if>            
-             <if test="password != null and password !=''" > password = #{password}, </if>                       
+             <if test="loginName != null and loginName !=''" > "loginName" = #{loginName},</if>                                 
              <if test="sex != null" >sex = #{sex,jdbcType=INTEGER}, </if>                        
              <if test="Email != null and Email != ''" > "Email" = #{Email}, </if>               
              <if test="updateBy != null and updateBy!=''" >  "updateBy" = #{updateBy},</if>                        
-             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>  
+             <if test="updateBy != null" > "updateTime" = Now(),</if>  
              <if test="status != null" > status = #{status},  </if>               
 		</set>
 		where code=#{code}
@@ -61,7 +60,7 @@
       <!-- 添加新角色 -->
      <insert id="addNewRole" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">  
         insert into "SM_userRole"(name,remark,"createBy","createTime","updateBy","updateTime",code)
-        values(#{roleName},#{roleRemark},#{createBy},#{createTime},#{updateBy},#{updateTime},#{roleCode})     
+        values(#{roleName},#{roleRemark},#{createBy},Now(),#{updateBy},Now(),#{roleCode})     
     </insert>
     
      <!-- 查询添加的新角色名称是否重复 -->
@@ -78,7 +77,7 @@
              <if test="roleName != null" > name= #{roleName},</if>            
              <if test="roleRemark != null" > remark= #{roleName},</if>
              <if test="updateBy != null and updateBy!=''" > "updateBy" = #{updateBy},</if>                        
-             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+             <if test="updateBy != null" > "updateTime" = Now(),</if>   
         </set>
 		where code=#{roleCode}
      </update>
@@ -133,7 +132,7 @@
     <insert id="addRoleUser" parameterType="java.util.List">  
         insert into "SM_userRoleRelation"("userCode", "roleCode","createBy","createTime","updateBy","updateTime")values
 		<foreach collection="list" item="roleuser"  index="index" separator=",">
-			(#{roleuser.userCode}, #{roleuser.roleCode}, #{roleuser.createBy}, #{roleuser.createTime}, #{roleuser.updateBy}, #{roleuser.updateTime})
+			(#{roleuser.userCode}, #{roleuser.roleCode}, #{roleuser.createBy},Now(), #{roleuser.updateBy},Now())
 		</foreach>
     </insert>
     
@@ -211,7 +210,7 @@
     <insert id="addDeptUser" parameterType="java.util.List">  
         insert into "SM_userDept"("userCode", "deptCode","createBy","createTime","updateBy","updateTime")values
 		<foreach collection="list" item="deptuser"  index="index" separator=",">
-			(#{deptuser.userCode}, #{deptuser.depCode}, #{deptuser.createBy}, #{deptuser.createTime}, #{deptuser.updateBy}, #{deptuser.updateTime})
+			(#{deptuser.userCode}, #{deptuser.depCode}, #{deptuser.createBy}, Now(), #{deptuser.updateBy}, Now())
 		</foreach>
     </insert>
     
@@ -229,20 +228,20 @@
     <insert id="addDataDic" parameterType="java.util.List">  
         insert into "SM_dataDictionary"(cn,en,remark,parent,key,value,seq,"createBy","createTime","updateBy","updateTime")values
         <foreach collection="list" index="index" separator="," item="item">
-          (#{item.dicCn},#{item.dicEn},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime})  
+          (#{item.dicCn},#{item.dicEn},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.createBy},Now(),#{item.updateBy},Now())  
         </foreach>      
     </insert>
     
     <!-- 插入数据字典主表信息记录 -->
     <insert id="addMainDataDic" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
         insert into "SM_dataDictionary"(cn,en,remark,parent,"createBy","createTime","updateBy","updateTime")
-        values  (#{dicCn},#{dicEn},#{dicRemark},#{dicParent},#{createBy},#{createTime},#{updateBy},#{updateTime})            
+        values  (#{dicCn},#{dicEn},#{dicRemark},#{dicParent},#{createBy},Now(),#{updateBy},Now())            
     </insert>
     
      <!-- 插入数据字典明细信息一条记录 -->
     <insert id="addOneDataDet" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
         insert into "SM_dataDictionary"(cn,en,remark,parent,key,value,seq,"createBy","createTime","updateBy","updateTime")
-        values  (#{dicCn},#{dicEn},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicSeq},#{createBy},#{createTime},#{updateBy},#{updateTime})            
+        values  (#{dicCn},#{dicEn},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicSeq},#{createBy},Now(),#{updateBy},Now())            
     </insert>
     
      <!-- 查询数据字典 主标识明细的信息-->
@@ -309,7 +308,7 @@
 	   	     <if test="dicCn != null"> cn = #{dicCn},</if>
 	   	     <if test="dicRemark != null">  remark =#{dicRemark},</if>  
              <if test="updateBy != null" >  "updateBy" = #{updateBy},</if>                        
-             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+             <if test="updateBy != null" > "updateTime" = Now(),</if>   
         </set>
 		where  parent=#{dicParent}
      </update>
@@ -335,7 +334,7 @@
              <if test="dicValue != null" > value= #{dicValue},</if>
              <if test="dicSeq != null" > seq= #{dicSeq},</if>
              <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
-             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+             <if test="updateBy != null" > "updateTime" = Now(),</if>   
         </set>
 		where  id=#{dicId}
 	   </update>
@@ -351,7 +350,7 @@
      <!-- 插入特征日表信息一条记录 -->
     <insert id="addSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO">  
         insert into "SM_specialDay"(name,remark,"spDate","createBy","createTime","updateBy","updateTime")values
-         (#{spName},#{spRemark},#{spDate},#{createBy},#{createTime},#{updateBy},#{updateTime})
+         (#{spName},#{spRemark},#{spDate},#{createBy},Now(),#{updateBy},Now())
     </insert>
     
      <!-- 查询特征日 是否已经存在该特征日的信息-->
@@ -403,17 +402,17 @@
       <!-- 插入部门主表信息一条记录 -->
     <select id="addDeptNew" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO" resultType="Integer">  
         insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
-        values(#{depCode},#{depName},#{depStatus},#{createBy},#{createTime},#{updateBy},#{updateTime})returning id         
+        values(#{depCode},#{depName},#{depStatus},#{createBy},Now(),#{updateBy},Now())returning id         
     </select>
      <!-- 插入组织部门表中-->
      <insert id="addOrgDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
         insert into "SM_orgDept"("orgCode","deptCode","createBy","createTime","updateBy","updateTime")
-        values(#{orgCode},#{depCode},#{createBy},#{createTime},#{updateBy},#{updateTime})       
+        values(#{orgCode},#{depCode},#{createBy},Now(),#{updateBy},Now())       
      </insert>
       <!--部门下添加部门-->
      <insert id="deptAddTreeDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
         insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
-        values(#{depCode},#{depName},#{depStatus},#{createBy},#{createTime},#{updateBy},#{updateTime})      
+        values(#{depCode},#{depName},#{depStatus},#{createBy},Now(),#{updateBy},Now())      
      </insert>
      
       <!-- 根据外键Code查询删除的部门节点下是否存在职员-->
@@ -436,8 +435,8 @@
 		update "SM_department" 
 		<set>	                                 
              <if test="depName != null" > name= #{depName},</if>            
-             <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
-             <if test="updateTime != null" > "updateTime" = #{updateTime},</if>   
+             <if test="updateBy != null" > "updateBy" =#{updateBy},</if>                        
+             <if test="updateBy  != null" > "updateTime" = Now(),</if>   
         </set>
 		where  code=#{depCode}
 	   </update>
@@ -472,7 +471,7 @@
      <!--添加菜单-->
      <insert id="addMenu" parameterType="com.koron.inwlms.bean.DTO.sysManager.MenuDTO">  
         insert into "SM_moduleMenu"(code,"moduleNo","moduleName","linkAddress","createBy","createTime","updateBy","updateTime")
-        values(#{menuCode},#{moduleNo},#{moduleName},#{linkAddress},#{createBy},#{createTime},#{updateBy},#{updateTime})      
+        values(#{menuCode},#{moduleNo},#{moduleName},#{linkAddress},#{createBy},Now(),#{updateBy},Now())      
      </insert>
      
      <!--加载角色权限菜单-->
@@ -504,7 +503,7 @@
     <insert id="addManyRoleMenu" parameterType="java.util.List">  
         insert into "SM_roleMenus"("roleCode","moduleCode",op,"createBy","createTime","updateBy","updateTime")values
         <foreach collection="list" index="index" separator="," item="item">
-          (#{item.roleCode},#{item.moduleCode},#{item.op},#{item.createBy},#{item.createTime},#{item.updateBy},#{item.updateTime})  
+          (#{item.roleCode},#{item.moduleCode},#{item.op},#{item.createBy},Now(),#{item.updateBy},Now())  
         </foreach>      
     </insert>
     
@@ -566,5 +565,15 @@
 		"menu"."moduleName" ,"menu"."linkAddress"
       </select>
 
+      <!--批量重置职员的密码 -->
+       <update id="updateUserPassword"  parameterType="java.util.List">
+         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+               update "SM_user"
+               <set>
+                 password=#{item.password}
+               </set>
+               where code = #{item.code}
+        </foreach>
+       </update>
       
 </mapper>

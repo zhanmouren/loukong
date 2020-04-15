@@ -11,6 +11,7 @@ import java.util.List;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.koron.common.web.mapper.LongTreeBean;
@@ -43,12 +44,14 @@ import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.sysManager.UserService;
+import com.koron.inwlms.util.EncryptionUtil;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.inwlms.util.RandomCodeUtil;
 import com.koron.util.Constant;
 
 @Service
 public class UserServiceImpl implements UserService{
+	
 
 	//管理员添加职员 2020/03/18	
 	@TaskAnnotation("addUser")
@@ -57,10 +60,9 @@ public class UserServiceImpl implements UserService{
 		// TODO Auto-generated method stub	
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		userDTO.setCreateBy("xiaozhan");
-		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-		userDTO.setCreateTime(timeNow);
 		userDTO.setUpdateBy("xiaozhan");
-		userDTO.setUpdateTime(timeNow);
+		//管理员设置默认密码yhsw123456
+		userDTO.setPassword((new  EncryptionUtil().encodeBase64("yhsw123456")));
 		//随机获取uuid,赋值给Code
 		String userCode=new RandomCodeUtil().getUUID32();
 		userDTO.setCode(userCode);	
@@ -89,8 +91,6 @@ public class UserServiceImpl implements UserService{
 		    deptAndUserDTO.setUserCode(userCode);
 		    deptAndUserDTO.setCreateBy("xiaozhan");
 		    deptAndUserDTO.setUpdateBy("xiaozhan");
-		    deptAndUserDTO.setCreateTime(timeNow);
-		    deptAndUserDTO.setUpdateTime(timeNow);
 		    List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
 		    deptUserDTOList.add(deptAndUserDTO);
 		    //添加用户(批量)和部门关系的操作
@@ -125,9 +125,6 @@ public class UserServiceImpl implements UserService{
 	public Integer updateUser(SessionFactory factory, UserDTO userDTO) {
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-		userDTO.setUpdateBy("xiaozhan");
-		userDTO.setUpdateTime(timeNow);
 		Integer editResult=userMapper.updateUser(userDTO);
 		return editResult;
 	}
@@ -149,10 +146,7 @@ public class UserServiceImpl implements UserService{
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		roleDTO.setCreateBy("xiaozhan");
-		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-		roleDTO.setCreateTime(timeNow);
 		roleDTO.setUpdateBy("xiaozhan");
-		roleDTO.setUpdateTime(timeNow);
 		//随机获取uuid,赋值给Code
 		roleDTO.setRoleCode(new RandomCodeUtil().getUUID32());	
 		//添加新角色的时候，判断名称是否重复
@@ -173,10 +167,8 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Integer updateRoleAttr(SessionFactory factory, RoleDTO roleDTO) {
 		// TODO Auto-generated method stub
-		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+		UserMapper userMapper = factory.getMapper(UserMapper.class);		
 		roleDTO.setUpdateBy("xiaozhan");
-		roleDTO.setUpdateTime(timeNow);
 		Integer editResult=userMapper.updateRoleAttr(roleDTO);
 		return editResult;
 	}
@@ -246,14 +238,11 @@ public class UserServiceImpl implements UserService{
 		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
-		List<RoleAndUserDTO> roleAndUserDTOList=new ArrayList<RoleAndUserDTO>();
-		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+		List<RoleAndUserDTO> roleAndUserDTOList=new ArrayList<RoleAndUserDTO>();		
 		for(int i=0;i<roleUserDTO.getUserCodeList().size();i++) {
 			RoleAndUserDTO roleUserDTONew=new RoleAndUserDTO();
 			roleUserDTONew.setRoleCode(roleUserDTO.getRoleCode());
-			roleUserDTONew.setUserCode(roleUserDTO.getUserCodeList().get(i));
-			roleUserDTONew.setCreateTime(timeNow);
-			roleUserDTONew.setUpdateTime(timeNow);
+			roleUserDTONew.setUserCode(roleUserDTO.getUserCodeList().get(i));		
 			roleUserDTONew.setCreateBy("小詹");
 			roleUserDTONew.setUpdateBy("小詹");
 			roleAndUserDTOList.add(roleUserDTONew);
@@ -323,15 +312,12 @@ public class UserServiceImpl implements UserService{
 			// TODO Auto-generated method stub
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
 			//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
-			List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
-			Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+			List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();			
 			for(int i=0;i<deptUserDTO.getUserCodeList().size();i++) {
 				DeptAndUserDTO deptUserDTONew=new DeptAndUserDTO();
 				deptUserDTONew.setDepCode(deptUserDTO.getDepCode());
-				deptUserDTONew.setUserCode(deptUserDTO.getUserCodeList().get(i));
-				deptUserDTONew.setCreateTime(timeNow);
-				deptUserDTONew.setCreateBy("小詹");
-				deptUserDTONew.setUpdateTime(timeNow);
+				deptUserDTONew.setUserCode(deptUserDTO.getUserCodeList().get(i));				
+				deptUserDTONew.setCreateBy("小詹");			
 				deptUserDTONew.setUpdateBy("小詹");
 				deptUserDTOList.add(deptUserDTONew);
 			}
@@ -365,8 +351,7 @@ public class UserServiceImpl implements UserService{
 					  //说明已经存在
 						addResult=-2;
 						return addResult;
-					}
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					}				
 					List<DataDicDTO> dataDicDTOList=new ArrayList<DataDicDTO>();
 					//插入i条
 					for(int i=0;i<dataDicDTO.getDataDicDTOList().size();i++) {
@@ -382,10 +367,8 @@ public class UserServiceImpl implements UserService{
 						}else {
 							dataDicDTONew.setDicSeq(dataDicDTO.getDataDicDTOList().get(i).getDicSeq());
 						}
-						dataDicDTONew.setCreateBy("小詹");
-						dataDicDTONew.setCreateTime(timeNow);
-						dataDicDTONew.setUpdateBy("小詹");
-						dataDicDTONew.setUpdateTime(timeNow);
+						dataDicDTONew.setCreateBy("小詹");					
+						dataDicDTONew.setUpdateBy("小詹");						
 						dataDicDTOList.add(dataDicDTONew);
 					}
 					
@@ -433,10 +416,8 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public Integer updateDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
 					// TODO Auto-generated method stub
-					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-					dataDicDTO.setUpdateBy("小詹");
-					dataDicDTO.setUpdateTime(timeNow);
+					UserMapper userMapper = factory.getMapper(UserMapper.class);					
+					dataDicDTO.setUpdateBy("小詹");					
 					Integer updateRes=userMapper.updateDicById(dataDicDTO);
 					return updateRes;
 				}
@@ -461,10 +442,8 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public Integer updateDicDetById(SessionFactory factory, DataDicDTO dataDicDTO) {
 					// TODO Auto-generated method stub
-					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-					dataDicDTO.setUpdateBy("小詹");
-					dataDicDTO.setUpdateTime(timeNow);
+					UserMapper userMapper = factory.getMapper(UserMapper.class);					
+					dataDicDTO.setUpdateBy("小詹");				
 					Integer updateRes=userMapper.updateDicDetById(dataDicDTO);
 					return updateRes;
 				}
@@ -499,12 +478,9 @@ public class UserServiceImpl implements UserService{
 				    if(specialDayDTOList.size()>0) {
 				    	insertRes=-2;
 				    	return insertRes;
-				    }
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-					specialDayDTO.setCreateBy("小詹");
-					specialDayDTO.setCreateTime(timeNow);
-					specialDayDTO.setUpdateBy("小詹");
-					specialDayDTO.setUpdateTime(timeNow);
+				    }					
+					specialDayDTO.setCreateBy("小詹");				
+					specialDayDTO.setUpdateBy("小詹");				
 				    insertRes=userMapper.addSpecialDate(specialDayDTO);
 					return insertRes;					
 				}
@@ -616,10 +592,7 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public Integer addTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO,int type,String foreignKey) {
 					// TODO Auto-generated method stub
-					UserMapper userMapper = factory.getMapper(UserMapper.class);	
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-					orgDeptDTO.setCreateTime(timeNow);
-					orgDeptDTO.setUpdateTime(timeNow);
+					UserMapper userMapper = factory.getMapper(UserMapper.class);						
 					orgDeptDTO.setCreateBy("小詹");
 					orgDeptDTO.setUpdateBy("小詹");
 					//部门正常使用状态0,禁用状态-1
@@ -629,18 +602,15 @@ public class UserServiceImpl implements UserService{
 					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
 					//随机获取uuid,赋值给Code	
 					String deptCode=randomCodeUtil.getUUID32();
-					orgDeptDTO.setDepCode(deptCode);
-					orgDeptDTO.setUpdateTime(timeNow);
+					orgDeptDTO.setDepCode(deptCode);		
 					//先执行生成部门的操作(获取刚刚插入到部门表的Id)
 					Integer depId=userMapper.addDeptNew(orgDeptDTO);
 					//插入组织部门关系表
 					OrgAndDeptDTO orgDeptDTONew=new OrgAndDeptDTO();
 					orgDeptDTONew.setDepCode(deptCode);
 					orgDeptDTONew.setOrgCode(orgDeptDTO.getOrgCode());
-					orgDeptDTONew.setCreateTime(timeNow);
 					orgDeptDTONew.setCreateBy("小詹");
 					orgDeptDTONew.setUpdateBy("小詹");										
-					orgDeptDTONew.setUpdateTime(timeNow);
 					Integer addRes=userMapper.addOrgDept(orgDeptDTONew);
 					if(addRes==-1) {
 						finalRes=-1;
@@ -673,8 +643,6 @@ public class UserServiceImpl implements UserService{
 				public Integer deptAddTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO,int type,String foreignKey) {
 					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);	
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-					orgDeptDTO.setCreateTime(timeNow);
 					orgDeptDTO.setCreateBy("小詹");
 					orgDeptDTO.setUpdateBy("小詹");
 					Integer finalRes=null;
@@ -684,7 +652,6 @@ public class UserServiceImpl implements UserService{
 					//随机获取uuid,赋值给Code	
 					String deptCode=randomCodeUtil.getUUID32();
 					orgDeptDTO.setDepCode(deptCode);
-					orgDeptDTO.setUpdateTime(timeNow);
 					Integer addRes=userMapper.deptAddTreeDept(orgDeptDTO);
 					if(addRes==-1) {
 						finalRes=-1;
@@ -765,9 +732,7 @@ public class UserServiceImpl implements UserService{
 				public Integer updateTreeDept(SessionFactory factory, DeptDTO deptDTO) {
 					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
-					deptDTO.setUpdateBy("小詹");
-					deptDTO.setUpdateTime(timeNow);
+					deptDTO.setUpdateBy("小詹");				
 					Integer updateRes=userMapper.updateTreeDept(deptDTO);
 					return updateRes;
 				}
@@ -801,17 +766,14 @@ public class UserServiceImpl implements UserService{
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					MenuDTO menuDTO=new MenuDTO();
 					menuDTO.setLinkAddress(menuTreeDTO.getLinkAddress());
-					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();				
 					//随机获取uuid,赋值给Code	
 					String menuCode=randomCodeUtil.getUUID32();
 					menuDTO.setMenuCode(menuCode);
 					menuDTO.setModuleName(menuTreeDTO.getModuleName());
-					menuDTO.setModuleNo(menuTreeDTO.getModuleNo());
-					menuDTO.setCreateTime(timeNow);
+					menuDTO.setModuleNo(menuTreeDTO.getModuleNo());					
 					menuDTO.setCreateBy("小詹");
 					menuDTO.setUpdateBy("小詹");
-					menuDTO.setUpdateTime(timeNow);
 					//先生成菜单
 					Integer addRes=userMapper.addMenu(menuDTO);
 					if(addRes==-1) {
@@ -870,8 +832,7 @@ public class UserServiceImpl implements UserService{
 						updateRes=-1;
 						return updateRes;
 					}					
-					List<RoleMenuDTO> roleMenuList=new ArrayList<RoleMenuDTO>();
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					List<RoleMenuDTO> roleMenuList=new ArrayList<RoleMenuDTO>();					
 					//删除完成后遍历插入SM_roleMenus数据
 					for(int i=0;i<roleMenuDTO.getRoleMenuList().size();i++) {					
 						for(int j=0;j<roleMenuDTO.getRoleMenuList().get(i).getOpList().size();j++) {
@@ -880,9 +841,7 @@ public class UserServiceImpl implements UserService{
 							roleMenuNew.setRoleCode(roleMenuDTO.getRoleMenuList().get(i).getRoleCode());
 							roleMenuNew.setOp(Integer.valueOf(roleMenuDTO.getRoleMenuList().get(i).getOpList().get(j)));
 							roleMenuNew.setCreateBy("小詹");
-							roleMenuNew.setUpdateBy("小詹");
-							roleMenuNew.setCreateTime(timeNow);
-							roleMenuNew.setUpdateTime(timeNow);
+							roleMenuNew.setUpdateBy("小詹");							
 							roleMenuList.add(roleMenuNew);
 						}
 					}
@@ -939,12 +898,9 @@ public class UserServiceImpl implements UserService{
 					  //说明已经存在
 						addResult=-2;
 						return addResult;
-					}
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					}				
 					dataDicDTO.setUpdateBy("小詹");
-					dataDicDTO.setCreateBy("小詹");
-					dataDicDTO.setCreateTime(timeNow);
-					dataDicDTO.setUpdateTime(timeNow);
+					dataDicDTO.setCreateBy("小詹");				
 					// 插入主表信息					
 					 addResult=userMapper.addMainDataDic(dataDicDTO);
 					return addResult;
@@ -965,12 +921,9 @@ public class UserServiceImpl implements UserService{
 					}
 					//先执行删除主表信息的操作(键值为空的)
 					Integer delRes=userMapper.deleteOneDic(dataDicDTO);
-					//插入数据字典的操作(一条)
-					Timestamp timeNow = new Timestamp(System.currentTimeMillis());
+					//插入数据字典的操作(一条)					
 					dataDicDTO.setUpdateBy("小詹");
-					dataDicDTO.setCreateBy("小詹");
-					dataDicDTO.setCreateTime(timeNow);
-					dataDicDTO.setUpdateTime(timeNow);
+					dataDicDTO.setCreateBy("小詹");					
 					if(dataDicDTO.getDicSeq()==null) {
 						dataDicDTO.setDicSeq(1);
 					}
@@ -987,7 +940,7 @@ public class UserServiceImpl implements UserService{
 					return moduleMenuList;
 				}
 
-				//通过模块菜单Code和角色code查询该模块菜单操作权限
+				//通过模块菜单Code和角色code查询该模块菜单操作权限 2020/04/14
 				@TaskAnnotation("queryOPByCode") 
 				@Override
 				public List<RoleMenusVO> queryOPByCode(SessionFactory factory, RoleMenuDTO roleMenuDTO) {
@@ -995,6 +948,23 @@ public class UserServiceImpl implements UserService{
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<RoleMenusVO> roleMenusList=userMapper.queryOPByCode(roleMenuDTO);
 					return roleMenusList;
+				}
+
+				//管理员批量重置职员密码2020/04/15
+				@TaskAnnotation("updateUserPassword") 
+				@Override
+				public Integer updateUserPassword(SessionFactory factory, UserDTO userDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);					
+					List<UserDTO> userList=new ArrayList<UserDTO>();
+					for(int i=0;i<userDTO.getUserCodeList().size();i++) {
+						UserDTO userDTONew=new UserDTO();
+						userDTONew.setPassword((new  EncryptionUtil().encodeBase64("yhsw123456")));
+						userDTONew.setCode(userDTO.getUserCodeList().get(i));
+						userList.add(userDTONew);
+					}
+					Integer updateRes=userMapper.updateUserPassword(userList);
+					return updateRes;
 				}
 
 					

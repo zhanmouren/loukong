@@ -77,9 +77,6 @@ public class SystemManagerController {
 		if(userDTO.getLoginName()==null || StringUtils.isBlank(userDTO.getLoginName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "登录名称不能为空", Integer.class).toJson();
 		}
-		if(userDTO.getPassword()==null || StringUtils.isBlank(userDTO.getPassword())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "密码不能为空", Integer.class).toJson();
-		}
 		if(userDTO.getWorkNo()==null || StringUtils.isBlank(userDTO.getWorkNo())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "工号不能为空", Integer.class).toJson();
 		}
@@ -165,9 +162,6 @@ public class SystemManagerController {
 		if(userDTO.getLoginName()==null || StringUtils.isBlank(userDTO.getLoginName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "登录名称不能为空", Integer.class).toJson();
 		}
-		if(userDTO.getPassword()==null || StringUtils.isBlank(userDTO.getPassword())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "密码不能为空", Integer.class).toJson();
-		}
 		if(userDTO.getSex()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "性别不能为空", Integer.class).toJson();
 		}
@@ -190,6 +184,39 @@ public class SystemManagerController {
 	        	//修改用户失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("修改用户失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-03-20
+     * funtion:管理员一键重置密码
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/updateUserPassword.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "批量重置职员密码接口", notes = "批量重置职员密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateUserPassword(@RequestBody UserDTO userDTO) {
+		if(userDTO.getUserCodeList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员编码列表不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行批量重置密码的操作
+		  try{
+			  Integer updateRes=ADOConnection.runTask(new UserServiceImpl(), "updateUserPassword", Integer.class, userDTO);		 
+			  if(updateRes!=null) {
+				  if(updateRes==1) {					
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("重置职员密码成功");
+				  }else {				   
+			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+			        msg.setDescription("重置职员密码失败");
+				  }
+			  }
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("重置失败");
 	        }
 		
 	     return msg.toJson();

@@ -38,6 +38,8 @@ public interface UserService {
 	PageListVO<List<UserVO>> queryUser(SessionFactory factory, QueryUserDTO userDTO);
 	//修改职员
     Integer  updateUser(SessionFactory factory, UserDTO userDTO);
+    //批量重置职员密码
+    Integer updateUserPassword(SessionFactory factory, UserDTO userDTO);
     //删除职员（不物理删除）
     Integer  deleteUser(SessionFactory factory, UserDTO userDTO);
     //新建新角色

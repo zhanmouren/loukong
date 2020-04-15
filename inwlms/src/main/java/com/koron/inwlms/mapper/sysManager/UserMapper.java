@@ -37,7 +37,6 @@ import com.koron.inwlms.bean.VO.sysManager.UserVO;
  * author:xiaozhan
  */  	
 @Repository
-@EnvSource("_default")
 public interface UserMapper {
    //添加职员
 	 Integer addUser(UserDTO userDTO);
@@ -50,6 +49,9 @@ public interface UserMapper {
 	
 	//修改职员
     public Integer updateUser(UserDTO userDTO);
+    
+    //批量重置职员密码
+    public Integer updateUserPassword(UserDTO userDTO);
     
     //删除职员
     public Integer deleteUser(UserDTO userDTO);
@@ -213,4 +215,8 @@ public interface UserMapper {
 		
 		//通过模块菜单Code和角色code查询该模块菜单操作权限
 		public List<RoleMenusVO> queryOPByCode(RoleMenuDTO roleMenuDTO);
+		
+		//批量重置密码
+		public Integer updateUserPassword(List<UserDTO> userList);
+		
 }

@@ -1,6 +1,7 @@
 package com.koron.inwlms.bean.DTO.sysManager;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
     * 1管理员添加职员信息bean
@@ -11,6 +12,8 @@ import java.sql.Timestamp;
 
 
 public class UserDTO {
+  //存储多个用户code的List
+  private List<String> userCodeList;
   //职员编码
   private String code;
   //职员id
@@ -53,6 +56,15 @@ public class UserDTO {
   //部门code
   private String depCode;
   
+public List<String> getUserCodeList() {
+	return userCodeList;
+}
+public void setUserCodeList(List<String> userCodeList) {
+	this.userCodeList = userCodeList;
+}
+public Integer getPosition() {
+	return position;
+}
 public String getDepCode() {
 	return depCode;
 }

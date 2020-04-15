@@ -16,7 +16,7 @@ import java.security.SecureRandom;
  **/
 public class EncryptionUtil {
 
-    private EncryptionUtil() {
+    public EncryptionUtil() {
 
     }
 
