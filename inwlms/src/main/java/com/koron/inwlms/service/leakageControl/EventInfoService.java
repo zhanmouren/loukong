@@ -6,6 +6,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 
@@ -21,6 +22,10 @@ public interface EventInfoService {
 	Integer addEventInfo(SessionFactory factory, EventInfo eventInfo);
 
 	List<DataDicRelationVO> querychildKey(SessionFactory factory, String parentKey);
+
+	Integer queryMaxKey(SessionFactory factory, String parent);
+
+	Integer addEventSubType(SessionFactory factory, EventSubTypeDTO eventSubTypeDTO);
 	
 	
 

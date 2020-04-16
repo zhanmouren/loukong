@@ -422,5 +422,9 @@ public class Constant {
 	 */
 	public final static Integer RANK_T = 3;
 	
+	/**
+	 * 事项子类型值域
+	 */
+	public final static String EVENTSUBTYPE = "10122";
 
 }

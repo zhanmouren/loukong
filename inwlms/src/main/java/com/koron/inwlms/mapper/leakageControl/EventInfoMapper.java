@@ -2,6 +2,7 @@ package com.koron.inwlms.mapper.leakageControl;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.koron.ebs.mybatis.EnvSource;
 import org.springframework.stereotype.Repository;
 
@@ -26,5 +27,8 @@ public interface EventInfoMapper {
 	
 	Integer addEventInfo(EventInfo eventInfo);
 	List<DataDicRelationVO> querychildKey(String parentKey);
+	
+	Integer queryMaxKey(@Param("parent") String parent);
+	Integer addEventTypeRelation(@Param("parentKey") String parentKey,@Param("childKey") String childKey);
 	
 }

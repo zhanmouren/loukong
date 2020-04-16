@@ -44,7 +44,7 @@
  </select>
  
  <insert id="addAlarmRule" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO">
- insert into "APP_alarmRule"("schemeCode", constant, target, "arithmeticRule", "limitType")
+ insert into "APP_warningRule"("schemeCode", constant, target, "arithmeticRule", "limitType")
  values(#{schemeCode}, #{constant}, #{target}, #{arithmeticRule}, #{limitType})
  </insert>
  

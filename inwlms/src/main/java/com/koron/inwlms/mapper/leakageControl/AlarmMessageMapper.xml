@@ -20,9 +20,7 @@
   </select>
   
   
-  <select id="queryAlarmMessageByPointCode1" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
-  select * from "APP_warningInf" where "pointCode" = #{code}
-  </select>
+
   
 </mapper>
   

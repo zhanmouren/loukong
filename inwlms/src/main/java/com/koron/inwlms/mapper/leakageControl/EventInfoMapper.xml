@@ -42,5 +42,13 @@
  select * from "SM_dataDictionaryRelation" where "parentKey" = #{parentKey}
  </select>
  
+ <select id="queryMaxKey" parameterType="java.lang.String" resultType="java.lang.Integer">
+ select cast(MAX(substring(key,2,9)) as integer) from "SM_dataDictionary" where parent = #{parent}
+ </select>
+ 
+ <insert id="addEventTypeRelation" parameterType="java.lang.String">
+ insert "SM_dataDictionaryRelation" into("parentKey", "childKey")
+ values(#{parentKey}, #{childKey})
+ </insert>
  
 </mapper>
