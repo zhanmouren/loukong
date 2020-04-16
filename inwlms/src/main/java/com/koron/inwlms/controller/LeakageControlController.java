@@ -298,7 +298,7 @@ public class LeakageControlController {
 			warningSchemeList = ADOConnection.runTask(wss, "queryWarningScheme", List.class,warningSchemeDTO);
 			if(warningSchemeList == null || warningSchemeList.size() == 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				msg.setDescription("改条件下未查询到数据");
+				msg.setDescription("该条件下未查询到数据");
 				return msg.toJson();
 			}
 			
@@ -316,7 +316,6 @@ public class LeakageControlController {
 			String noticeType = "";
 			try {
 				List<AlertNoticeScheme> alertNoticeSchemeList = ADOConnection.runTask(wss, "queryAlertNoticeSchemeByWarningId",List.class,warningScheme.getCode());
-				if(alertNoticeSchemeList != null && alertNoticeSchemeList.size() != 0) {
 					for(AlertNoticeScheme alertNoticeScheme : alertNoticeSchemeList) {
 						//TODO 通过通知方式的key查询其值
 						
@@ -331,7 +330,7 @@ public class LeakageControlController {
 					alertSchemeVO.setId(warningScheme.getId());
 					alertSchemeVO.setObjectType(warningScheme.getObjectType());
 					alertSchemeListVO.add(alertSchemeVO);					
-				}	
+	
 			}catch(Exception e) {
 				//添加失败
 		     	msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -1076,9 +1075,16 @@ public class LeakageControlController {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("事项子类型添加失败");
 		}
-		
-		
+
 		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/deleteEventSubtype.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项子类型删除接口", notes = "事项子类型删除接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteEventSubtype() {
+		 
+		return null;
 	}
 	
 	
