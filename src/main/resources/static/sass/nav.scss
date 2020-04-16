@@ -1,0 +1,175 @@
+@import "variable";
+@import "common";
+
+@mixin nav-color($color:$color_primary){
+	width: 100%;
+	display: inline-block;
+	height: 100%;
+	background: $color;
+	transition: all .3s;
+	padding-top: 2em;
+	overflow: auto;
+	ul{
+		transition: all .4s;
+		li{
+			position: relative;
+			a{
+				overflow: hidden;
+				padding-left: 1.5em;
+				line-height: 3.2857em;
+				color: $color_darkgray;
+				text-decoration: none;
+				cursor: pointer;
+				display:block;   
+				&:hover {
+					background: $color;
+				}
+				&>:nth-child(3n+3){
+					@include borwse-prefix("transition","all .4s");
+				}
+			}
+			a span.icon:last-child {
+				float: right;
+			}
+			&.active {
+				color: $color_darkgray;
+				&>a>:nth-child(3n+3){
+					@include borwse-prefix("transform","rotate(90deg)");
+				}
+				&>ul{
+					display:block;
+					height:auto;
+				}
+			}
+		}
+		background: mix($color,$white,80%);
+		&>li>ul{
+			background: mix($color,white,70%);
+			&>li>ul{
+				background: mix($color,white);
+				&>li>ul{
+					background: mix($color,$white,40%);
+				}
+			}
+		}
+	}
+}
+
+
+.nav-menu{
+	ul:after {
+		content: ".";
+		clear: both;
+		display: block;
+		height: 0;
+		overflow: hidden;
+		visibility: hidden;
+		li{
+			.icon {
+				margin: 0 .25rem;
+			}
+		}
+	}
+	&>ul{
+		 li{
+			& >ul{
+				display:block;
+				overflow:hidden;
+				height:0;
+			}
+		}
+	}
+}
+
+/*  nav水平样式  */
+.nav-menu.lihorizontal, .nav-menu.lihorizontal02 {
+	width: 100%;
+	-webkit-box-sizing: border-box;
+	-webkit-box-shadow: 0 2px 4px $color_whitegray;
+	box-shadow: 0 2px 4px $color_whitegray;
+	/*background: #fff;*/
+	height: 2.857em;
+	line-height: 2.857em;
+	ul {
+		margin-bottom: 0;
+		li{
+			position: relative;
+			a{
+				color: $color_darkgray;
+				font-size: .7em;
+				display: inline-block;
+				text-decoration: none;
+				padding: 0 1em;
+				cursor: pointer;
+			}
+			ul{
+				padding-left:.5em;
+			}
+		}
+	}
+	&>ul{
+		&>li{
+			float: left;
+			height: 2.857em;
+			&>ul{
+				background: lighten($white,90%);
+				line-height: 2.5rem;
+				padding: 1rem 0;
+				color: $color_blackgray;
+				box-shadow: 1px 1px 10px $color_whitegray;
+				position: absolute;
+				min-width: 14rem;
+				top: 3em;
+			}
+		}
+		&>li:hover a{
+			color:$color_style_main;
+		}
+		&>li:hover ul{
+			display:block;
+		}
+	}
+}
+.nav-menu.lihorizontal{
+	&>ul{
+		&>li.active,&>li:hover{
+			border-bottom: 2px solid $color_style_main;
+			color: $color_style_main;
+		}
+		&>li.active{
+			&>a{
+				color: $color_style_main;
+			}
+			
+		}
+	}
+}
+.nav-menu.lihorizontal02{
+	&>ul{
+		&>li{
+		
+		}
+		&>li.active,&>li:hover{
+			background: lighten($color_style_main,10%);
+			color: $white;
+		}
+		&>li.active{
+			a{
+				color: $white;
+			}
+		}
+		&>li:hover{
+			a{
+				color: $white;
+			}
+		}
+	}
+}
+
+/*  nav垂直样式  */
+.livertical {
+	@include nav-color($color_style_main);
+	&>ul>li>ul li a {
+		padding-left: 2rem;
+	}
+}

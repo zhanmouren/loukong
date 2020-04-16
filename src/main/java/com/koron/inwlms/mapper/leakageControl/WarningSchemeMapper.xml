@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper">
+ 
+ <select id="queryWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO">
+ select * from "APP_warningScheme"
+ <trim prefix="where" prefixOverrides="and|or">
+ <if test="id != null"> id = #{id}</if>
+ <if test="code != null and code !='' "> code = #{code}</if>
+ <if test="state != null and state != '' "> state = #{state}</if>
+ <if test="objectType != null and objectType != '' "> "objectType" = #{objectType}</if>
+ <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType}</if>
+ <if test="dmaCode != null and dmaCode != '' "> "dmaCode" = #{dmaCode}</if>
+ </trim>
+ </select>
+ 
+ <insert id="addWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, #{code}, #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
+ </insert>
+ 
+ <delete id="deleteWarningScheme" parameterType="java.lang.String">
+ delete from "APP_warningScheme" where code = #{code}
+ </delete>
+ 
+ <update id="updateWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO">
+ update "APP_warningScheme" 
+ <set>
+ <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType}</if>
+ <if test="name != null and name != '' "> name = #{name}</if>
+ <if test="objectType != null and objectType != '' "> "objectType" = #{objectType}</if>
+ <if test="alarmIndex != null and alarmIndex != '' "> "alarmIndex" = #{alarmIndex}</if>
+ <if test="paramType != null and paramType != '' "> "paramType" = #{paramType}</if>
+ </set>
+ where code = #{code}
+ </update>
+ 
+ 
+ 
+ <select id="queryAlertNoticeSchemeByWarningId" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme">
+ select * from "APP_alertNoticeScheme" where "schemeCode" = #{code}
+ </select>
+ 
+ <insert id="addAlarmRule" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO">
+ insert into "APP_warningRule"("schemeCode", constant, target, "arithmeticRule", "limitType")
+ values(#{schemeCode}, #{constant}, #{target}, #{arithmeticRule}, #{limitType})
+ </insert>
+ 
+ <select id="queryAlarmRuleByAlarmCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO">
+ select * from "APP_warningRule"  where "schemeCode" = #{schemeCode}
+ </select>
+ 
+ <delete id="deleteAlarmRuleByAlarmCode" parameterType="java.lang.String">
+ delete from "APP_warningRule" where "schemeCode" = #{schemeCode}
+ </delete>
+
+<update id="updateAlarmRule" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO">
+update "APP_warningRule"
+<set>
+<if test="constant != null and constant != '' "> constant = #{constant}</if>
+<if test="target != null and target != '' "> target = #{target}</if>
+<if test="arithmeticRule != null and arithmeticRule != '' "> "arithmeticRule" = #{arithmeticRule}</if>
+<if test="limitType != null and limitType != '' "> "limitType" = #{limitType}</if>
+</set>
+where "schemeCode" = #{schemeCode}
+</update>
+
+ <select id="queryNoticeSchemeByWarningCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO">
+ select * from "APP_alertNoticeScheme" where "schemeCode" = #{code}
+ </select>
+ 
+ </mapper>

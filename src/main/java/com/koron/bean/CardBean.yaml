@@ -1,0 +1,13 @@
+update :
+    age :
+      require : 1
+    name :
+      require : 1
+      minLength : 3
+      maxLength : 40
+    birthday:
+      minLength: 10
+      maxLength: 10
+insert :
+  name :
+    minLength : 20

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koron.inwlms.mapper.leakageControl.EventInfoMapper">
+ <select id="queryEventInfo" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
+ select * from "APP_eventInfo" where "createTime" between '${startTime}' and '${endTime}'
+ <if test="objectType != null && objectType != '' "> and "objectType" = #{objectType}</if>
+ <if test="type != null && type != '' "> and "type" = #{type}</if>
+ <if test="subtype != null && subtype != '' "> and "subtype" = #{subtype}</if>
+ <if test="objectCode != null && objectCode != '' "> and "objectCode" = #{objectCode}</if>
+ <if test="firstPartition != null && firstPartition != '' "> and "firstPartition" = #{firstPartition}</if>
+ </select>
+ 
+ <delete id="deleteEventInfo" parameterType="java.lang.String">
+ delete from "APP_eventInfo" where code = #{code}
+ </delete>
+ 
+ <insert id="addEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
+ insert into "APP_eventInfo"(code, name, type, subtype, "objectCode", "firstPartition", "secondPartition", "dmaCode", "objectType", "happenTime", 
+ "content", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{code}, #{name}, #{type}, #{subtype}, #{objectCode}, #{firstPartition}, #{secondPartition}, #{dmaCode}, #{objectType}, #{happenTime},
+ #{content}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
+ </insert>
+ 
+ <update id="updateEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
+ update "APP_eventInfo"
+ <set>
+ <if test="type != null && type != '' "> type = #{type}</if>
+ <if test="subtype != null && subtype != '' "> subtype = #{subtype}</if>
+ <if test="objectCode != null && objectCode != '' "> "objectCode" = #{objectCode}</if>
+ <if test="firstPartition != null && firstPartition != '' "> "firstPartition" = #{firstPartition}</if>
+ <if test="secondPartition != null && secondPartition != '' "> "secondPartition" = #{secondPartition}</if>
+ <if test="dmaCode != null && dmaCode != '' "> "dmaCode" = #{dmaCode}</if>
+ <if test="happenTime != null && happenTime != '' "> "happenTime" = #{happenTime}</if>
+ <if test="content != null && content != '' "> content = #{content}</if>
+ </set>
+ where code = #{code}
+ </update>
+ 
+ <select id="querychildKey" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO">
+ select * from "SM_dataDictionaryRelation" where "parentKey" = #{parentKey}
+ </select>
+ 
+ <select id="queryMaxKey" parameterType="java.lang.String" resultType="java.lang.Integer">
+ select cast(MAX(substring(key,2,9)) as integer) from "SM_dataDictionary" where parent = #{parent}
+ </select>
+ 
+ <insert id="addEventTypeRelation" parameterType="java.lang.String">
+ insert "SM_dataDictionaryRelation" into("parentKey", "childKey")
+ values(#{parentKey}, #{childKey})
+ </insert>
+ 
+</mapper>

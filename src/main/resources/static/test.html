@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title></title>
+<link rel="stylesheet" href="./css/bootstrap.min.css">
+<link rel="stylesheet" href="./css/fontello.css">
+<link rel="stylesheet" href="./css/common.css" />
+<script src="./js/jquery.js"></script>
+<script src="./js/sea.js"></script>
+<script src="./js/common.js"></script>
+<script src="./addone/baseform/baseform.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="./addone/staffselector/selector.js"></script>
+
+<script>
+	var ctxPath = "";
+    $(function() {
+    	// $(".m-select").click(function(){
+    	// 	$(this).staffSelector({});
+    	// });
+    	//$(".m-select").staffSelector({});
+	    // $("body").loadForm(ctxPath,"index", function() {
+		   //  var app = new Vue({
+		   //      el : '#app', data : {
+			  //       user : {
+				 //        name : "方志文"
+			  //       }
+		   //      }
+		   //  });
+		   //  $(".nav-menu").dropdownMenu();
+	    // });
+    });
+    function selector (obj,num,checkType){
+    	$(obj).staffSelector({"type":num,"checkType":checkType});
+    }
+</script>
+<style type="text/css">
+	.m-select{height: 30px;line-height: 30px;margin-bottom: 10px;}
+	.m-select span{display: inline-block;}
+	.m-select span:last-child{width: 200px;height: 30px;background-color: pink;}
+</style>
+</head>
+<body>
+	<h3>单选</h3>
+	<div class="m-select">
+		<span>人员：</span>
+		<span onclick="selector(this,1,'single')"></span>
+	</div>
+	<div class="m-select">
+		<span>部门：</span>
+		<span onclick="selector(this,2)"></span>
+	</div>
+	<div class="m-select">
+		<span>职位：</span>
+		<span onclick="selector(this,4,'single')"></span>
+	</div>
+	<div class="m-select">
+		<span>人员部门职位：</span>
+		<span onclick="selector(this,7,'single')"></span>
+	</div>
+	<h3>多选</h3>
+	<div class="m-select">
+		<span>人员：</span>
+		<span onclick="selector(this,1,'check')"></span>
+	</div>
+	<div class="m-select">
+		<span>部门：</span>
+		<span onclick="selector(this,2,'check')"></span>
+	</div>
+	<div class="m-select">
+		<span>职位：</span>
+		<span onclick="selector(this,4,'check')"></span>
+	</div>
+	<div class="m-select">
+		<span>人员部门职位：</span>
+		<span onclick="selector(this,7,'check')"></span>
+	</div>
+</body>
+</html>
