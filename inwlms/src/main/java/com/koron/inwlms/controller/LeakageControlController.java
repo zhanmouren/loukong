@@ -328,6 +328,7 @@ public class LeakageControlController {
 					alertSchemeVO.setName(warningScheme.getName());
 					alertSchemeVO.setAlarmIndex(warningScheme.getAlarmIndex());
 					alertSchemeVO.setId(warningScheme.getId());
+					alertSchemeVO.setCode(warningScheme.getCode());
 					alertSchemeVO.setObjectType(warningScheme.getObjectType());
 					alertSchemeListVO.add(alertSchemeVO);					
 	

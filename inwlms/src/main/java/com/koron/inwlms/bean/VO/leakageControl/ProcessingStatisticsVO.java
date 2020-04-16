@@ -1,12 +1,40 @@
 package com.koron.inwlms.bean.VO.leakageControl;
 
+import java.util.List;
+
 public class ProcessingStatisticsVO {
+	
+	/**
+	 * 月份
+	 */
+	private Integer month;
 	
 	private Double loadingNum;
 	
 	private Double finishNum;
 	
 	private Double untreatedNum;
+
+	private List<ProcessingStatisticsVO> proStatList;
+	
+	
+	
+	
+	public List<ProcessingStatisticsVO> getProStatList() {
+		return proStatList;
+	}
+
+	public void setProStatList(List<ProcessingStatisticsVO> proStatList) {
+		this.proStatList = proStatList;
+	}
+
+	public Integer getMonth() {
+		return month;
+	}
+
+	public void setMonth(Integer month) {
+		this.month = month;
+	}
 
 	public Double getLoadingNum() {
 		return loadingNum;

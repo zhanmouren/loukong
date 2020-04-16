@@ -426,6 +426,10 @@ public class Constant {
 	 * 事项子类型值域
 	 */
 	public final static String EVENTSUBTYPE = "10122";
+	/**
+	 * 最小夜间流量指标编码
+	 */
+	public final static String MINNIGHTFLOW = "";
 
 	/**
 	 * 基础指标编码

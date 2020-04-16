@@ -28,8 +28,10 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		//1获取漏损变化 
 		//获取指标编码
-		  //TODO 查询分区级别
-		String code = "";
+		  //TODO 查询分区级别,判断分区级别获取对应指标编码
+		
+		String minNightFlowCode = "";
+		
 		
 		//TODO  1.1处理前后最小夜间流量
 		
@@ -51,6 +53,7 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		  int loadNum = 0;
 		  int finishNum = 0;
 		  int untreatedNum = 0;
+		  List<ProcessingStatisticsVO> proStatList = new ArrayList<>();
 		  while(start <= end) {
 			  String startTime = TimeUtil.getMonthFirstDay(i);
 			  String endTime = TimeUtil.getMonthFirstDay(i+1);
@@ -73,6 +76,8 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 					  //已处理
 					  finishNum = finishNum + 1;
 					  //TODO  统计使用的控制策略次数
+					  //查询控制策略类型
+					  
 					  
 				  }else {
 					  //未处理
