@@ -9,10 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.swan.bean.MessageBean;
 
@@ -215,16 +218,14 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadALList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载表观漏损列表数据", notes = "下载表观漏损列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadALList(HttpServletResponse response, HttpServletRequest request) {
+	public HttpEntity<?> downloadALList(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
-			String objValue = request.getParameter("objValue"); // 获取导出数据查询条件bean
-			String titleInfos = request.getParameter("titleInfos"); // 获取导出列表数据表头
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
 			QueryALListDTO queryALListDTO = jsonValue.fromJson(objValue, QueryALListDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (queryALListDTO == null) {
-				return null;
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			queryALListDTO.setPage(1);
 			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
@@ -347,16 +348,14 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadMeterRunAnalysisList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载水表运行分析列表数据", notes = "下载水表运行分析列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadMeterRunAnalysisList(HttpServletResponse response, HttpServletRequest request) {
+    public HttpEntity<?> downloadMeterRunAnalysisList(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
-			String objValue = request.getParameter("objValue"); // 获取导出数据查询条件bean
-			String titleInfos = request.getParameter("titleInfos"); // 获取导出列表数据表头
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
 			QueryALDTO queryALDTO = jsonValue.fromJson(objValue, QueryALDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (queryALDTO == null) {
-				queryALDTO = new QueryALDTO();
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			// 查询到导出数据结果
 			List<MeterRunAnalysisVO> lists = ADOConnection.runTask(als, "queryMeterRunAnalysisList", List.class,queryALDTO);
@@ -693,7 +692,7 @@ public class ApparentLossController {
 			QueryALDTO queryALDTO = jsonValue.fromJson(objValue, QueryALDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (queryALDTO == null) {
-				return null;
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			// 查询到导出数据结果
 			DrqlVO data = ADOConnection.runTask(als, "queryDrQuestionList", DrqlVO.class,queryALDTO);

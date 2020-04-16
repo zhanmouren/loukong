@@ -1,12 +1,14 @@
 package com.koron.inwlms.bean.DTO.zoneLoss;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * 查询分区指标列表DTO
  * @author csh
  * @Date 2020.03.18
  *
  */
-public class QueryZoneIndicatorListDTO {
+public class QueryZoneIndicatorListDTO extends BaseDTO{
 
 	/**
 	 * 分区类型（1：一级，2：二级，3：DMA/PMA）
@@ -14,7 +16,7 @@ public class QueryZoneIndicatorListDTO {
 	public Integer zoneType;
 	
 	/**
-	 * 时间类型（0：分，1：时，2：日，3：月，4：年）
+	 * 时间类型（3：月，4：年）
 	 */
 	public Integer timeType;
 	

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.swan.bean.MessageBean;
 import org.swan.excel.ExportExcel;
@@ -22,6 +23,8 @@ import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddVCZoneDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.LegitimateNightUseDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.LegitimateNightUseEditDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryDmaZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QuerySZoneLossListDTO;
@@ -34,9 +37,11 @@ import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneIndicatorListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneWBLossDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.ZoneThematicValueDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneHstDataVO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.LegitimateNightUseVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageDmaZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageSZoneLossListVO;
@@ -51,8 +56,10 @@ import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportIndicator;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportDetailVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportIndicator;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
+import com.koron.inwlms.bean.VO.zoneLoss.ZoneIndicatorDicVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
+import com.koron.inwlms.service.zoneLoss.LeakageParamSetService;
 import com.koron.inwlms.service.zoneLoss.VZoneLossAnaService;
 import com.koron.inwlms.service.zoneLoss.WaterBalanceAnaService;
 import com.koron.inwlms.service.zoneLoss.ZoneLossAnaService;
@@ -80,6 +87,9 @@ public class ZoneLossController {
 	
 	@Autowired
     private VZoneLossAnaService vzlas;
+	
+	@Autowired
+    private LeakageParamSetService lpss;
 	
 	@RequestMapping(value = "/queryZoneWBLossData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区水平衡漏损数据", notes = "查询分区水平衡漏损数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -137,7 +147,7 @@ public class ZoneLossController {
     @ApiOperation(value = "查询全网水平衡报表列表", notes = "查询全网水平衡报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryWNWBReportList(@RequestBody QueryWNWBReportListDTO queryWNWBReportListDTO) {
-		MessageBean<PageWNWBReportListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageWNWBReportListVO.class);
+		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		if(queryWNWBReportListDTO.getTimeType() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
@@ -169,7 +179,7 @@ public class ZoneLossController {
 			return msg.toJson();
    	 	}
 		try{
-			PageWNWBReportListVO data = ADOConnection.runTask(wbas, "queryWNWBReportList", PageWNWBReportListVO.class,queryWNWBReportListDTO);
+			PageListVO data = ADOConnection.runTask(wbas, "queryWNWBReportList", PageListVO.class,queryWNWBReportListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -187,7 +197,7 @@ public class ZoneLossController {
 		try{
 			//查询报表
 			WNWBReportDetailVO report = ADOConnection.runTask(wbas,"queryWNWBReportDetail",WNWBReportDetailVO.class,id);
-			if(report == null) return null;
+			if(report == null) return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			//查询模板
 			WNWBTReportDetailVO tReport = ADOConnection.runTask(wbas,"queryWNWBTReportDetail",WNWBTReportDetailVO.class,report.getTemplateId());
 			Map<String,Double> indicatorValue = new HashMap<>();
@@ -254,7 +264,7 @@ public class ZoneLossController {
 			QueryWNWBReportListDTO qwnwbr = jsonValue.fromJson(objValue, QueryWNWBReportListDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (qwnwbr == null) {
-				return null;
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			qwnwbr.setPage(1);
 			qwnwbr.setPageCount(Constant.DOWN_MAX_LIMIT);
@@ -361,9 +371,9 @@ public class ZoneLossController {
     @ApiOperation(value = "查询全网水平衡模板报表列表", notes = "查询全网水平衡模板报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryWNWBTReportList(@RequestBody QueryWNWBTReportListDTO queryWNWBTReportListDTO) {
-		MessageBean<PageWNWBTReportListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageWNWBTReportListVO.class);
+		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		try{
-			PageWNWBTReportListVO data = ADOConnection.runTask(wbas, "queryWNWBTReportList", PageWNWBTReportListVO.class,queryWNWBTReportListDTO);
+			PageListVO data = ADOConnection.runTask(wbas, "queryWNWBTReportList", PageListVO.class,queryWNWBTReportListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -381,14 +391,14 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadWNWBReporTemplate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载全网水平衡模板报表列表", notes = "下载全网水平衡模板报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadWNWBReporTemplate(@RequestBody String objValue,@RequestBody String titleInfos) {
+	public HttpEntity<?> downloadWNWBReporTemplate(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
 			QueryWNWBTReportListDTO qwnwbtr = jsonValue.fromJson(objValue, QueryWNWBTReportListDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (qwnwbtr == null) {
-				return null;
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			qwnwbtr.setPage(1);
 			qwnwbtr.setPageCount(Constant.DOWN_MAX_LIMIT);
@@ -535,14 +545,14 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadFZoneLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载一级分区漏损分析列表", notes = "下载一级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadFZoneLossList(@RequestBody String objValue,@RequestBody String titleInfos) {
+	public HttpEntity<?> downloadFZoneLossList(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
 			QueryFZoneLossListDTO qfzlDTO = jsonValue.fromJson(objValue, QueryFZoneLossListDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (qfzlDTO == null) {
-				return null;
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			qfzlDTO.setPage(1);
 			qfzlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
@@ -620,14 +630,14 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadSZoneLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载二级分区漏损分析列表", notes = "下载二级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadSZoneLossList(@RequestBody String objValue,@RequestBody String titleInfos) {
+	public HttpEntity<?> downloadSZoneLossList(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
 			QuerySZoneLossListDTO qszlDTO = jsonValue.fromJson(objValue, QuerySZoneLossListDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (qszlDTO == null) {
-				return null;
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			qszlDTO.setPage(1);
 			qszlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
@@ -705,14 +715,14 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadDmaZoneLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载DMA漏损分析列表", notes = "下载DMA漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDmaZoneLossList(@RequestBody String objValue,@RequestBody String titleInfos) {
+	public HttpEntity<?> downloadDmaZoneLossList(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
 			QueryDmaZoneLossListDTO qdzlDTO = jsonValue.fromJson(objValue, QueryDmaZoneLossListDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (qdzlDTO == null) {
-				return null;
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			qdzlDTO.setPage(1);
 			qdzlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
@@ -913,14 +923,14 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadVSZoneHstList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载虚拟分区（相减）列表", notes = "下载虚拟分区（相减）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadVSZoneHstList(@RequestBody String objValue,@RequestBody String titleInfos) {
+	public HttpEntity<?> downloadVSZoneHstList(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
 			QueryVSZoneListDTO qvszlDTO = jsonValue.fromJson(objValue, QueryVSZoneListDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (qvszlDTO == null) {
-				return null;
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			qvszlDTO.setPage(1);
 			qvszlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
@@ -998,14 +1008,14 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadVCZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载拟分区（合并）列表", notes = "下载拟分区（合并）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadVCZoneList(@RequestBody String objValue,@RequestBody String titleInfos) {
+	public HttpEntity<?> downloadVCZoneList(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
 			QueryVCZoneListDTO qvczlDTO = jsonValue.fromJson(objValue, QueryVCZoneListDTO.class);
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			if (qvczlDTO == null) {
-				return null;
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			qvczlDTO.setPage(1);
 			qvczlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
@@ -1068,7 +1078,7 @@ public class ZoneLossController {
 	}
 	
 	/**
-	 * 查询全网专题图列表
+	 * 查询全网漏点专题图（调用gis接口）
 	 * @param thematicMapType 专题图类型（0：管径，1：漏损现象，2：处理情况，3：漏点密度）
 	 * @return
 	 */
@@ -1079,17 +1089,188 @@ public class ZoneLossController {
 		return null;
 	}
 	
+	/**
+	 * 查询全网漏点列表信息（调用gis接口）
+	 * @return
+	 */
+	@RequestMapping(value = "/queryWNLeakList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询全网漏点列表信息", notes = "查询全网漏点列表信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryWNLeakList() {
+		return null;
+	}
+	
+	@RequestMapping(value = "/queryZoneIndicatorDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区指标数据字典", notes = "查询分区指标数据字典", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryZoneIndicatorDic(Integer zoneType) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(zoneType == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("分区类型为空");
+			return msg.toJson();
+		}
+		if(zoneType < 1 || zoneType > 3) {
+			//传参数值不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("分区类型数值错误");
+			return msg.toJson();
+		}
+		try{
+			List<ZoneIndicatorDicVO> lists = ADOConnection.runTask(zlas,"queryZoneIndicatorDic",List.class,zoneType);
+			msg.setData(lists);
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription(Constant.MESSAGE_STRING_NULL);	
+		}catch(Exception e){
+			msg.setCode(Constant.MESSAGE_INT_DELERROR);
+			msg.setDescription(Constant.MESSAGE_STRING_DELERROR);
+		}
+		return msg.toJson();
+		
+	}
+	
+	@RequestMapping(value = "/queryZoneThematicValue.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区专题图指标数据", notes = "查询分区专题图指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryZoneThematicValue(@RequestBody ZoneThematicValueDTO zoneThematicValueDTO) {
+		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(zoneThematicValueDTO.getItemCode() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("指标编码为空");
+			return msg.toJson();
+		}
+		if(zoneThematicValueDTO.getTimeType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("时间粒度为空");
+			return msg.toJson();
+		}
+		if(zoneThematicValueDTO.getTimeType() < Constant.TIME_TYPE_M || zoneThematicValueDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+			//传参数值不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("时间粒度数值错误");
+			return msg.toJson();
+		}
+		if(zoneThematicValueDTO.getStartTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("开始时间为空");
+			return msg.toJson();
+		}
+		if(zoneThematicValueDTO.getEndTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("结束时间为空");
+			return msg.toJson();
+		}
+		if(zoneThematicValueDTO.getStartTime() > zoneThematicValueDTO.getEndTime()) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("开始时间大于结束时间");
+			return msg.toJson();
+   	 	}
+		if(zoneThematicValueDTO.getZoneType() != null && (zoneThematicValueDTO.getZoneType() < Constant.RANK_F || zoneThematicValueDTO.getZoneType() > Constant.RANK_T)) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("分区等级数值错误");
+			return msg.toJson();
+		}
+		try{
+			List<Map<Object, Object>> data = ADOConnection.runTask(zlas, "queryZoneThematicValue", List.class,zoneThematicValueDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
+		
+		return msg.toJson();
+	}
+	
 	@RequestMapping(value = "/queryZoneIndicatorList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区指标数据", notes = "查询分区指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZoneIndicatorList(@RequestBody QueryZoneIndicatorListDTO QueryZoneIndicatorListDTO) {
-		return null;
+	public String queryZoneIndicatorList(@RequestBody QueryZoneIndicatorListDTO queryZoneIndicatorListDTO) {
+		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
+		if(queryZoneIndicatorListDTO.getZoneType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("分区类型为空");
+			return msg.toJson();
+		}
+		if(queryZoneIndicatorListDTO.getTimeType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("时间粒度为空");
+			return msg.toJson();
+		}
+		if(queryZoneIndicatorListDTO.getTimeType() < Constant.TIME_TYPE_M || queryZoneIndicatorListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+			//传参数值不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("时间粒度数值错误");
+			return msg.toJson();
+		}
+		if(queryZoneIndicatorListDTO.getStartTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("开始时间为空");
+			return msg.toJson();
+		}
+		if(queryZoneIndicatorListDTO.getEndTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("结束时间为空");
+			return msg.toJson();
+		}
+		if(queryZoneIndicatorListDTO.getStartTime() > queryZoneIndicatorListDTO.getEndTime()) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("开始时间大于结束时间");
+			return msg.toJson();
+   	 	}
+		if(queryZoneIndicatorListDTO.getZoneType() != null && (queryZoneIndicatorListDTO.getZoneType() < Constant.RANK_F || queryZoneIndicatorListDTO.getZoneType() > Constant.RANK_T)) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("分区等级数值错误");
+			return msg.toJson();
+		}
+		try{
+			PageListVO<List<Map<Object,Object>>> data = ADOConnection.runTask(zlas, "queryZoneIndicatorList", PageListVO.class,queryZoneIndicatorListDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
+		
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/downloadZoneIndicatorList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载分区指标数据", notes = "下载分区指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String downloadZoneIndicatorList(@RequestBody QueryZoneIndicatorListDTO QueryZoneIndicatorListDTO) {
+	public HttpEntity<?> downloadZoneIndicatorList(@RequestParam String objValue,@RequestParam String titleInfos) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryVCZoneListDTO qvczlDTO = jsonValue.fromJson(objValue, QueryVCZoneListDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (qvczlDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			qvczlDTO.setPage(1);
+			qvczlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			PageListVO<List<Map<Object,Object>>> data = ADOConnection.runTask(zlas, "queryZoneIndicatorList", PageListVO.class,qvczlDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(data.getDataList(), jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
@@ -1137,4 +1318,132 @@ public class ZoneLossController {
     	}
 		return msg.toJson();
 	}
+	
+	 @ApiOperation(value = "查询漏损量指标值", notes = "查询漏损量指标值", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	 @RequestMapping(value = "/queryLeakageExponent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	 @ResponseBody
+	 public String queryLeakageExponent() {
+	     MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+	     try {
+	         String leakageExponent = ADOConnection.runTask(lpss, "queryLeakageExponent", String.class);
+	         msg.setData(leakageExponent);
+	     } catch (Exception e) {
+	         msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+	         msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+	     }
+	     return msg.toJson();
+	 }
+	 
+	 @ApiOperation(value = "更新漏损量指标值", notes = "更新漏损量指标值", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	 @RequestMapping(value = "/updateLeakageExponent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	 @ResponseBody
+	 public String updateLeakageExponent(String value) {
+	     MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+	     if(StringUtil.isEmpty(value)) {
+	    	 msg.setCode(Constant.MESSAGE_INT_NULL);
+			 msg.setDescription("漏损量指标值为空");
+			 return msg.toJson();
+	     }
+	     try {
+	         ADOConnection.runTask(lpss, "updateLeakageExponent", Void.class,value);
+	     } catch (Exception e) {
+	         msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+	         msg.setDescription(Constant.MESSAGE_STRING_EDITERROR);
+	     }
+	     return msg.toJson();
+	 }
+	 
+	 /**
+	     * 分页查询合理夜晚使用量列表信息信息方法
+	     *
+	     * @param legitimateNightUseListDTO 滤水厂回用水数据列表查询DTO
+	     * @return
+	     */
+	    @ApiOperation(value = "分页查询合理夜晚使用量列表信息信息方法", notes = "条件分页查询合理夜晚使用量列表信息信息方法", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	    @RequestMapping(value = "/queryLegitimateNightUseList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	    @ResponseBody
+	    public String queryLegitimateNightUseList(@RequestBody LegitimateNightUseDTO lnuDTO) {
+	    	MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
+			try{
+				PageListVO data = ADOConnection.runTask(lpss, "queryLegitimateNightUseList", PageListVO.class,lnuDTO);
+				msg.setData(data);
+	    	}catch(Exception e){
+	    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+	    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+	    	}
+			return msg.toJson();
+	    }
+
+	    /**
+	     * 导出合理夜晚使用量信息
+	     *
+	     * @return
+	     */
+	    @ApiOperation(value = "导出合理夜晚使用量信息", notes = "导出合理夜晚使用量信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	    @RequestMapping(value = "/downloadLegitimateNightUseList.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
+	    @ResponseBody
+	    public HttpEntity<?> downloadLegitimateNightUseList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	    	try{
+				Gson jsonValue = new Gson();
+				// 查询条件字符串转对象，查询数据结果
+				LegitimateNightUseDTO lnuDTO = jsonValue.fromJson(objValue, LegitimateNightUseDTO.class);
+				// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+				if (lnuDTO == null) {
+					return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+				}
+				lnuDTO.setPage(1);
+				lnuDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+				// 查询到导出数据结果
+				PageListVO<List<LegitimateNightUseVO>> data = ADOConnection.runTask(lpss, "queryLegitimateNightUseList", PageListVO.class,lnuDTO);
+				List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+						}.getType());
+				// 导出excel文件
+				//导出list
+				return ExportDataUtil.getExcelDataFileInfoByList(data.getDataList(), jsonArray);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+	    }
+
+
+	    /**
+	     * 更新合理夜晚使用量信息
+	     *
+	     * @param legitimateNightUseEditDTO 滤水厂回用水数据更新DTO
+	     * @return
+	     */
+	    @ApiOperation(value = "更新合理夜晚使用量信息", notes = "更新合理夜晚使用量信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	    @RequestMapping(value = "/updateLegitimateNightUse.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	    @ResponseBody
+	    public String updateLegitimateNightUse(@RequestBody LegitimateNightUseEditDTO legitimateNightUseEditDTO) {
+	    	MessageBean msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, Void.class);
+			if(legitimateNightUseEditDTO.getId() == null) {
+				//参数不正确
+				msg.setCode(Constant.MESSAGE_INT_NULL);
+				msg.setDescription("id为空");
+				return msg.toJson();
+			}
+			if(legitimateNightUseEditDTO.getCode() == null) {
+				//参数不正确
+				msg.setCode(Constant.MESSAGE_INT_NULL);
+				msg.setDescription("类别编码为空");
+				return msg.toJson();
+			}
+			if(legitimateNightUseEditDTO.getCode() == null) {
+				//参数不正确
+				msg.setCode(Constant.MESSAGE_INT_NULL);
+				msg.setDescription("夜间合理流量为空");
+				return msg.toJson();
+			}
+			try{
+				ADOConnection.runTask(lpss, "updateLegitimateNightUse", Void.class,legitimateNightUseEditDTO);
+	    	}catch(Exception e){
+	    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+	    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+	    	}
+			return msg.toJson();
+	    }
+	
 }

@@ -1,7 +1,10 @@
 package com.koron.inwlms.service.zoneLoss.impl;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
@@ -12,6 +15,8 @@ import com.koron.inwlms.bean.DTO.zoneLoss.QueryDmaZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QuerySZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneHstDataDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneIndicatorListDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.ZoneThematicValueDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneHstDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneHstIndicData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
@@ -22,6 +27,7 @@ import com.koron.inwlms.bean.VO.zoneLoss.DmaZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.IndicatorInfo;
 import com.koron.inwlms.bean.VO.zoneLoss.SZoneLossListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.ZoneIndicatorDicVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.zoneLoss.ZoneLossAnaMapper;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
@@ -615,4 +621,785 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		zoneHstDataVO.setIndicatorData(lists);
 		return zoneHstDataVO;
 	}
+
+	@TaskAnnotation("queryZoneIndicatorList")
+	@Override
+	public PageListVO queryZoneIndicatorList(SessionFactory factory,
+			QueryZoneIndicatorListDTO queryZoneIndicatorListDTO) {
+		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
+		Integer zoneType = queryZoneIndicatorListDTO.getZoneType();
+		List<String> zoneNos = new ArrayList<>();
+		List<String> codes = new ArrayList<>();
+		//根据分区类型获取所有分区编号
+		GisZoneServiceImpl gisZoneServiceImpl = new GisZoneServiceImpl();
+		List<ZoneInfo> zoneInfos = gisZoneServiceImpl.queryZoneNosByRank(factory, zoneType);
+		if(zoneInfos == null || zoneInfos.size() ==0) return null;
+		for (ZoneInfo zoneInfo : zoneInfos) {
+			zoneNos.add(zoneInfo.getZoneNo());
+		}
+		//获取所有指标
+		List<ZoneIndicatorDicVO> zidVOList = queryZoneIndicatorDic(factory,zoneType);
+		for (ZoneIndicatorDicVO zoneIndicatorDicVO : zidVOList) {
+			if(queryZoneIndicatorListDTO.getTimeType().equals(zoneIndicatorDicVO.getTimeType())) {
+				codes.add(zoneIndicatorDicVO.getItemCode());
+			}
+		}
+		List<IndicatorVO> lists = new ArrayList<>();
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setCodes(codes);
+		indicatorDTO.setZoneCodes(zoneNos);
+		indicatorDTO.setStartTime(queryZoneIndicatorListDTO.getStartTime());
+		indicatorDTO.setEndTime(queryZoneIndicatorListDTO.getEndTime());
+		indicatorDTO.setTimeType(queryZoneIndicatorListDTO.getTimeType());
+		//基础指标
+		List<IndicatorVO> queryBaseIndicData = mapper.queryBaseIndicData(indicatorDTO);
+		//水平衡指标
+		List<IndicatorVO> queryWBBaseIndicData = mapper.queryWBBaseIndicData(indicatorDTO);
+		//分区漏损指标
+		List<IndicatorVO> queryZoneLossIndicData = mapper.queryZoneLossIndicData(indicatorDTO);
+		//爆管/渗漏指标
+		List<IndicatorVO> queryLeakIndicData = mapper.queryLeakIndicData(indicatorDTO);
+		lists.addAll(queryBaseIndicData);
+		lists.addAll(queryWBBaseIndicData);
+		lists.addAll(queryZoneLossIndicData);
+		lists.addAll(queryLeakIndicData);
+		List<Map<Object,Object>> mapLists = new ArrayList<>();
+		List<String> zoneNoList = new ArrayList<>(); //已存储的分区编号
+		DecimalFormat df = new DecimalFormat("#.0000");
+		for (int i = 0; i<zoneNos.size();i++) {
+			if(i < (queryZoneIndicatorListDTO.getPage()-1)*queryZoneIndicatorListDTO.getPageCount()) continue;
+			if(mapLists.size() >= queryZoneIndicatorListDTO.getPageCount()) break;
+			Map<Object,Object> map = new HashMap<Object, Object>();
+			String zoneNo = zoneNos.get(i);
+			map.put("zoneNo", zoneNo);
+			if(zoneNoList.contains(zoneNo)) continue;
+			zoneNoList.add(zoneNo);
+			Double values = 0.0; //统计值
+			int timeNum = 0;  //参与计算的月份数量
+			for (String code : codes) {
+				for (IndicatorVO indicatorVO1 : lists) {
+					if(zoneNo.equals(indicatorVO1.getZoneNo()) && code.equals(indicatorVO1.getCode())) {
+						values += indicatorVO1.getValue();
+						timeNum++;
+					}
+				}
+				
+				if(code.contains("DCPL") || code.contains("UCRFW") || code.contains("WLR") || 
+						code.contains("MNF") || code.contains("LCA") || code.contains("LPL")) {
+					//DMA覆盖率（管长），未计量用水量占比，漏损率，最小夜间流量,扣除大用户的最小夜间流量,单位户数漏损量,单位管长漏损量,计算平均值
+					if(timeNum == 0) {
+						map.put(code, null);
+					} else{
+						map.put(code, Double.parseDouble(df.format(values/timeNum)));
+					}
+					
+				}else {
+					map.put(code, values);
+				}
+			}
+			mapLists.add(map);
+		}
+		PageListVO<List<Map<Object,Object>>> result = new PageListVO<>();
+		result.setDataList(mapLists);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(queryZoneIndicatorListDTO.getPage(), queryZoneIndicatorListDTO.getPageCount(), zoneInfos.size());
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
+		
+	}
+
+	@TaskAnnotation("queryZoneIndicatorDic")
+	@Override
+	public List<ZoneIndicatorDicVO> queryZoneIndicatorDic(SessionFactory factory, Integer zoneType) {
+		List<ZoneIndicatorDicVO> lists = new ArrayList<>();
+		if(Constant.RANK_F.equals(zoneType)) {
+			//一级分区
+			//日指标
+			ZoneIndicatorDicVO dZidVO = new ZoneIndicatorDicVO();
+			dZidVO.setItemCode("FLDUCRFW");
+			dZidVO.setItemName("未计量水量占比");
+			dZidVO.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO1 = new ZoneIndicatorDicVO();
+			dZidVO1.setItemCode("FLDNBFW");
+			dZidVO1.setItemName("爆管数");
+			dZidVO1.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO2 = new ZoneIndicatorDicVO();
+			dZidVO2.setItemCode("FLDNPLFW");
+			dZidVO2.setItemName("渗漏数");
+			dZidVO2.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO3 = new ZoneIndicatorDicVO();
+			dZidVO3.setItemCode("FLDBRFW");
+			dZidVO3.setItemName("爆管率");
+			dZidVO3.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO4 = new ZoneIndicatorDicVO();
+			dZidVO4.setItemCode("FLDWLR");
+			dZidVO4.setItemName("漏损率");
+			dZidVO4.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO5 = new ZoneIndicatorDicVO();
+			dZidVO5.setItemCode("FLDMNF");
+			dZidVO5.setItemName("最小夜间流量");
+			dZidVO5.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO6 = new ZoneIndicatorDicVO();
+			dZidVO6.setItemCode("FLDMNFLF");
+			dZidVO6.setItemName("扣除大用户的最小夜间流量");
+			dZidVO6.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO7 = new ZoneIndicatorDicVO();
+			dZidVO7.setItemCode("FLDLCA");
+			dZidVO7.setItemName("单位户数漏损量");
+			dZidVO7.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO8 = new ZoneIndicatorDicVO();
+			dZidVO8.setItemCode("FLDLPL");
+			dZidVO8.setItemName("单位管长漏损量");
+			dZidVO8.setTimeType(2);
+			
+			//月指标
+			ZoneIndicatorDicVO mZidVO = new ZoneIndicatorDicVO();
+			mZidVO.setItemCode("FLMMC");
+			mZidVO.setItemName("客户计量用水量");
+			mZidVO.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO1 = new ZoneIndicatorDicVO();
+			mZidVO1.setItemCode("FLMUCRFW");
+			mZidVO1.setItemName("未计量水量占比");
+			mZidVO1.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO2 = new ZoneIndicatorDicVO();
+			mZidVO2.setItemCode("FLMNRW");
+			mZidVO2.setItemName("产销差");
+			mZidVO2.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO3 = new ZoneIndicatorDicVO();
+			mZidVO3.setItemCode("FLMNBFW");
+			mZidVO3.setItemName("爆管数");
+			mZidVO3.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO4 = new ZoneIndicatorDicVO();
+			mZidVO4.setItemCode("FLMNPLFW");
+			mZidVO4.setItemName("渗漏数");
+			mZidVO4.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO5 = new ZoneIndicatorDicVO();
+			mZidVO5.setItemCode("FLMBRFW");
+			mZidVO5.setItemName("爆管率");
+			mZidVO5.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO6 = new ZoneIndicatorDicVO();
+			mZidVO6.setItemCode("FLMWL");
+			mZidVO6.setItemName("漏损量");
+			mZidVO6.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO7 = new ZoneIndicatorDicVO();
+			mZidVO7.setItemCode("FLMWLR");
+			mZidVO7.setItemName("漏损率");
+			mZidVO7.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO8 = new ZoneIndicatorDicVO();
+			mZidVO8.setItemCode("FLMMNF");
+			mZidVO8.setItemName("最小夜间流量");
+			mZidVO8.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO9 = new ZoneIndicatorDicVO();
+			mZidVO9.setItemCode("FLMMNFLF");
+			mZidVO9.setItemName("扣除大用户的最小夜间流量");
+			mZidVO9.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO10 = new ZoneIndicatorDicVO();
+			mZidVO10.setItemCode("FLMLCA");
+			mZidVO10.setItemName("单位户数漏损量");
+			mZidVO10.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO11 = new ZoneIndicatorDicVO();
+			mZidVO11.setItemCode("FLMLPL");
+			mZidVO11.setItemName("单位管长漏损量");
+			mZidVO11.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO12 = new ZoneIndicatorDicVO();
+			mZidVO12.setItemCode("FLMDCPL");
+			mZidVO12.setItemName("DMA/PMA面积覆盖率");
+			mZidVO12.setTimeType(3);
+			
+			//月指标
+			ZoneIndicatorDicVO yZidVO = new ZoneIndicatorDicVO();
+			yZidVO.setItemCode("FLYMC");
+			yZidVO.setItemName("客户计量用水量");
+			yZidVO.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO1 = new ZoneIndicatorDicVO();
+			yZidVO1.setItemCode("FLYUCRFW");
+			yZidVO1.setItemName("未计量水量占比");
+			yZidVO1.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO2 = new ZoneIndicatorDicVO();
+			yZidVO2.setItemCode("FLYNRW");
+			yZidVO2.setItemName("产销差");
+			yZidVO2.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO3 = new ZoneIndicatorDicVO();
+			yZidVO3.setItemCode("FLYNBFW");
+			yZidVO3.setItemName("爆管数");
+			yZidVO3.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO4 = new ZoneIndicatorDicVO();
+			yZidVO4.setItemCode("FLYNPLFW");
+			yZidVO4.setItemName("渗漏数");
+			yZidVO4.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO5 = new ZoneIndicatorDicVO();
+			yZidVO5.setItemCode("FLYBRFW");
+			yZidVO5.setItemName("爆管率");
+			yZidVO5.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO6 = new ZoneIndicatorDicVO();
+			yZidVO6.setItemCode("FLYWL");
+			yZidVO6.setItemName("漏损量");
+			yZidVO6.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO7 = new ZoneIndicatorDicVO();
+			yZidVO7.setItemCode("FLYWLR");
+			yZidVO7.setItemName("漏损率");
+			yZidVO7.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO8 = new ZoneIndicatorDicVO();
+			yZidVO8.setItemCode("FLYMNF");
+			yZidVO8.setItemName("最小夜间流量");
+			yZidVO8.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO9 = new ZoneIndicatorDicVO();
+			yZidVO9.setItemCode("FLYMNFLF");
+			yZidVO9.setItemName("扣除大用户的最小夜间流量");
+			yZidVO9.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO10 = new ZoneIndicatorDicVO();
+			yZidVO10.setItemCode("FLYLCA");
+			yZidVO10.setItemName("单位户数漏损量");
+			yZidVO10.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO11 = new ZoneIndicatorDicVO();
+			yZidVO11.setItemCode("FLYLPL");
+			yZidVO11.setItemName("单位管长漏损量");
+			yZidVO11.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO12 = new ZoneIndicatorDicVO();
+			yZidVO12.setItemCode("FLYDCPL");
+			yZidVO12.setItemName("DMA/PMA面积覆盖率");
+			yZidVO12.setTimeType(4);
+			lists.add(dZidVO);
+			lists.add(dZidVO1);
+			lists.add(dZidVO2);
+			lists.add(dZidVO3);
+			lists.add(dZidVO4);
+			lists.add(dZidVO5);
+			lists.add(dZidVO6);
+			lists.add(dZidVO7);
+			lists.add(dZidVO8);
+			lists.add(mZidVO);
+			lists.add(mZidVO1);
+			lists.add(mZidVO2);
+			lists.add(mZidVO3);
+			lists.add(mZidVO4);
+			lists.add(mZidVO5);
+			lists.add(mZidVO6);
+			lists.add(mZidVO7);
+			lists.add(mZidVO8);
+			lists.add(mZidVO9);
+			lists.add(mZidVO10);
+			lists.add(mZidVO11);
+			lists.add(mZidVO12);
+			lists.add(yZidVO);
+			lists.add(yZidVO1);
+			lists.add(yZidVO2);
+			lists.add(yZidVO3);
+			lists.add(yZidVO4);
+			lists.add(yZidVO5);
+			lists.add(yZidVO6);
+			lists.add(yZidVO7);
+			lists.add(yZidVO8);
+			lists.add(yZidVO9);
+			lists.add(yZidVO10);
+			lists.add(yZidVO11);
+			lists.add(yZidVO12);
+		}else if(Constant.RANK_S.equals(zoneType)) {
+			//二级分区
+			//日指标
+			ZoneIndicatorDicVO dZidVO = new ZoneIndicatorDicVO();
+			dZidVO.setItemCode("SLDUCRFW");
+			dZidVO.setItemName("未计量水量占比");
+			dZidVO.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO1 = new ZoneIndicatorDicVO();
+			dZidVO1.setItemCode("SLDNBFW");
+			dZidVO1.setItemName("爆管数");
+			dZidVO1.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO2 = new ZoneIndicatorDicVO();
+			dZidVO2.setItemCode("SLDNPLFW");
+			dZidVO2.setItemName("渗漏数");
+			dZidVO2.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO3 = new ZoneIndicatorDicVO();
+			dZidVO3.setItemCode("SLDBRFW");
+			dZidVO3.setItemName("爆管率");
+			dZidVO3.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO4 = new ZoneIndicatorDicVO();
+			dZidVO4.setItemCode("SLDWLR");
+			dZidVO4.setItemName("漏损率");
+			dZidVO4.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO5 = new ZoneIndicatorDicVO();
+			dZidVO5.setItemCode("SLDMNF");
+			dZidVO5.setItemName("最小夜间流量");
+			dZidVO5.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO6 = new ZoneIndicatorDicVO();
+			dZidVO6.setItemCode("SLDMNFLF");
+			dZidVO6.setItemName("扣除大用户的最小夜间流量");
+			dZidVO6.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO7 = new ZoneIndicatorDicVO();
+			dZidVO7.setItemCode("SLDLCA");
+			dZidVO7.setItemName("单位户数漏损量");
+			dZidVO7.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO8 = new ZoneIndicatorDicVO();
+			dZidVO8.setItemCode("SLDLPL");
+			dZidVO8.setItemName("单位管长漏损量");
+			dZidVO8.setTimeType(2);
+			
+			//月指标
+			ZoneIndicatorDicVO mZidVO = new ZoneIndicatorDicVO();
+			mZidVO.setItemCode("SLMMC");
+			mZidVO.setItemName("客户计量用水量");
+			mZidVO.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO1 = new ZoneIndicatorDicVO();
+			mZidVO1.setItemCode("SLMUCRFW");
+			mZidVO1.setItemName("未计量水量占比");
+			mZidVO1.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO2 = new ZoneIndicatorDicVO();
+			mZidVO2.setItemCode("SLMNRW");
+			mZidVO2.setItemName("产销差");
+			mZidVO2.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO3 = new ZoneIndicatorDicVO();
+			mZidVO3.setItemCode("SLMNBFW");
+			mZidVO3.setItemName("爆管数");
+			mZidVO3.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO4 = new ZoneIndicatorDicVO();
+			mZidVO4.setItemCode("SLMNPLFW");
+			mZidVO4.setItemName("渗漏数");
+			mZidVO4.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO5 = new ZoneIndicatorDicVO();
+			mZidVO5.setItemCode("SLMBRFW");
+			mZidVO5.setItemName("爆管率");
+			mZidVO5.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO6 = new ZoneIndicatorDicVO();
+			mZidVO6.setItemCode("SLMWL");
+			mZidVO6.setItemName("漏损量");
+			mZidVO6.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO7 = new ZoneIndicatorDicVO();
+			mZidVO7.setItemCode("SLMWLR");
+			mZidVO7.setItemName("漏损率");
+			mZidVO7.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO8 = new ZoneIndicatorDicVO();
+			mZidVO8.setItemCode("SLMMNF");
+			mZidVO8.setItemName("最小夜间流量");
+			mZidVO8.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO9 = new ZoneIndicatorDicVO();
+			mZidVO9.setItemCode("SLMMNFLF");
+			mZidVO9.setItemName("扣除大用户的最小夜间流量");
+			mZidVO9.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO10 = new ZoneIndicatorDicVO();
+			mZidVO10.setItemCode("SLMLCA");
+			mZidVO10.setItemName("单位户数漏损量");
+			mZidVO10.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO11 = new ZoneIndicatorDicVO();
+			mZidVO11.setItemCode("SLMLPL");
+			mZidVO11.setItemName("单位管长漏损量");
+			mZidVO11.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO12 = new ZoneIndicatorDicVO();
+			mZidVO12.setItemCode("SLMDCPL");
+			mZidVO12.setItemName("DMA/PMA面积覆盖率");
+			mZidVO12.setTimeType(3);
+			
+			//月指标
+			ZoneIndicatorDicVO yZidVO = new ZoneIndicatorDicVO();
+			yZidVO.setItemCode("SLYMC");
+			yZidVO.setItemName("客户计量用水量");
+			yZidVO.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO1 = new ZoneIndicatorDicVO();
+			yZidVO1.setItemCode("SLYUCRFW");
+			yZidVO1.setItemName("未计量水量占比");
+			yZidVO1.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO2 = new ZoneIndicatorDicVO();
+			yZidVO2.setItemCode("SLYNRW");
+			yZidVO2.setItemName("产销差");
+			yZidVO2.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO3 = new ZoneIndicatorDicVO();
+			yZidVO3.setItemCode("SLYNBFW");
+			yZidVO3.setItemName("爆管数");
+			yZidVO3.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO4 = new ZoneIndicatorDicVO();
+			yZidVO4.setItemCode("SLYNPLFW");
+			yZidVO4.setItemName("渗漏数");
+			yZidVO4.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO5 = new ZoneIndicatorDicVO();
+			yZidVO5.setItemCode("SLYBRFW");
+			yZidVO5.setItemName("爆管率");
+			yZidVO5.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO6 = new ZoneIndicatorDicVO();
+			yZidVO6.setItemCode("SLYWL");
+			yZidVO6.setItemName("漏损量");
+			yZidVO6.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO7 = new ZoneIndicatorDicVO();
+			yZidVO7.setItemCode("SLYWLR");
+			yZidVO7.setItemName("漏损率");
+			yZidVO7.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO8 = new ZoneIndicatorDicVO();
+			yZidVO8.setItemCode("SLYMNF");
+			yZidVO8.setItemName("最小夜间流量");
+			yZidVO8.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO9 = new ZoneIndicatorDicVO();
+			yZidVO9.setItemCode("SLYMNFLF");
+			yZidVO9.setItemName("扣除大用户的最小夜间流量");
+			yZidVO9.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO10 = new ZoneIndicatorDicVO();
+			yZidVO10.setItemCode("SLYLCA");
+			yZidVO10.setItemName("单位户数漏损量");
+			yZidVO10.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO11 = new ZoneIndicatorDicVO();
+			yZidVO11.setItemCode("SLYLPL");
+			yZidVO11.setItemName("单位管长漏损量");
+			yZidVO11.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO12 = new ZoneIndicatorDicVO();
+			yZidVO12.setItemCode("SLYDCPL");
+			yZidVO12.setItemName("DMA/PMA面积覆盖率");
+			yZidVO12.setTimeType(4);
+			lists.add(dZidVO);
+			lists.add(dZidVO1);
+			lists.add(dZidVO2);
+			lists.add(dZidVO3);
+			lists.add(dZidVO4);
+			lists.add(dZidVO5);
+			lists.add(dZidVO6);
+			lists.add(dZidVO7);
+			lists.add(dZidVO8);
+			lists.add(mZidVO);
+			lists.add(mZidVO1);
+			lists.add(mZidVO2);
+			lists.add(mZidVO3);
+			lists.add(mZidVO4);
+			lists.add(mZidVO5);
+			lists.add(mZidVO6);
+			lists.add(mZidVO7);
+			lists.add(mZidVO8);
+			lists.add(mZidVO9);
+			lists.add(mZidVO10);
+			lists.add(mZidVO11);
+			lists.add(mZidVO12);
+			lists.add(yZidVO);
+			lists.add(yZidVO1);
+			lists.add(yZidVO2);
+			lists.add(yZidVO3);
+			lists.add(yZidVO4);
+			lists.add(yZidVO5);
+			lists.add(yZidVO6);
+			lists.add(yZidVO7);
+			lists.add(yZidVO8);
+			lists.add(yZidVO9);
+			lists.add(yZidVO10);
+			lists.add(yZidVO11);
+			lists.add(yZidVO12);
+		}else if(Constant.RANK_T.equals(zoneType)) {
+			//DMA分区
+			//日指标
+			ZoneIndicatorDicVO dZidVO = new ZoneIndicatorDicVO();
+			dZidVO.setItemCode("DMDUCRFW");
+			dZidVO.setItemName("未计量水量占比");
+			dZidVO.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO1 = new ZoneIndicatorDicVO();
+			dZidVO1.setItemCode("DMDNBFW");
+			dZidVO1.setItemName("爆管数");
+			dZidVO1.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO2 = new ZoneIndicatorDicVO();
+			dZidVO2.setItemCode("DMDNPLFW");
+			dZidVO2.setItemName("渗漏数");
+			dZidVO2.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO3 = new ZoneIndicatorDicVO();
+			dZidVO3.setItemCode("DMDBRFW");
+			dZidVO3.setItemName("爆管率");
+			dZidVO3.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO4 = new ZoneIndicatorDicVO();
+			dZidVO4.setItemCode("DMDWLR");
+			dZidVO4.setItemName("漏损率");
+			dZidVO4.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO5 = new ZoneIndicatorDicVO();
+			dZidVO5.setItemCode("DMDMNF");
+			dZidVO5.setItemName("最小夜间流量");
+			dZidVO5.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO6 = new ZoneIndicatorDicVO();
+			dZidVO6.setItemCode("DMDMNFLF");
+			dZidVO6.setItemName("扣除大用户的最小夜间流量");
+			dZidVO6.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO7 = new ZoneIndicatorDicVO();
+			dZidVO7.setItemCode("DMDLCA");
+			dZidVO7.setItemName("单位户数漏损量");
+			dZidVO7.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO8 = new ZoneIndicatorDicVO();
+			dZidVO8.setItemCode("DMDLPL");
+			dZidVO8.setItemName("单位管长漏损量");
+			dZidVO8.setTimeType(2);
+			
+			//月指标
+			ZoneIndicatorDicVO mZidVO = new ZoneIndicatorDicVO();
+			mZidVO.setItemCode("DMMMC");
+			mZidVO.setItemName("客户计量用水量");
+			mZidVO.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO1 = new ZoneIndicatorDicVO();
+			mZidVO1.setItemCode("DMMUCRFW");
+			mZidVO1.setItemName("未计量水量占比");
+			mZidVO1.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO2 = new ZoneIndicatorDicVO();
+			mZidVO2.setItemCode("DMMNRW");
+			mZidVO2.setItemName("产销差");
+			mZidVO2.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO3 = new ZoneIndicatorDicVO();
+			mZidVO3.setItemCode("DMMNBFW");
+			mZidVO3.setItemName("爆管数");
+			mZidVO3.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO4 = new ZoneIndicatorDicVO();
+			mZidVO4.setItemCode("DMMNPLFW");
+			mZidVO4.setItemName("渗漏数");
+			mZidVO4.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO5 = new ZoneIndicatorDicVO();
+			mZidVO5.setItemCode("DMMBRFW");
+			mZidVO5.setItemName("爆管率");
+			mZidVO5.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO6 = new ZoneIndicatorDicVO();
+			mZidVO6.setItemCode("DMMWL");
+			mZidVO6.setItemName("漏损量");
+			mZidVO6.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO7 = new ZoneIndicatorDicVO();
+			mZidVO7.setItemCode("DMMWLR");
+			mZidVO7.setItemName("漏损率");
+			mZidVO7.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO8 = new ZoneIndicatorDicVO();
+			mZidVO8.setItemCode("DMMMNF");
+			mZidVO8.setItemName("最小夜间流量");
+			mZidVO8.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO9 = new ZoneIndicatorDicVO();
+			mZidVO9.setItemCode("DMMMNFLF");
+			mZidVO9.setItemName("扣除大用户的最小夜间流量");
+			mZidVO9.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO10 = new ZoneIndicatorDicVO();
+			mZidVO10.setItemCode("DMMLCA");
+			mZidVO10.setItemName("单位户数漏损量");
+			mZidVO10.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO11 = new ZoneIndicatorDicVO();
+			mZidVO11.setItemCode("DMMLPL");
+			mZidVO11.setItemName("单位管长漏损量");
+			mZidVO11.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO12 = new ZoneIndicatorDicVO();
+			mZidVO12.setItemCode("DMMDCPL");
+			mZidVO12.setItemName("DMA/PMA面积覆盖率");
+			mZidVO12.setTimeType(3);
+			
+			//月指标
+			ZoneIndicatorDicVO yZidVO = new ZoneIndicatorDicVO();
+			yZidVO.setItemCode("DMYMC");
+			yZidVO.setItemName("客户计量用水量");
+			yZidVO.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO1 = new ZoneIndicatorDicVO();
+			yZidVO1.setItemCode("DMYUCRFW");
+			yZidVO1.setItemName("未计量水量占比");
+			yZidVO1.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO2 = new ZoneIndicatorDicVO();
+			yZidVO2.setItemCode("DMYNRW");
+			yZidVO2.setItemName("产销差");
+			yZidVO2.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO3 = new ZoneIndicatorDicVO();
+			yZidVO3.setItemCode("DMYNBFW");
+			yZidVO3.setItemName("爆管数");
+			yZidVO3.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO4 = new ZoneIndicatorDicVO();
+			yZidVO4.setItemCode("DMYNPLFW");
+			yZidVO4.setItemName("渗漏数");
+			yZidVO4.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO5 = new ZoneIndicatorDicVO();
+			yZidVO5.setItemCode("DMYBRFW");
+			yZidVO5.setItemName("爆管率");
+			yZidVO5.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO6 = new ZoneIndicatorDicVO();
+			yZidVO6.setItemCode("DMYWL");
+			yZidVO6.setItemName("漏损量");
+			yZidVO6.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO7 = new ZoneIndicatorDicVO();
+			yZidVO7.setItemCode("DMYWLR");
+			yZidVO7.setItemName("漏损率");
+			yZidVO7.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO8 = new ZoneIndicatorDicVO();
+			yZidVO8.setItemCode("DMYMNF");
+			yZidVO8.setItemName("最小夜间流量");
+			yZidVO8.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO9 = new ZoneIndicatorDicVO();
+			yZidVO9.setItemCode("DMYMNFLF");
+			yZidVO9.setItemName("扣除大用户的最小夜间流量");
+			yZidVO9.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO10 = new ZoneIndicatorDicVO();
+			yZidVO10.setItemCode("DMYLCA");
+			yZidVO10.setItemName("单位户数漏损量");
+			yZidVO10.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO11 = new ZoneIndicatorDicVO();
+			yZidVO11.setItemCode("DMYLPL");
+			yZidVO11.setItemName("单位管长漏损量");
+			yZidVO11.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO12 = new ZoneIndicatorDicVO();
+			yZidVO12.setItemCode("DMYDCPL");
+			yZidVO12.setItemName("DMA/PMA面积覆盖率");
+			yZidVO12.setTimeType(4);
+			lists.add(dZidVO);
+			lists.add(dZidVO1);
+			lists.add(dZidVO2);
+			lists.add(dZidVO3);
+			lists.add(dZidVO4);
+			lists.add(dZidVO5);
+			lists.add(dZidVO6);
+			lists.add(dZidVO7);
+			lists.add(dZidVO8);
+			lists.add(mZidVO);
+			lists.add(mZidVO1);
+			lists.add(mZidVO2);
+			lists.add(mZidVO3);
+			lists.add(mZidVO4);
+			lists.add(mZidVO5);
+			lists.add(mZidVO6);
+			lists.add(mZidVO7);
+			lists.add(mZidVO8);
+			lists.add(mZidVO9);
+			lists.add(mZidVO10);
+			lists.add(mZidVO11);
+			lists.add(mZidVO12);
+			lists.add(yZidVO);
+			lists.add(yZidVO1);
+			lists.add(yZidVO2);
+			lists.add(yZidVO3);
+			lists.add(yZidVO4);
+			lists.add(yZidVO5);
+			lists.add(yZidVO6);
+			lists.add(yZidVO7);
+			lists.add(yZidVO8);
+			lists.add(yZidVO9);
+			lists.add(yZidVO10);
+			lists.add(yZidVO11);
+			lists.add(yZidVO12);
+		}
+		return lists;
+	}
+
+
+	@TaskAnnotation("queryZoneThematicValue")
+	@Override
+	public List<Map<Object, Object>> queryZoneThematicValue(SessionFactory factory,
+			ZoneThematicValueDTO zoneThematicValueDTO) {
+		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
+		List<String> codes = new ArrayList<>();
+		List<String> zoneNos = new ArrayList<>();
+		List<Map<Object,Object>> lists = new ArrayList<>();
+		DecimalFormat df = new DecimalFormat("#.0000");
+		//根据分区类型获取所有分区编号
+		GisZoneServiceImpl gisZoneServiceImpl = new GisZoneServiceImpl();
+		List<ZoneInfo> zoneInfos = gisZoneServiceImpl.queryZoneNosByRank(factory, zoneThematicValueDTO.getZoneType());
+		for (ZoneInfo zoneInfo : zoneInfos) {
+			zoneNos.add(zoneInfo.getZoneNo());
+		}
+		String itemCode = zoneThematicValueDTO.getItemCode();
+		
+		codes.add(itemCode);
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setTimeType(zoneThematicValueDTO.getTimeType());
+		indicatorDTO.setStartTime(zoneThematicValueDTO.getStartTime());
+		indicatorDTO.setEndTime(zoneThematicValueDTO.getEndTime());
+		indicatorDTO.setCodes(codes);
+		indicatorDTO.setZoneCodes(zoneNos);
+		List<String> zoneNoList = new ArrayList<>(); //已存储的分区编号
+		if(Constant.BASE_INDIC.contains(itemCode)) {
+			//基础指标
+			List<IndicatorVO> queryBaseIndicData = mapper.queryBaseIndicData(indicatorDTO);
+			for (int i = 0; i<zoneNos.size();i++) {
+				String zoneNo = zoneNos.get(i);
+				if(zoneNoList.contains(zoneNo)) continue;
+				zoneNoList.add(zoneNo);
+				Double values = 0.0; //统计值
+				int timeNum = 0;  //参与计算的月份数量
+				for (IndicatorVO indicatorVO1 : queryBaseIndicData) {
+					if(indicatorVO1.getZoneNo().equals(zoneNo)) {
+						values += indicatorVO1.getValue();
+						timeNum++;
+					}
+				}
+				Map<Object,Object> map = new HashMap<Object, Object>();
+				map.put("zoneNo", zoneNo);
+				if(itemCode.contains("MRR") || itemCode.contains("DCPL") || itemCode.contains("DCCA")) {
+					//管道更新率指标，DMA覆盖率（管长），DMA覆盖率（户数），计算平均值
+					if(timeNum == 0) {
+						map.put(itemCode, null);
+					} else{
+						map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
+					}
+					
+				}else {
+					map.put(itemCode, values);
+				}
+				lists.add(map);
+			}
+		}else if(Constant.MONI_INDIC.contains(itemCode)) {
+			//监测点指标
+		}else if(Constant.ZONE_MONI_INDIC.contains(itemCode)) {
+			//分区监测指标
+		}else if(Constant.BALANCE_INDIC.contains(itemCode)) {
+			//水平衡指标
+			List<IndicatorVO> queryWBBaseIndicData = mapper.queryWBBaseIndicData(indicatorDTO);
+			for (int i = 0; i<zoneNos.size();i++) {
+				String zoneNo = zoneNos.get(i);
+				if(zoneNoList.contains(zoneNo)) continue;
+				zoneNoList.add(zoneNo);
+				Double values = 0.0; //统计值
+				for (IndicatorVO indicatorVO1 : queryWBBaseIndicData) {
+					if(indicatorVO1.getZoneNo().equals(zoneNo)) {
+						values += indicatorVO1.getValue();
+					}
+				}
+				Map<Object,Object> map = new HashMap<Object, Object>();
+				map.put("zoneNo", zoneNo);
+				map.put(itemCode, values);
+				lists.add(map);
+			}
+		}else if(Constant.ZONE_LOSS_INDIC.contains(itemCode)) {
+			//分区漏损指标
+			List<IndicatorVO> queryZoneLossIndicData = mapper.queryZoneLossIndicData(indicatorDTO);
+			for (int i = 0; i<zoneNos.size();i++) {
+				String zoneNo = zoneNos.get(i);
+				if(zoneNoList.contains(zoneNo)) continue;
+				zoneNoList.add(zoneNo);
+				Double values = 0.0; //统计值
+				int timeNum = 0;  //参与计算的月份数量
+				for (IndicatorVO indicatorVO1 : queryZoneLossIndicData) {
+					if(indicatorVO1.getZoneNo().equals(zoneNo)) {
+						values += indicatorVO1.getValue();
+						timeNum++;
+					}
+				}
+				Map<Object,Object> map = new HashMap<Object, Object>();
+				map.put("zoneNo", zoneNo);
+				if(timeNum == 0) {
+					map.put(itemCode, null);
+				} else{
+					map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
+				}
+				lists.add(map);
+			}
+		}else if(Constant.APPARENT_INDIC.contains(itemCode)) {
+			//表观漏损指标
+		}else if(Constant.LEAK_INDIC.contains(itemCode)) {
+			//爆管/渗漏指标
+			List<IndicatorVO> queryLeakIndicData = mapper.queryLeakIndicData(indicatorDTO);
+			for (int i = 0; i<zoneNos.size();i++) {
+				String zoneNo = zoneNos.get(i);
+				if(zoneNoList.contains(zoneNo)) continue;
+				zoneNoList.add(zoneNo);
+				Double values = 0.0; //统计值
+				int timeNum = 0;
+				for (IndicatorVO indicatorVO1 : queryLeakIndicData) {
+					if(indicatorVO1.getZoneNo().equals(zoneNo)) {
+						values += indicatorVO1.getValue();
+						timeNum++;
+					}
+				}
+				Map<Object,Object> map = new HashMap<Object, Object>();
+				map.put("zoneNo", zoneNo);
+				if(itemCode.contains("MRR") || itemCode.contains("DCPL") || itemCode.contains("DCCA")) {
+					//管道更新率指标，DMA覆盖率（管长），DMA覆盖率（户数），计算平均值
+					if(timeNum == 0) {
+						map.put(itemCode, null);
+					} else{
+						map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
+					}
+				}else {
+					map.put(itemCode, values);
+				}
+				lists.add(map);
+			}
+		}
+		return lists;
+	}
+	
 }
