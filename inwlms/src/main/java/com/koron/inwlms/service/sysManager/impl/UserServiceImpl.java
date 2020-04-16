@@ -20,6 +20,9 @@ import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
@@ -29,6 +32,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
+import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -1011,8 +1015,7 @@ public class UserServiceImpl implements UserService{
 				//管理员批量重置职员密码2020/04/15
 				@TaskAnnotation("updateUserPassword") 
 				@Override
-				public Integer updateUserPassword(SessionFactory factory, UserDTO userDTO) {
-					// TODO Auto-generated method stub
+				public Integer updateUserPassword(SessionFactory factory, UserDTO userDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);					
 					List<UserDTO> userList=new ArrayList<UserDTO>();
 					for(int i=0;i<userDTO.getUserCodeList().size();i++) {
@@ -1023,6 +1026,61 @@ public class UserServiceImpl implements UserService{
 					}
 					Integer updateRes=userMapper.updateUserPassword(userList);
 					return updateRes;
+				}
+
+				//添加集成配置主表信息 2020/04/16
+				@TaskAnnotation("addIntegration") 
+				@Override
+				public Integer addIntegration(SessionFactory factory, IntegrationConfDTO integrationConfDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					integrationConfDTO.setCreateBy("小詹");
+					integrationConfDTO.setUpdateBy("小詹");
+					//随机获取uuid,赋值给Code
+					String code=new RandomCodeUtil().getUUID32();
+					integrationConfDTO.setInteConfCode(code);
+					Integer addRes=userMapper.addIntegration(integrationConfDTO);
+					return addRes;
+				}
+
+				//添加表格映射主表信息 2020/04/16
+				@TaskAnnotation("addTableMapper") 
+				@Override
+				public Integer addTableMapper(SessionFactory factory, TableMapperDTO tableMapperDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					tableMapperDTO.setCreateBy("小詹");
+					tableMapperDTO.setUpdateBy("小詹");
+					String code=new RandomCodeUtil().getUUID32();
+					tableMapperDTO.setTableMapperCode(code);
+					Integer addRes=userMapper.addTableMapper(tableMapperDTO);
+					return addRes;
+				}
+
+				//添加表格映射主表信息 2020/04/16
+				@TaskAnnotation("addFieldMapper") 
+				@Override
+				public Integer addFieldMapper(SessionFactory factory, FieldMapperDTO fieldMapperDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					fieldMapperDTO.setCreateBy("小詹");
+					fieldMapperDTO.setUpdateBy("小詹");
+					String code=new RandomCodeUtil().getUUID32();
+					fieldMapperDTO.setFieldMapperCode(code);
+					Integer addRes=userMapper.addFieldMapper(fieldMapperDTO);
+					return addRes;
+				}
+
+				//添加枚举值映射明细2020/04/16
+				@TaskAnnotation("addEnumMapper") 
+				@Override
+				public Integer addEnumMapper(SessionFactory factory, EnumMapperDTO enumMapperDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					enumMapperDTO.setCreateBy("小詹");
+					enumMapperDTO.setUpdateBy("小詹");				
+					Integer addRes=userMapper.addEnumMapper(enumMapperDTO);
+					return addRes;
 				}
 
 					

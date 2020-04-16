@@ -9,6 +9,9 @@ import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
@@ -17,6 +20,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
+import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
@@ -67,6 +71,7 @@ public interface UserService {
 	
 	
 	/**下面是系统配置***/
+	 
 	
 	  //添加数据字典
 		Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
@@ -147,6 +152,20 @@ public interface UserService {
 		 
 		 //通过模块菜单Code和角色code查询该模块菜单操作权限
 		 List<RoleMenusVO>  queryOPByCode(SessionFactory factory,RoleMenuDTO roleMenuDTO);
+		 
+		 //添加集成配置主表信息
+		  Integer addIntegration(SessionFactory factory,IntegrationConfDTO integrationConfDTO);
+		  
+		 //添加表格映射主表信息
+		  Integer addTableMapper(SessionFactory factory,TableMapperDTO tableMapperDTO);
+		  
+		  //添加表格字段映射
+		  Integer addFieldMapper(SessionFactory factory,FieldMapperDTO fieldMapperDTO);
+		  
+		  //添加枚举值映射明细
+		  Integer addEnumMapper(SessionFactory factory,EnumMapperDTO enumMapperDTO); 
+		  
+		 
 		 
 		 
 }

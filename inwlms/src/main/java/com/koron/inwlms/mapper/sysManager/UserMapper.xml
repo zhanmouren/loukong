@@ -621,5 +621,32 @@
                where code = #{item.code}
         </foreach>
        </update>
+       
+       
+      <!-- 插入集成配置主表 -->
+     <insert id="addIntegration" parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO">  
+        insert into "SM_integrationConf"(code,status,"sysName","otherJDBC","createBy","createTime","updateBy","updateTime")values
+         (#{inteConfCode},#{status},#{sysName},#{otherJDBC},#{createBy},Now(),#{updateBy},Now())
+     </insert>
+     
+      <!-- 添加表格映射主表信息 -->
+     <insert id="addTableMapper" parameterType="com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO">  
+        insert into "SM_tableMapper"(code,"confCode","otherTabName","otherTabCode","tableName","tableCode","createBy","createTime","updateBy","updateTime")values
+         (#{tableMapperCode},#{configCode},#{otherTabName},#{otherTabCode},#{tableName},#{tableCode},#{createBy},Now(),#{updateBy},Now())
+     </insert>
+     
+       <!-- 添加表格字段映射信息 -->
+     <insert id="addFieldMapper" parameterType="com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO">  
+        insert into "SM_fieldMapper"(code,"tableCode","tableNames","otherFieldCode","otherFieldName","fieldCode","fieldName","fieldType","formula","value","createBy","createTime","updateBy","updateTime")values
+         (#{fieldMapperCode},#{tableCode},#{tableNames},#{otherFieldCode},#{otherFieldName},#{fieldCode},#{fieldName},#{fieldType},#{formula},#{value},#{createBy},Now(),#{updateBy},Now())
+     </insert>
+     
+      <!-- 添加枚举值映射明细-->
+     <insert id="addEnumMapper" parameterType="com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO">  
+        insert into "SM_enumMapper"("confCode","otherFieldValue","fieldValue","mapper","createBy","createTime","updateBy","updateTime")values
+         (#{confCode},#{otherFieldValue},#{fieldValue},#{mapper},#{createBy},Now(),#{updateBy},Now())
+     </insert>
+     
+     
       
 </mapper>

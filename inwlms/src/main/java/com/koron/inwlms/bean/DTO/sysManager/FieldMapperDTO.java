@@ -1,5 +1,7 @@
 package com.koron.inwlms.bean.DTO.sysManager;
 
+import java.sql.Timestamp;
+
 /**
  * 表格字段映射明细bean
  *
@@ -8,8 +10,10 @@ package com.koron.inwlms.bean.DTO.sysManager;
 */
 
 public class FieldMapperDTO {
-	//表格映射明细id
-	private Integer tableId;
+	//字段映射code
+	private String fieldMapperCode;
+	//表格映射明细编码
+	private String tableCode;
 	//对方字段code
 	private String otherFieldCode;
 	//对方字段名称
@@ -18,12 +22,82 @@ public class FieldMapperDTO {
 	private String fieldName;
 	//我方字段Code
 	private String fieldCode;
-	public Integer getTableId() {
-		return tableId;
+	//字段类型
+	private String fieldType;
+	//字段公式
+	private String formula;
+	//code值
+	private Integer value;
+	//表格名称
+	private String tableNames;
+	public String getTableNames() {
+		return tableNames;
 	}
-	public void setTableId(Integer tableId) {
-		this.tableId = tableId;
+	public void setTableNames(String tableNames) {
+		this.tableNames = tableNames;
 	}
+		//创建人
+		private String createBy;
+		//创建时间
+		private Timestamp createTime;
+		//修改人
+		private String updateBy;
+		//修改时间
+		private Timestamp updateTime;
+	public String getFieldMapperCode() {
+			return fieldMapperCode;
+		}
+		public void setFieldMapperCode(String fieldMapperCode) {
+			this.fieldMapperCode = fieldMapperCode;
+		}
+		public String getTableCode() {
+			return tableCode;
+		}
+		public void setTableCode(String tableCode) {
+			this.tableCode = tableCode;
+		}
+		public String getFieldType() {
+			return fieldType;
+		}
+		public void setFieldType(String fieldType) {
+			this.fieldType = fieldType;
+		}
+		public String getFormula() {
+			return formula;
+		}
+		public void setFormula(String formula) {
+			this.formula = formula;
+		}
+		public Integer getValue() {
+			return value;
+		}
+		public void setValue(Integer value) {
+			this.value = value;
+		}
+		public String getCreateBy() {
+			return createBy;
+		}
+		public void setCreateBy(String createBy) {
+			this.createBy = createBy;
+		}
+		public Timestamp getCreateTime() {
+			return createTime;
+		}
+		public void setCreateTime(Timestamp createTime) {
+			this.createTime = createTime;
+		}
+		public String getUpdateBy() {
+			return updateBy;
+		}
+		public void setUpdateBy(String updateBy) {
+			this.updateBy = updateBy;
+		}
+		public Timestamp getUpdateTime() {
+			return updateTime;
+		}
+		public void setUpdateTime(Timestamp updateTime) {
+			this.updateTime = updateTime;
+		}
 	public String getOtherFieldCode() {
 		return otherFieldCode;
 	}

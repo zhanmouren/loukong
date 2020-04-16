@@ -1,5 +1,6 @@
 package com.koron.inwlms.bean.DTO.sysManager;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 
@@ -13,8 +14,10 @@ import java.util.List;
 public class TableMapperDTO {
     //集成表格映射明细
 	private Integer tableMapperId;
-	//集成配置主表Id
-	private Integer configID;
+	//表格映射code
+	private String tableMapperCode;
+	//集成配置主表Code
+	private String configCode;
 	//其他表的名称
 	private String otherTabName;
 	//对方表格code
@@ -24,6 +27,63 @@ public class TableMapperDTO {
 	//我方表格code
 	private String tableCode;
 	
+	//创建人
+	private String createBy;
+	//创建时间
+	private Timestamp createTime;
+	//修改人
+	private String updateBy;
+	//修改时间
+	private Timestamp updateTime;
+	
+	public String getTableMapperCode() {
+		return tableMapperCode;
+	}
+
+	public void setTableMapperCode(String tableMapperCode) {
+		this.tableMapperCode = tableMapperCode;
+	}	
+
+	public String getConfigCode() {
+		return configCode;
+	}
+
+	public void setConfigCode(String configCode) {
+		this.configCode = configCode;
+	}
+
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
+
+	public Timestamp getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getUpdateBy() {
+		return updateBy;
+	}
+
+	public void setUpdateBy(String updateBy) {
+		this.updateBy = updateBy;
+	}
+
+	public Timestamp getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Timestamp updateTime) {
+		this.updateTime = updateTime;
+	}
+
 	//表格字段映射明细列表
 	private List<FieldMapperDTO> fieldMapperList;
 
@@ -35,13 +95,7 @@ public class TableMapperDTO {
 		this.tableMapperId = tableMapperId;
 	}
 
-	public Integer getConfigID() {
-		return configID;
-	}
-
-	public void setConfigID(Integer configID) {
-		this.configID = configID;
-	}
+	
 
 	public String getOtherTabName() {
 		return otherTabName;

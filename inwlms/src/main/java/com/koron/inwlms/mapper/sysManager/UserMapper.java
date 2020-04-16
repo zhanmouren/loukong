@@ -12,6 +12,9 @@ import com.koron.common.bean.LongTreeBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
@@ -21,6 +24,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
+import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
@@ -118,6 +122,9 @@ public interface UserMapper {
 	
 	
 	/**下面是系统配置***/
+	 
+	  
+	
 	   //添加数据字典主表
 		public Integer addDataDic(List<DataDicDTO> dataDicDTOList);
 		
@@ -235,5 +242,18 @@ public interface UserMapper {
 		
 		//批量重置密码
 		public Integer updateUserPassword(List<UserDTO> userList);
+		
+		
+		 //添加集成配置主表
+	    public Integer addIntegration(IntegrationConfDTO integrationConfDTO);
+	    
+	    //添加表格映射主表信息
+	    public Integer addTableMapper(TableMapperDTO tableMapperDTO);
+	    
+	    //添加表格映射主表信息 2020/04/16
+	    public Integer addFieldMapper(FieldMapperDTO fieldMapperDTO);
+	    
+	    //添加枚举值映射明细
+	    public Integer addEnumMapper(EnumMapperDTO enumMapperDTO);
 		
 }

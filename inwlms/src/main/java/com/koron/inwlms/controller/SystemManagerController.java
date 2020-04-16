@@ -21,6 +21,8 @@ import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
@@ -29,6 +31,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
+import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -683,8 +686,8 @@ public class SystemManagerController {
      /* -------下面的是关于系统配置的接口--------  */ 
     
 	 /*
-     * date:2020-03-25
-     * funtion:插入集成配置功能（暂不开发，需求不明确）
+     * date:2020-04-16
+     * funtion:添加集成配置功能
      * author:xiaozhan
      */  
 	@RequestMapping(value = "/addIntegration.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -697,26 +700,159 @@ public class SystemManagerController {
 		if(integrationConfDTO.getSysName()==null || StringUtils.isBlank(integrationConfDTO.getSysName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方系统名称不能为空", Integer.class).toJson();
 		}
+		if(integrationConfDTO.getStatus()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "状态不能为空", Integer.class).toJson();
+		}
 		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
-		//执行集成配置功能的操作
+		//执行集成配置添加功能的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addIntegration", Integer.class, integrationConfDTO);		 
-			  if(insertRes!=null) {
+			  Integer insertRes=ADOConnection.runTask(userService, "addIntegration", Integer.class, integrationConfDTO);		 		  
 				  if(insertRes==1) {
 					//添加集成配置功能成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				    msg.setDescription("添加配置成功");
+				    msg.setDescription("添加集成配置成功");
 				  }else {
 				    //插入失败
 			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
-			        msg.setDescription("添加配置失败");
-				  }
-			  }
+			        msg.setDescription("添加集成配置失败");
+				  }			  
 	        }catch(Exception e){
 	        	//插入失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("添加配置失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	 /*
+     * date:2020-04-16
+     * funtion:添加表格映射
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/addTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "添加表格映射功能接口", notes = "添加表格映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {		
+		if(tableMapperDTO.getConfigCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置编码不能为空", Integer.class).toJson();
+		}
+		if(tableMapperDTO.getOtherTabCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方表格编码不能为空", Integer.class).toJson();
+		}	
+		if(tableMapperDTO.getOtherTabName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方表格名不能为空", Integer.class).toJson();
+		}
+		if(tableMapperDTO.getTableCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格编码不能为空", Integer.class).toJson();
+		}
+		if(tableMapperDTO.getTableName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格名称不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer insertRes=ADOConnection.runTask(userService, "addTableMapper", Integer.class, tableMapperDTO);		 		  
+				  if(insertRes==1) {
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("添加表格映射成功");
+				  }else {			    
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("添加表格映射失败");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加表格失败");
+	        }
+		
+	     return msg.toJson();
+	}
+
+	 /*
+     * date:2020-04-16
+     * funtion:添加表格字段映射
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/addFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "添加表格映射功能接口", notes = "添加表格映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {		
+		if(fieldMapperDTO.getTableCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
+		}	
+		if(fieldMapperDTO.getOtherFieldCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段code不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getOtherFieldName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段名称不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getFieldCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方字段code不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getFieldName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方字段名称不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getFieldType()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段类型不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getFormula()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段公式不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getValue()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "code值不能为空", Integer.class).toJson();
+		}				
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer insertRes=ADOConnection.runTask(userService, "addFieldMapper", Integer.class, fieldMapperDTO);		 		  
+				  if(insertRes==1) {
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("添加表格字段映射成功");
+				  }else {			    
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("添加表格字段映射失败");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加表格字段失败");
+	        }
+		
+	     return msg.toJson();
+	}
+
+	 /*
+     * date:2020-04-16
+     * funtion:添加枚举值映射明细
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/addEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "添加枚举值映射明细接口", notes = "添加枚举值映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {		
+		if(enumMapperDTO.getConfCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置编码不能为空", Integer.class).toJson();
+		}
+		if(enumMapperDTO.getOtherFieldValue()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段枚举编码不能为空", Integer.class).toJson();
+		}
+		if(enumMapperDTO.getFieldValue()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方枚举编码不能为空", Integer.class).toJson();
+		}
+		if(enumMapperDTO.getMapper()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "映射方式不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer insertRes=ADOConnection.runTask(userService, "addEnumMapper", Integer.class, enumMapperDTO);		 		  
+				  if(insertRes==1) {
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("添加枚举值映射明细成功");
+				  }else {			    
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("添加枚举值映射明细失败");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("添加枚举值映射明细失败");
 	        }
 		
 	     return msg.toJson();
