@@ -21,7 +21,8 @@
    	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>
    	    <if test="code != null"> and "user".code = #{code}</if> 
    	    <if test="loginName != null"> and "user"."loginName" = #{loginName}</if> 
-   	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if>           
+   	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if> 
+   	    <if test="code != null"> and "user"."code" = #{code}</if>         
 	  </trim>
 	   order by "user"."createTime" desc
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
@@ -145,6 +146,21 @@
 		</foreach>
     </insert>
     
+      <!--判断角色编码在职员表是否存在 -->
+    <select id="queryExistRole"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
+         select code as "roleCode",name as "roleName"
+         from "SM_userRole"
+         where   "code" =  #{roleCode}
+    </select>
+    
+     <!--先判断职员code和roleCode是否已经存在在用户角色关系表 -->
+    <select id="judgeExistCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO">
+         select "userCode","roleCode"
+         from "SM_userRoleRelation"
+         where "userCode" =   #{userCode}
+         and  "roleCode" =  #{roleCode}
+    </select>
+    
      <!-- 批量删除角色中员工信息 -->
     <delete id="deleteRoleUser">
         delete from "SM_userRoleRelation" where "roleCode"=#{roleCode} 
@@ -222,6 +238,21 @@
 			(#{deptuser.userCode}, #{deptuser.depCode}, #{deptuser.createBy}, Now(), #{deptuser.updateBy}, Now())
 		</foreach>
     </insert>
+    
+     <!--查询deptCode是否存在 -->
+     <select id="queryExistDept"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DeptVO">
+         select code as "depCode",name as "depName"
+         from "SM_department"
+         where   "code" =  #{depCode}
+    </select>
+    
+      <!--先判断职员code和depCode是否已经存在在用户部门关系表 -->
+    <select id="judgeExistDeptUserCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO">
+         select "userCode","deptCode"
+         from "SM_userDept"
+         where "userCode" =   #{userCode}
+         and  "deptCode" =  #{depCode}
+    </select>
     
      <!-- 批量删除部门中员工信息 -->
     <delete id="deleteDeptUser">

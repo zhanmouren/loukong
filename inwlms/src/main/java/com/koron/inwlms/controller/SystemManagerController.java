@@ -460,9 +460,18 @@ public class SystemManagerController {
 			  Integer addResult=ADOConnection.runTask(userService, "addRoleUser", Integer.class, roleUserDTO);		 
 			  if(addResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
-					 msg.setDescription("插入职员和角色的关系失败"); 
-					
-			 }else {
+					 msg.setDescription("插入职员和角色的关系失败"); 					
+			 }else if(addResult==-2) {
+				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("职员和角色的关系在用户角色关系表已经存在"); 
+			 }else if(addResult==-3) {
+				 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				 msg.setDescription("角色编码在角色表中不存在"); 
+			 }else if(addResult==-4) {
+				 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				 msg.setDescription("用户编码在用户表中不存在"); 
+			 }
+			 else {
 				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				     msg.setDescription("插入职员和角色的关系成功"); 
 			 }
@@ -606,8 +615,16 @@ public class SystemManagerController {
 			  Integer addResult=ADOConnection.runTask(userService, "addDeptUser", Integer.class, deptUserDTO);		 
 			  if(addResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
-					 msg.setDescription("插入职员和部门的关系失败"); 
-					
+					 msg.setDescription("插入职员和部门的关系失败"); 					
+			 }else if(addResult==-2) {
+				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				    msg.setDescription("职员和部门的关系在用户部门关系表已经存在"); 
+			 }else if(addResult==-3) {
+				 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				 msg.setDescription("部门编码在部门表中不存在"); 
+			 }else if(addResult==-4) {
+				 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				 msg.setDescription("用户编码在用户表中不存在"); 
 			 }else {
 				     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				     msg.setDescription("插入职员和部门的关系成功"); 

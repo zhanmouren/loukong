@@ -34,11 +34,13 @@ import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -220,7 +222,7 @@ public class UserServiceImpl implements UserService{
 		return result;		
 	}
 
-	//根据角色Id加载角色接口 2020/03/24
+	//加载角色接口 2020/03/24
 	@TaskAnnotation("queryAllRole")
 	@Override
 	public List<RoleVO> queryAllRole(SessionFactory factory) {		
@@ -236,9 +238,17 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Integer addRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
 		// TODO Auto-generated method stub
-		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		UserMapper userMapper = factory.getMapper(UserMapper.class);		
+		Integer addResult=null;
 		//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
-		List<RoleAndUserDTO> roleAndUserDTOList=new ArrayList<RoleAndUserDTO>();		
+		List<RoleAndUserDTO> roleAndUserDTOList=new ArrayList<RoleAndUserDTO>();
+		List<RoleUserCodeVO> codeList=new  ArrayList<>();
+		//插入之前判断roleCode在SM_userRole表中是否存在
+		List<RoleVO> roleList=userMapper.queryExistRole(roleUserDTO);
+		if(roleList.size()<1) {
+			addResult=-3;
+			return addResult;
+		}		
 		for(int i=0;i<roleUserDTO.getUserCodeList().size();i++) {
 			RoleAndUserDTO roleUserDTONew=new RoleAndUserDTO();
 			roleUserDTONew.setRoleCode(roleUserDTO.getRoleCode());
@@ -246,8 +256,22 @@ public class UserServiceImpl implements UserService{
 			roleUserDTONew.setCreateBy("小詹");
 			roleUserDTONew.setUpdateBy("小詹");
 			roleAndUserDTOList.add(roleUserDTONew);
-		}
-		Integer addResult=userMapper.addRoleUser(roleAndUserDTOList);
+			//插入之前判断职员code是否在sm_user是否存在
+			QueryUserDTO queryUserDTO=new QueryUserDTO();
+			queryUserDTO.setCode(roleUserDTO.getUserCodeList().get(i));
+			List<UserVO> userList=userMapper.queryUser(queryUserDTO);
+			if(userList.size()<1) {
+				addResult=-4;
+				return addResult;
+			}
+			//插入之前先判断职员code和roleCode是否已经存在在用户角色关系表		
+		    codeList=userMapper.judgeExistCode(roleUserDTONew);
+		    if(codeList.size()>0) {
+				addResult=-2;
+				return addResult;				
+			}
+		}						
+	    addResult=userMapper.addRoleUser(roleAndUserDTOList);
 		return addResult;
 	}
 
@@ -311,8 +335,18 @@ public class UserServiceImpl implements UserService{
 		public Integer addDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {
 			// TODO Auto-generated method stub
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			Integer addResult=null;
 			//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
-			List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();			
+			List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();	
+			List<DeptUserCodeVO> codeList=new  ArrayList<>();
+			//添加之前先判断deptCode是否存在
+			DeptDTO deptDTO=new DeptDTO();
+			deptDTO.setDepCode(deptUserDTO.getDepCode());
+			List<DeptVO> deptList=userMapper.queryExistDept(deptDTO);		
+			if(deptList.size()<1) {
+				addResult=-3;
+				return addResult;
+			}			
 			for(int i=0;i<deptUserDTO.getUserCodeList().size();i++) {
 				DeptAndUserDTO deptUserDTONew=new DeptAndUserDTO();
 				deptUserDTONew.setDepCode(deptUserDTO.getDepCode());
@@ -320,8 +354,22 @@ public class UserServiceImpl implements UserService{
 				deptUserDTONew.setCreateBy("小詹");			
 				deptUserDTONew.setUpdateBy("小詹");
 				deptUserDTOList.add(deptUserDTONew);
+				//插入之前判断职员code是否在sm_user是否存在
+				QueryUserDTO queryUserDTO=new QueryUserDTO();
+				queryUserDTO.setCode(deptUserDTO.getUserCodeList().get(i));
+				List<UserVO> userList=userMapper.queryUser(queryUserDTO);
+				if(userList.size()<1) {
+					addResult=-4;
+					return addResult;
+				}
+				//插入之前先判断职员code和deptCode是否已经存在在用户角色关系表		
+			    codeList=userMapper.judgeExistDeptUserCode(deptUserDTONew);
+			    if(codeList.size()>0) {
+					addResult=-2;
+					return addResult;				
+				}
 			}
-			Integer addResult=userMapper.addDeptUser(deptUserDTOList);
+			addResult=userMapper.addDeptUser(deptUserDTOList);
 			return addResult;
 		}
 

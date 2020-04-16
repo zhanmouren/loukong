@@ -23,11 +23,13 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -81,6 +83,12 @@ public interface UserMapper {
 	//插入角色与职员(批量)的关系
 	public Integer addRoleUser(List<RoleAndUserDTO> roleAndUserDTOList);
 	
+	//判断角色编码在职员表是否存在
+	public List<RoleVO> queryExistRole(RoleAndUserDTO roleUserDTO);
+	
+	//先判断职员code和roleCode是否已经存在在用户角色关系表
+	public List<RoleUserCodeVO> judgeExistCode(RoleAndUserDTO roleAndUserDTO);
+	
 	//删除角色中职员(批量)
 	public Integer  deleteRoleUser(@Param("roleCode") String roleCode,@Param("list") List<String> userCodeList);
 	
@@ -98,6 +106,12 @@ public interface UserMapper {
 	
 	//添加用户(批量)和部门关系的操作
 	public Integer addDeptUser(List<DeptAndUserDTO> deptUserDTOList);
+	
+	//查询deptCode是否存在
+	public List<DeptVO> queryExistDept(DeptDTO deptDTO);
+	
+	//判断userCode和deptCode是否在部门人员关系表已经存在一条记录
+	public List<DeptUserCodeVO>  judgeExistDeptUserCode(DeptAndUserDTO deptUserDTO);
 	
 	//删除部门中职员(批量)
 	public Integer deleteDeptUser(@Param("depCode") String depCode,@Param("list") List<String> userCodeList);
