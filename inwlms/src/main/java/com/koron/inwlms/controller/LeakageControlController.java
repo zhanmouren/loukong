@@ -418,7 +418,9 @@ public class LeakageControlController {
 		}
 		
 		//TODO 产生一个方案编码,入库判断是否重复
-		String code = new Date()+"";
+		
+		long time = new Date().getTime();
+		String code = time+"";
 		warningSchemeDTO.setCode(code);
 		
 		List<AlarmRuleDTO> alarmRuleList = warningSchemeDTO.getAlarmRuleList();
