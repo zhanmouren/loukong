@@ -729,7 +729,7 @@ public class UserServiceImpl implements UserService{
 			   //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除根据外键code 2020/04/01
 				@TaskAnnotation("judgeExistUser")
 				@Override
-				public Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO,int type,String foreignkey, boolean force) {					
+				public Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO,int type,String foreignkey, boolean force,int deleteType) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<UserVO> userList=userMapper.judgeExistUser(deptAndUserDTO);
 					Integer userRes=0;
@@ -743,16 +743,26 @@ public class UserServiceImpl implements UserService{
 						  TreeService treeService  =new TreeService();
 						  Integer  delRes=treeService.forceDelNode(factory,type,foreignkey,force);					
 						  if(delRes!=null && delRes!=-1) {
-							    UserServiceImpl userService=new UserServiceImpl();
 								//删除数结构部门成功，执行删除部门的操作(物理删除),根据外键Code
-							   Integer delDeptRes = userService.deleteTreeDept(factory, deptAndUserDTO);
+							   Integer delDeptRes = userMapper.deleteTreeDept(deptAndUserDTO);
 							   if(delDeptRes!=null) {
 								   if(delDeptRes==-1) {
 									   //删除部门失败
 									   userRes=-1;
-								   }else {
-									   //删除部门成功
-									   userRes=0;
+								   }else {									   								   
+									   if(deleteType==0) {	
+										 //删除部门成功,删除组织部门关系
+										   OrgAndDeptDTO orgAndDeptDTO=new OrgAndDeptDTO();
+										  //TODO 测试使用 org001
+										   orgAndDeptDTO.setDepCode(foreignkey);
+										   orgAndDeptDTO.setOrgCode("org001");
+										   userRes=userMapper.deleteOrgDept(orgAndDeptDTO);
+										   if(userRes==1) {
+											   userRes=0;  
+										   }
+									   }else {
+									    userRes=0;
+									   }
 								   }
 							   }else {
 								   userRes=-1;
@@ -774,7 +784,7 @@ public class UserServiceImpl implements UserService{
 					return delRes;
 				}
 
-				//根据部门Id更新部门名称 2020/04/01
+				//根据部门code更新部门名称 2020/04/01
 				@TaskAnnotation("updateTreeDept")
 				@Override
 				public Integer updateTreeDept(SessionFactory factory, DeptDTO deptDTO) {

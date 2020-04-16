@@ -1397,21 +1397,25 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除树结构的部门接口", notes = "删除树结构的部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteTreeDept(@RequestBody  LongTreeBean longTreeBean) {
+	public String deleteTreeDept(@RequestBody  TreeDTO longTreeBean) {
 		Integer type=Integer.valueOf(longTreeBean.getType());
 		if(type==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson();
 		}	
-		if(longTreeBean.getForeignkey()==null) {
+		if(longTreeBean.getForeignKey()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "节点外键不能为空", Integer.class).toJson();
+		}
+		//删除的时候  (deleteType  0代表删除组织下部门,1代表部门下删除部门）
+		if(longTreeBean.getDeleteType()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "删除类型不能为空", Integer.class).toJson();
 		}
 		
 		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
 		  try{		
 			  DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
-			  deptAndUserDTO.setDepCode(longTreeBean.getForeignkey());
+			  deptAndUserDTO.setDepCode(longTreeBean.getForeignKey());
 			  //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除，根据外键Code
-			  Integer res=ADOConnection.runTask(userService, "judgeExistUser", Integer.class, deptAndUserDTO,longTreeBean.getType(),longTreeBean.getForeignkey(),false);			  
+			  Integer res=ADOConnection.runTask(userService, "judgeExistUser", Integer.class, deptAndUserDTO,longTreeBean.getType(),longTreeBean.getForeignKey(),false,longTreeBean.getDeleteType().intValue());			  
 				if(res==0){
 					   msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					   msg.setDescription("删除部门成功"); 

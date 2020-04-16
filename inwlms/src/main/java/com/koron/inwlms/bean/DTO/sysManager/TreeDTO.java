@@ -27,7 +27,16 @@ public void setOrgCode(String orgCode) {
 }
 //组织下添加树还是部门下添加部门
    private Integer addType;
+ 
+   //判断组织下删除部门还是部门下删除部门
+   private Integer deleteType;
 
+public Integer getDeleteType() {
+	return deleteType;
+}
+public void setDeleteType(Integer deleteType) {
+	this.deleteType = deleteType;
+}
 public Integer getAddType() {
 	return addType;
 }

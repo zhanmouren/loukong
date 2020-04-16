@@ -189,6 +189,9 @@ public interface UserMapper {
 		//物理删除部门，部门表 根据外键Code
 		public Integer deleteTreeDept(DeptAndUserDTO deptAndUserDTO);
 		
+		//删除组织部门关系 根据外键Code和组织Code
+		public Integer deleteOrgDept(OrgAndDeptDTO orgAndDeptDTO);
+		
 		//根据Id更新部门名称
 		public Integer updateTreeDept(DeptDTO deptDTO);
 		

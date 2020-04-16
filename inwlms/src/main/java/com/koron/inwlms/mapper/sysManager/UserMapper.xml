@@ -470,6 +470,12 @@
          where "code"=#{depCode}
      </delete>
      
+       <!--删除组织部门关系 根据外键Code和组织Code-->
+     <delete id="deleteOrgDept">
+         delete from "SM_orgDept" 
+         where "orgCode"=#{orgCode} and "deptCode"=#{depCode}
+     </delete>
+     
      <!-- 修改部门名称，通过部门ID-->
        <update id="updateTreeDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO">   
 		update "SM_department" 

@@ -115,7 +115,7 @@ public interface UserService {
 	    Integer deptAddTreeDept(SessionFactory factory,  OrgAndDeptDTO orgDeptDTO,int type,String foreignKey);
 	    
 	    //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除
-	    Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO,int type,String foreignkey, boolean force);
+	    Integer judgeExistUser(SessionFactory factory, DeptAndUserDTO deptAndUserDTO,int type,String foreignkey, boolean force,int deleteType);
 	    
 	    //物理删除部门，部门表
 	    Integer deleteTreeDept(SessionFactory factory,DeptAndUserDTO deptAndUserDTO);
