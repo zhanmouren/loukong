@@ -91,7 +91,11 @@
 		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
 		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qzlDTO.startTime} 
 		and m."yearMonth" &lt;= #{qzlDTO.endTime}) b
-		group by b."zoneNo";
+		group by b."zoneNo"
+		<if test="qzlDTO.orderBy != null and qzlDTO.orderBy != ''">
+			order by ${qzlDTO.orderBy}
+		</if>
+		
 	</select>
 	
 	<select id="queryZoneWBYLossData" resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO">
@@ -139,7 +143,10 @@
 			</if>
 		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
 		) b
-		group by b."zoneNo";
+		group by b."zoneNo"
+		<if test="qzlDTO.orderBy != null and qzlDTO.orderBy != ''">
+			order by ${qzlDTO.orderBy} 
+		</if>
 	</select>
 	
 	<select id="queryWNWBReportList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO"

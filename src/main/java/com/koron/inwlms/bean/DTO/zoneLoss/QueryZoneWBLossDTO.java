@@ -32,6 +32,11 @@ public class QueryZoneWBLossDTO {
 	 * 结束时间
 	 */
 	public Integer endTime;
+	
+	/**
+	 * 排序方式 eg: "lossRate" desc
+	 */
+	private String orderBy;
 
 	public Integer getTimeType() {
 		return timeType;
@@ -72,5 +77,14 @@ public class QueryZoneWBLossDTO {
 	public void setZoneRank(Integer zoneRank) {
 		this.zoneRank = zoneRank;
 	}
+
+	public String getOrderBy() {
+		return orderBy;
+	}
+
+	public void setOrderBy(String orderBy) {
+		this.orderBy = orderBy;
+	}
+
 	
 }
