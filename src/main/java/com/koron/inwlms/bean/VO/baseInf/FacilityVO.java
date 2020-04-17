@@ -83,10 +83,6 @@ public class FacilityVO {
      */
     private Double CENTER_H;
 
-    /**
-     * 型号
-     */
-    private String MODEL;
 
     /**
      * 适用年限
