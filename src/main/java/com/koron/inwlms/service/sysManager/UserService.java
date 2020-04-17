@@ -25,6 +25,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
@@ -165,7 +166,12 @@ public interface UserService {
 		  //添加枚举值映射明细
 		  Integer addEnumMapper(SessionFactory factory,EnumMapperDTO enumMapperDTO); 
 		  
-		 
+		  //查询集成配置列表信息接口
+		  PageListVO<List<IntegrationConfVO>> queryIntegration(SessionFactory factory,IntegrationConfDTO integrationConfDTO);
+		  
+		  //根据code查询集成配置信息接口
+		  List<IntegrationConfVO> queryIntegrationByCode(SessionFactory factory,IntegrationConfDTO integrationConfDTO);
+		  		 
 		 
 		 
 }

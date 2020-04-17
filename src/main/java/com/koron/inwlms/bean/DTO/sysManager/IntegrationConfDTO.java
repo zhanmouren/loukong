@@ -4,6 +4,8 @@ package com.koron.inwlms.bean.DTO.sysManager;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 
 /**
  * 集成bean
@@ -12,7 +14,7 @@ import java.util.List;
 * @Date 2020.03.17
 */
 
-public class IntegrationConfDTO {
+public class IntegrationConfDTO  extends BaseDTO{
    //集成配置Id
 	private Integer inteConfId;
 	//集成配置的编码

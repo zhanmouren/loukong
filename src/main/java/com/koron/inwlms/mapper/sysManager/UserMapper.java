@@ -29,6 +29,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
@@ -255,5 +256,15 @@ public interface UserMapper {
 	    
 	    //添加枚举值映射明细
 	    public Integer addEnumMapper(EnumMapperDTO enumMapperDTO);
+	    
+	    //查询集成配置列表
+	    public List<IntegrationConfVO> queryIntegration(IntegrationConfDTO integrationConfDTO);
+	    
+	    //查询集成配置列表总数
+	    public Integer getIntegrationCount(IntegrationConfDTO integrationConfDTO);
+	    
+	   //根据code查询集成配置信息
+	    public List<IntegrationConfVO> queryIntegrationByCode(IntegrationConfDTO integrationConfDTO);
+		
 		
 }

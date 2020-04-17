@@ -40,6 +40,7 @@ import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
@@ -1083,5 +1084,37 @@ public class UserServiceImpl implements UserService{
 					return addRes;
 				}
 
+				//查询集成配置列表信息 2020/04/16 分页
+				@TaskAnnotation("queryIntegration") 
+				@Override
+				public PageListVO<List<IntegrationConfVO>> queryIntegration(SessionFactory factory,
+						IntegrationConfDTO integrationConfDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					// 查询集成配置列表
+					List<IntegrationConfVO> IntegrationConfList=userMapper.queryIntegration(integrationConfDTO);
+					//查询总条数
+					int rowNumber = userMapper.getIntegrationCount(integrationConfDTO);
+					// 返回数据结果
+					PageListVO<List<IntegrationConfVO>> result = new PageListVO<>();
+					result.setDataList(IntegrationConfList);
+					// 插入分页信息
+					PageVO pageVO = PageUtil.getPageBean(integrationConfDTO.getPage(), integrationConfDTO.getPageCount(), rowNumber);
+					result.setTotalPage(pageVO.getTotalPage());
+					result.setRowNumber(pageVO.getRowNumber());
+					result.setPageCount(pageVO.getPageCount());
+					result.setPage(pageVO.getPage());
+					return result;							
+				}
+
+				//根据code查询集成配置信息
+				@TaskAnnotation("queryIntegrationByCode") 
+				@Override
+				public List<IntegrationConfVO> queryIntegrationByCode(SessionFactory factory,
+						IntegrationConfDTO integrationConfDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<IntegrationConfVO> integrationConfList=userMapper.queryIntegrationByCode(integrationConfDTO);
+					return integrationConfList;
+				}
 					
 }

@@ -647,6 +647,37 @@
          (#{confCode},#{otherFieldValue},#{fieldValue},#{mapper},#{createBy},Now(),#{updateBy},Now())
      </insert>
      
+     <!--查询集成配置列表-->
+     <select id="queryIntegration"  parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO" resultType="com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO">
+         select "conf"."sysName" as "sysName","conf"."otherJDBC" as "otherJDBC","conf".code as "inteConfCode","conf".status as "status"
+         from "SM_integrationConf" as "conf"
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="sysName != null"> and "conf"."sysName" like '%'||#{sysName}||'%'</if>  
+		 <if test="otherJDBC != null"> and "conf"."otherJDBC" like '%'||#{otherJDBC}||'%'</if>  
+		 <if test="inteConfCode != null"> and "conf".code=#{inteConfCode}</if>  
+		 <if test="status != null"> and "conf".status=${status}</if>        
+	   </trim>
+	    limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+      </select>
+      
+       <!--查询集成配置列表总数-->
+      <select id="getIntegrationCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO" resultType="java.lang.Integer">
+         select count(*) 
+         from "SM_integrationConf" as "conf"
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="sysName != null"> and "conf"."sysName" like '%'||#{sysName}||'%'</if>  
+		 <if test="otherJDBC != null"> and "conf"."otherJDBC" like '%'||#{otherJDBC}||'%'</if>  
+		 <if test="inteConfCode != null"> and "conf".code=#{inteConfCode}</if>  
+		 <if test="status != null"> and "conf".status=${status}</if>        
+	   </trim>     
+      </select>
+      
+        <!--根据code查询集成配置-->
+     <select id="queryIntegrationByCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO" resultType="com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO">
+         select "conf"."sysName" as "sysName","conf"."otherJDBC" as "otherJDBC","conf".code as "inteConfCode","conf".status as "status"
+         from "SM_integrationConf" as "conf"
+	     where 	"conf".code=#{inteConfCode}
+      </select>
      
       
 </mapper>

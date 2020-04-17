@@ -37,6 +37,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -853,6 +854,64 @@ public class SystemManagerController {
 	        }catch(Exception e){	        	
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("添加枚举值映射明细失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-04-16
+     * funtion:查询集成配置列表信息
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/queryIntegration.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询集成配置列表信息接口", notes = "查询集成配置列表信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryIntegration(@RequestBody IntegrationConfDTO integrationConfDTO) {		
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
+		  try{
+			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryIntegration", PageListVO.class,integrationConfDTO);		 		  
+				  if(pageListVO!=null &&  pageListVO.getRowNumber()>0) {
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("查询集成配置列表信息成功");
+				    msg.setData(pageListVO);
+				  }else {			    
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询集成配置列表信息失败");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询集成配置列表信息失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	/*
+     * date:2020-04-16
+     * funtion:根据code查询集成配置信息
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/queryIntegrationByCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据code查询集成配置信息接口", notes = "根据code查询集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryIntegrationByCode(@RequestBody IntegrationConfDTO integrationConfDTO) {
+		if(integrationConfDTO.getInteConfCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
+		}
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{
+			  List<IntegrationConfVO> integrationConfVOList=ADOConnection.runTask(userService, "queryIntegrationByCode", List.class,integrationConfDTO);		 		  
+				  if(integrationConfVOList.size()>0) {
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("查询集成配置详情信息成功");
+				    msg.setData(integrationConfVOList);
+				  }else {			    
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询集成配置详情信息失败");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询集成配置详情信息失败");
 	        }
 		
 	     return msg.toJson();
