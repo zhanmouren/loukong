@@ -305,30 +305,85 @@ public class ZoneLossController {
     @ApiOperation(value = "添加全网水平衡报表", notes = "添加全网水平衡报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addWNWBReport(@RequestBody AddWNWBReportDTO addWNWBReportDTO) {
-		MessageBean<AddWNWBReportDTO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBReportDTO.class);
+		MessageBean<AddWNWBReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBReportDTO.class);
+		if(addWNWBReportDTO.getReportName() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("报表名称为空");
+		}
+		if(addWNWBReportDTO.getIndicators() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("报表指标为空");
+		}
+		if(addWNWBReportDTO.getReportTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("报表时间为空");
+		}
+		if(addWNWBReportDTO.getTimeType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("时间类型为空");
+		}
+		if(addWNWBReportDTO.getTemplateId() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("模板报表id为空");
+		}
 		try{
 			ADOConnection.runTask(wbas,"addWNWBReport",Integer.class,addWNWBReportDTO);
-			data.setData(addWNWBReportDTO);
+			msg.setData(addWNWBReportDTO);
 		}catch(Exception e){
-			data.setCode(Constant.MESSAGE_INT_ADDERROR);
-			data.setDescription(Constant.MESSAGE_STRING_ADDERROR);
+			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
 		}
-		return data.toJson();
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/updateWNWBReport.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "编辑全网水平衡报表", notes = "编辑全网水平衡报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateWNWBReport(@RequestBody AddWNWBReportDTO editWNWBReportDTO) {
-		MessageBean<AddWNWBReportDTO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBReportDTO.class);
+		MessageBean<AddWNWBReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBReportDTO.class);
+		if(editWNWBReportDTO.getId() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("报表id为空");
+		}
+		if(editWNWBReportDTO.getReportName() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("报表名称为空");
+		}
+		if(editWNWBReportDTO.getIndicators() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("报表指标为空");
+		}
+		if(editWNWBReportDTO.getReportTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("报表时间为空");
+		}
+		if(editWNWBReportDTO.getTimeType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("时间类型为空");
+		}
+		if(editWNWBReportDTO.getTemplateId() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("模板报表id为空");
+		}
 		try{
 			ADOConnection.runTask(wbas,"updateWNWBReport",Integer.class,editWNWBReportDTO);
-			data.setData(editWNWBReportDTO);
+			msg.setData(editWNWBReportDTO);
 		}catch(Exception e){
-			data.setCode(Constant.MESSAGE_INT_EDITERROR);
-			data.setDescription(Constant.MESSAGE_STRING_EDITERROR);
+			msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+			msg.setDescription(Constant.MESSAGE_STRING_EDITERROR);
 		}
-		return data.toJson();
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/queryWNWBReportDetail.htm", method=RequestMethod.POST,produces={"application/json;charset=UTF-8"})
@@ -480,30 +535,55 @@ public class ZoneLossController {
     @ApiOperation(value = "添加全网水平衡模板报表", notes = "添加全网水平衡模板报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addWNWBReporTemplate(@RequestBody AddWNWBTReportDTO addWNWBTReportDTO) {
-		MessageBean<AddWNWBTReportDTO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBTReportDTO.class);
+		MessageBean<AddWNWBTReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBTReportDTO.class);
+		if(addWNWBTReportDTO.getReportName() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("模板报表名称为空");
+		}
+		if(addWNWBTReportDTO.getIndicators() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("模板报表指标为空");
+		}
 		try{
 			ADOConnection.runTask(wbas,"addWNWBTReport",Integer.class,addWNWBTReportDTO);
-			data.setData(addWNWBTReportDTO);
+			msg.setData(addWNWBTReportDTO);
 		}catch(Exception e){
-			data.setCode(Constant.MESSAGE_INT_ADDERROR);
-			data.setDescription(Constant.MESSAGE_STRING_ADDERROR);
+			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
 		}
-		return data.toJson();
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/updateWNWBReporTemplate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "编辑全网水平衡模板报表", notes = "编辑全网水平衡模板报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateWNWBReporTemplate(@RequestBody AddWNWBTReportDTO editWNWBTReportDTO) {
-		MessageBean<AddWNWBTReportDTO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBTReportDTO.class);
+		MessageBean<AddWNWBTReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBTReportDTO.class);
+		if(editWNWBTReportDTO.getId() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("模板报表id为空");
+		}
+		if(editWNWBTReportDTO.getReportName() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("模板报表名称为空");
+		}
+		if(editWNWBTReportDTO.getIndicators() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("模板报表指标为空");
+		}
 		try{
 			ADOConnection.runTask(wbas,"updateWNWBTReport",Integer.class,editWNWBTReportDTO);
-			data.setData(editWNWBTReportDTO);
+			msg.setData(editWNWBTReportDTO);
 		}catch(Exception e){
-			data.setCode(Constant.MESSAGE_INT_EDITERROR);
-			data.setDescription(Constant.MESSAGE_STRING_EDITERROR);
+			msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+			msg.setDescription(Constant.MESSAGE_STRING_EDITERROR);
 		}
-		return data.toJson();
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/queryWNWBTReportDetail.htm", method=RequestMethod.POST,produces={"application/json;charset=UTF-8"})

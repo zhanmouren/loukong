@@ -250,7 +250,7 @@
 		INSERT INTO
 		"APP_company_report_indicator"
 		("reportId",
-		"templateId",
+		"templateIndicId",
 		value,
 		"createBy",
 		"createTime",
@@ -330,7 +330,7 @@
 	
 	<select id="queryWNWBReportIndicatorById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportIndicator">
 		select 
-		id,"reportId","templateId" as "templateIndicatorId",value,
+		id,"reportId","templateIndicId" as "templateIndicatorId",value,
 		"createTime","updateTime","createBy","updateBy"
 		from "APP_company_report_indicator"
 		where "reportId" = #{id}
