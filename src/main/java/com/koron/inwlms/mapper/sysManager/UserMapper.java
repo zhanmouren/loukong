@@ -29,6 +29,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
@@ -36,6 +37,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
+import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
@@ -265,6 +267,17 @@ public interface UserMapper {
 	    
 	   //根据code查询集成配置信息
 	    public List<IntegrationConfVO> queryIntegrationByCode(IntegrationConfDTO integrationConfDTO);
+	    
+	    //根据配置主表Code查询表格映射明细列表
+	    public List<TableMapperVO> queryTableMapper(TableMapperDTO tableMapperDTO);  
 		
+	    //查询表格映射列表明细条数
+	    public Integer getTableMapperCount(TableMapperDTO tableMapperDTO);
+	    
+	    //根据配置主表Code查询枚举值映射明细列表
+	    public List<EnumMapperVO> queryEnumMapper(EnumMapperDTO enumMapperDTO);
+		
+	    //查询枚举值映射明细列表条数
+	    public Integer getEnumMapperCount(EnumMapperDTO enumMapperDTO);
 		
 }

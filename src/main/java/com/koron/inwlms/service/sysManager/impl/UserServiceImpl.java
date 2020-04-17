@@ -40,6 +40,7 @@ import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -47,6 +48,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
+import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
@@ -1110,11 +1112,50 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("queryIntegrationByCode") 
 				@Override
 				public List<IntegrationConfVO> queryIntegrationByCode(SessionFactory factory,
-						IntegrationConfDTO integrationConfDTO) {
-					// TODO Auto-generated method stub
+						IntegrationConfDTO integrationConfDTO) {				
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<IntegrationConfVO> integrationConfList=userMapper.queryIntegrationByCode(integrationConfDTO);
 					return integrationConfList;
+				}
+
+				//根据配置主表Code查询表格映射明细列表
+				@TaskAnnotation("queryTableMapper") 
+				@Override
+				public PageListVO<List<TableMapperVO>> queryTableMapper(SessionFactory factory,TableMapperDTO tableMapperDTO) {											
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<TableMapperVO> tableMapperList=userMapper.queryTableMapper(tableMapperDTO);
+					//查询总条数
+					int rowNumber = userMapper.getTableMapperCount(tableMapperDTO);
+					// 返回数据结果
+					PageListVO<List<TableMapperVO>> result = new PageListVO<>();
+					result.setDataList(tableMapperList);
+					// 插入分页信息
+					PageVO pageVO = PageUtil.getPageBean(tableMapperDTO.getPage(), tableMapperDTO.getPageCount(), rowNumber);
+					result.setTotalPage(pageVO.getTotalPage());
+					result.setRowNumber(pageVO.getRowNumber());
+					result.setPageCount(pageVO.getPageCount());
+					result.setPage(pageVO.getPage());
+					return result;		
+				}
+
+				//根据配置主表Code查询枚举值映射明细列表
+				@TaskAnnotation("queryEnumMapper") 
+				@Override
+				public PageListVO<List<EnumMapperVO>> queryEnumMapper(SessionFactory factory,EnumMapperDTO enumMapperDTO) {						
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<EnumMapperVO> enumMapperList=userMapper.queryEnumMapper(enumMapperDTO);
+					//查询总条数
+					int rowNumber = userMapper.getEnumMapperCount(enumMapperDTO);
+					// 返回数据结果
+					PageListVO<List<EnumMapperVO>> result = new PageListVO<>();
+					result.setDataList(enumMapperList);
+					// 插入分页信息
+					PageVO pageVO = PageUtil.getPageBean(enumMapperDTO.getPage(), enumMapperDTO.getPageCount(), rowNumber);
+					result.setTotalPage(pageVO.getTotalPage());
+					result.setRowNumber(pageVO.getRowNumber());
+					result.setPageCount(pageVO.getPageCount());
+					result.setPage(pageVO.getPage());
+					return result;	
 				}
 					
 }

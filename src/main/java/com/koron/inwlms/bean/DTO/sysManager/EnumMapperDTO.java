@@ -2,12 +2,14 @@ package com.koron.inwlms.bean.DTO.sysManager;
 
 import java.sql.Timestamp;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * 枚举值映射明细
 * @Author xiaozhan
 * @Date 2020.04.16
 */
-public class EnumMapperDTO {
+public class EnumMapperDTO extends BaseDTO{
 	//集成配置编码
 	private String confCode;
 	//对方字段枚举编码

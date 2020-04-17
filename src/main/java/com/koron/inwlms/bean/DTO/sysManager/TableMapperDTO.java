@@ -3,6 +3,8 @@ package com.koron.inwlms.bean.DTO.sysManager;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 
 /**
  * 表格映射明细bean
@@ -11,7 +13,7 @@ import java.util.List;
 * @Date 2020.03.17
 */
 
-public class TableMapperDTO {
+public class TableMapperDTO extends BaseDTO{
     //集成表格映射明细
 	private Integer tableMapperId;
 	//表格映射code

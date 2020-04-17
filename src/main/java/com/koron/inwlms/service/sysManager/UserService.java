@@ -25,12 +25,14 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
+import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
@@ -172,6 +174,10 @@ public interface UserService {
 		  //根据code查询集成配置信息接口
 		  List<IntegrationConfVO> queryIntegrationByCode(SessionFactory factory,IntegrationConfDTO integrationConfDTO);
 		  		 
-		 
+		  //查询表格映射列表明细
+		  PageListVO<List<TableMapperVO>> queryTableMapper(SessionFactory factory,TableMapperDTO tableMapperDTO);
+		  
+		  //根据配置主表Code查询枚举值映射明细列表
+		  PageListVO<List<EnumMapperVO>> queryEnumMapper(SessionFactory factory,EnumMapperDTO enumMapperDTO);
 		 
 }

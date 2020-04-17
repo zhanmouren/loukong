@@ -917,6 +917,70 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
+	/*
+     * date:2020-04-17
+     * funtion:根据配置主表Code查询表格映射明细列表
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/queryTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据配置主表Code查询表格映射明细列表接口", notes = "根据配置主表Code查询表格映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {
+		if(tableMapperDTO.getConfigCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
+		}
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
+		  try{
+			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryTableMapper", PageListVO.class,tableMapperDTO);		 		  
+				  if(pageListVO!=null &&  pageListVO.getRowNumber()>0) {
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("查询表格映射列表明细成功");
+				    msg.setData(pageListVO);
+				  }else {			    
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询表格映射列表明细失败");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询表格映射列表明细失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-04-17
+     * funtion:根据配置主表Code查询枚举值映射明细列表
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/queryEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据配置主表Code查询枚举值映射明细列表接口", notes = "根据配置主表Code查询枚举值映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {
+		if(enumMapperDTO.getConfCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
+		}
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
+		  try{
+			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryEnumMapper", PageListVO.class,enumMapperDTO);		 		  
+				  if(pageListVO!=null &&  pageListVO.getRowNumber()>0) {
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("查询枚举值映射明细列表成功");
+				    msg.setData(pageListVO);
+				  }else {			    
+			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setDescription("查询枚举值映射明细列表失败");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询枚举值映射明细列表失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	
+	
 	 /*
      * date:2020-03-25
      * funtion:新建数据字典(主明细信息同时插入)

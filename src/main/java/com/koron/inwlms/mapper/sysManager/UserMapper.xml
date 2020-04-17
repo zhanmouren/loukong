@@ -657,6 +657,7 @@
 		 <if test="inteConfCode != null"> and "conf".code=#{inteConfCode}</if>  
 		 <if test="status != null"> and "conf".status=${status}</if>        
 	   </trim>
+	    order by "conf"."createTime" desc
 	    limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
       </select>
       
@@ -672,11 +673,68 @@
 	   </trim>     
       </select>
       
-        <!--根据code查询集成配置-->
+        <!--根据code查询集成配置 查询一条详细信息-->
      <select id="queryIntegrationByCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO" resultType="com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO">
          select "conf"."sysName" as "sysName","conf"."otherJDBC" as "otherJDBC","conf".code as "inteConfCode","conf".status as "status"
          from "SM_integrationConf" as "conf"
 	     where 	"conf".code=#{inteConfCode}
+      </select>
+      
+      
+       
+     <!--根据配置主表Code查询表格映射明细列表-->
+     <select id="queryTableMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO" resultType="com.koron.inwlms.bean.VO.sysManager.TableMapperVO">
+         select "table"."code" as "tableMapperCode","table"."confCode" as "configCode","table"."otherTabName" as "otherTabName",
+         "table"."otherTabCode" as "otherTabCode","table"."tableName" as "tableName","table"."tableCode" as "tableCode",
+         "table"."createTime" as "createTime","table"."updateTime" as "updateTime","table"."createBy" as "createBy",
+         "table"."updateBy" as "updateBy"
+         from "SM_tableMapper" as "table"
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="configCode != null"> and "table"."confCode"=#{configCode}</if>  
+		 <if test="otherTabName != null"> and "table"."otherTabName" like '%'||#{otherTabName}||'%'</if> 
+		 <if test="tableName != null"> and "table"."tableName" like '%'||#{tableName}||'%'</if>        
+	    </trim>
+	    order by "table"."createTime" desc
+	    limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+      </select>
+      
+       <!--根据配置主表Code查询集成配置列表数量-->
+      <select id="getTableMapperCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO" resultType="java.lang.Integer">
+         select count(*) 
+         from "SM_tableMapper" as "table" 
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="configCode != null"> and "table"."confCode"=#{configCode}</if>  
+		 <if test="otherTabName != null"> and "table"."otherTabName" like '%'||#{otherTabName}||'%'</if> 
+		 <if test="tableName != null"> and "table"."tableName" like '%'||#{tableName}||'%'</if>        
+	    </trim> 
+      </select>
+      
+       <!--根据配置主表Code查询枚举值映射明细列表-->
+     <select id="queryEnumMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO" resultType="com.koron.inwlms.bean.VO.sysManager.EnumMapperVO">
+         select "enummapper".id,"enummapper"."confCode" as "confCode","enummapper"."otherFieldValue" as "otherFieldValue","enummapper"."fieldValue" ,"enummapper"."mapper",
+         "enummapper"."createTime" as "createTime","enummapper"."updateTime" as "updateTime","enummapper"."createBy" as "createBy",
+         "enummapper"."updateBy" as "updateBy"
+         from "SM_enumMapper" as "enummapper"
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="confCode != null"> and "enummapper"."confCode"=#{confCode}</if>  
+		 <if test="otherFieldValue != null"> and "enummapper"."otherFieldValue" like '%'||#{otherFieldValue}||'%'</if> 
+		 <if test="fieldValue != null"> and "enummapper"."fieldValue" like '%'||#{fieldValue}||'%'</if> 
+		 <if test="mapper != null"> and "enummapper"."mapper" like '%'||#{mapper}||'%'</if>        
+	    </trim>
+	    order by "enummapper"."createTime" desc
+	    limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+      </select>
+      
+       <!--查询枚举值映射明细列表条数-->
+      <select id="getEnumMapperCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO" resultType="java.lang.Integer">
+         select count(*) 
+         from "SM_enumMapper" as "enummapper" 
+       <trim prefix="where" prefixOverrides="and|or">
+		 <if test="confCode != null"> and "enummapper"."confCode"=#{confCode}</if>  
+		 <if test="otherFieldValue != null"> and "enummapper"."otherFieldValue" like '%'||#{otherFieldValue}||'%'</if> 
+		 <if test="fieldValue != null"> and "enummapper"."fieldValue" like '%'||#{fieldValue}||'%'</if> 
+		 <if test="mapper != null"> and "enummapper"."mapper" like '%'||#{mapper}||'%'</if>        
+	    </trim>
       </select>
      
       
