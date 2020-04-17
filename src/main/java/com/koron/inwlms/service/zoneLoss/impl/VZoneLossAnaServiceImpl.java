@@ -49,6 +49,9 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 		queryVZoneInfoDTO.setZoneNo(queryVSZoneListDTO.getvZoneNo());
 		queryVZoneInfoDTO.setZoneType(2);
 		List<VZoneInfoVO> vZoneInfos = gzsImpl.queryVZoneInfo(factory,queryVZoneInfoDTO);
+		//判空，及判断分页
+		if(vZoneInfos == null || vZoneInfos.size()<(queryVSZoneListDTO.getPage()-1)*queryVSZoneListDTO.getPageCount()) return null;
+				
 		for(VZoneInfoVO zoneInfo : vZoneInfos) {
 			vZoneCodes.add(zoneInfo.getZoneNo());
 		}
@@ -227,6 +230,9 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 		queryVZoneInfoDTO.setZoneNo(queryVCZoneListDTO.getvZoneNo());
 		queryVZoneInfoDTO.setZoneType(1);
 		List<VZoneInfoVO> vZoneInfos = gzsImpl.queryVZoneInfo(factory,queryVZoneInfoDTO);
+		//判空，及判断分页
+		if(vZoneInfos == null || vZoneInfos.size()<(queryVCZoneListDTO.getPage()-1)*queryVCZoneListDTO.getPageCount()) return null;
+				
 		for(VZoneInfoVO zoneInfo : vZoneInfos) {
 			vZoneCodes.add(zoneInfo.getZoneNo());
 		}

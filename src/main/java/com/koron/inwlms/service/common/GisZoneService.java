@@ -84,4 +84,14 @@ public interface GisZoneService {
 	 * @return
 	 */
 	List<VZoneInfoVO> queryVZoneInfo(SessionFactory factory,QueryVZoneInfoDTO queryVZoneInfoDTO);
+
+	/**
+	 * 根据分区编号获取等级
+	 * @param factory
+	 * @param zoneNo
+	 * @return
+	 */
+	Integer getZoneRankByNo(SessionFactory factory,String zoneNo);
+
+
 }

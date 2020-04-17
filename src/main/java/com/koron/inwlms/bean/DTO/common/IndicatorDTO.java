@@ -12,6 +12,9 @@ public class IndicatorDTO {
 
 	private List<String> codes;
 	
+	/**
+	 * 时间类型 2-日，3-月，4-年
+	 */
 	private Integer timeType;
 	
 	private Integer startTime;

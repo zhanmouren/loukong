@@ -154,6 +154,18 @@ public class ApparentLossController {
 			msg.setDescription("分区等级数值错误");
 			return msg.toJson();
 		}
+		if(queryALListDTO.getPage() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("页数为空");
+			return msg.toJson();
+		}
+		if(queryALListDTO.getPageCount() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("每页记录数为空");
+			return msg.toJson();
+		}
 		try{
 			PageListVO data = ADOConnection.runTask(als, "queryALList", PageListVO.class,queryALListDTO);
 			msg.setData(data);

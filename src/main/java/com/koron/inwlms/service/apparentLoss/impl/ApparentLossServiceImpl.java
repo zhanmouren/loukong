@@ -131,14 +131,22 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		int rowNumber = 0;
 		if (Constant.TIME_TYPE_M.equals(timeType)) {
 			// 月指标查询
-			alLists = mapper.queryMALList(queryALListDTO, lists);
 			// 查询总条数
 			rowNumber = mapper.countMALList(queryALListDTO, lists);
+			//及判断分页
+			if(rowNumber<(queryALListDTO.getPage()-1)*queryALListDTO.getPageCount()) return null;
+			
+			alLists = mapper.queryMALList(queryALListDTO, lists);
+			
 		} else if (Constant.TIME_TYPE_Y.equals(timeType)) {
 			// 年指标查询
-			alLists = mapper.queryYALList(queryALListDTO, lists);
 			// 查询总条数
 			rowNumber = mapper.countYALList(queryALListDTO, lists);
+			//及判断分页
+			if(rowNumber<(queryALListDTO.getPage()-1)*queryALListDTO.getPageCount()) return null;
+			
+			alLists = mapper.queryYALList(queryALListDTO, lists);
+			
 		}
 		// 返回数据结果
 		PageListVO<List<ALListVO>> result = new PageListVO<>();

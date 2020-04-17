@@ -1,33 +1,74 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.zoneLoss.WaterBalanceAnaMapper">
+	
+	<select id="queryCompanyWBMLossData" resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO">
+		select 
+		sum(case when b.code='WNMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+		sum(case when b.code='WNMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+		sum(case when b.code='WNMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+		avg(case when b.code='WNMWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate"
+		from
+		(select a.id,m."yearMonth",a.code,a.value,ind.precision as precision
+		from (
+			select id,"yearMonth",code,value from "ANA_company_month"
+			where 1= 1
+			<if test="codes != null and codes.size > 0">
+				and code in 
+				<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
+		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
+		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qzlDTO.startTime} 
+		and m."yearMonth" &lt;= #{qzlDTO.endTime}) b
+	</select>
+	
+	<select id="queryCompanyWBYLossData" resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO">
+		select 
+		sum(case when b.code='WNYFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+		sum(case when b.code='WNYBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+		sum(case when b.code='WNYWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+		avg(case when b.code='WNYWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate"
+		from
+		(select a.id,a.year,a.code,a.value,ind.precision as precision
+		from (
+			select id,year,code,value from "ANA_company_year"
+			where year &gt;= #{qzlDTO.startTime} and year &lt;= #{qzlDTO.endTime}
+			<if test="codes != null and codes.size > 0">
+				and code in 
+				<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
+		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
+		) b
+	</select>
 
 	<select id="queryZoneWBMLossData" resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO">
 		select 
-		<if test="(qzlDTO.zoneNo == null or qzlDTO.zoneNo == '') and (qzlDTO.zoneRank == null or qzlDTO.zoneRank == '')">
-			sum(case when b.code='WNMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
-			sum(case when b.code='WNMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
-			sum(case when b.code='WNMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
-			<!-- 漏损率暂定 -->
-			0.1 as "lossRate",
-			b."zoneNo"
-		</if>
 		<if test="qzlDTO.zoneRank == 1">
 			<!-- 一级分区 -->
 			sum(case when b.code='FLMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
 			sum(case when b.code='FLMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
 			sum(case when b.code='FLMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
-			<!-- 漏损率暂定 -->
-			0.1 as "lossRate",
+			avg(case when b.code='FLMWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
 			b."zoneNo"
 		</if>
-		<if test="qzlDTO.zoneNo != null and qzlDTO.zoneNo != '' and qzlDTO.zoneRank == 3">
+		<if test="qzlDTO.zoneRank == 2">
+			<!-- 二级分区 -->
+			sum(case when b.code='SLMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='SLMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='SLMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='SLMWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
+			b."zoneNo"
+		</if>
+		<if test="qzlDTO.zoneRank == 3">
 			<!-- DMA/PMA -->
 			sum(case when b.code='DMMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
 			sum(case when b.code='DMMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
 			sum(case when b.code='DMMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
-			<!-- 漏损率暂定 -->
-			0.1 as "lossRate",
+			avg(case when b.code='DMMWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
 			b."zoneNo"
 		</if>
 		from
@@ -35,14 +76,17 @@
 		from (
 			select id,"yearMonth",code,value,"zoneNo" from "ANA_zone_balance_month"
 			where 1= 1
+			<if test="codes != null and codes.size > 0">
+				and code in 
+				<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
 			<if test="lists != null and lists.size > 0">
 				and "zoneNo" in 
 				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
 					#{item.zoneNo}    
 				</foreach> 
-			</if>
-			<if test="lists == null or lists.size == 0">
-				and "zoneNo" is null 
 			</if>
 		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
 		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qzlDTO.startTime} 
@@ -52,45 +96,46 @@
 	
 	<select id="queryZoneWBYLossData" resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO">
 		select 
-		<if test="(qzlDTO.zoneNo == null or qzlDTO.zoneNo == '') and (qzlDTO.zoneRank == null or qzlDTO.zoneRank == '')">
-			sum(case when b.code='WNMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
-			sum(case when b.code='WNMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
-			sum(case when b.code='WNMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
-			<!-- 漏损率暂定 -->
-			0.1 as "lossRate",
-			b."zoneNo"
-		</if>
-		<if test="qzlDTO.zoneNo != null and qzlDTO.zoneNo != '' and qzlDTO.zoneRank == 1">
+		<if test="qzlDTO.zoneRank == 1">
 			<!-- 一级分区 -->
-			sum(case when b.code='FLMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
-			sum(case when b.code='FLMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
-			sum(case when b.code='FLMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
-			<!-- 漏损率暂定 -->
-			0.1 as "lossRate",
+			sum(case when b.code='FLYFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='FLYBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='FLYWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='FLYWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
 			b."zoneNo"
 		</if>
-		<if test="qzlDTO.zoneNo != null and qzlDTO.zoneNo != '' and qzlDTO.zoneRank == 3">
+		<if test="qzlDTO.zoneRank == 2">
+			<!-- 二级分区 -->
+			sum(case when b.code='SLYFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='SLYBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='SLYWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='SLYWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
+			b."zoneNo"
+		</if>
+		<if test="qzlDTO.zoneRank == 3">
 			<!-- DMA/PMA -->
-			sum(case when b.code='DMMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
-			sum(case when b.code='DMMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
-			sum(case when b.code='DMMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
-			<!-- 漏损率暂定 -->
-			0.1 as "lossRate",
+			sum(case when b.code='DMYFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='DMYBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='DMYWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='DMYWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
 			b."zoneNo"
 		</if>
 		from
 		(select a.id,a.year,a.code,a.value,ind.precision as precision,a."zoneNo"
 		from (
 			select id,year,code,value,"zoneNo" from "ANA_zone_balance_year"
-			where year &gt;= #{startTime} and year &lt;= #{endTime}
+			where year &gt;= #{qzlDTO.startTime} and year &lt;= #{qzlDTO.endTime}
+			<if test="codes != null and codes.size > 0">
+				and code in 
+				<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
 			<if test="lists != null and lists.size > 0">
 				and "zoneNo" in 
 				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
 					#{item.zoneNo}    
 				</foreach> 
-			</if>
-			<if test="lists == null or lists.size == 0">
-				and "zoneNo" is null 
 			</if>
 		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
 		) b

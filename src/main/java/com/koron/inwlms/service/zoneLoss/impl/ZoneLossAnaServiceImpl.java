@@ -53,6 +53,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		GisZoneServiceImpl gzsImpl = new GisZoneServiceImpl();
 		List<String> zoneNos = new ArrayList<>();
 		List<ZoneInfo> zoneInfos = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_F);
+		//判空，及判断分页
+		if(zoneInfos == null || zoneInfos.size()<(queryFZoneLossListDTO.getPage()-1)*queryFZoneLossListDTO.getPageCount()) return null;
 		for(ZoneInfo zoneInfo : zoneInfos) {
 			zoneNos.add(zoneInfo.getZoneNo());
 		}
@@ -227,6 +229,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		GisZoneServiceImpl gzsImpl = new GisZoneServiceImpl();
 		List<String> zoneNos = new ArrayList<>();
 		List<ZoneInfo> zoneInfos = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_S);
+		//判空，及判断分区
+		if(zoneInfos == null || zoneInfos.size()<(querySZoneLossListDTO.getPage()-1)*querySZoneLossListDTO.getPageCount()) return null;
 		for(ZoneInfo zoneInfo : zoneInfos) {
 			zoneNos.add(zoneInfo.getZoneNo());
 		}
@@ -401,6 +405,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		GisZoneServiceImpl gzsImpl = new GisZoneServiceImpl();
 		List<String> zoneNos = new ArrayList<>();
 		List<ZoneInfo> zoneInfos = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_T);
+		//判空，及判断分页
+		if(zoneInfos == null || zoneInfos.size()<(queryDmaZoneLossListDTO.getPage()-1)*queryDmaZoneLossListDTO.getPageCount()) return null;
 		for(ZoneInfo zoneInfo : zoneInfos) {
 			zoneNos.add(zoneInfo.getZoneNo());
 		}
@@ -633,7 +639,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		//根据分区类型获取所有分区编号
 		GisZoneServiceImpl gisZoneServiceImpl = new GisZoneServiceImpl();
 		List<ZoneInfo> zoneInfos = gisZoneServiceImpl.queryZoneNosByRank(factory, zoneType);
-		if(zoneInfos == null || zoneInfos.size() ==0) return null;
+		//判空，及判断分页
+		if(zoneInfos == null || zoneInfos.size()<(queryZoneIndicatorListDTO.getPage()-1)*queryZoneIndicatorListDTO.getPageCount()) return null;
 		for (ZoneInfo zoneInfo : zoneInfos) {
 			zoneNos.add(zoneInfo.getZoneNo());
 		}

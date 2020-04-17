@@ -1,5 +1,7 @@
 package com.koron.inwlms.bean.VO.zoneLoss;
 
+import java.util.List;
+
 /**
  * 分区水平衡VO
  * @author csh
@@ -17,6 +19,11 @@ public class ZoneWBLossVO {
 	 * 分区编号
 	 */
 	private String zoneNo;
+	
+	/**
+	 * 父编号
+	 */
+	private String pZoneNo;
 	
 	/**
 	 * 总表水量
@@ -37,6 +44,16 @@ public class ZoneWBLossVO {
 	 * 水损率
 	 */
 	private Double lossRate;
+	
+	/**
+	 * 颜色，1-灰色，2-橙色，3-红色
+	 */
+	private Integer color;
+	
+	/**
+	 * 子模块
+	 */
+	private List<ZoneWBLossVO> childrens;
 
 
 	public String getZoneName() {
@@ -86,6 +103,29 @@ public class ZoneWBLossVO {
 	public void setLossRate(Double lossRate) {
 		this.lossRate = lossRate;
 	}
-	
+
+	public String getpZoneNo() {
+		return pZoneNo;
+	}
+
+	public Integer getColor() {
+		return color;
+	}
+
+	public List<ZoneWBLossVO> getChildrens() {
+		return childrens;
+	}
+
+	public void setpZoneNo(String pZoneNo) {
+		this.pZoneNo = pZoneNo;
+	}
+
+	public void setColor(Integer color) {
+		this.color = color;
+	}
+
+	public void setChildrens(List<ZoneWBLossVO> childrens) {
+		this.childrens = childrens;
+	}
 	
 }

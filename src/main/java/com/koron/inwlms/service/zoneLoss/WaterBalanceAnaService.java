@@ -34,7 +34,7 @@ public interface WaterBalanceAnaService {
 	 * @param queryZoneWBLossDTO
 	 * @return
 	 */
-	List<ZoneWBLossVO> queryZoneWBLossData(SessionFactory factory,QueryZoneWBLossDTO queryZoneWBLossDTO);
+	ZoneWBLossVO queryZoneWBLossData(SessionFactory factory,QueryZoneWBLossDTO queryZoneWBLossDTO);
 	
 	/**
 	 * 查询全网水平衡报表列表

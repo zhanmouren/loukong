@@ -366,4 +366,23 @@ public class GisZoneServiceImpl implements GisZoneService {
 		}
 		return lists;
 	}
+	
+	/**
+	 * 根据分区编号获取分区等级（暂定）
+	 * @param zoneNo
+	 * @return
+	 */
+	@TaskAnnotation("getZoneRankByNo")
+	@Override
+	public Integer getZoneRankByNo(SessionFactory factory, String zoneNo) {
+		if(zoneNo.contains("FL")) {
+			return 1;
+		}else if(zoneNo.contains("SL")) {
+			return 2;
+		}else if(zoneNo.contains("DM")) {
+			return 3;
+		}else {
+			return 0;
+		}
+	}
 }

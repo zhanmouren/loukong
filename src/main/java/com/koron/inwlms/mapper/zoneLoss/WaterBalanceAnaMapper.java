@@ -37,18 +37,30 @@ import com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO;
  */
 @Repository
 public interface WaterBalanceAnaMapper {
-
+	
+	 /**
+     * 查询全网水平衡月漏损数据
+     * @return
+     */
+	ZoneWBLossVO queryCompanyWBMLossData(@Param("qzlDTO") QueryZoneWBLossDTO qzlDTO,@Param("codes") List<String> codes);
+	
+	 /**
+     * 查询全网水平衡年漏损数据
+     * @return
+     */
+	ZoneWBLossVO queryCompanyWBYLossData(@Param("qzlDTO") QueryZoneWBLossDTO qzlDTO,@Param("codes") List<String> codes);
+	
     /**
      * 查询分区水平衡月漏损数据
      * @return
      */
-	List<ZoneWBLossVO> queryZoneWBMLossData(@Param("qzlDTO") QueryZoneWBLossDTO queryZoneWBLossDTO,@Param("lists") List<ZoneInfo> lists);
+	List<ZoneWBLossVO> queryZoneWBMLossData(@Param("qzlDTO") QueryZoneWBLossDTO qzlDTO,@Param("lists") List<ZoneInfo> lists,@Param("codes") List<String> codes);
 	
 	 /**
      * 查询分区水平衡年漏损数据
      * @return
      */
-	List<ZoneWBLossVO> queryZoneWBYLossData(@Param("qzlDTO") QueryZoneWBLossDTO queryZoneWBLossDTO,@Param("lists") List<ZoneInfo> lists);
+	List<ZoneWBLossVO> queryZoneWBYLossData(@Param("qzlDTO") QueryZoneWBLossDTO qzlDTO,@Param("lists") List<ZoneInfo> lists,@Param("codes") List<String> codes);
 	
 	/**
 	 * 查询全网水平衡报表列表
