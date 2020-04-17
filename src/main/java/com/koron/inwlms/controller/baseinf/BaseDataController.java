@@ -2,6 +2,7 @@ package com.koron.inwlms.controller.baseinf;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.koron.inwlms.bean.DTO.property.FacilityDTO;
 import com.koron.inwlms.bean.DTO.property.PipeDTO;
 import com.koron.inwlms.bean.DTO.property.PointDTO;
@@ -52,11 +53,12 @@ public class BaseDataController {
 
         //TODO:参数pipeDTO校验
 
-        JSONObject json = JSONObject.fromObject(pipeDTO);
+        //JSONObject json = JSONObject.fromObject(pipeDTO);
+        String path = "";
         //TODO:调用GIS接口获取管线数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        return msg.toString();
     }
 
 
@@ -67,10 +69,12 @@ public class BaseDataController {
 
         //TODO:参数pipeID校验
 
-        //TODO:调用GIS接口获取管线数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        //TODO:调用GIS接口获取管线数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
     }
 
     @RequestMapping("/importPipe.htm")
@@ -82,9 +86,10 @@ public class BaseDataController {
 
 
         //TODO:调用GIS接口导入管线数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
+        String path= "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        return msg.toString();
     }
 
     @RequestMapping("/deletePipes/{BatchNo}")
@@ -93,9 +98,10 @@ public class BaseDataController {
     public String deletePipes(@PathVariable("BatchNo") String BatchNo) {
 
         //TODO:调用GIS接口删除某一批次数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        return msg.toString();
     }
 
     @RequestMapping(value = "/queryPointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -104,11 +110,10 @@ public class BaseDataController {
     public String queryPointList(@RequestBody PointDTO pointDTO) {
 
 
-        JSONObject json = JSONObject.fromObject(pointDTO);
         //TODO:调用GIS接口获取管线数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
-
-        return msg.toJSONString();
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+        return msg.toString();
     }
 
     @RequestMapping(value = "/queryPointDet/{P_CODE}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -119,9 +124,10 @@ public class BaseDataController {
         //TODO:参数P_CODE校验
 
         //TODO:调用GIS接口获取管线数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        return msg.toString();
     }
 
     @RequestMapping("/importPoint.htm")
@@ -133,9 +139,10 @@ public class BaseDataController {
 
 
         //TODO:调用GIS接口导入管线数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        return msg.toString();
     }
 
     @RequestMapping("/deletePoints/{BatchNo}")
@@ -144,9 +151,10 @@ public class BaseDataController {
     public String deletePoints(@PathVariable("BatchNo") String BatchNo) {
 
         //TODO:调用GIS接口删除某一批次数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        return msg.toString();
     }
 
     @RequestMapping(value = "/queryFacilityList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -154,11 +162,11 @@ public class BaseDataController {
     @ResponseBody
     public String queryPointList(@RequestBody FacilityDTO facilityDTO) {
 
-        JSONObject json = JSONObject.fromObject(facilityDTO);
         //TODO:调用GIS接口获取附属设施数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        return msg.toString();
     }
 
     @RequestMapping(value = "/queryFacilityDet/{P_CODE}", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -169,9 +177,10 @@ public class BaseDataController {
         //TODO:参数P_CODE校验
 
         //TODO:调用GIS接口获取附属设施数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        return msg.toString();
     }
 
 
@@ -181,9 +190,10 @@ public class BaseDataController {
     public String deleteFacility(@PathVariable("BatchNo") String BatchNo) {
 
         //TODO:调用GIS接口删除某一批次数据
-        JSONObject msg = InterfaceUtil.interfaceUtil(path);
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
 
-        return msg.toJSONString();
+        return msg.toString();
     }
 
 
