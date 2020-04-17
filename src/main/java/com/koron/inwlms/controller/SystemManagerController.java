@@ -876,8 +876,8 @@ public class SystemManagerController {
 				    msg.setDescription("查询集成配置列表信息成功");
 				    msg.setData(pageListVO);
 				  }else {			    
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-			        msg.setDescription("查询集成配置列表信息失败");
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询集成配置列表信息");
 				  }			  
 	        }catch(Exception e){	        	
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -906,8 +906,8 @@ public class SystemManagerController {
 				    msg.setDescription("查询集成配置详情信息成功");
 				    msg.setData(integrationConfVOList);
 				  }else {			    
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-			        msg.setDescription("查询集成配置详情信息失败");
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询到集成配置详情信息");
 				  }			  
 	        }catch(Exception e){	        	
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -937,8 +937,8 @@ public class SystemManagerController {
 				    msg.setDescription("查询表格映射列表明细成功");
 				    msg.setData(pageListVO);
 				  }else {			    
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-			        msg.setDescription("查询表格映射列表明细失败");
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询到表格映射列表明细");
 				  }			  
 	        }catch(Exception e){	        	
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -968,8 +968,8 @@ public class SystemManagerController {
 				    msg.setDescription("查询枚举值映射明细列表成功");
 				    msg.setData(pageListVO);
 				  }else {			    
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-			        msg.setDescription("查询枚举值映射明细列表失败");
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询到枚举值映射明细列表");
 				  }			  
 	        }catch(Exception e){	        	
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -979,7 +979,154 @@ public class SystemManagerController {
 	     return msg.toJson();
 	}
 	
+	/*
+     * date:2020-04-17
+     * funtion:根据表格Code查询表格字段映射明细列表
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/queryFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据表格Code查询表格字段映射明细列表接口", notes = "根据表格Code查询表格字段映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {
+		if(fieldMapperDTO.getTableCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细code不能为空", Integer.class).toJson();
+		}
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
+		  try{
+			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryFieldMapper", PageListVO.class,fieldMapperDTO);		 		  
+				  if(pageListVO!=null &&  pageListVO.getRowNumber()>0) {
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("查询表格Code查询表格字段映射明细列表成功");
+				    msg.setData(pageListVO);
+				  }else {			    
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询到列表信息");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询表格Code查询表格字段映射明细列表失败");
+	        }
+		
+	     return msg.toJson();
+	}
 	
+	/*
+     * date:2020-04-17
+     * funtion:根据code修改集成配置信息
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/updateConf.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据code修改集成配置信息接口", notes = "根据code修改集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateConf(@RequestBody IntegrationConfDTO integrationConfDTO) {
+		if(integrationConfDTO.getInteConfCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "配置编码不能为空", Integer.class).toJson();
+		}
+		if(integrationConfDTO.getStatus()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "配置状态不能为空", Integer.class).toJson();
+		}	
+		if(integrationConfDTO.getSysName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "系统名称不能为空", Integer.class).toJson();
+		}
+		if(integrationConfDTO.getOtherJDBC()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方JDBC不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer updateRes=ADOConnection.runTask(userService, "updateConf", Integer.class,integrationConfDTO);		 		  
+				  if(updateRes==-1) {
+					msg.setCode(Constant.MESSAGE_INT_ERROR);
+				    msg.setDescription("修改集成配置信息失败");			   				    
+				  }else {			    
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("修改集成配置信息成功");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("修改集成配置信息失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	/*
+     * date:2020-04-17
+     * funtion:根据code修改表格映射明细信息
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/updateTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据code修改表格映射明细信息接口", notes = "根据code修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {
+        if(tableMapperDTO.getTableMapperCode()==null) {
+        	return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
+        }	
+		if(tableMapperDTO.getOtherTabCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方表格编码不能为空", Integer.class).toJson();
+		}	
+		if(tableMapperDTO.getOtherTabName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方表格名不能为空", Integer.class).toJson();
+		}
+		if(tableMapperDTO.getTableCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格编码不能为空", Integer.class).toJson();
+		}
+		if(tableMapperDTO.getTableName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格名称不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer updateRes=ADOConnection.runTask(userService, "updateTableMapper", Integer.class,tableMapperDTO);		 		  
+				  if(updateRes==-1) {
+					msg.setCode(Constant.MESSAGE_INT_ERROR);
+				    msg.setDescription("修改表格映射明细信息失败");			   				    
+				  }else {			    
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("修改表格映射明细信息成功");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("修改表格映射明细信息失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	/*
+     * date:2020-04-17
+     * funtion:根据Id修改枚举明细映射接口
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/updateEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据id修改表格映射明细信息接口", notes = "根据id修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {
+		if(enumMapperDTO.getId()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "id不能为空", Integer.class).toJson();
+		}
+		if(enumMapperDTO.getOtherFieldValue()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段枚举编码不能为空", Integer.class).toJson();
+		}
+		if(enumMapperDTO.getFieldValue()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方枚举编码不能为空", Integer.class).toJson();
+		}
+		if(enumMapperDTO.getMapper()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "映射方式不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer updateRes=ADOConnection.runTask(userService, "updateEnumMapper", Integer.class,enumMapperDTO);		 		  
+				  if(updateRes==-1) {
+					msg.setCode(Constant.MESSAGE_INT_ERROR);
+				    msg.setDescription("修改枚举明细映射失败");			   				    
+				  }else {			    
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("修改枚举明细映射成功");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("修改枚举明细映射失败");
+	        }
+		
+	     return msg.toJson();
+	}
 	
 	 /*
      * date:2020-03-25

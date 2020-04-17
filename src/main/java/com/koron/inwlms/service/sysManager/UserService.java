@@ -26,6 +26,7 @@ import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
+import com.koron.inwlms.bean.VO.sysManager.FieldMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -179,5 +180,17 @@ public interface UserService {
 		  
 		  //根据配置主表Code查询枚举值映射明细列表
 		  PageListVO<List<EnumMapperVO>> queryEnumMapper(SessionFactory factory,EnumMapperDTO enumMapperDTO);
+		  
+		  //根据表格Code查询表格字段映射明细列表
+		  PageListVO<List<FieldMapperVO>> queryFieldMapper(SessionFactory factory,FieldMapperDTO fieldMapperDTO);
+		  
+		  //修改集成配置信息接口
+		  Integer updateConf(SessionFactory factory,IntegrationConfDTO integrationConfDTO);
+		  
+		  //根据code修改表格映射明细信息
+		  Integer updateTableMapper(SessionFactory factory,TableMapperDTO tableMapperDTO);
+		  
+		  //根据id修改表格映射明细信息
+		  Integer updateEnumMapper(SessionFactory factory,EnumMapperDTO enumMapperDTO);
 		 
 }

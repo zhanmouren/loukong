@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 * @Date 2020.04.16
 */
 public class EnumMapperVO {
+	private Integer id;
 	//集成配置编码
 		private String confCode;
 		//对方字段枚举编码
@@ -24,6 +25,13 @@ public class EnumMapperVO {
 				private String updateBy;
 				//修改时间
 				private Timestamp updateTime;
+				
+				public Integer getId() {
+					return id;
+				}
+				public void setId(Integer id) {
+					this.id = id;
+				}
 				public String getConfCode() {
 					return confCode;
 				}

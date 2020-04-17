@@ -2,6 +2,8 @@ package com.koron.inwlms.bean.DTO.sysManager;
 
 import java.sql.Timestamp;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * 表格字段映射明细bean
  *
@@ -9,7 +11,7 @@ import java.sql.Timestamp;
 * @Date 2020.03.17
 */
 
-public class FieldMapperDTO {
+public class FieldMapperDTO  extends BaseDTO {
 	//字段映射code
 	private String fieldMapperCode;
 	//表格映射明细编码

@@ -711,7 +711,7 @@
       
        <!--根据配置主表Code查询枚举值映射明细列表-->
      <select id="queryEnumMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO" resultType="com.koron.inwlms.bean.VO.sysManager.EnumMapperVO">
-         select "enummapper".id,"enummapper"."confCode" as "confCode","enummapper"."otherFieldValue" as "otherFieldValue","enummapper"."fieldValue" ,"enummapper"."mapper",
+         select "enummapper".id as "id","enummapper"."confCode" as "confCode","enummapper"."otherFieldValue" as "otherFieldValue","enummapper"."fieldValue" ,"enummapper"."mapper",
          "enummapper"."createTime" as "createTime","enummapper"."updateTime" as "updateTime","enummapper"."createBy" as "createBy",
          "enummapper"."updateBy" as "updateBy"
          from "SM_enumMapper" as "enummapper"
@@ -736,6 +736,76 @@
 		 <if test="mapper != null"> and "enummapper"."mapper" like '%'||#{mapper}||'%'</if>        
 	    </trim>
       </select>
+      
+       <!--根据表格Code查询表格字段映射明细列表-->
+     <select id="queryFieldMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO" resultType="com.koron.inwlms.bean.VO.sysManager.FieldMapperVO">
+         select "field".code as "fieldMapperCode","field"."tableCode" as "tableCode","field"."otherFieldCode" as "otherFieldCode",
+         "field"."otherFieldName" as "otherFieldName","field"."fieldType" as "fieldType",
+         "field"."formula" as "formula","field".value as "value","field"."tableNames" as "tableNames","field"."fieldCode" as "fieldCode","field"."fieldName" as "fieldName",
+         "field"."createBy", "field"."createTime","field"."updateBy","field"."updateTime"
+         from "SM_fieldMapper" as "field"
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="tableCode != null"> and "field"."tableCode"=#{tableCode}</if>  
+		 <if test="otherFieldName != null"> and "field"."otherFieldName" like '%'||#{otherFieldName}||'%'</if> 
+		 <if test="fieldName != null"> and "field"."fieldName" like '%'||#{fieldName}||'%'</if> 
+		 <if test="fieldType != null"> and "field"."fieldType"=#{fieldType}</if>     
+	    </trim>
+	    order by "field"."createTime" desc
+	    limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+      </select>
+      
+       <!--根据表格Code查询表格字段映射明细列表条数-->
+      <select id="getFieldMapperCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO" resultType="java.lang.Integer">
+         select count(*) 
+         from "SM_fieldMapper" as "field" 
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="tableCode != null"> and "field"."tableCode"=#{tableCode}</if>  
+		 <if test="otherFieldName != null"> and "field"."otherFieldName" like '%'||#{otherFieldName}||'%'</if> 
+		 <if test="fieldName != null"> and "field"."fieldName" like '%'||#{fieldName}||'%'</if> 
+		 <if test="fieldType != null"> and "field"."fieldType"=#{fieldType}</if>     
+	    </trim>
+      </select>
+      
+       <!--根据code修改集成配置信息接口 -->
+       <update id="updateConf"  parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO">
+          	update "SM_integrationConf" 
+		<set>	    
+             <if test="otherJDBC != null  " > "otherJDBC" = #{otherJDBC},  </if>                       
+             <if test="sysName != null " > "sysName" = #{sysName},</if>                                               
+             <if test="updateBy != null " > "updateBy" = #{updateBy},</if>                        
+             <if test="updateBy != null" > "updateTime" = Now(),</if>  
+             <if test="status != null" > status = #{status},  </if>               
+		</set>
+	    	where code=#{inteConfCode}
+       </update>
+       
+       <!--根据Code修改集成配置信息接口 -->
+       <update id="updateTableMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO">
+          	update "SM_tableMapper" 
+		<set>	    
+             <if test="otherTabName != null  " > "otherTabName" = #{otherTabName},  </if>                       
+             <if test="otherTabCode != null " > "otherTabCode" = #{otherTabCode},</if>    
+             <if test="tableName != null" > "tableName" = #{tableName},  </if>   
+             <if test="tableCode != null" > "tableCode" = #{tableCode},  </if>                                          
+             <if test="updateBy != null " > "updateBy" = #{updateBy},</if>                        
+             <if test="updateBy != null" > "updateTime" = Now(),</if>  
+                          
+		</set>
+	    	where code=#{tableMapperCode}
+       </update>
+       
+       <!--根据id修改表格映射明细信息 -->
+       <update id="updateEnumMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO">
+          	update "SM_enumMapper" 
+		<set>	    
+             <if test="otherFieldValue != null  " > "otherFieldValue" = #{otherFieldValue},  </if>                       
+             <if test="fieldValue != null " > "fieldValue" = #{fieldValue},</if>    
+             <if test="mapper != null" > "mapper" = #{mapper},  </if>                                        
+             <if test="updateBy != null " > "updateBy" = #{updateBy},</if>                        
+             <if test="updateBy != null" > "updateTime" = Now(),</if>                        
+		</set>
+	    	where id=#{id}
+       </update>
      
       
 </mapper>

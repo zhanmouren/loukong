@@ -30,6 +30,7 @@ import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
+import com.koron.inwlms.bean.VO.sysManager.FieldMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
@@ -279,5 +280,20 @@ public interface UserMapper {
 		
 	    //查询枚举值映射明细列表条数
 	    public Integer getEnumMapperCount(EnumMapperDTO enumMapperDTO);
+	    
+	    //根据表格Code查询表格字段映射明细列表
+	    public List<FieldMapperVO> queryFieldMapper(FieldMapperDTO fieldMapperDTO);
+		
+	    //根据表格Code查询表格字段映射明细列表条数
+	    public Integer getFieldMapperCount(FieldMapperDTO fieldMapperDTO);
+	    
+	    //修改集成配置信息接口
+	    public Integer updateConf(IntegrationConfDTO integrationConfDTO);
+	    
+	    //根据Code修改集成配置信息接口
+	    public Integer updateTableMapper(TableMapperDTO tableMapperDTO);
+	        
+	    //根据id修改表格映射明细信息
+		public Integer updateEnumMapper(EnumMapperDTO enumMapperDTO);
 		
 }

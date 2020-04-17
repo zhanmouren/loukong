@@ -41,6 +41,7 @@ import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
+import com.koron.inwlms.bean.VO.sysManager.FieldMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
@@ -1118,7 +1119,7 @@ public class UserServiceImpl implements UserService{
 					return integrationConfList;
 				}
 
-				//根据配置主表Code查询表格映射明细列表
+				//根据配置主表Code查询表格映射明细列表 分页
 				@TaskAnnotation("queryTableMapper") 
 				@Override
 				public PageListVO<List<TableMapperVO>> queryTableMapper(SessionFactory factory,TableMapperDTO tableMapperDTO) {											
@@ -1138,7 +1139,7 @@ public class UserServiceImpl implements UserService{
 					return result;		
 				}
 
-				//根据配置主表Code查询枚举值映射明细列表
+				//根据配置主表Code查询枚举值映射明细列表 分页
 				@TaskAnnotation("queryEnumMapper") 
 				@Override
 				public PageListVO<List<EnumMapperVO>> queryEnumMapper(SessionFactory factory,EnumMapperDTO enumMapperDTO) {						
@@ -1156,6 +1157,58 @@ public class UserServiceImpl implements UserService{
 					result.setPageCount(pageVO.getPageCount());
 					result.setPage(pageVO.getPage());
 					return result;	
+				}
+
+				//根据表格Code查询表格字段映射明细列表 2020/04/17 分页
+				@TaskAnnotation("queryFieldMapper") 
+				@Override
+				public PageListVO<List<FieldMapperVO>> queryFieldMapper(SessionFactory factory,
+						FieldMapperDTO fieldMapperDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<FieldMapperVO>  FieldMapperList=userMapper.queryFieldMapper(fieldMapperDTO);
+					//查询总条数
+					int rowNumber = userMapper.getFieldMapperCount(fieldMapperDTO);
+					// 返回数据结果
+					PageListVO<List<FieldMapperVO>> result = new PageListVO<>();
+					result.setDataList(FieldMapperList);
+					// 插入分页信息
+					PageVO pageVO = PageUtil.getPageBean(fieldMapperDTO.getPage(), fieldMapperDTO.getPageCount(), rowNumber);
+					result.setTotalPage(pageVO.getTotalPage());
+					result.setRowNumber(pageVO.getRowNumber());
+					result.setPageCount(pageVO.getPageCount());
+					result.setPage(pageVO.getPage());
+					return result;				
+				}
+				//根据Code修改集成配置信息接口
+				@TaskAnnotation("updateConf") 
+				@Override
+				public Integer updateConf(SessionFactory factory,IntegrationConfDTO integrationConfDTO) {						
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					integrationConfDTO.setUpdateBy("小詹");
+					Integer updateRes=userMapper.updateConf(integrationConfDTO);
+					return updateRes;				
+				}
+				
+				//根据Code修改集成配置信息接口
+				@TaskAnnotation("updateTableMapper") 
+				@Override
+				public Integer updateTableMapper(SessionFactory factory, TableMapperDTO tableMapperDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					tableMapperDTO.setUpdateBy("小詹");
+					Integer updateRes=userMapper.updateTableMapper(tableMapperDTO);
+					return updateRes;
+				}
+
+				//根据id修改表格映射明细信息
+				@TaskAnnotation("updateEnumMapper") 
+				@Override
+				public Integer updateEnumMapper(SessionFactory factory, EnumMapperDTO enumMapperDTO) {
+					// TODO Auto-generated method stub
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					enumMapperDTO.setUpdateBy("小詹");
+					Integer updateRes=userMapper.updateEnumMapper(enumMapperDTO);
+					return updateRes;
 				}
 					
 }
