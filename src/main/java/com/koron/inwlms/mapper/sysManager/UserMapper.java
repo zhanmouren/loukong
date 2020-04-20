@@ -27,6 +27,7 @@ import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.DeptAndUserIdVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
@@ -314,5 +315,11 @@ public interface UserMapper {
 		
 		//根据id删除枚举值映射明细
 		public Integer deleteEnumMapper(List<Integer> idList);
+		
+		//查询职员部门关系表的Id
+		public List<DeptAndUserIdVO> queryUserDeptId(DeptAndUserDTO deptAndUserDTO);
+		
+		//修改职员部门
+		public Integer updateUserDept(DeptAndUserDTO deptAndUserDTO);
 		
 }

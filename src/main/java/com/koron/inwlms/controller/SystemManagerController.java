@@ -2307,6 +2307,9 @@ public class SystemManagerController {
 		if(roleMenuDTO.getRoleMenuList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "传参不能为空", Integer.class).toJson();
 		}
+		if(roleMenuDTO.getRoleMenuList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "传参不能为空", Integer.class).toJson();
+		}
 		if(roleMenuDTO.getRoleMenuList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "传参不能为空", Integer.class).toJson();
 		}

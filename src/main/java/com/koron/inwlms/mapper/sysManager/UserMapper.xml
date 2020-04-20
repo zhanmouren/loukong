@@ -3,12 +3,12 @@
 <mapper namespace="com.koron.inwlms.mapper.sysManager.UserMapper">
    <!-- 插入职员信息 -->
    <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO" >  
-        insert into "SM_user"("loginName",passWord,phone,"Email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code")
-        values(#{loginName},#{password},#{phone},#{Email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},Now(),#{updateBy},Now(),#{code})   
+        insert into "SM_user"("loginName",passWord,phone,"email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code")
+        values(#{loginName},#{password},#{phone},#{email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},Now(),#{updateBy},Now(),#{code})   
     </insert>
      <!-- 查询相关职员信息 -->
     <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-      select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."Email" is null then '' else "user"."Email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
+      select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname","user".code  as code    
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   
@@ -52,12 +52,31 @@
              <if test="name != null  and name !=''" > name = #{name},  </if>                       
              <if test="loginName != null and loginName !=''" > "loginName" = #{loginName},</if>                                 
              <if test="sex != null" >sex = #{sex,jdbcType=INTEGER}, </if>                        
-             <if test="Email != null and Email != ''" > "Email" = #{Email}, </if>               
+             <if test="email != null and email != ''" > "email" = #{email}, </if>               
              <if test="updateBy != null and updateBy!=''" >  "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if>  
              <if test="status != null" > status = #{status},  </if>               
 		</set>
 		where code=#{code}
+     </update>
+     
+     <!--查询职员部门关系表的Id -->
+    <select id="queryUserDeptId"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DeptAndUserIdVO">
+        select id
+        from "SM_userDept"
+        where "deptCode"=#{depCode} and "userCode"=#{userCode}
+    </select>
+     
+     <!--根据id修改职员部门信息 -->
+    <update id="updateUserDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO">   
+		update "SM_userDept" 
+		<set>	    
+             <if test="deptCode != null" > "deptCode" = #{deptCode},  </if>                                         
+             <if test="userCode != null " > "userCode" = #{userCode}, </if>               
+             <if test="updateBy != null " >  "updateBy" = #{updateBy},</if>                        
+             <if test="updateBy != null" > "updateTime" = Now(),</if>             
+		</set>
+		where id={#id}
      </update>
      <!-- 修改用户信息,删除 -->
     <update id="deleteUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
@@ -110,7 +129,7 @@
     
     <!--根据角色Code加载角色人员列表接口 -->
      <select id="queryUserByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."Email" is null then '' else "user"."Email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
+       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when  "dept".name is null then '' else "dept".name end as "depname","user".code as code
        from "SM_userRoleRelation" as "userRela"
        left join "SM_user" as "user" on "userRela"."userCode"="user".code
@@ -172,7 +191,7 @@
     
      <!-- 角色弹窗选择职员 -->
      <select id="queryExceptRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,"user"."email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
 	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname","user".code as code     
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
@@ -202,7 +221,7 @@
      
       <!-- 部门弹窗选择职员 -->
      <select id="queryExceptDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,"user"."Email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,"user"."email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
 	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname" ,"user".code     
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
@@ -503,7 +522,7 @@
       
         <!-- 根据部门Code查询部门人员-->
       <select id="queryDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-          select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."Email" is null then '' else "user"."Email" end,"user".name,case when "user".position is null then -1 else "user".position end,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
+          select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."email" is null then '' else "user"."email" end,"user".name,case when "user".position is null then -1 else "user".position end,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 		  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name end as "depname"      
 		   from "SM_user" as "user"       
 		   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    

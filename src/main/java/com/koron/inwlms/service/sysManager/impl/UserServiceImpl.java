@@ -38,6 +38,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.DeptAndUserIdVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
@@ -69,8 +70,8 @@ public class UserServiceImpl implements UserService{
 	public Integer addUser(SessionFactory factory,UserDTO userDTO) {
 		// TODO Auto-generated method stub	
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		userDTO.setCreateBy("xiaozhan");
-		userDTO.setUpdateBy("xiaozhan");
+		userDTO.setCreateBy("小詹");
+		userDTO.setUpdateBy("小詹");
 		//管理员设置默认密码yhsw123456
 		userDTO.setPassword((new  EncryptionUtil().encodeBase64("yhsw123456")));
 		//随机获取uuid,赋值给Code
@@ -99,11 +100,11 @@ public class UserServiceImpl implements UserService{
 		    DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
 		    deptAndUserDTO.setDepCode(userDTO.getDepCode());
 		    deptAndUserDTO.setUserCode(userCode);
-		    deptAndUserDTO.setCreateBy("xiaozhan");
-		    deptAndUserDTO.setUpdateBy("xiaozhan");
+		    deptAndUserDTO.setCreateBy("小詹");
+		    deptAndUserDTO.setUpdateBy("小詹");
 		    List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
 		    deptUserDTOList.add(deptAndUserDTO);
-		    //添加用户(批量)和部门关系的操作
+		    //添加用户和部门关系的操作
 		    addResult=userMapper.addDeptUser(deptUserDTOList);
 	    }    
 		return addResult;
@@ -133,8 +134,8 @@ public class UserServiceImpl implements UserService{
 	@TaskAnnotation("updateUser")
 	@Override
 	public Integer updateUser(SessionFactory factory, UserDTO userDTO) {
-		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		userDTO.setUpdateBy("小詹");
 		Integer editResult=userMapper.updateUser(userDTO);
 		return editResult;
 	}

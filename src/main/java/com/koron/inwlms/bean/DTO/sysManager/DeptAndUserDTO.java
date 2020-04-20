@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 * @Date 2020.03.25
 */
 public class DeptAndUserDTO extends BaseDTO{
+     private Integer id;
 	//人员名称
 		private String name;
 		//登录名称
@@ -42,6 +43,12 @@ public class DeptAndUserDTO extends BaseDTO{
 		private String updateBy;
 		//修改时间
 		private Timestamp updateTime;
+		public Integer getId() {
+			return id;
+		}
+		public void setId(Integer id) {
+			this.id = id;
+		}
 		public String getName() {
 			return name;
 		}
