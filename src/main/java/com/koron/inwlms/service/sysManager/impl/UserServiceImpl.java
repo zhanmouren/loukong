@@ -499,7 +499,12 @@ public class UserServiceImpl implements UserService{
 				public Integer updateDicDetById(SessionFactory factory, DataDicDTO dataDicDTO) {
 					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);					
-					dataDicDTO.setUpdateBy("小詹");				
+					dataDicDTO.setUpdateBy("小詹");
+					//修改时候判断key是否重复
+					List<DataDicVO> keyList=userMapper.queryKey(dataDicDTO);
+					if(keyList.size()>0) {
+						return -2;
+					}
 					Integer updateRes=userMapper.updateDicDetById(dataDicDTO);
 					return updateRes;
 				}
@@ -987,6 +992,11 @@ public class UserServiceImpl implements UserService{
 						dataDicDTO.setDicCn(dataList.get(0).getDicCn());
 						dataDicDTO.setDicEn(dataList.get(0).getDicEn());
 						dataDicDTO.setDicRemark(dataList.get(0).getDicRemark());
+					}
+					//添加时候判断key是否重复
+					List<DataDicVO> keyList=userMapper.queryKey(dataDicDTO);
+					if(keyList.size()>0) {
+						return -2;
 					}
 					//先执行删除主表信息的操作(键值为空的)
 					Integer delRes=userMapper.deleteOneDic(dataDicDTO);

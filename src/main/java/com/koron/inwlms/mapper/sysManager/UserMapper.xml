@@ -315,6 +315,13 @@
 		  where  "dic".parent = #{dicParent}       	  
       </select>
       
+        <!-- 根据key查询数据字典主信息-->
+      <select id="queryKey"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          from "SM_dataDictionary" as "dic"	      
+		  where  "dic".key = #{dicKey}       	  
+      </select>
+      
         <!-- 查询数据字典 主标识主的信息-->
       <select id="queryMainDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select distinct "dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".remark as dicRemark

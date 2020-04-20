@@ -144,6 +144,9 @@ public interface UserMapper {
 		//根据parent查询数据字典主的详细信息
 		public List<DataDicVO> queryDic(DataDicDTO dataDicDTO);
 		
+		//查询key是否重复
+		public List<DataDicVO> queryKey(DataDicDTO dataDicDTO);
+		
 		//查询数据字典(查询主信息键值)
 		public List<DataDicVO> queryMainDataDic(DataDicDTO dataDicDTO);
 		

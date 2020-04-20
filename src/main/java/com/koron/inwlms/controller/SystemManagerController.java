@@ -1380,6 +1380,10 @@ public class SystemManagerController {
 					//添加数据字典功能失败
 				    msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 				    msg.setDescription("添加数据字典失败");
+				  }else if(insertRes==-2){
+					//添加数据字典功能失败
+					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+					 msg.setDescription("添加数据字典key重复");
 				  }else {
 				    //插入成功
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1553,7 +1557,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateDicDetById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "通过字典主表id修改数据字典接口(明细信息))接口", notes = "通过字典主表id修改数据字典接口(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateDicDet(@RequestBody DataDicDTO dataDicDTO) {
+	public String updateDicDetById(@RequestBody DataDicDTO dataDicDTO) {
 		if(dataDicDTO.getDicId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
 		}
@@ -1573,7 +1577,11 @@ public class SystemManagerController {
 					//修改数据字典失败
 				    msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 				    msg.setDescription("修改数据字典失败");
-				  }else {
+				  }else if(updateRes==-2) {
+					//修改数据字典失败
+					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+					msg.setDescription("修改数据字典键重复");  
+				  } else {
 				    //修改数据字典成功
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("修改数据字典成功");
