@@ -26,23 +26,22 @@
 
 	<select id="queryFilePath" parameterType="java.lang.Integer"
 		resultType="java.lang.String">
-		SELECT PATH FROM GDHK_SYS_FILE
+		SELECT PATH FROM "APP_file"
 		WHERE ID = #{fileId} AND STATUS = 1
 	</select>
 	<select id="getAttachmentInfoById" parameterType="java.lang.Integer"
 		resultType="com.koron.inwlms.bean.DTO.common.UploadFileDTO">
-		SELECT * FROM GDHK_SYS_FILE WHERE ID = #{fileId} AND STATUS
+		SELECT * FROM "APP_file" WHERE ID = #{fileId} AND STATUS
 		= '1'
 	</select>
 	<delete id="deleteFileById" parameterType="java.lang.Integer">
-		UPDATE GDHK_SYS_FILE
+		UPDATE "APP_file"
 		SET STATUS = 0
 		where ID = #{fileId}
 	</delete>
 
-	<select id="getAttachmentInfoByTid" parameterType="java.lang.fileId"
-		resultType="com.koron.inwlms.bean.DTO.common.UploadFileDTO">
-		SELECT * FROM GDHK_SYS_FILE WHERE T_ID = #{tId} AND STATUS
+	<select id="getAttachmentInfoByTid" resultType="com.koron.inwlms.bean.DTO.common.UploadFileDTO">
+		SELECT * FROM "APP_file" WHERE T_ID = #{tId} AND STATUS
 		= 1
 	</select>
 </mapper>
