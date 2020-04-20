@@ -2031,8 +2031,8 @@ public class SystemManagerController {
 					msg.setData(treeBeanList);
 				  }else {
 					//查询失败
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-			        msg.setDescription("查询组织树失败"); 
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询到相关组织树"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败
@@ -2109,7 +2109,7 @@ public class SystemManagerController {
 			        msg.setDescription("添加菜单失败"); 
 			   }		  
 	        }catch(Exception e){
-	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        	msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 	            msg.setDescription("添加失败");
 	        }
 		
@@ -2142,8 +2142,8 @@ public class SystemManagerController {
 					msg.setData(treeBeanList);
 				  }else {
 					//查询失败
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-			        msg.setDescription("查询目录树失败"); 
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询到相关目录树"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败
@@ -2179,9 +2179,8 @@ public class SystemManagerController {
 					msg.setDescription("查询下级目录树成功"); 
 					msg.setData(treeBeanList);
 				  }else {
-					//查询失败
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-			        msg.setDescription("查询下级目录树失败"); 
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询到下级目录树"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败
@@ -2212,7 +2211,7 @@ public class SystemManagerController {
 					msg.setDescription("查询角色菜单查看权限成功"); 
 					msg.setData(menuList);
 				  }else {
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("没有查询到角色查看菜单权限"); 
 			 }		  
 	        }catch(Exception e){
@@ -2244,7 +2243,7 @@ public class SystemManagerController {
 					msg.setDescription("查询角色菜单操作权限成功"); 
 					msg.setData(menuCDUList);
 				  }else {
-			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("没有查询到角色操作菜单权限"); 
 			 }		  
 	        }catch(Exception e){
@@ -2352,9 +2351,8 @@ public class SystemManagerController {
 					msg.setDescription("查询一级目录树成功"); 
 					msg.setData(treeBeanList);
 				  }else {
-					//查询失败
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			        msg.setDescription("查询一级目录树失败"); 
+			        msg.setDescription("没有查询到相关一级目录树"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败
@@ -2390,10 +2388,9 @@ public class SystemManagerController {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询所有下级树成功"); 
 					msg.setData(treeBeanList);
-				  }else {
-					//查询失败
+				  }else {					
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			        msg.setDescription("查询所有下级树失败"); 
+			        msg.setDescription("没有查询到相关所有下级树"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败
