@@ -1,6 +1,7 @@
 package com.koron.inwlms.bean.DTO.sysManager;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import com.koron.inwlms.bean.DTO.common.BaseDTO;
 
@@ -10,6 +11,8 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 * @Date 2020.04.16
 */
 public class EnumMapperDTO extends BaseDTO{
+	//存储id的List
+	private List<Integer> idList;
 
 	private Integer id;
 	//集成配置编码
@@ -28,6 +31,12 @@ public class EnumMapperDTO extends BaseDTO{
 			private String updateBy;
 			//修改时间
 			private Timestamp updateTime;
+			public List<Integer> getIdList() {
+				return idList;
+			}
+			public void setIdList(List<Integer> idList) {
+				this.idList = idList;
+			}
 			public Integer getId() {
 				return id;
 			}

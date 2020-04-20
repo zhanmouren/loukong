@@ -312,4 +312,7 @@ public interface UserMapper {
 		//查询明细字段code根据主表code
 		public List<FieldMapperVO> queryFieldMapperCode(List<String> codeList);
 		
+		//根据id删除枚举值映射明细
+		public Integer deleteEnumMapper(List<Integer> idList);
+		
 }

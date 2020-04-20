@@ -201,5 +201,8 @@ public interface UserService {
 		  
 		  //根据Code删除表格字段映射
 		  Integer deleteFieldMapper(SessionFactory factory,FieldMapperDTO fieldMapperDTO);
+		  
+		  //根据id删除枚举值映射明细
+		  Integer deleteEnumMapper(SessionFactory factory,EnumMapperDTO enumMapperDTO);
 		 
 }

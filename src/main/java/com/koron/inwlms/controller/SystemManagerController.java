@@ -1214,11 +1214,11 @@ public class SystemManagerController {
 	
 	/*
      * date:2020-04-20
-     * funtion:根据Code删除表格映射
+     * funtion:根据Code删除表格字段映射
      * author:xiaozhan
      */  
 	@RequestMapping(value = "/deleteFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "根据Code删除表格映射接口", notes = "根据Code删除表格映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "根据Code删除表格映字段射接口", notes = "根据Code删除表格字段映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {
 		if(fieldMapperDTO.getCodeList()==null) {
@@ -1240,6 +1240,39 @@ public class SystemManagerController {
 	        }catch(Exception e){	        	
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("删除表格字段映射失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-04-20
+     * funtion:根据id删除枚举值映射明细
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/deleteEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据id删除枚举值映射明细接口", notes = "根据id删除枚举值映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {
+		if(enumMapperDTO.getIdList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "枚举值映射id不能为空", Integer.class).toJson();
+		}
+		if(enumMapperDTO.getIdList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "枚举值映射id不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer delRes=ADOConnection.runTask(userService, "deleteEnumMapper", Integer.class,enumMapperDTO);		 		  
+				  if(delRes==-1) {
+					msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				    msg.setDescription("删除枚举值映射明细失败");			   				    
+				  }else {			    
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("删除枚举值映射明细成功");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("删除枚举值映射明细失败");
 	        }
 		
 	     return msg.toJson();

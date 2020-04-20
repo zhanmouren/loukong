@@ -1265,5 +1265,14 @@ public class UserServiceImpl implements UserService{
 					Integer delRes=userMapper.deleteFieldMapper(fieldMapperDTO.getCodeList());
 					return delRes;
 				}
+
+				//根据id删除枚举值映射明细
+				@TaskAnnotation("deleteEnumMapper") 
+				@Override
+				public Integer deleteEnumMapper(SessionFactory factory, EnumMapperDTO enumMapperDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Integer delRes=userMapper.deleteEnumMapper(enumMapperDTO.getIdList());
+					return delRes;
+				}
 					
 }

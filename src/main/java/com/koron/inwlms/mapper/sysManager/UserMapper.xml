@@ -851,6 +851,15 @@
 	        </foreach>
 	    </delete>
 	    
+	    <!-- 批量删除枚举值映射明细-->
+	    <delete id="deleteEnumMapper" parameterType="String">
+	        delete from "SM_enumMapper"	      
+	        where "id" in
+	        <foreach item="item" collection="list" open="(" separator="," close=")">
+	            #{item}
+	        </foreach>
+	    </delete>
+	    
 	    
 	   <!--根据主表code查询明细字段code-->
       <select id="queryFieldMapperCode"   resultType="com.koron.inwlms.bean.VO.sysManager.FieldMapperVO">      
