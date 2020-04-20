@@ -2268,7 +2268,15 @@ public class SystemManagerController {
 		if(roleMenuDTO.getRoleCode()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		if(roleMenuDTO.getModuleCodeList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块编码不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		 if(roleMenuDTO.getModuleCodeList().size()<1) {
+			    List<RoleMenusVO> data=new ArrayList<RoleMenusVO>();
+			    msg.setData(data);
+				return  msg.toJson();
+	     }
 		  try{				
 			  List<RoleMenusVO> menuCDUList=ADOConnection.runTask(userService, "queryRoleMenuByRoleMenu", List.class,roleMenuDTO);	
 			  if(menuCDUList.size()>0) {			 
