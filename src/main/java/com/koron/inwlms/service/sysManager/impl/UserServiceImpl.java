@@ -468,20 +468,20 @@ public class UserServiceImpl implements UserService{
 				}
 
 			    //修改数据字典(通过parent,修改一条就要修改多条主的信息) 2020/03/27
-				@TaskAnnotation("updateDicById")
+				@TaskAnnotation("updateDic")
 				@Override
-				public Integer updateDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
+				public Integer updateDic(SessionFactory factory, DataDicDTO dataDicDTO) {
 					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);					
 					dataDicDTO.setUpdateBy("小詹");					
-					Integer updateRes=userMapper.updateDicById(dataDicDTO);
+					Integer updateRes=userMapper.updateDic(dataDicDTO);
 					return updateRes;
 				}
 				
 				//删除数据字典(通过parent，删除一条就要修改多条主的信息，还要实现批量) 2020/03/27
-				@TaskAnnotation("deleteDicById")
+				@TaskAnnotation("deleteDicByParent")
 				@Override
-				public Integer deleteDicById(SessionFactory factory, DataDicDTO dataDicDTO) {					
+				public Integer deleteDicByParent(SessionFactory factory, DataDicDTO dataDicDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<DataDicDTO> dataDicDTOList=new ArrayList<DataDicDTO>();
 					for(int i=0;i<dataDicDTO.getDicParentList().size();i++) {
@@ -489,7 +489,7 @@ public class UserServiceImpl implements UserService{
 						dataDicDTONew.setDicParent(dataDicDTO.getDicParentList().get(i));
 						dataDicDTOList.add(dataDicDTONew);
 					}
-					Integer delRes=userMapper.deleteDicById(dataDicDTOList);
+					Integer delRes=userMapper.deleteDicByParent(dataDicDTOList);
 					return delRes;
 				}
 				
@@ -504,19 +504,19 @@ public class UserServiceImpl implements UserService{
 					return updateRes;
 				}
 		      
-				//删除数据字典(通过parent，删除一条就要修改多条主的信息，还要实现批量) 2020/03/27
-				@TaskAnnotation("deleteDetDicById")
+				//删除数据字典(通过key，删除一条就要修改多条主的信息，还要实现批量) 2020/03/27
+				@TaskAnnotation("deleteDetDicByKey")
 				@Override
-				public Integer deleteDetDicById(SessionFactory factory, DataDicDTO dataDicDTO) {
+				public Integer deleteDetDicByKey(SessionFactory factory, DataDicDTO dataDicDTO) {
 					// TODO Auto-generated method stub
 				    UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<DataDicDTO> dataDicDTOList=new ArrayList<DataDicDTO>();
-					for(int i=0;i<dataDicDTO.getDicIdList().size();i++) {
+					for(int i=0;i<dataDicDTO.getDicKeyList().size();i++) {
 					    DataDicDTO dataDicDTONew=new DataDicDTO();
-						dataDicDTONew.setDicId(dataDicDTO.getDicIdList().get(i));
+						dataDicDTONew.setDicKey(dataDicDTO.getDicKeyList().get(i));
 						dataDicDTOList.add(dataDicDTONew);
 					}
-					Integer delRes=userMapper.deleteDetDicById(dataDicDTOList);
+					Integer delRes=userMapper.deleteDetDicByKey(dataDicDTOList);
 					 return delRes;
 					}
 
@@ -892,7 +892,10 @@ public class UserServiceImpl implements UserService{
 						roleMenuDTONew.setRoleCode(roleMenuDTO.getRoleMenuList().get(i).getRoleCode());
 						roleMenuDTOList.add(roleMenuDTONew);
 					}
-					Integer delRes=userMapper.deleteManyOP(roleMenuDTOList);
+					Integer delRes=0;
+					if(roleMenuDTOList.size()>0) {
+						delRes=userMapper.deleteManyOP(roleMenuDTOList);
+					}
 					Integer updateRes=null;
 					if(delRes==-1) {
 						updateRes=-1;
@@ -1193,7 +1196,6 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("updateTableMapper") 
 				@Override
 				public Integer updateTableMapper(SessionFactory factory, TableMapperDTO tableMapperDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					tableMapperDTO.setUpdateBy("小詹");
 					Integer updateRes=userMapper.updateTableMapper(tableMapperDTO);
@@ -1204,11 +1206,54 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("updateEnumMapper") 
 				@Override
 				public Integer updateEnumMapper(SessionFactory factory, EnumMapperDTO enumMapperDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					enumMapperDTO.setUpdateBy("小詹");
 					Integer updateRes=userMapper.updateEnumMapper(enumMapperDTO);
 					return updateRes;
+				}
+				//根据Code修改表格字段映射明细
+				@TaskAnnotation("updateFieldMapper") 
+				@Override
+				public Integer updateFieldMapper(SessionFactory factory, FieldMapperDTO fieldMapperDTO) {				    
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					fieldMapperDTO.setUpdateBy("小詹");
+					Integer updateRes=userMapper.updateFieldMapper(fieldMapperDTO);					
+					return updateRes;
+				}
+
+				//根据Code删除表格映射
+				@TaskAnnotation("deleteTableMapper") 
+				@Override
+				public Integer deleteTableMapper(SessionFactory factory, TableMapperDTO tableMapperDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					//根据主表code查询明细字段code
+					List<FieldMapperVO> FieldMapperList=userMapper.queryFieldMapperCode(tableMapperDTO.getCodeList());
+					List<String> fileCodeList=new ArrayList<>();
+					for(int i=0;i<FieldMapperList.size();i++) {
+						fileCodeList.add(FieldMapperList.get(i).getFieldMapperCode());
+					}
+					//先删除明细
+					Integer delFieldRes=0;
+					if(fileCodeList.size()>0) {
+					  delFieldRes=userMapper.deleteFieldMapper(fileCodeList);
+					}
+					Integer delRes=null;
+					if(delFieldRes!=-1) {
+						delRes=userMapper.deleteTableMapper(tableMapperDTO.getCodeList());
+					}else {
+						delFieldRes=-1;
+						return delFieldRes;
+					}
+					return delRes;
+				}
+
+				//根据Code删除表格字段映射
+				@TaskAnnotation("deleteFieldMapper") 
+				@Override
+				public Integer deleteFieldMapper(SessionFactory factory, FieldMapperDTO fieldMapperDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Integer delRes=userMapper.deleteFieldMapper(fieldMapperDTO.getCodeList());
+					return delRes;
 				}
 					
 }

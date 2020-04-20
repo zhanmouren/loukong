@@ -151,10 +151,10 @@ public interface UserMapper {
 		public int getDataDicCount();
 		
 		//修改数据字典主表(批量修改主表信息)
-		public Integer updateDicById(DataDicDTO dataDicDTO);
+		public Integer updateDic(DataDicDTO dataDicDTO);
 		
 		//删除数据字典主表(删除主表信息批量)
-		public Integer deleteDicById(List<DataDicDTO> dataDicDTOList);
+		public Integer deleteDicByParent(List<DataDicDTO> dataDicDTOList);
 		
 		//删除数据字典主表信息(一条)key,value为空的
 		public Integer deleteOneDic(DataDicDTO dataDicDTO);
@@ -166,7 +166,7 @@ public interface UserMapper {
 	    public Integer updateDicDetById(DataDicDTO dataDicDTO);
 	    
 	  //修改数据字典主表(批量修改明细信息)
-	  	public Integer deleteDetDicById(List<DataDicDTO> dataDicDTOList);	
+	  	public Integer deleteDetDicByKey(List<DataDicDTO> dataDicDTOList);	
 	//特征日
 	  	//新建特征日
 	  	public Integer addSpecialDate(SpecialDayDTO specialDayDTO);
@@ -295,5 +295,18 @@ public interface UserMapper {
 	        
 	    //根据id修改表格映射明细信息
 		public Integer updateEnumMapper(EnumMapperDTO enumMapperDTO);
+		
+		//根据Code修改表格字段映射明细
+		public Integer updateFieldMapper(FieldMapperDTO fieldMapperDTO);
+		
+		//根据Code删除表格映射
+		public Integer deleteTableMapper(List<String> codeList);
+		
+		//根据Code删除表格映射
+		public Integer deleteFieldMapper(List<String> codeList);
+		
+		
+		//查询明细字段code根据主表code
+		public List<FieldMapperVO> queryFieldMapperCode(List<String> codeList);
 		
 }

@@ -14,6 +14,8 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 */
 
 public class TableMapperDTO extends BaseDTO{
+	//存储code的列表
+	private List<String> codeList;
     //集成表格映射明细
 	private Integer tableMapperId;
 	//表格映射code
@@ -38,6 +40,14 @@ public class TableMapperDTO extends BaseDTO{
 	//修改时间
 	private Timestamp updateTime;
 	
+	public List<String> getCodeList() {
+		return codeList;
+	}
+
+	public void setCodeList(List<String> codeList) {
+		this.codeList = codeList;
+	}
+
 	public String getTableMapperCode() {
 		return tableMapperCode;
 	}

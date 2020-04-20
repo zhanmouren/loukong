@@ -1,6 +1,7 @@
 package com.koron.inwlms.bean.DTO.sysManager;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import com.koron.inwlms.bean.DTO.common.BaseDTO;
 
@@ -12,6 +13,8 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 */
 
 public class FieldMapperDTO  extends BaseDTO {
+	//存储codeList
+	private List<String> codeList;
 	//字段映射code
 	private String fieldMapperCode;
 	//表格映射明细编码
@@ -32,6 +35,12 @@ public class FieldMapperDTO  extends BaseDTO {
 	private Integer value;
 	//表格名称
 	private String tableNames;
+	public List<String> getCodeList() {
+		return codeList;
+	}
+	public void setCodeList(List<String> codeList) {
+		this.codeList = codeList;
+	}
 	public String getTableNames() {
 		return tableNames;
 	}

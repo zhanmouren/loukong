@@ -90,16 +90,16 @@ public interface UserService {
 		PageListVO<List<DataDicVO>> queryMainDataDic(SessionFactory factory,DataDicDTO dataDicDTO);
 		
 	    //修改数据字典(通过parent)
-	    Integer updateDicById(SessionFactory factory, DataDicDTO dataDicDTO);
+	    Integer updateDic(SessionFactory factory, DataDicDTO dataDicDTO);
 	    
 	    //删除数据字典(通过parent)
-	    Integer deleteDicById(SessionFactory factory, DataDicDTO dataDicDTO);
+	    Integer deleteDicByParent(SessionFactory factory, DataDicDTO dataDicDTO);
 	    
 	    //通过字典主表ID修改数据字典明细接口(明细信息))
 	    Integer updateDicDetById(SessionFactory factory, DataDicDTO dataDicDTO);
 	    
 	    //删除数据字典(通过Id)
-	    Integer deleteDetDicById(SessionFactory factory, DataDicDTO dataDicDTO);
+	    Integer deleteDetDicByKey(SessionFactory factory, DataDicDTO dataDicDTO);
 	    
 	   //特征日
 	     
@@ -192,5 +192,14 @@ public interface UserService {
 		  
 		  //根据id修改表格映射明细信息
 		  Integer updateEnumMapper(SessionFactory factory,EnumMapperDTO enumMapperDTO);
+		  
+		  //根据Code修改表格字段映射明细
+		  Integer updateFieldMapper(SessionFactory factory,FieldMapperDTO fieldMapperDTO);
+		  
+		  //根据Code删除表格映射
+		  Integer deleteTableMapper(SessionFactory factory,TableMapperDTO tableMapperDTO);
+		  
+		  //根据Code删除表格字段映射
+		  Integer deleteFieldMapper(SessionFactory factory,FieldMapperDTO fieldMapperDTO);
 		 
 }

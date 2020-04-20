@@ -1035,7 +1035,7 @@ public class SystemManagerController {
 		  try{
 			  Integer updateRes=ADOConnection.runTask(userService, "updateConf", Integer.class,integrationConfDTO);		 		  
 				  if(updateRes==-1) {
-					msg.setCode(Constant.MESSAGE_INT_ERROR);
+					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 				    msg.setDescription("修改集成配置信息失败");			   				    
 				  }else {			    
 					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1076,7 +1076,7 @@ public class SystemManagerController {
 		  try{
 			  Integer updateRes=ADOConnection.runTask(userService, "updateTableMapper", Integer.class,tableMapperDTO);		 		  
 				  if(updateRes==-1) {
-					msg.setCode(Constant.MESSAGE_INT_ERROR);
+					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 				    msg.setDescription("修改表格映射明细信息失败");			   				    
 				  }else {			    
 					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1114,7 +1114,7 @@ public class SystemManagerController {
 		  try{
 			  Integer updateRes=ADOConnection.runTask(userService, "updateEnumMapper", Integer.class,enumMapperDTO);		 		  
 				  if(updateRes==-1) {
-					msg.setCode(Constant.MESSAGE_INT_ERROR);
+					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 				    msg.setDescription("修改枚举明细映射失败");			   				    
 				  }else {			    
 					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1123,6 +1123,123 @@ public class SystemManagerController {
 	        }catch(Exception e){	        	
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("修改枚举明细映射失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-04-20
+     * funtion:根据Code修改表格字段映射明细
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/updateFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据Code修改表格字段映射明细接口", notes = "根据Code修改表格字段映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {
+		if(fieldMapperDTO.getFieldMapperCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段映射明细编码不能为空", Integer.class).toJson();
+		}	
+		if(fieldMapperDTO.getOtherFieldCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段code不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getOtherFieldName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段名称不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getFieldCode()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方字段code不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getFieldName()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方字段名称不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getFieldType()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段类型不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getFormula()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段公式不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getValue()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "code值不能为空", Integer.class).toJson();
+		}	
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer updateRes=ADOConnection.runTask(userService, "updateFieldMapper", Integer.class,fieldMapperDTO);		 		  
+				  if(updateRes==-1) {
+					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				    msg.setDescription("修改表格字段映射明细失败");			   				    
+				  }else {			    
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("修改表格字段映射明细成功");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("修改表格字段映射明细失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-04-20
+     * funtion:根据Code删除表格映射
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/deleteTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据Code删除表格映射接口", notes = "根据Code删除表格映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {
+		if(tableMapperDTO.getCodeList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
+		}
+		if(tableMapperDTO.getCodeList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer delRes=ADOConnection.runTask(userService, "deleteTableMapper", Integer.class,tableMapperDTO);		 		  
+				  if(delRes==-1) {
+					msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				    msg.setDescription("删除表格映射失败");			   				    
+				  }else {			    
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("删除表格映射成功");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("删除表格映射失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-04-20
+     * funtion:根据Code删除表格映射
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/deleteFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据Code删除表格映射接口", notes = "根据Code删除表格映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String deleteFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {
+		if(fieldMapperDTO.getCodeList()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格字段明细编码不能为空", Integer.class).toJson();
+		}
+		if(fieldMapperDTO.getCodeList().size()<1) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格字段明细编码不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		  try{
+			  Integer delRes=ADOConnection.runTask(userService, "deleteFieldMapper", Integer.class,fieldMapperDTO);		 		  
+				  if(delRes==-1) {
+					msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				    msg.setDescription("删除表格字段映射失败");			   				    
+				  }else {			    
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					msg.setDescription("删除表格字段映射成功");
+				  }			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("删除表格字段映射失败");
 	        }
 		
 	     return msg.toJson();
@@ -1349,14 +1466,13 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-27
-     * funtion:通过字典主表ID修改数据字典接口(主表信息))说明(通过ID等等)
+     * funtion:通过字典主表parent修改数据字典接口(主表信息))说明
      * author:xiaozhan
      */
-	@RequestMapping(value = "/updateDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "通过字典主表ID修改数据字典接口(主表信息))接口", notes = "通过字典主表ID修改数据字典接口(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/updateDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "通过字典主表parent修改数据字典接口(主表信息))接口", notes = "通过字典主表parent修改数据字典接口(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateDicById(@RequestBody DataDicDTO dataDicDTO) {
-		
+	public String updateDic(@RequestBody DataDicDTO dataDicDTO) {		
 		if(dataDicDTO.getDicParent()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
 		}
@@ -1369,7 +1485,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行查询数据字典
 		 try {
-			 Integer updateRes=ADOConnection.runTask(userService, "updateDicById", Integer.class, dataDicDTO);
+			 Integer updateRes=ADOConnection.runTask(userService, "updateDic", Integer.class, dataDicDTO);
 			 if(updateRes!=null) {
 				  if(updateRes==-1) {
 					//修改数据字典失败
@@ -1392,13 +1508,13 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-27
-     * funtion:通过字典主表Parent删除数据字典接口(主表信息)(批量)说明(通过ID等等)
+     * funtion:通过字典主表Parent删除数据字典接口(主表信息)(批量)说明
      * author:xiaozhan
      */
-	@RequestMapping(value = "/deleteDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/deleteDicByParent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "主表parent删除数据字典详情(主表信息)接口", notes = "主表parent删除数据字典详情(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDicById(@RequestBody DataDicDTO dataDicDTO) {	
+	public String deleteDicByParent(@RequestBody DataDicDTO dataDicDTO) {	
 		if(dataDicDTO.getDicParentList()==null) {
 			  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域参数不能为空", Integer.class).toJson();
 			}	
@@ -1408,7 +1524,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行删除数据字典
 		 try {
-			 Integer delRes=ADOConnection.runTask(userService, "deleteDicById", Integer.class, dataDicDTO);
+			 Integer delRes=ADOConnection.runTask(userService, "deleteDicByParent", Integer.class, dataDicDTO);
 			 if(delRes!=null) {
 				  if(delRes==-1) {
 					//删除数据字典失败
@@ -1431,13 +1547,13 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-27
-     * funtion:通过字典主表ID修改数据字典明细接口(明细信息))说明(通过ID等等)
+     * funtion:通过字典主表id修改数据字典明细接口(明细信息))说明
      * author:xiaozhan
      */
 	@RequestMapping(value = "/updateDicDetById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "通过字典主表ID修改数据字典接口(明细信息))接口", notes = "通过字典主表ID修改数据字典接口(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "通过字典主表id修改数据字典接口(明细信息))接口", notes = "通过字典主表id修改数据字典接口(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateDicDetById(@RequestBody DataDicDTO dataDicDTO) {
+	public String updateDicDet(@RequestBody DataDicDTO dataDicDTO) {
 		if(dataDicDTO.getDicId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
 		}
@@ -1474,23 +1590,23 @@ public class SystemManagerController {
 	
 	 /*
      * date:2020-03-27
-     * funtion:通过字典主表id删除数据字典接口(明细信息)(批量)说明(通过ID等等)
+     * funtion:通过字典主表key删除数据字典接口(明细信息)(批量)说明(通过Key等等)
      * author:xiaozhan
      */
-	@RequestMapping(value = "/deleteDetDicById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "主表ID删除数据字典详情(明细信息)接口", notes = "主表ID删除数据字典详情(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/deleteDetDicByKey.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "主表key删除数据字典详情(明细信息)接口", notes = "主表key删除数据字典详情(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDetDicById(@RequestBody DataDicDTO dataDicDTO) {
-		if(dataDicDTO.getDicIdList()==null) {
-			  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID参数不能为空", Integer.class).toJson();
+	public String deleteDetDicByKey(@RequestBody DataDicDTO dataDicDTO) {
+		if(dataDicDTO.getDicKeyList()==null) {
+			  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表key参数不能为空", Integer.class).toJson();
 			}	
-		if(dataDicDTO.getDicIdList().size()<1) {
-		  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID列表不能为空", Integer.class).toJson();
+		if(dataDicDTO.getDicKeyList().size()<1) {
+		  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表key列表不能为空", Integer.class).toJson();
 		}	
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行删除数据字典
 		 try {
-			 Integer delRes=ADOConnection.runTask(userService, "deleteDetDicById", Integer.class, dataDicDTO);
+			 Integer delRes=ADOConnection.runTask(userService, "deleteDetDicByKey", Integer.class, dataDicDTO);
 			 if(delRes!=null) {
 				  if(delRes==-1) {
 					//删除数据字典失败

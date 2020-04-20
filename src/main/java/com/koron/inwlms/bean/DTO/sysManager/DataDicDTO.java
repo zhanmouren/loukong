@@ -20,6 +20,16 @@ public class DataDicDTO extends BaseDTO{
 	//装数据字典的的Id集合
 	private List<Integer> dicIdList;
 	
+	//key 集合
+	private List<String > dicKeyList;
+	
+	
+	public List<String> getDicKeyList() {
+		return dicKeyList;
+	}
+	public void setDicKeyList(List<String> dicKeyList) {
+		this.dicKeyList = dicKeyList;
+	}
 	public List<Integer> getDicIdList() {
 		return dicIdList;
 	}

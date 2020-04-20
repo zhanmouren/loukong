@@ -341,7 +341,7 @@
       </select>
       
        <!-- 修改数据字典主的信息 根据parent-->
-       <update id="updateDicById" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
+       <update id="updateDic" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
 		update "SM_dataDictionary" 
 		<set>	                                 
              <if test="dicEn != null"> en = #{dicEn},</if>
@@ -354,7 +354,7 @@
      </update>
      
       <!-- 删除数据字典(通过parent),还要实现批量 -->
-     <delete id="deleteDicById">
+     <delete id="deleteDicByParent">
          delete from "SM_dataDictionary" where "parent" in
           <foreach item="dicitem" collection="list" open="(" separator="," close=")">
             #{dicitem.dicParent}
@@ -379,11 +379,11 @@
 		where  id=#{dicId}
 	   </update>
 	   
-	  <!-- 删除数据字典(通过Id),还要实现批量 -->
-     <delete id="deleteDetDicById">
-         delete from "SM_dataDictionary" where "id" in
+	  <!-- 删除数据字典(通过key),还要实现批量 -->
+     <delete id="deleteDetDicByKey">
+         delete from "SM_dataDictionary" where "key" in
           <foreach item="dicitem" collection="list" open="(" separator="," close=")">
-            #{dicitem.dicId}
+            #{dicitem.dicKey}
           </foreach>
      </delete>
     
@@ -807,5 +807,53 @@
 	    	where id=#{id}
        </update>
      
+     <!--根据Code修改表格字段映射明细 -->
+       <update id="updateFieldMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO">
+          	update "SM_fieldMapper" 
+		<set>	    
+             <if test="otherFieldCode != null  " > "otherFieldCode" = #{otherFieldCode},  </if>                                    
+             <if test="otherFieldName != null" > "otherFieldName" = #{otherFieldName},  </if>   
+             <if test="fieldType != null" > "fieldType" = #{fieldType},  </if>     
+             <if test="formula != null" > "formula" = #{formula},  </if>   
+             <if test="value != null " > "value" = #{value},</if>         
+             <if test="tableNames != null" > "tableNames" = #{tableNames},  </if> 
+             <if test="fieldCode != null" > "fieldCode" = #{fieldCode},  </if>  
+             <if test="fieldName != null" > "fieldName" = #{fieldName},  </if>                                           
+             <if test="updateBy != null " > "updateBy" = #{updateBy},</if>                        
+             <if test="updateBy != null" > "updateTime" = Now(),</if>  
+                          
+		</set>
+	    	where code=#{fieldMapperCode}
+       </update>
+       
+        <!-- 批量删除表格映射明细 -->
+	    <delete id="deleteTableMapper" parameterType="String">
+	        delete  from "SM_tableMapper"	      
+	        where "code" in
+	        <foreach item="item" collection="list" open="(" separator="," close=")">
+	            #{item}
+	        </foreach>
+	    </delete>
+	    
+	     <!-- 批量删除字段映射明细 -->
+	    <delete id="deleteFieldMapper" parameterType="String">
+	        delete from "SM_fieldMapper"	      
+	        where "code" in
+	        <foreach item="item" collection="list" open="(" separator="," close=")">
+	            #{item}
+	        </foreach>
+	    </delete>
+	    
+	    
+	   <!--根据主表code查询明细字段code-->
+      <select id="queryFieldMapperCode"   resultType="com.koron.inwlms.bean.VO.sysManager.FieldMapperVO">      
+		select "SM_fieldMapper".code as "fieldMapperCode"
+		from "SM_fieldMapper" 
+		left join "SM_tableMapper" on "SM_fieldMapper"."tableCode"="SM_tableMapper".code 
+		where "SM_tableMapper".code in
+	       <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+		      #{item}
+		    </foreach>
+      </select>
       
 </mapper>
