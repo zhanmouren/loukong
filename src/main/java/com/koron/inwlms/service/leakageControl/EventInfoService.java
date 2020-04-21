@@ -26,6 +26,8 @@ public interface EventInfoService {
 	Integer queryMaxKey(SessionFactory factory, String parent);
 
 	Integer addEventSubType(SessionFactory factory, EventSubTypeDTO eventSubTypeDTO);
+
+	Integer deleteEventSubType(SessionFactory factory, String key);
 	
 	
 

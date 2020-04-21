@@ -1,4 +1,4 @@
-package com.koron.util;
+﻿package com.koron.util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -423,6 +423,43 @@ public class Constant {
 	public final static Integer RANK_T = 3;
 	
 	/**
+	 * 报警指标-渗漏状态持续时间
+	 */
+	public final static String WARNINGINDEX_LEAKAGETIME = "leakageStateTime";
+	/**
+	 * 报警指标-数据连续缺失持续时间
+	 */
+	public final static String WARNINGINDEX_DATALOSS = "dataLossTime";
+	/**
+	 * 报警指标-与历史均值对比
+	 */
+	public final static String WARNINGINDEX_OLDCONTRAST = "oldContrast";
+	/**
+	 * 对象类型数据字典编码
+	 */
+	public final static String DATADICTIONARY_OBJECTTYPE = "L101170001";
+	/**
+	 * 超限报警数据字典编码
+	 */
+	public final static String DATADICTIONARY_OVERRUN = "L101130002";
+	/**
+	 * 固定限值数据字典编码
+	 */
+	public final static String DATADICTIONARY_FIXLIMIT = "L101180001";
+	/**
+	 * 离线报警数据字典编码
+	 */
+	public final static String DATADICTIONARY_OFFLINE = "L101130004";
+	/**
+	 * AI报警数据字典编码
+	 */
+	public final static String DATADICTIONARY_AI = "L101130003";
+	/**
+	 * 趋势变化报警数据字典编码
+	 */
+	public final static String DATADICTIONARY_TRENDCHANGE = "L101130001";
+	
+	/**
 	 * 事项子类型值域
 	 */
 	public final static String EVENTSUBTYPE = "10122";
@@ -430,7 +467,6 @@ public class Constant {
 	 * 最小夜间流量指标编码
 	 */
 	public final static String MINNIGHTFLOW = "";
-
 	/**
 	 * 基础指标编码
 	 */

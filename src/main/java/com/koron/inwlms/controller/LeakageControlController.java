@@ -1,4 +1,4 @@
-package com.koron.inwlms.controller;
+﻿package com.koron.inwlms.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -1033,6 +1033,7 @@ public class LeakageControlController {
 		if(code != null || code.equals(" ")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("事项类型编码为空");
+	        return msg.toJson();
 		}
 		
 		try {
@@ -1080,13 +1081,36 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
-	@RequestMapping(value = "/deleteEventSubtype.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "事项子类型删除接口", notes = "事项子类型删除接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/deleteEventSubtype.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项子类型删除接口", notes = "事项子类型删除接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteEventSubtype() {
-		 
-		return null;
+    public String deleteEventSubtype(String key) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		
+		if(key != null || key.equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项子类型编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			Integer num = ADOConnection.runTask(eis, "deleteEventSubType", Integer.class, key);
+			if(num > 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("事项子类型删除成功");
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无事项子类型数据");
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项子类型删除失败");
+		}
+		
+		return msg.toJson();
 	}
+	
 	
 	
 }

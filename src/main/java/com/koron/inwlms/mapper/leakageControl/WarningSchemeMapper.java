@@ -2,6 +2,8 @@ package com.koron.inwlms.mapper.leakageControl;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.koron.ebs.mybatis.EnvSource;
 import org.springframework.stereotype.Repository;
 
@@ -31,4 +33,7 @@ public interface WarningSchemeMapper {
 	Integer updateAlarmRule(AlarmRuleDTO alarmRuleDTO);
 	
 	List<AlertNoticeSchemeVO> queryNoticeSchemeByWarningCode(String code);
+	
+	@Select("select * from \"APP_warningScheme\" where \"state\" = #{state}")
+	List<WarningSchemeVO> queryWarningSchemeStart(@Param("state") String state);
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koron.inwlms.mapper.intellectPartition.PartitionSchemeMapper">
+
+ <select id="queryTotalSchemeDet" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO" resultType="com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet">
+ select * from "APP_totalSchemeDet" where "createTime" between '${startTime}' and '${endTime}'
+ <if test="code != null and code != '' "> and code = #{code}</if>
+ <if test="zoneCode != null and zoneCode != '' "> and "zoneCode" = #{zoneCode}</if>
+ </select>
+ 
+ <insert id="addTotalSchemeDet" parameterType="com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet">
+ insert into "APP_totalSchemeDet"(code, "zoneType", "maxZone", "minZone", "ambientLayer", "flowLayer", "zoneGrade", "zoneCode", "createBy", "createTime", "updateBy", "updateTime", state)
+ values(#{code}, #{zoneType}, #{maxZone}, #{minZone}, #{ambientLayer}, #{flowLayer}, #{zoneGrade}, #{zoneCode}, #{createBy}, now, #{updateBy}, #{updateTime}, #{state})
+ </insert>
+ 
+ <delete id="deleteTotalSchemeDet" parameterType="java.lang.String">
+ delete from "APP_totalSchemeDet" where code in
+ <foreach item="code" collection="list" open="(" separator="," close=")">
+ #{code}
+ </foreach>
+ </delete>
+ 
+ <select id="querySchemeDet" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.intellectPartition.SchemeDet">
+ select * from "APP_schemeDet" where "totalSchemeCode" = #{totalSchemeCode} 
+ </select>
+ 
+ <delete id="deleteSchemeDet" parameterType="java.lang.String">
+ delete from "APP_schemeDet" where "totalSchemeCode" in
+ <foreach item="codeitem" collection="list" open="(" separator="," close=")">
+ #{codeitem}
+ </foreach>
+ </delete>
+ 
+ 
+ <update id="updateTotalSchemeDet" parameterType="java.lang.String">
+ update "APP_totalSchemeDet" set state = 1 where code in
+ <foreach item="codeitem" collection="list" open="(" separator="," close=")">
+ #{codeitem}
+ </foreach>
+ </update>
+
+ <update id="updateSchemeDet" parameterType="java.lang.String">
+ update "APP_schemeDet" set state = 1 where "totalSchemeCode" in
+ <foreach item="codeitem" collection="list" open="(" separator="," close=")">
+ #{codeitem}
+ </foreach>
+ </update>
+ 
+
+
+</mapper>

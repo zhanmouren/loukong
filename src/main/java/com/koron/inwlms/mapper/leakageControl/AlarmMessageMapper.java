@@ -25,5 +25,7 @@ public interface AlarmMessageMapper {
 	@Select("select * from \"APP_warningInf\" where \"pointCode\" = #{code}")
 	List<AlarmMessageVO> queryAlarmMessageByPointCode(@Param("code") String code);
 	
+	Integer addWarningInf(AlarmMessageVO alarmMessageVO);
+	
 
 }

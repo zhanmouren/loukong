@@ -8,18 +8,48 @@ public class ProcessingStatisticsVO {
 	 * 月份
 	 */
 	private Integer month;
-	
+	/**
+	 * 处理中占比
+	 */
 	private Double loadingNum;
-	
+	/**
+	 * 已处理占比
+	 */
 	private Double finishNum;
-	
+	/**
+	 * 未处理占比
+	 */
 	private Double untreatedNum;
+	/**
+	 * 漏损水量占比
+	 */
+	private Double lossFlowNum;
+	/**
+	 * 供水量占比
+	 */
+	private Double allFlowNum;
 
 	private List<ProcessingStatisticsVO> proStatList;
 	
 	
 	
 	
+	public Double getLossFlowNum() {
+		return lossFlowNum;
+	}
+
+	public void setLossFlowNum(Double lossFlowNum) {
+		this.lossFlowNum = lossFlowNum;
+	}
+
+	public Double getAllFlowNum() {
+		return allFlowNum;
+	}
+
+	public void setAllFlowNum(Double allFlowNum) {
+		this.allFlowNum = allFlowNum;
+	}
+
 	public List<ProcessingStatisticsVO> getProStatList() {
 		return proStatList;
 	}

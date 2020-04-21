@@ -99,6 +99,14 @@ public class EventInfoServiceImpl implements EventInfoService{
 		return eventSubTypeNum;
 	}
 	
-	
+	@TaskAnnotation("deleteEventSubType")
+	@Override
+	public Integer deleteEventSubType(SessionFactory factory,String key) {
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		//删除关联表的相关信息
+		Integer num = mapper.deleteEventSubType(key);
+		//TODO 删除数据字典信息
+		return num;
+	}
 
 }
