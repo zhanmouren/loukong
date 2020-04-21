@@ -20,27 +20,27 @@ public class FileServiceImpl implements FileService {
 	}
 
 	@TaskAnnotation("queryFilePath")
-	public String queryFilePath(SessionFactory factory, String fileId) {
+	public String queryFilePath(SessionFactory factory, Integer fileId) {
 		FileMapper mapper = factory.getMapper(FileMapper.class);
 		String path = mapper.queryFilePath(fileId);
 		return path;
 	}
 
 	@TaskAnnotation("deleteFileById")
-	public int deleteFileById(SessionFactory factory, String fileId) {
+	public int deleteFileById(SessionFactory factory, Integer fileId) {
 		FileMapper mapper = factory.getMapper(FileMapper.class);
 		int result = mapper.deleteFileById(fileId);
 		return result;
 	}
 	@TaskAnnotation("getAttachmentInfoById")
 	@Override
-	public UploadFileDTO getAttachmentInfoById(SessionFactory factory, String fileId) {
+	public UploadFileDTO getAttachmentInfoById(SessionFactory factory, Integer fileId) {
 		FileMapper mapper = factory.getMapper(FileMapper.class);
 		return mapper.getAttachmentInfoById(fileId);
 	}
 	@TaskAnnotation("getAttachmentInfoByTid")
 	@Override
-	public UploadFileDTO getAttachmentInfoByTid(SessionFactory factory, String tid) {
+	public UploadFileDTO getAttachmentInfoByTid(SessionFactory factory, Integer tid) {
 		FileMapper mapper = factory.getMapper(FileMapper.class);
 		return mapper.getAttachmentInfoByTid(tid);
 	}

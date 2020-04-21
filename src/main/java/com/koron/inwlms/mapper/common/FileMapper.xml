@@ -24,17 +24,17 @@
 		 #{updateTime,jdbcType=TIMESTAMP})
 	</insert>
 
-	<select id="queryFilePath" parameterType="java.lang.Integer"
+	<select id="queryFilePath"
 		resultType="java.lang.String">
 		SELECT PATH FROM "APP_file"
 		WHERE ID = #{fileId} AND STATUS = 1
 	</select>
-	<select id="getAttachmentInfoById" parameterType="java.lang.Integer"
+	<select id="getAttachmentInfoById"
 		resultType="com.koron.inwlms.bean.DTO.common.UploadFileDTO">
 		SELECT * FROM "APP_file" WHERE ID = #{fileId} AND STATUS
 		= '1'
 	</select>
-	<delete id="deleteFileById" parameterType="java.lang.Integer">
+	<delete id="deleteFileById">
 		UPDATE "APP_file"
 		SET STATUS = 0
 		where ID = #{fileId}

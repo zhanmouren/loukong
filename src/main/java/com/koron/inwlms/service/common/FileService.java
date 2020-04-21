@@ -25,7 +25,7 @@ public interface FileService {
 	 * @param fileId
 	 * @return
 	 */
-	public String queryFilePath(SessionFactory factory,String fileId);
+	public String queryFilePath(SessionFactory factory,Integer fileId);
 	/**
 	 * 删除附件信息
 	 * @param factory
@@ -33,14 +33,14 @@ public interface FileService {
 	 * @return
 	 */
 
-	public int deleteFileById(SessionFactory factory,String fileId);
+	public int deleteFileById(SessionFactory factory,Integer fileId);
 	/**
 	 * 根据id，获取附件基本信息
 	 * @param factory
 	 * @param fileId
 	 * @return
 	 */
-	public UploadFileDTO getAttachmentInfoById(SessionFactory factory,String fileId);
+	public UploadFileDTO getAttachmentInfoById(SessionFactory factory,Integer fileId);
 
 	/**
 	 * 根据tId，获取附件基本信息
@@ -48,6 +48,6 @@ public interface FileService {
 	 * @param fileId
 	 * @return
 	 */
-	public UploadFileDTO getAttachmentInfoByTid(SessionFactory factory,String tid);
+	public UploadFileDTO getAttachmentInfoByTid(SessionFactory factory,Integer tid);
 
 }

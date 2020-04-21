@@ -8,11 +8,11 @@ public interface FileMapper {
 
 	public int insertFileData(UploadFileDTO uploadFileDTO);
 	
-	public String queryFilePath(@Param("fileId") String fileId);
+	public String queryFilePath(@Param("fileId") Integer fileId);
 	
-	public int deleteFileById(@Param("fileId") String fileId);
+	public int deleteFileById(@Param("fileId") Integer fileId);
 	
-	public UploadFileDTO getAttachmentInfoById(@Param("fileId") String fileId);
+	public UploadFileDTO getAttachmentInfoById(@Param("fileId") Integer fileId);
 	
-	public UploadFileDTO getAttachmentInfoByTid(@Param("tId") String tId);
+	public UploadFileDTO getAttachmentInfoByTid(@Param("tId") Integer tId);
 }
