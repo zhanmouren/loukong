@@ -13,22 +13,22 @@ public class QueryZoneIndicatorListDTO extends BaseDTO{
 	/**
 	 * 分区类型（1：一级，2：二级，3：DMA/PMA）
 	 */
-	public Integer zoneType;
+	private Integer zoneType;
 	
 	/**
 	 * 时间类型（3：月，4：年）
 	 */
-	public Integer timeType;
+	private Integer timeType;
 	
 	/**
 	 * 开始时间
 	 */
-	public Integer startTime;
+	private Integer startTime;
 	
 	/**
 	 * 结束时间
 	 */
-	public Integer endTime;
+	private Integer endTime;
 
 	public Integer getZoneType() {
 		return zoneType;

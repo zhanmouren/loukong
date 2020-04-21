@@ -9,38 +9,38 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
  */
 public class QueryFZoneLossListDTO extends BaseDTO{
 
-	public Double minNrw;
+	private Double minNrw;
 	
-	public Double maxNrw;
+	private Double maxNrw;
 	
-	public Double minUfwc;
+	private Double minUfwc;
 	
-	public Double maxUfwc;
+	private Double maxUfwc;
 	
 	/**
 	 * 时间类型（3：月，4：年）
 	 */
-	public Integer timeType;
+	private Integer timeType;
 	
 	/**
 	 * 开始时间
 	 */
-	public Integer startTime;
+	private Integer startTime;
 	
 	/**
 	 * 结束时间
 	 */
-	public Integer endTime;
+	private Integer endTime;
 	
 	/**
 	 * 分区编码
 	 */
-	public String zoneNo;
+	private String zoneNo;
 	
 	/**
 	 * 警报状态（0：不报警，1：报警）
 	 */
-	public Integer alarmStatus;
+	private Integer alarmStatus;
 
 	public Double getMinNrw() {
 		return minNrw;

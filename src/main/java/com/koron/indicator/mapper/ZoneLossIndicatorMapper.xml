@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koron.indicator.mapper.ZoneLossIndicatorMapper">
+
+	<select id="getDMoniMinFlow" resultType="java.lang.Double">
+		SELECT 
+		min(value) from "NW_monitorpoint_hour"
+		where "stationCode" = #{code}
+		and "analysisDate" &gt;= #{startTime}
+		and "analysisDate" &lt; #{endTime}
+		and code = 'FLHFLOW'
+		group by "stationCode"
+	</select>
+	
+	<select id="queryVZoneInfoByNo" parameterType="java.lang.String" resultType="com.koron.indicator.bean.VZoneInfo">
+		SELECT "pCode" as "zoneNo","vType","masCode","secCode"
+		from "GIS_exist_vzone" where "pCode" = #{zoneNo}
+	</select>
+	
+	<select id="getDMnfByNo" resultType="java.lang.Double">
+		SELECT round( a.value/b.precision :: NUMERIC, 2 )
+		from "ANA_zone_day" a, "LC_APP_dim_indicator" b
+		where a.code = b.code and a.analysisDate = #{date}
+	</select>
+	
+	<select id="getMMnfAvg" resultType="java.lang.Double">
+		SELECT avg(value)
+		from "ANA_zone_day" where "zoneNo" = #{zoneNo}
+		and code = #{code} and to_char("analysisDate",'yyyyMM') = #{month} ||''
+		group by code
+	</select>
+	
+	<select id="getMWnMnfAvg" resultType="java.lang.Double">
+		SELECT avg(value)
+		from "ANA_company_day"
+		where code = #{code} and to_char("analysisDate",'yyyyMM') = #{month} ||''
+		group by code
+	</select>
+	
+	<select id="getYMnfAvg" resultType="java.lang.Double">
+		SELECT avg(a.value)
+		from "ANA_zone_month" a, "APP_dim_month" b 
+		where a.yearMonth = b.id and a.code = #{code}
+		and b.year = #{year}
+		group by a.code
+	</select>
+</mapper>

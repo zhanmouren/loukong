@@ -10,12 +10,12 @@ public class QueryVZoneInfoDTO {
 	/**
 	 * 分区编号
 	 */
-	public String zoneNo;
+	private String zoneNo;
 	
 	/**
 	 * 分区类型（1：加，2：减）
 	 */
-	public Integer zoneType;
+	private Integer zoneType;
 
 	public String getZoneNo() {
 		return zoneNo;

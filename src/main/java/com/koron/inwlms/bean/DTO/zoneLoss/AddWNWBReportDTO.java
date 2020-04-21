@@ -13,17 +13,17 @@ public class AddWNWBReportDTO{
 	/**
 	 * id
 	 */
-	public Integer id;
+	private Integer id;
 	
 	/**
 	 * 报表名称
 	 */
-	public String reportName;
+	private String reportName;
 	
 	/**
 	 * 报表描述
 	 */
-	public String description;
+	private String description;
 	
 	/**
 	 * 报表时间
@@ -33,52 +33,52 @@ public class AddWNWBReportDTO{
 	/**
 	 * 模板id
 	 */
-	public Integer templateId;
+	private Integer templateId;
 	
 	/**
 	 * 时间类型（3：月，4：年）
 	 */
-	public Integer timeType;
+	private Integer timeType;
 	
 	/**
 	 * 开始时间
 	 */
-	public Integer startTime;
+	private Integer startTime;
 	
 	/**
 	 * 结束时间
 	 */
-	public Integer endTime;
+	private Integer endTime;
 	
 	/**
 	 * 状态（0：不存在，1：存在）
 	 */
-	public Integer status;
+	private Integer status;
 	
 	/**
 	 * 创建时间（时间戳）
 	 */
-	public Integer createTime;
+	private Integer createTime;
 	
 	/**
 	 * 修改时间（时间戳）
 	 */
-	public Integer updateTime;
+	private Integer updateTime;
 	
 	/**
 	 * 创建人
 	 */
-	public String createBy;
+	private String createBy;
 	
 	/**
 	 * 修改人
 	 */
-	public String updateBy;
+	private String updateBy;
 	
 	/**
 	 * 备注
 	 */
-	public String remarks;
+	private String remarks;
 	
 	/**
 	 * 报表模板指标信息

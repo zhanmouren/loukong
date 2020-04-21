@@ -27,7 +27,21 @@ public class AddVCZoneDTO {
 	/**
 	 * 虚拟分区类型，1-加，2-减
 	 */
-	private String zoneType;
+	private Integer zoneType;
+	
+	/**
+	 * 实际主分区编码
+	 */
+	private String masCode;
+	
+	/**
+	 * 实际辅分区编码
+	 */
+	private String secCode;
+	
+	private String createBy;
+	
+	private String updateBy;
 
 	public String getvZoneNo() {
 		return vZoneNo;
@@ -41,9 +55,6 @@ public class AddVCZoneDTO {
 		return sZoneNos;
 	}
 
-	public String getZoneType() {
-		return zoneType;
-	}
 
 	public void setvZoneNo(String vZoneNo) {
 		this.vZoneNo = vZoneNo;
@@ -57,8 +68,44 @@ public class AddVCZoneDTO {
 		this.sZoneNos = sZoneNos;
 	}
 
-	public void setZoneType(String zoneType) {
+	public Integer getZoneType() {
+		return zoneType;
+	}
+
+	public void setZoneType(Integer zoneType) {
 		this.zoneType = zoneType;
+	}
+
+	public String getMasCode() {
+		return masCode;
+	}
+
+	public String getSecCode() {
+		return secCode;
+	}
+
+	public void setMasCode(String masCode) {
+		this.masCode = masCode;
+	}
+
+	public void setSecCode(String secCode) {
+		this.secCode = secCode;
+	}
+
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public String getUpdateBy() {
+		return updateBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
+
+	public void setUpdateBy(String updateBy) {
+		this.updateBy = updateBy;
 	}
 
 }

@@ -22,6 +22,7 @@ import com.koron.inwlms.bean.VO.zoneLoss.VCZoneListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VSZoneListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
+import com.koron.inwlms.mapper.zoneLoss.VZoneLossAnaMapper;
 import com.koron.inwlms.mapper.zoneLoss.ZoneLossAnaMapper;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.service.zoneLoss.VZoneLossAnaService;
@@ -401,20 +402,40 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 	}
 
 	/**
-	 * 调用gis接口，完成删除虚拟分区操作（gis接口未完成，暂定）
+	 * 调用gis接口，完成删除虚拟分区操作
 	 */
 	@TaskAnnotation("deleteVCZone")
 	@Override
 	public void deleteVCZone(SessionFactory factory, String vZoneNo) {
-		
+		VZoneLossAnaMapper mapper = factory.getMapper(VZoneLossAnaMapper.class);
+		mapper.deleteVCZone(vZoneNo);
 	}
 
 	/**
-	 * 调用gis接口，完成添加虚拟分区操作（gis接口未完成，暂定）
+	 * 调用gis接口，完成添加虚拟分区操作
 	 */
+	@TaskAnnotation("addVCZone")
 	@Override
 	public void addVCZone(SessionFactory factory, AddVCZoneDTO addVCZoneDTO) {
-		
+		VZoneLossAnaMapper mapper = factory.getMapper(VZoneLossAnaMapper.class);
+		Integer code = mapper.querySeqVzoneCode();
+		String zoneNo = "VZ"+code;
+		addVCZoneDTO.setvZoneNo(zoneNo);
+		addVCZoneDTO.setvZoneName("虚拟分区"+code);
+		addVCZoneDTO.setZoneType(1);
+		String zoneNos = addVCZoneDTO.getsZoneNos();
+		String[] split = zoneNos.split(",");
+		for (int i = 0; i<split.length; i++) {
+			if(i%2==1) {
+				addVCZoneDTO.setSecCode(split[i]);
+				mapper.addVCZone(addVCZoneDTO);
+			}else {
+				addVCZoneDTO.setMasCode(split[i]);
+				if(i == split.length-1) {
+					mapper.addVCZone(addVCZoneDTO);
+				}
+			}
+		}
 	}
 		
 

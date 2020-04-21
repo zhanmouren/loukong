@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import net.bytebuddy.implementation.bytecode.Throw;
 
 /**
  * @author csh
@@ -512,4 +511,46 @@ public class TimeUtil {
     		 return time-1;
     	 }
      }
+     
+     /**
+      * 获取前一天的时间
+      * @return
+      */
+     public static Date getPreDay() {
+    	 Calendar cal=Calendar.getInstance();
+         cal.add(Calendar.DATE,-1);
+         Date preDay =cal.getTime();
+		return preDay;
+     }
+     
+     /**
+      * 获取前一月的时间
+      * @return
+      */
+     public static Integer getPreMonth() {
+    	 Calendar cal=Calendar.getInstance();
+         cal.add(Calendar.MONTH,-1);
+         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+         String preMonth = sdf.format(cal.getTime());
+		return Integer.parseInt(preMonth);
+     }
+     
+     /**
+      * 获取年份
+      * 当前是1月时，获取上一年的年份
+      * 当前是2-12月时，获取当前年份
+      * @return
+      */
+     public static Integer getPreOrCurrentYear() {
+    	 Calendar cal=Calendar.getInstance();
+    	 int year = 0;
+    	 int currentMonth = cal.get(Calendar.MONTH) + 1;
+    	 if(currentMonth == 1) {
+    		 year = cal.get(Calendar.YEAR) - 1;
+    	 }else {
+    		 year = cal.get(Calendar.YEAR);
+    	 }
+		 return year;
+     }
+     
 }

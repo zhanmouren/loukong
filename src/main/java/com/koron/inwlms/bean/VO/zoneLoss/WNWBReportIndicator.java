@@ -10,22 +10,22 @@ public class WNWBReportIndicator {
 	/**
 	 * 主键id
 	 */
-	public Integer id;
+	private Integer id;
 	
 	/**
 	 * 报表id
 	 */
-	public Integer reportId;
+	private Integer reportId;
 	
 	/**
 	 * 模板指标id
 	 */
-	public Integer templateIndicatorId;
+	private Integer templateIndicatorId;
 	
 	/**
 	 * 指标值
 	 */
-	public Double value;
+	private Double value;
 	
 	/**
 	 * 创建时间

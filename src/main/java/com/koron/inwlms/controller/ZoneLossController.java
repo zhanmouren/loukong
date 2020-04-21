@@ -41,20 +41,24 @@ import com.koron.inwlms.bean.DTO.zoneLoss.ZoneThematicValueDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneHstDataVO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.DmaZoneLossListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.LegitimateNightUseVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageDmaZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageSZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBTReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PositionInfoVO;
+import com.koron.inwlms.bean.VO.zoneLoss.SZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VCZoneListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VSZoneListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReporFileListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportDetailVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportIndicator;
+import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportDetailVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportIndicator;
+import com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneIndicatorDicVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO;
@@ -288,7 +292,7 @@ public class ZoneLossController {
 			qwnwbr.setPage(1);
 			qwnwbr.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageWNWBReportListVO data = ADOConnection.runTask(wbas, "queryWNWBReportList", PageWNWBReportListVO.class,qwnwbr);
+			PageListVO<List<WNWBReportListVO>> data = ADOConnection.runTask(wbas, "queryWNWBReportList", PageListVO.class,qwnwbr);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -499,7 +503,7 @@ public class ZoneLossController {
 			qwnwbtr.setPage(1);
 			qwnwbtr.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageWNWBTReportListVO data = ADOConnection.runTask(wbas, "queryWNWBTReportList", PageWNWBTReportListVO.class,qwnwbtr);
+			PageListVO<List<WNWBTReportListVO>> data = ADOConnection.runTask(wbas, "queryWNWBTReportList", PageListVO.class,qwnwbtr);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -699,7 +703,7 @@ public class ZoneLossController {
 			qfzlDTO.setPage(1);
 			qfzlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageFZoneLossListVO data = ADOConnection.runTask(zlas, "queryFZoneLossList", PageFZoneLossListVO.class,qfzlDTO);
+			PageListVO<List<FZoneLossListVO>> data = ADOConnection.runTask(zlas, "queryFZoneLossList", PageListVO.class,qfzlDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -805,7 +809,7 @@ public class ZoneLossController {
 			qszlDTO.setPage(1);
 			qszlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageSZoneLossListVO data = ADOConnection.runTask(zlas, "querySZoneLossList", PageSZoneLossListVO.class,qszlDTO);
+			PageListVO<List<SZoneLossListVO>> data = ADOConnection.runTask(zlas, "querySZoneLossList", PageListVO.class,qszlDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -910,7 +914,7 @@ public class ZoneLossController {
 			qdzlDTO.setPage(1);
 			qdzlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageDmaZoneLossListVO data = ADOConnection.runTask(zlas, "queryDmaZoneLossList", PageDmaZoneLossListVO.class,qdzlDTO);
+			PageListVO<List<DmaZoneLossListVO>> data = ADOConnection.runTask(zlas, "queryDmaZoneLossList", PageListVO.class,qdzlDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -1267,10 +1271,9 @@ public class ZoneLossController {
 			msg.setDescription("合并的分区编号为空");
 			return msg.toJson();
 		}
+		//TODO 判断合并分区是否存在
 		try{
 			ADOConnection.runTask(vzlas,"addVCZone",Void.class,addVCZoneDTO);
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription(Constant.MESSAGE_STRING_NULL);	
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_DELERROR);
 			msg.setDescription(Constant.MESSAGE_STRING_DELERROR);
@@ -1278,8 +1281,8 @@ public class ZoneLossController {
 		return msg.toJson();
 	}
 	
-	@RequestMapping(value = "/deleteVCZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "删除虚拟分区（合并）", notes = "删除虚拟分区（合并）", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/deleteVCZone.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除虚拟分区（合并）", notes = "删除虚拟分区（合并）", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteVCZone(String vZoneNo) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Void.class);
@@ -1291,8 +1294,6 @@ public class ZoneLossController {
 		}
 		try{
 			ADOConnection.runTask(vzlas,"deleteVCZone",Void.class,vZoneNo);
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription(Constant.MESSAGE_STRING_NULL);	
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_DELERROR);
 			msg.setDescription(Constant.MESSAGE_STRING_DELERROR);
@@ -1572,8 +1573,8 @@ public class ZoneLossController {
 	     return msg.toJson();
 	 }
 	 
-	 @ApiOperation(value = "更新漏损量指标值", notes = "更新漏损量指标值", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
-	 @RequestMapping(value = "/updateLeakageExponent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+	 @ApiOperation(value = "更新漏损量指标值", notes = "更新漏损量指标值", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	 @RequestMapping(value = "/updateLeakageExponent.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	 @ResponseBody
 	 public String updateLeakageExponent(String value) {
 	     MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);

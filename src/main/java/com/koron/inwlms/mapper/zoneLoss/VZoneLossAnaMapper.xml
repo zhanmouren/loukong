@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.zoneLoss.VZoneLossAnaMapper">
+	<select id="querySeqVzoneCode" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select nextval('seq_vzone_code'::regclass) as code
+	</select>
+	
+	<insert id="addVCZone" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddVCZoneDTO">
+		INSERT INTO
+		"GIS_exist_vzone"
+		("pCode",
+		"name",
+		"masCode",
+		"secCode",
+		"vType",
+		"createBy",
+		"createTime",
+		"updateBy",
+		"updateTime")
+		VALUES
+		(#{vZoneNo,jdbcType=INTEGER},
+		#{vZoneName,jdbcType=VARCHAR},
+		#{masCode,jdbcType=INTEGER},
+		#{secCode,jdbcType=INTEGER},
+		#{zoneType,jdbcType=VARCHAR},
+		#{createBy,jdbcType=VARCHAR},
+		current_timestamp,
+		#{updateBy,jdbcType=VARCHAR},
+		current_timestamp)
+	</insert>
+	
+	<update id="deleteVCZone" parameterType="java.lang.String">
+		update "GIS_exist_vzone" set status = 0 where "pCode" = #{vZoneNo};
+	</update>
+</mapper>

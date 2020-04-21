@@ -7,7 +7,7 @@ package com.koron.inwlms.bean.VO.zoneLoss;
  */
 public class WNWBReportFile {
 
-private Integer id;
+	private Integer id;
 	
 	private String fileName;
 	

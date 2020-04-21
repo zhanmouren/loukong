@@ -9,35 +9,35 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
  */
 public class QueryVSZoneListDTO extends BaseDTO{
 
-	public Double minNrw;
+	private Double minNrw;
 	
-	public Double maxNrw;
+	private Double maxNrw;
 	
-	public Double minUfwc;
+	private Double minUfwc;
 	
-	public Double maxUfwc;
+	private Double maxUfwc;
 	
 	/**
 	 * 时间类型（0：分 ，1：时，2：日，3：月，4：年）
 	 */
-	public Integer timeType;
+	private Integer timeType;
 	
 	/**
 	 * 开始时间
 	 */
-	public Integer startTime;
+	private Integer startTime;
 	
 	/**
 	 * 结束时间
 	 */
-	public Integer endTime;
+	private Integer endTime;
 	
-	public Integer vZoneType;
+	private Integer vZoneType;
 	
 	/**
 	 * 虚拟分区编码
 	 */
-	public String  vZoneNo;
+	private String  vZoneNo;
 
 	public Double getMinNrw() {
 		return minNrw;

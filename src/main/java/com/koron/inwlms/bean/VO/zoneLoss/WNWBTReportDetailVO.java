@@ -13,47 +13,47 @@ public class WNWBTReportDetailVO{
 	/**
 	 * id
 	 */
-	public Integer id;
+	private Integer id;
 	
 	/**
 	 * 报表名称
 	 */
-	public String reportName;
+	private String reportName;
 	
 	/**
 	 * 报表描述
 	 */
-	public String description;
+	private String description;
 	
 	/**
 	 * 创建时间（时间戳）
 	 */
-	public String createTime;
+	private String createTime;
 	
 	/**
 	 * 修改时间（时间戳）
 	 */
-	public String updateTime;
+	private String updateTime;
 	
 	/**
 	 * 创建人
 	 */
-	public String createBy;
+	private String createBy;
 	
 	/**
 	 * 修改人
 	 */
-	public String updateBy;
+	private String updateBy;
 	
 	/**
 	 * 备注
 	 */
-	public String remarks;
+	private String remarks;
 	
 	/**
 	 * 全网水平衡模板报表指标
 	 */
-	public List<WNWBTReportIndicator> indicators;
+	private List<WNWBTReportIndicator> indicators;
 
 	public Integer getId() {
 		return id;

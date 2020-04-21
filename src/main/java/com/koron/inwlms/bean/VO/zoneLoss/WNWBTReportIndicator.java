@@ -10,62 +10,62 @@ public class WNWBTReportIndicator {
 	/**
 	 * 主键id
 	 */
-	public Integer id;
+	private Integer id;
 	
 	/**
 	 * 模板id
 	 */
-	public Integer templateId;
+	private Integer templateId;
 	
 	/**
 	 * 指标编码
 	 */
-	public String code;
+	private String code;
 	
 	/**
 	 * 描述
 	 */
-	public String description;
+	private String description;
 	
 	/**
 	 * 编辑状态（0-未编辑，1-已编辑）
 	 */
-	public Integer editStatus;
+	private Integer editStatus;
 	
 	/**
 	 * 是否可编辑（0-不可编辑，1-可编辑）
 	 */
-	public Integer editAble;
+	private Integer editAble;
 	
 	/**
 	 * 是否设置公式（0-否，1-是）
 	 */
-	public Integer formulaAble;
+	private Integer formulaAble;
 	
 	/**
 	 * 公式
 	 */
-	public String formula;
+	private String formula;
 	
 	/**
 	 * 创建时间（时间戳）
 	 */
-	public String createTime;
+	private String createTime;
 	
 	/**
 	 * 修改时间（时间戳）
 	 */
-	public String updateTime;
+	private String updateTime;
 	
 	/**
 	 * 创建人
 	 */
-	public String createBy;
+	private String createBy;
 	
 	/**
 	 * 修改人
 	 */
-	public String updateBy;
+	private String updateBy;
 
 	public Integer getId() {
 		return id;

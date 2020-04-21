@@ -12,7 +12,7 @@ public class QueryWNWBTReportListDTO extends BaseDTO{
 	/**
 	 * 模板报表名称
 	 */
-	public String templateName;
+	private String templateName;
 
 	public String getTemplateName() {
 		return templateName;
