@@ -891,4 +891,13 @@
 		    </foreach>
       </select>
       
+      
+      <!-- 批量导入用户 -->
+    <insert id="addManyUser" parameterType="java.util.List">  
+        insert into "SM_user"("loginName",passWord,phone,"email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code") values
+        <foreach collection="list" index="index" separator="," item="item">
+           (#{item.loginName},#{item.password},#{item.phone},#{item.email},#{item.name},#{item.position},#{item.sex},#{item.photo},#{item.openID},0,#{item.workNo},0,#{item.createBy},Now(),#{item.updateBy},Now(),#{item.code})   
+        </foreach>      
+    </insert>
+      
 </mapper>

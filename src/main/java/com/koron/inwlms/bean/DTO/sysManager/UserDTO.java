@@ -3,6 +3,8 @@ package com.koron.inwlms.bean.DTO.sysManager;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
     * 1管理员添加职员信息bean
     * 2修改职员信息bean
@@ -11,7 +13,7 @@ import java.util.List;
  */
 
 
-public class UserDTO {
+public class UserDTO{
   //存储多个用户code的List
   private List<String> userCodeList;
   //职员编码

@@ -7,6 +7,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.mybatis.SessionFactory;
@@ -34,31 +39,28 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
-import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
+import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
-import com.koron.inwlms.bean.VO.sysManager.DeptAndUserIdVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.FieldMapperVO;
+import com.koron.inwlms.bean.VO.sysManager.ImportUserResVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
-import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
-import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.EncryptionUtil;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.inwlms.util.RandomCodeUtil;
-import com.koron.util.Constant;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -510,7 +512,7 @@ public class UserServiceImpl implements UserService{
 					return updateRes;
 				}
 		      
-				//删除数据字典(通过key，删除一条就要修改多条主的信息，还要实现批量) 2020/03/27
+				//删除数据字典(通过key) 2020/03/27
 				@TaskAnnotation("deleteDetDicByKey")
 				@Override
 				public Integer deleteDetDicByKey(SessionFactory factory, DataDicDTO dataDicDTO) {
@@ -1275,5 +1277,83 @@ public class UserServiceImpl implements UserService{
 					Integer delRes=userMapper.deleteEnumMapper(enumMapperDTO.getIdList());
 					return delRes;
 				}
+				
+				
+				//添加excel时候导入用户数据 2020/04/22
+				@TaskAnnotation("addImportUserDataExcel")
+				@Override
+				public ImportUserResVO addImportUserDataExcel(SessionFactory factory,List<UserExcelDTO> userList) {					
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					ImportUserResVO importUserResVO=new ImportUserResVO();
+					//String转类型
+					for(int j=0;j<userList.size();j++) {
+					    if("男".equals(userList.get(j).getSexStr())) {
+					    	userList.get(j).setSex(0);
+					    }else if("女".equals(userList.get(j).getSexStr())) {
+					    	userList.get(j).setSex(1);
+					    }else {
+					    	userList.get(j).setSex(-1);
+					    }				    
+					    userList.get(j).setPosition(1);
+					}					
+					List<UserExcelDTO> collect=userList.stream().filter(distinctByKey(UserExcelDTO::getLoginName)).collect(Collectors.toList());
+					if(collect.size()<userList.size()) {
+						importUserResVO.setResult(-4);
+						importUserResVO.setLoginName(collect.get(0).getLoginName());
+						return importUserResVO;
+					}
+					List<UserExcelDTO> collectWorkNo=userList.stream().filter(distinctByKey(UserExcelDTO::getWorkNo)).collect(Collectors.toList());
+					if(collectWorkNo.size()<userList.size()) {
+						importUserResVO.setResult(-5);
+						importUserResVO.setLoginName(collect.get(0).getWorkNo());
+						return importUserResVO;
+					}
+					
+					for(int i=0;i<userList.size();i++) {
+						userList.get(i).setCreateBy("小詹");
+						userList.get(i).setUpdateBy("小詹");
+						//管理员设置默认密码yhsw123456
+						userList.get(i).setPassword((new  EncryptionUtil().encodeBase64("yhsw123456")));
+						//随机获取uuid,赋值给Code
+						String userCode=new RandomCodeUtil().getUUID32();
+						userList.get(i).setCode(userCode);	
+						//添加用户的时候判断工号和登录名称是否重复
+						QueryUserDTO queryUserDTO=new QueryUserDTO();
+						queryUserDTO.setLoginName(userList.get(i).getLoginName());		
+						List<UserVO> loginNameList=userMapper.queryUser(queryUserDTO);
+						Integer addResult=null;
+						if(loginNameList.size()>0) {
+							importUserResVO.setNum(i);
+							importUserResVO.setLoginName(userList.get(i).getLoginName());
+							importUserResVO.setResult(-2);
+							return importUserResVO;
+						}
+						QueryUserDTO queryUserDTONew=new QueryUserDTO();
+						queryUserDTONew.setWorkNo(userList.get(i).getWorkNo());
+						List<UserVO> workNoList=userMapper.queryUser(queryUserDTONew);
+						if(workNoList.size()>0) {
+							importUserResVO.setNum(i);
+							importUserResVO.setWorkNo(userList.get(i).getWorkNo());
+							importUserResVO.setResult(-3);
+							return importUserResVO;
+						}				
+				    }
+				     Integer addResult=userMapper.addManyUser(userList);
+				     if(userList.size()>0) {
+				      importUserResVO.setSuccessRate(addResult.intValue()/userList.size());	
+				     }
+				     importUserResVO.setResult(0);
+					 return importUserResVO;
+				}
+				
+				
+				/**
+				  * 获取list中对象属性的重复值
+				 */
+				    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+				        Set<Object> seen = ConcurrentHashMap.newKeySet();
+				        return t -> seen.add(keyExtractor.apply(t));
+				    }
+		
 					
 }

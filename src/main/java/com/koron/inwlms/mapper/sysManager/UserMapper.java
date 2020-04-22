@@ -26,6 +26,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptAndUserIdVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
@@ -321,5 +322,8 @@ public interface UserMapper {
 		
 		//修改职员部门
 		public Integer updateUserDept(DeptAndUserDTO deptAndUserDTO);
+		
+		//批量导入用户
+		public Integer addManyUser(List<UserExcelDTO> userList);
 		
 }
