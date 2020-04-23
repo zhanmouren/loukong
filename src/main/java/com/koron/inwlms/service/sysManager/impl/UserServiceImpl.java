@@ -38,6 +38,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -1205,7 +1206,7 @@ public class UserServiceImpl implements UserService{
 					return updateRes;				
 				}
 				
-				//根据Code修改集成配置信息接口
+				//根据Code修改表格接口
 				@TaskAnnotation("updateTableMapper") 
 				@Override
 				public Integer updateTableMapper(SessionFactory factory, TableMapperDTO tableMapperDTO) {
@@ -1215,7 +1216,7 @@ public class UserServiceImpl implements UserService{
 					return updateRes;
 				}
 
-				//根据id修改表格映射明细信息
+				//根据id修改表格枚举映射明细信息
 				@TaskAnnotation("updateEnumMapper") 
 				@Override
 				public Integer updateEnumMapper(SessionFactory factory, EnumMapperDTO enumMapperDTO) {
@@ -1354,6 +1355,44 @@ public class UserServiceImpl implements UserService{
 				        Set<Object> seen = ConcurrentHashMap.newKeySet();
 				        return t -> seen.add(keyExtractor.apply(t));
 				    }
+
+				//修改个人密码	
+				@TaskAnnotation("updateMyPassword")
+				@Override
+				public Integer updateMyPassword(SessionFactory factory, UpdateWordDTO updateWordDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					//验证两次输入的密码是否一致
+					EncryptionUtil encryptionUtil=new EncryptionUtil();
+					if(!encryptionUtil.decodeBase64(updateWordDTO.getNewPassWord()).equals(encryptionUtil.decodeBase64(updateWordDTO.getSurePassWord()))) {						
+						return -2;
+					}
+					//验证新老密码是否重复
+					if(encryptionUtil.decodeBase64(updateWordDTO.getNewPassWord()).equals(encryptionUtil.decodeBase64(updateWordDTO.getOldPassWord()))) {						
+						return -3;
+					}
+					// 正则 {8,}8位以上,包含大写小写字母，数字，特殊字符
+					String PW_PATTERN = "^(?![A-Za-z0-9]+$)(?![a-z0-9\\W]+$)(?![A-Za-z\\W]+$)(?![A-Z0-9\\W]+$)[a-zA-Z0-9\\W]{8,16}";
+		  
+		            if(encryptionUtil.decodeBase64(updateWordDTO.getNewPassWord()).matches(PW_PATTERN)==false) { 
+		        	  return -4; 
+		        	}
+		 
+					//验证old密码是否正确   TODO 测试先使用loginName为测试11
+					UserDTO user=new UserDTO();
+					user.setLoginName("测试11");
+					List<UserVO> userList=userMapper.queryPassWord(user);
+					Integer updateRes=null;
+					if(userList!=null && userList.size()>0) {						
+						if(!encryptionUtil.decodeBase64(updateWordDTO.getOldPassWord()).equals(encryptionUtil.decodeBase64(userList.get(0).getPassword()))) {						
+							return -5;
+						}
+						//执行修改密码的操作
+						user.setPassword(updateWordDTO.getNewPassWord());
+						user.setUpdateBy("小詹");
+						updateRes=userMapper.updateMyPassword(user);
+					}
+					return updateRes;
+				}
 		
 					
 }

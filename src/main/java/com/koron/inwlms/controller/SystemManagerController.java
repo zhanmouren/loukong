@@ -37,6 +37,7 @@ import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TitleInfoDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -2626,4 +2627,55 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	 /*
+     * date:2020-03-20
+     * funtion:个人修改密码
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/updateMyPassword.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "重置职员密码接口", notes = "重置职员密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateMyPassword(@RequestBody UpdateWordDTO updateWordDTO) {
+		if(updateWordDTO.getOldPassWord()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+		}
+		if(updateWordDTO.getNewPassWord()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+		}
+		if(updateWordDTO.getSurePassWord()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       		
+		  try{
+			  Integer updateRes=ADOConnection.runTask(userService, "updateMyPassword", Integer.class, updateWordDTO);		 
+			 
+				  if(updateRes==1) {					
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("重置密码成功");
+				  }else if(updateRes==-2){
+					  msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("两次输入的密码不一致");
+				  }else if (updateRes==-3){
+					  msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("新密码和旧密码同样");
+				  }else if(updateRes==-4){
+					  msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("8位到16位,包含大写小写字母，数字，特殊字符");
+				  } 			  				  
+				  else  if(updateRes==-5){
+					  msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("旧密码输入不正确，请重新输入旧密码");
+				  }else {				   
+			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+			        msg.setDescription("重置密码失败");
+				  }
+			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("重置失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
 }

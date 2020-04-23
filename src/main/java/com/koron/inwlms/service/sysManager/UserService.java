@@ -21,6 +21,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -209,5 +210,8 @@ public interface UserService {
 		  
 		 //添加excel时候导入用户数据 2020/04/22
 		  ImportUserResVO addImportUserDataExcel(SessionFactory factory,List<UserExcelDTO> userList);
+		  
+		  //修改个人密码
+		  Integer updateMyPassword(SessionFactory factory,UpdateWordDTO updateWordDTO);
 		 
 }
