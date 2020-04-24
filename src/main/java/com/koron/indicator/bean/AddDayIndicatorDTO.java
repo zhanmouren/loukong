@@ -13,13 +13,13 @@ public class AddDayIndicatorDTO {
 	
 	private String code;
 	
-	private Long analysisValue;
+	private Integer analysisValue;
 	
 	private String zoneNo;
 	
 	private String zoneRank;
 	
-	private Long value;
+	private Integer value;
 	
 	private String method;
 	
@@ -59,19 +59,20 @@ public class AddDayIndicatorDTO {
 		this.updateBy = updateBy;
 	}
 
-	public Long getAnalysisValue() {
+
+	public Integer getAnalysisValue() {
 		return analysisValue;
 	}
 
-	public Long getValue() {
+	public Integer getValue() {
 		return value;
 	}
 
-	public void setAnalysisValue(Long analysisValue) {
+	public void setAnalysisValue(Integer analysisValue) {
 		this.analysisValue = analysisValue;
 	}
 
-	public void setValue(Long value) {
+	public void setValue(Integer value) {
 		this.value = value;
 	}
 

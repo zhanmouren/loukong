@@ -24,6 +24,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
+import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrCurrentMeterDataVO;
@@ -34,7 +35,6 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrTotalAnalysisDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
-import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.util.ExportDataUtil;
@@ -242,7 +242,7 @@ public class ApparentLossController {
 			queryALListDTO.setPage(1);
 			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageALListVO pageBean = ADOConnection.runTask(als, "queryALList", PageALListVO.class,queryALListDTO);
+			PageListVO<List<ALListVO>> pageBean = ADOConnection.runTask(als, "queryALList", PageListVO.class,queryALListDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件

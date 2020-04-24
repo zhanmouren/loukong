@@ -24,10 +24,6 @@ import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
-import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBReportListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBTReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReporFileListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportDetailVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
@@ -42,7 +38,6 @@ import com.koron.inwlms.service.zoneLoss.WaterBalanceAnaService;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.util.Constant;
 
-import oracle.sql.ARRAY;
 
 /**
  * 水平衡分析接口实现层
