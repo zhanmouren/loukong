@@ -381,8 +381,8 @@
 		"updateTime")
 		VALUES
 		(#{templateId,jdbcType=INTEGER},
-		#{code,jdbcType=VARCHAR},
-		#{description,jdbcType=VARCHAR},
+		#{indicatorCode,jdbcType=VARCHAR},
+		#{indicatorDescribe,jdbcType=VARCHAR},
 		#{editStatus,jdbcType=INTEGER},
 		#{editAble,jdbcType=INTEGER},
 		#{formulaAble,jdbcType=INTEGER},

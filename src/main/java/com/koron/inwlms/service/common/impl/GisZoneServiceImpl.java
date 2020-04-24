@@ -8,6 +8,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.util.StringUtil;
+import com.koron.indicator.bean.CalZoneInfos;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
@@ -384,5 +385,39 @@ public class GisZoneServiceImpl implements GisZoneService {
 		}else {
 			return 0;
 		}
+	}
+	
+	/**
+	 * 获取分区信息集合，造数据，暂用
+	 */
+	public CalZoneInfos getZoneInfos() {
+		CalZoneInfos calZoneInfos = new CalZoneInfos();
+		List<String> firstZoneLists = new ArrayList<>();
+		List<String> secondZoneLists = new ArrayList<>();
+		List<String> dmaZoneLists = new ArrayList<>();
+		List<String> vZoneLists = new ArrayList<>();
+		firstZoneLists.add("FL01");
+		firstZoneLists.add("FL02");
+		secondZoneLists.add("SL01001");
+		secondZoneLists.add("SL01002");
+		secondZoneLists.add("SL02001");
+		secondZoneLists.add("SL02002");
+		dmaZoneLists.add("DM01001001");
+		dmaZoneLists.add("DM01001002");
+		dmaZoneLists.add("DM01002001");
+		dmaZoneLists.add("DM01002002");
+		dmaZoneLists.add("DM02001001");
+		dmaZoneLists.add("DM02001002");
+		dmaZoneLists.add("DM02002001");
+		dmaZoneLists.add("DM02002002");
+		vZoneLists.add("VCZ001");
+		vZoneLists.add("VCZ002");
+		vZoneLists.add("VSZ001");
+		vZoneLists.add("VSZ002");
+		calZoneInfos.setFirstZoneLists(firstZoneLists);
+		calZoneInfos.setSecondZoneLists(secondZoneLists);
+		calZoneInfos.setDmaZoneLists(dmaZoneLists);
+		calZoneInfos.setvZoneLists(vZoneLists);
+		return calZoneInfos;
 	}
 }
