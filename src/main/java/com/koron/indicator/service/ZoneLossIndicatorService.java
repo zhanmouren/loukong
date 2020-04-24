@@ -29,13 +29,11 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDMnf")
-	public void calDMnf(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDMnf(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> mnfLists = new ArrayList<>();
 		List<AddDayIndicatorDTO> mnfTimeLists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		//2.查询分区监测点的当日24小时各时刻移动时平均流量的最小值
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
@@ -160,6 +158,7 @@ public class ZoneLossIndicatorService {
 			addDayIndicatorDTO.setMethod("0");
 			mnfLists.add(addDayIndicatorDTO);
 		}
+		
 		//批量插入日指标数据
 		addIndicMapper.addZoneLossDIndicDataBatch(mnfLists);
 		//全网
@@ -183,12 +182,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMMnf")
-	public void calMMnf(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMMnf(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//2.查询当前月日最小夜间流量平均值
@@ -274,12 +271,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYMnf")
-	public void calYMnf(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYMnf(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//2.查询当前月日最小夜间流量平均值
@@ -374,12 +369,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDMnfNoBigUser")
-	public void calDMnfNoBigUser(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDMnfNoBigUser(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取所有分区的最小夜间流量
@@ -502,12 +495,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMMnfNoBigUser")
-	public void calMMnfNoBigUser(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMMnfNoBigUser(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//2.查询当前月日除大用户最小夜间流量平均值
@@ -594,12 +585,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYMnfNoBigUser")
-	public void calYMnfNoBigUser(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYMnfNoBigUser(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//2.查询当前月日最小夜间流量平均值
@@ -686,16 +675,13 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDAznp")
-	public void calDAznp(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDAznp(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		
 		//查询该时刻的平均压力
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
-		
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//查询最小夜间流量时刻
 			Integer mnfTime = zlimapper.getDMnftByNo(zoneNo,preDay);
@@ -832,12 +818,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMAznp")
-	public void calMAznp(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMAznp(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//2.查询当前月日平均夜间供水压力
@@ -924,7 +908,7 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLegitimateNightUse")
-	public void calDLegitimateNightUse(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLegitimateNightUse(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		//TODO 1.调用gis接口，获取分区下所有用户的信息
 		//2.查询所有用户类型的用户夜间标准用水量
 		//3.计算用户夜间用水量：SUM（A类型用户数*A类用户夜间标准用水量+B类型用户数*B类用户夜间标准用水量……）
@@ -935,7 +919,7 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLegitimateNightUse")
-	public void calMLegitimateNightUse(SessionFactory factory){
+	public void calMLegitimateNightUse(SessionFactory factory,Integer preMonth){
 		//TODO
 	}
 	
@@ -944,7 +928,7 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLegitimateNightUse")
-	public void calYLegitimateNightUse(SessionFactory factory){
+	public void calYLegitimateNightUse(SessionFactory factory,Integer year){
 		//TODO
 	}
 	
@@ -980,14 +964,12 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDHourDayFactor")
-	public void calDHourDayFactor(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDHourDayFactor(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		//1.获取漏损指数
 		double le = Double.parseDouble(factory.getMapper(LeakageParamSetMapper.class).queryLeakageExponent());
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//2.获取平均夜间供水压力
@@ -1096,12 +1078,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLeakage")
-	public void calDLeakage(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLeakage(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取日供水量
@@ -1241,12 +1221,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLeakage")
-	public void calMLeakage(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMLeakage(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//2.查询当前月日漏失量
@@ -1332,12 +1310,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLeakage")
-	public void calYLeakage(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYLeakage(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//2.查询当前月漏失量
@@ -1419,12 +1395,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLeakageRate")
-	public void calDLeakageRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLeakageRate(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取日漏失量
@@ -1569,12 +1543,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLeakageRate")
-	public void calMLeakageRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMLeakageRate(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月漏失量
@@ -1693,12 +1665,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLeakageRate")
-	public void calYLeakageRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYLeakageRate(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个年的时间,格式：yyyy
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年漏失量
@@ -1817,15 +1787,13 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLeakagePerCustomer")
-	public void calDLeakagePerCustomer(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLeakagePerCustomer(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		//1.查询日漏失量
 		//2.查询客户数，月度值
 		//3.计算单位户数漏失量
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//获取上个月
 		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
@@ -1964,12 +1932,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLeakagePerCustomerAccount")
-	public void calMLeakagePerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMLeakagePerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月漏失量
@@ -2082,12 +2048,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLeakagePerCustomerAccount")
-	public void calYLeakagePerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYLeakagePerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取年份
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月漏失量
@@ -2200,15 +2164,13 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLeakagePerPipeLength")
-	public void calDLeakagePerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLeakagePerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		//1.查询日漏失量
 		//2.查询客户数，月度值
 		//3.计算单位户数漏失量
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//上个月
 		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
@@ -2346,12 +2308,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLeakagePerPipeLength")
-	public void calMLeakagePerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMLeakagePerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月漏失量
@@ -2463,12 +2423,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLeakagePerPipeLength")
-	public void calYLeakagePerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYLeakagePerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取年份
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年漏失量
@@ -2581,15 +2539,13 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDMnfTdf")
-	public void calDMnfTdf(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDMnfTdf(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		//1.获取最小夜间流量
 		//2.获取供水量
 		//3.计算日夜间最小流量
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//上个月
 		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
@@ -2727,12 +2683,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMMnfTdf")
-	public void calMMnfTdf(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMMnfTdf(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//上个月
-		Integer preMonth = TimeUtil.getPreMonth();
 		//上个月有效天数
 		Integer daySum = TimeUtil.getDaysOfPreMonth();
 		//一级分区
@@ -2845,12 +2799,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYMnfTdf")
-	public void calYMnfTdf(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYMnfTdf(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//上一年/或当前年
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//上一年/或当前年的有效天数
 		Integer daySum = TimeUtil.getDaysOfYear(year);
 		//一级分区
@@ -2963,14 +2915,12 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLossRate")
-	public void calDLossRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLossRate(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		//1.获取漏损量
 		//2.获取供水量
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取日漏损量
@@ -3106,12 +3056,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLossRate")
-	public void calMLossRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMLossRate(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月漏损量
@@ -3222,12 +3170,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLossRate")
-	public void calYLossRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYLossRate(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月漏损量
@@ -3338,15 +3284,13 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLossPerCustomerAccount")
-	public void calDLossPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLossPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		//1.查询日漏损量
 		//2.查询客户数，月度值
 		//3.计算单位户数漏损量
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//获取上个月
 		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
@@ -3484,12 +3428,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLossPerCustomerAccount")
-	public void calMLossPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMLossPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月漏损量
@@ -3601,12 +3543,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLossPerCustomerAccount")
-	public void calYLossPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYLossPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取年份
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年漏损量
@@ -3719,12 +3659,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLossPerPipeLength")
-	public void calDLossPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLossPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//获取上个月
 		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
@@ -3862,12 +3800,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLossPerPipeLength")
-	public void calMLossPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMLossPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月漏损量
@@ -3979,12 +3915,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLossPerPipeLength")
-	public void calYLossPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYLossPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取年份
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年漏损量
@@ -4097,12 +4031,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLossPerPipeLengthPerUnitPress")
-	public void calDLossPerPipeLengthPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLossPerPipeLengthPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取日单位管长漏损量
@@ -4237,12 +4169,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLossPerPipeLengthPerUnitPress")
-	public void calMLossPerPipeLengthPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMLossPerPipeLengthPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月单位管长漏损量
@@ -4354,12 +4284,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLossPerPipeLengthPerUnitPress")
-	public void calYLossPerPipeLengthPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYLossPerPipeLengthPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年单位管长漏损量
@@ -4471,12 +4399,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDLossPerCustomerAccountPerUnitPress")
-	public void calDLossPerCustomerAccountPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDLossPerCustomerAccountPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取日单位户数漏损量
@@ -4611,12 +4537,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMLossPerCustomerAccountPerUnitPress")
-	public void calMLossPerCustomerAccountPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMLossPerCustomerAccountPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月单位户数漏损量
@@ -4728,12 +4652,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYLossPerCustomerAccountPerUnitPress")
-	public void calYLossPerCustomerAccountPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYLossPerCustomerAccountPerUnitPress(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//1.获取上个月的时间,格式：yyyyMM
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年单位户数漏损量
@@ -4845,12 +4767,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDNrwRate")
-	public void calDNrwRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDNrwRate(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取日产销差水量
@@ -4986,12 +4906,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMNrwRate")
-	public void calMNrwRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMNrwRate(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月产销差水量
@@ -5102,12 +5020,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYNrwRate")
-	public void calYNrwRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYNrwRate(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年产销差水量
@@ -5218,12 +5134,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDNrwPerPipeLength")
-	public void calDNrwPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDNrwPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//上个月
 		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
@@ -5360,12 +5274,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMNrwPerPipeLength")
-	public void calMNrwPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMNrwPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月产销差水量
@@ -5476,12 +5388,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYNrwPerPipeLength")
-	public void calYNrwPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYNrwPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年产销差水量
@@ -5592,12 +5502,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDNrwPerCustomerAccount")
-	public void calDNrwPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDNrwPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//上个月
 		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
@@ -5734,12 +5642,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMNrwPerCustomerAccount")
-	public void calMNrwPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMNrwPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月产销差水量
@@ -5850,12 +5756,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYNrwPerCustomerAccount")
-	public void calYNrwPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYNrwPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年产销差水量
@@ -5966,12 +5870,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDUfwcRate")
-	public void calDUfwcRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDUfwcRate(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取日未计量水量
@@ -6107,12 +6009,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMUfwcRate")
-	public void calMUfwcRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMUfwcRate(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月未计量水量
@@ -6223,12 +6123,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYUfwcRate")
-	public void calYUfwcRate(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYUfwcRate(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年产未计量水量
@@ -6339,12 +6237,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDUfwcPerPipeLength")
-	public void calDUfwcPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDUfwcPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//上个月
 		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
@@ -6482,12 +6378,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMUfwcPerPipeLength")
-	public void calMUfwcPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMUfwcPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月未计量水量
@@ -6598,12 +6492,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYUfwcPerPipeLength")
-	public void calYUfwcPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYUfwcPerPipeLength(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//上一年或当前年
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年产未计量水量
@@ -6714,12 +6606,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calDUfwcPerCustomerAccount")
-	public void calDUfwcPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calDUfwcPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Date preDay){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddDayIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Date preDay = TimeUtil.getPreDay();
 		//上个月
 		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
@@ -6856,12 +6746,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calMUfwcPerCustomerAccount")
-	public void calMUfwcPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calMUfwcPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Integer preMonth){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddMonthIndicatorDTO> lists = new ArrayList<>();
-		//获取昨天的时间，精确到天
-		Integer preMonth = TimeUtil.getPreMonth();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取月未计量水量
@@ -6972,12 +6860,10 @@ public class ZoneLossIndicatorService {
 	 * @param factory
 	 */
 	@TaskAnnotation("calYUfwcPerCustomerAccount")
-	public void calYUfwcPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos){
+	public void calYUfwcPerCustomerAccount(SessionFactory factory,CalZoneInfos calZoneInfos,Integer year){
 		ZoneLossIndicatorMapper zlimapper = factory.getMapper(ZoneLossIndicatorMapper.class);
 		AddIndicatorMapper addIndicMapper = factory.getMapper(AddIndicatorMapper.class);
 		List<AddYearIndicatorDTO> lists = new ArrayList<>();
-		//上一年或当前年
-		Integer year = TimeUtil.getPreOrCurrentYear();
 		//一级分区
 		for (String zoneNo : calZoneInfos.getFirstZoneLists()) {
 			//1.获取年产未计量水量

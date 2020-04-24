@@ -48,16 +48,6 @@ public class WNWBTReportIndicatorDTO {
 	private String formula;
 	
 	/**
-	 * 创建时间（时间戳）
-	 */
-	private Integer createTime;
-	
-	/**
-	 * 修改时间（时间戳）
-	 */
-	private Integer updateTime;
-	
-	/**
 	 * 创建人
 	 */
 	private String createBy;
@@ -92,13 +82,6 @@ public class WNWBTReportIndicatorDTO {
 		return formula;
 	}
 
-	public Integer getCreateTime() {
-		return createTime;
-	}
-
-	public Integer getUpdateTime() {
-		return updateTime;
-	}
 
 	public String getCreateBy() {
 		return createBy;
@@ -130,14 +113,6 @@ public class WNWBTReportIndicatorDTO {
 
 	public void setFormula(String formula) {
 		this.formula = formula;
-	}
-
-	public void setCreateTime(Integer createTime) {
-		this.createTime = createTime;
-	}
-
-	public void setUpdateTime(Integer updateTime) {
-		this.updateTime = updateTime;
 	}
 
 	public void setCreateBy(String createBy) {
