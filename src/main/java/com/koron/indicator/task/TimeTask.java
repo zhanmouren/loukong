@@ -23,7 +23,7 @@ public class TimeTask {
 		//测试
 		System.out.println("执行小时指标计算任务......");
 		int i = 0;
-		while(i<100) {
+		while(i<10) {
 			i++;
 			try {
 				Thread.sleep(100);

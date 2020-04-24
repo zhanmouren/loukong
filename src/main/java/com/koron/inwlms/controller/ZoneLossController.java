@@ -222,7 +222,7 @@ public class ZoneLossController {
 			for(int i=0;i<tReportIndic.size();i++){
 				for(int j=0;j<reportIndic.size();j++){
 					if(tReportIndic.get(i).getId().equals(reportIndic.get(j).getTemplateIndicatorId())){
-						indicatorValue.put(tReportIndic.get(i).getCode(), reportIndic.get(j).getValue());
+						indicatorValue.put(tReportIndic.get(i).getIndicatorCode(), reportIndic.get(j).getValue());
 					}
 				}
 			}

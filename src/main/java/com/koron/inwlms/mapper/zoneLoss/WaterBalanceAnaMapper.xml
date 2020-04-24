@@ -418,7 +418,7 @@
 	
 	<select id="queryWNWBTReportIndicatorById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportIndicator">
 		select 
-		id,"templateId",code,description,"editStatus","editAble","formulaAble",
+		id,"templateId",code as "indicatorCode",description as "indicatorDescribe","editStatus","editAble","formulaAble",
 		formula,"createTime","updateTime","createBy","updateBy"
 		from "APP_company_t_report_indicator"
 		where "templateId" = #{id}
