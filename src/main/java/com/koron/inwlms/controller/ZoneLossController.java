@@ -441,6 +441,22 @@ public class ZoneLossController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/queryWNWBIndicatorData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询全网水平衡报表指标值", notes = "查询全网水平衡报表指标值", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryWNWBIndicatorData(@RequestBody IndicatorDTO indicatorDTO) {
+		MessageBean<List> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		try{
+			@SuppressWarnings("unchecked")
+			List<IndicatorVO> lists = ADOConnection.runTask(wbas,"queryWNWBIndicatorData",List.class,indicatorDTO);
+			data.setData(lists);
+		}catch(Exception e){
+			data.setCode(Constant.MESSAGE_INT_ERROR);
+			data.setDescription(Constant.MESSAGE_STRING_ERROR);
+		}
+		return data.toJson();
+	}
+	
 	@RequestMapping(value = "/queryWNWBTReportList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询全网水平衡模板报表列表", notes = "查询全网水平衡模板报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1703,4 +1719,5 @@ public class ZoneLossController {
 			return msg.toJson();
 	    }
 	  
+	    
 }

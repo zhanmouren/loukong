@@ -446,5 +446,26 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 		List<IndicatorVO> lists = mapper.queryWBBaseIndicData(indicatorDTO);
 		return lists;
 	}
+
+	@TaskAnnotation("queryWNWBIndicatorData")
+	@Override
+	public List<IndicatorVO> queryWNWBIndicatorData(SessionFactory factory, IndicatorDTO indicatorDTO) {
+		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
+		List<IndicatorVO> result = new ArrayList<>();
+		List<IndicatorVO> lists = mapper.queryCompanyIndicData(indicatorDTO);
+		for (String code : indicatorDTO.getCodes()) {
+			IndicatorVO indicVO = new IndicatorVO();
+			Double value = 0.0;
+			for (IndicatorVO indicatorVO : lists) {
+				if(code.equals(indicatorVO.getCode())) {
+					value += indicatorVO.getValue();
+				}
+			}
+			indicVO.setCode(code);
+			indicVO.setValue(value);
+			result.add(indicVO);
+		}
+		return result;
+	}
 	
 }

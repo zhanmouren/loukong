@@ -137,4 +137,12 @@ public interface WaterBalanceAnaService {
 	 */
 	List<IndicatorVO> queryWBIndicatorData(SessionFactory factory,IndicatorDTO indicatorDTO);
 
+	/**
+	 * 查询全网水平衡指标数据
+	 * @param factory
+	 * @param wBIndicatorDTO
+	 * @return
+	 */
+	List<IndicatorVO> queryWNWBIndicatorData(SessionFactory factory,IndicatorDTO indicatorDTO);
+
 }
