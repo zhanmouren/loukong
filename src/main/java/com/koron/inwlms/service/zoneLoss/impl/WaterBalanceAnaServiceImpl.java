@@ -414,7 +414,6 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 		WaterBalanceAnaMapper mapper = factory.getMapper(WaterBalanceAnaMapper.class);
 		mapper.updateWNWBTReport(editWNWBTReportDTO);
 		mapper.deleteTReportIndicatorById(editWNWBTReportDTO.getId());
-		mapper.addWNWBTReport(editWNWBTReportDTO);
 		List<WNWBTReportIndicatorDTO> indicators = editWNWBTReportDTO.getIndicators();
 		 //保存报表模板指标信息
 		 if(indicators != null && indicators.size() > 0){
