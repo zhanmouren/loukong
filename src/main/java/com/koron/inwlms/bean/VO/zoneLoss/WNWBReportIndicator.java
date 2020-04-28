@@ -23,6 +23,11 @@ public class WNWBReportIndicator {
 	private Integer templateIndicatorId;
 	
 	/**
+	 * 指标code
+	 */
+	private String indicatorCode;
+	
+	/**
 	 * 指标值
 	 */
 	private Double value;
@@ -107,4 +112,13 @@ public class WNWBReportIndicator {
 	public void setUpdateBy(String updateBy) {
 		this.updateBy = updateBy;
 	}
+
+	public String getIndicatorCode() {
+		return indicatorCode;
+	}
+
+	public void setIndicatorCode(String indicatorCode) {
+		this.indicatorCode = indicatorCode;
+	}
+	
 }

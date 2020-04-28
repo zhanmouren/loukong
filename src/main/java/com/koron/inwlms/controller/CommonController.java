@@ -137,7 +137,7 @@ public class CommonController {
      */
     @RequestMapping(value = "/downloadFileByFileId.htm", method = RequestMethod.GET, produces = {"text/html;charset=UTF-8"})
     @ResponseBody
-    public void downloadFileByFileId(String fileId, HttpServletResponse response, HttpServletRequest request) {
+    public void downloadFileByFileId(Integer fileId, HttpServletResponse response, HttpServletRequest request) {
         UploadFileDTO data = ADOConnection.runTask(new FileServiceImpl(), "getAttachmentInfoById", UploadFileDTO.class, fileId);
         //调用文件工具类下载文件
         if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
@@ -188,7 +188,7 @@ public class CommonController {
     @RequestMapping(value = "/deleteFile.htm",method = RequestMethod.GET,produces={"application/json;charset=UTF-8"})
     @ApiOperation(value = "删除附件",notes = "删除附件",httpMethod = "GET",response = MessageBean.class,consumes = "application/json;charset=UTF-8",produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteFile(String fileId){
+    public String deleteFile(Integer fileId){
     	MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
     	try{
 	    	int result = ADOConnection.runTask(new FileServiceImpl(),"deleteFileById",Integer.class,fileId);

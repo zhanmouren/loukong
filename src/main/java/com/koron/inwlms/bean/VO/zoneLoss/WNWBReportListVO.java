@@ -12,6 +12,10 @@ public class WNWBReportListVO {
 	
 	private String reportName;
 	
+	private Integer templateId;
+	
+	private String templateName;
+	
 	private String timeType;
 	
 	private String reportTime;
@@ -86,6 +90,22 @@ public class WNWBReportListVO {
 
 	public void setCreateBy(String createBy) {
 		this.createBy = createBy;
+	}
+
+	public Integer getTemplateId() {
+		return templateId;
+	}
+
+	public String getTemplateName() {
+		return templateName;
+	}
+
+	public void setTemplateId(Integer templateId) {
+		this.templateId = templateId;
+	}
+
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
 	}
 	
 }

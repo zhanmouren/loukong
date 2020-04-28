@@ -152,21 +152,22 @@
 	<select id="queryWNWBReportList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO"
 		resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO">
 		select 
-		id,"reportName","dateType" as "timeType","reportTime",description,
-		"createTime","createBy","updateTime" 
-		from "APP_company_report"
-		where status = 1
+		a.id,a."reportName",a."dateType" as "timeType",a."reportTime",a.description,
+		a."createTime",a."createBy",a."updateTime", b.id as "templateId",b."templateName"
+		from "APP_company_report" a left join "APP_company_t_report" b
+		on a."templateId" = b.id
+		where a.status = 1
 		<if test="timeType != null and timeType != ''">
-			and "dateType" = #{timeType}
+			and a."dateType" = #{timeType}
 		</if>
 		<if test="startTime !='' and startTime !=null">
-			and "reportTime" &gt;= #{startTime}
+			and a."reportTime" &gt;= #{startTime}
 		</if>
 		<if test="endTime !='' and endTime !=null">
-			and "reportTime" &lt;= #{endTime}
+			and a."reportTime" &lt;= #{endTime}
 		</if>
 		<if test="reportName != null and reportName != ''">
-			and "reportName" like '%'||#{reportName}||'%'
+			and a."reportName" like '%'||#{reportName}||'%'
 		</if>
 		<if test="orderby !=null and orderby !=''">
 			ORDER BY ${orderby}
@@ -308,7 +309,7 @@
       </delete>
       
       <delete id="deleteReportFileById">
-           delete from "APP_company_report_attach" where "reportId" = #{id}
+           delete from "APP_company_report_attach" where "fileId" = #{fileId}
       </delete>
       
       <select id="queryWNWBReporFileList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO"
@@ -332,15 +333,16 @@
 		a.id,b."fileName",b."fileSize" as size,b."fileType"
 		from "APP_company_report_attach" a
 		left join "APP_file" b on a."fileId" = b.id
-		where a.id = #{id}
+		where a."reportId" = #{id}
 	</select>
 	
 	<select id="queryWNWBReportIndicatorById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportIndicator">
 		select 
-		id,"reportId","templateIndicId" as "templateIndicatorId",value,
-		"createTime","updateTime","createBy","updateBy"
-		from "APP_company_report_indicator"
-		where "reportId" = #{id}
+		a.id,a."reportId",a."templateIndicId" as "templateIndicatorId",b.code as "indicatorCode",a.value,
+		a."createTime",a."updateTime",a."createBy",a."updateBy"
+		from "APP_company_report_indicator" a left join "APP_company_t_report_indicator" b
+		on a."templateIndicId" = b.id
+		where "reportId" =  #{id}
 	</select>
 	
 	 <insert id="addWNWBTReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO"

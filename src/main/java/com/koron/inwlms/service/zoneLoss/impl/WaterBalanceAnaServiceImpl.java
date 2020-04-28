@@ -385,9 +385,9 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 
 	@TaskAnnotation("deleteReportFileById")
 	@Override
-	public void deleteReportFileById(SessionFactory factory, Integer id) {
+	public void deleteReportFileById(SessionFactory factory, Integer fileId) {
 		WaterBalanceAnaMapper mapper = factory.getMapper(WaterBalanceAnaMapper.class);
-		mapper.deleteReportFileById(id);
+		mapper.deleteReportFileById(fileId);
 	}
 
 	@TaskAnnotation("addWNWBTReport")
