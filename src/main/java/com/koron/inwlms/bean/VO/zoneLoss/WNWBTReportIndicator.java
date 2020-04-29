@@ -20,12 +20,12 @@ public class WNWBTReportIndicator {
 	/**
 	 * 指标编码
 	 */
-	private String code;
+	private String indicatorCode;
 	
 	/**
 	 * 描述
 	 */
-	private String description;
+	private String indicatorDescribe;
 	
 	/**
 	 * 编辑状态（0-未编辑，1-已编辑）
@@ -75,14 +75,6 @@ public class WNWBTReportIndicator {
 		return templateId;
 	}
 
-	public String getCode() {
-		return code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
 	public Integer getEditStatus() {
 		return editStatus;
 	}
@@ -115,13 +107,6 @@ public class WNWBTReportIndicator {
 		this.templateId = templateId;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
 
 	public void setEditStatus(Integer editStatus) {
 		this.editStatus = editStatus;
@@ -162,6 +147,22 @@ public class WNWBTReportIndicator {
 
 	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public String getIndicatorCode() {
+		return indicatorCode;
+	}
+
+	public String getIndicatorDescribe() {
+		return indicatorDescribe;
+	}
+
+	public void setIndicatorCode(String indicatorCode) {
+		this.indicatorCode = indicatorCode;
+	}
+
+	public void setIndicatorDescribe(String indicatorDescribe) {
+		this.indicatorDescribe = indicatorDescribe;
 	}
 	
 }

@@ -19,7 +19,6 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
-import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 
 /**

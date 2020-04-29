@@ -7,6 +7,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.mybatis.SessionFactory;
@@ -33,32 +38,30 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
-import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
+import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
-import com.koron.inwlms.bean.VO.sysManager.DeptAndUserIdVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.FieldMapperVO;
+import com.koron.inwlms.bean.VO.sysManager.ImportUserResVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
-import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
-import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.EncryptionUtil;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.inwlms.util.RandomCodeUtil;
-import com.koron.util.Constant;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -510,7 +513,7 @@ public class UserServiceImpl implements UserService{
 					return updateRes;
 				}
 		      
-				//删除数据字典(通过key，删除一条就要修改多条主的信息，还要实现批量) 2020/03/27
+				//删除数据字典(通过key) 2020/03/27
 				@TaskAnnotation("deleteDetDicByKey")
 				@Override
 				public Integer deleteDetDicByKey(SessionFactory factory, DataDicDTO dataDicDTO) {
@@ -1203,7 +1206,7 @@ public class UserServiceImpl implements UserService{
 					return updateRes;				
 				}
 				
-				//根据Code修改集成配置信息接口
+				//根据Code修改表格接口
 				@TaskAnnotation("updateTableMapper") 
 				@Override
 				public Integer updateTableMapper(SessionFactory factory, TableMapperDTO tableMapperDTO) {
@@ -1213,7 +1216,7 @@ public class UserServiceImpl implements UserService{
 					return updateRes;
 				}
 
-				//根据id修改表格映射明细信息
+				//根据id修改表格枚举映射明细信息
 				@TaskAnnotation("updateEnumMapper") 
 				@Override
 				public Integer updateEnumMapper(SessionFactory factory, EnumMapperDTO enumMapperDTO) {
@@ -1275,5 +1278,121 @@ public class UserServiceImpl implements UserService{
 					Integer delRes=userMapper.deleteEnumMapper(enumMapperDTO.getIdList());
 					return delRes;
 				}
+				
+				
+				//添加excel时候导入用户数据 2020/04/22
+				@TaskAnnotation("addImportUserDataExcel")
+				@Override
+				public ImportUserResVO addImportUserDataExcel(SessionFactory factory,List<UserExcelDTO> userList) {					
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					ImportUserResVO importUserResVO=new ImportUserResVO();
+					//String转类型
+					for(int j=0;j<userList.size();j++) {
+					    if("男".equals(userList.get(j).getSexStr())) {
+					    	userList.get(j).setSex(0);
+					    }else if("女".equals(userList.get(j).getSexStr())) {
+					    	userList.get(j).setSex(1);
+					    }else {
+					    	userList.get(j).setSex(-1);
+					    }				    
+					    userList.get(j).setPosition(1);
+					}					
+					List<UserExcelDTO> collect=userList.stream().filter(distinctByKey(UserExcelDTO::getLoginName)).collect(Collectors.toList());
+					if(collect.size()<userList.size()) {
+						importUserResVO.setResult(-4);
+						importUserResVO.setLoginName(collect.get(0).getLoginName());
+						return importUserResVO;
+					}
+					List<UserExcelDTO> collectWorkNo=userList.stream().filter(distinctByKey(UserExcelDTO::getWorkNo)).collect(Collectors.toList());
+					if(collectWorkNo.size()<userList.size()) {
+						importUserResVO.setResult(-5);
+						importUserResVO.setLoginName(collect.get(0).getWorkNo());
+						return importUserResVO;
+					}
+					
+					for(int i=0;i<userList.size();i++) {
+						userList.get(i).setCreateBy("小詹");
+						userList.get(i).setUpdateBy("小詹");
+						//管理员设置默认密码yhsw123456
+						userList.get(i).setPassword((new  EncryptionUtil().encodeBase64("yhsw123456")));
+						//随机获取uuid,赋值给Code
+						String userCode=new RandomCodeUtil().getUUID32();
+						userList.get(i).setCode(userCode);	
+						//添加用户的时候判断工号和登录名称是否重复
+						QueryUserDTO queryUserDTO=new QueryUserDTO();
+						queryUserDTO.setLoginName(userList.get(i).getLoginName());		
+						List<UserVO> loginNameList=userMapper.queryUser(queryUserDTO);
+						Integer addResult=null;
+						if(loginNameList.size()>0) {
+							importUserResVO.setNum(i);
+							importUserResVO.setLoginName(userList.get(i).getLoginName());
+							importUserResVO.setResult(-2);
+							return importUserResVO;
+						}
+						QueryUserDTO queryUserDTONew=new QueryUserDTO();
+						queryUserDTONew.setWorkNo(userList.get(i).getWorkNo());
+						List<UserVO> workNoList=userMapper.queryUser(queryUserDTONew);
+						if(workNoList.size()>0) {
+							importUserResVO.setNum(i);
+							importUserResVO.setWorkNo(userList.get(i).getWorkNo());
+							importUserResVO.setResult(-3);
+							return importUserResVO;
+						}				
+				    }
+				     Integer addResult=userMapper.addManyUser(userList);
+				     if(userList.size()>0) {
+				      importUserResVO.setSuccessRate(addResult.intValue()/userList.size());	
+				     }
+				     importUserResVO.setResult(0);
+					 return importUserResVO;
+				}
+				
+				
+				/**
+				  * 获取list中对象属性的重复值
+				 */
+				    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+				        Set<Object> seen = ConcurrentHashMap.newKeySet();
+				        return t -> seen.add(keyExtractor.apply(t));
+				    }
+
+				//修改个人密码	
+				@TaskAnnotation("updateMyPassword")
+				@Override
+				public Integer updateMyPassword(SessionFactory factory, UpdateWordDTO updateWordDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					//验证两次输入的密码是否一致
+					EncryptionUtil encryptionUtil=new EncryptionUtil();
+					if(!encryptionUtil.decodeBase64(updateWordDTO.getNewPassWord()).equals(encryptionUtil.decodeBase64(updateWordDTO.getSurePassWord()))) {						
+						return -2;
+					}
+					//验证新老密码是否重复
+					if(encryptionUtil.decodeBase64(updateWordDTO.getNewPassWord()).equals(encryptionUtil.decodeBase64(updateWordDTO.getOldPassWord()))) {						
+						return -3;
+					}
+					// 正则 {8,}8位以上,包含大写小写字母，数字，特殊字符
+					String PW_PATTERN = "^(?![A-Za-z0-9]+$)(?![a-z0-9\\W]+$)(?![A-Za-z\\W]+$)(?![A-Z0-9\\W]+$)[a-zA-Z0-9\\W]{8,16}";
+		  
+		            if(encryptionUtil.decodeBase64(updateWordDTO.getNewPassWord()).matches(PW_PATTERN)==false) { 
+		        	  return -4; 
+		        	}
+		 
+					//验证old密码是否正确   TODO 测试先使用loginName为测试11
+					UserDTO user=new UserDTO();
+					user.setLoginName("测试11");
+					List<UserVO> userList=userMapper.queryPassWord(user);
+					Integer updateRes=null;
+					if(userList!=null && userList.size()>0) {						
+						if(!encryptionUtil.decodeBase64(updateWordDTO.getOldPassWord()).equals(encryptionUtil.decodeBase64(userList.get(0).getPassword()))) {						
+							return -5;
+						}
+						//执行修改密码的操作
+						user.setPassword(updateWordDTO.getNewPassWord());
+						user.setUpdateBy("小詹");
+						updateRes=userMapper.updateMyPassword(user);
+					}
+					return updateRes;
+				}
+		
 					
 }

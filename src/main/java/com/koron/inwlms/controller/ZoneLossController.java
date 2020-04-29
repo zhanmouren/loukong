@@ -44,10 +44,6 @@ import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.DmaZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.LegitimateNightUseVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageSZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBReportListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBTReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PositionInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.SZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VCZoneListVO;
@@ -208,8 +204,8 @@ public class ZoneLossController {
 		return msg;
 	}	
 	
-	@RequestMapping(value = "/downloadWNWBReport.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "下载全网水平衡报表信息", notes = "下载全网水平衡报表信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/downloadWNWBReport.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载全网水平衡报表信息", notes = "下载全网水平衡报表信息", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public HttpEntity<?> downloadWNWBReport(Integer id) {
 		if(id == null) return null;
@@ -226,7 +222,7 @@ public class ZoneLossController {
 			for(int i=0;i<tReportIndic.size();i++){
 				for(int j=0;j<reportIndic.size();j++){
 					if(tReportIndic.get(i).getId().equals(reportIndic.get(j).getTemplateIndicatorId())){
-						indicatorValue.put(tReportIndic.get(i).getCode(), reportIndic.get(j).getValue());
+						indicatorValue.put(tReportIndic.get(i).getIndicatorCode(), reportIndic.get(j).getValue());
 					}
 				}
 			}
@@ -249,8 +245,8 @@ public class ZoneLossController {
 		return entity;
 	}
 	
-	@RequestMapping(value = "/deleteWNWBReport.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "删除全网水平衡报表", notes = "删除全网水平衡报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/deleteWNWBReport.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除全网水平衡报表", notes = "删除全网水平衡报表", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteWNWBReport(Integer id) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Void.class);
@@ -390,8 +386,8 @@ public class ZoneLossController {
 		return msg.toJson();
 	}
 	
-	@RequestMapping(value = "/queryWNWBReportDetail.htm", method=RequestMethod.POST,produces={"application/json;charset=UTF-8"})
-	@ApiOperation(value = "查询全网水平衡报表详情",notes = "查询全网水平衡报表详情",httpMethod = "POST",consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/queryWNWBReportDetail.htm", method=RequestMethod.GET,produces={"application/json;charset=UTF-8"})
+	@ApiOperation(value = "查询全网水平衡报表详情",notes = "查询全网水平衡报表详情",httpMethod = "GET",consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String queryWNWBReportDetail(Integer id){
 		MessageBean<WNWBReportDetailVO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, WNWBReportDetailVO.class);
@@ -426,8 +422,8 @@ public class ZoneLossController {
 		return data.toJson();
 	}
 	
-	@RequestMapping(value = "/deleteWNWBReporFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "删除全网水平衡报表附件", notes = "删除全网水平衡报表附件", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/deleteWNWBReporFile.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除全网水平衡报表附件", notes = "删除全网水平衡报表附件", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteWNWBReporFile(Integer fileId) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Void.class);
@@ -443,6 +439,22 @@ public class ZoneLossController {
 			msg.setDescription(Constant.MESSAGE_STRING_DELERROR);
 		}
 		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/queryWNWBIndicatorData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询全网水平衡报表指标值", notes = "查询全网水平衡报表指标值", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryWNWBIndicatorData(@RequestBody IndicatorDTO indicatorDTO) {
+		MessageBean<List> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		try{
+			@SuppressWarnings("unchecked")
+			List<IndicatorVO> lists = ADOConnection.runTask(wbas,"queryWNWBIndicatorData",List.class,indicatorDTO);
+			data.setData(lists);
+		}catch(Exception e){
+			data.setCode(Constant.MESSAGE_INT_ERROR);
+			data.setDescription(Constant.MESSAGE_STRING_ERROR);
+		}
+		return data.toJson();
 	}
 	
 	@RequestMapping(value = "/queryWNWBTReportList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -516,8 +528,8 @@ public class ZoneLossController {
 		return null;
 	}
 	
-	@RequestMapping(value = "/deleteWNWBReporTemplate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "删除全网水平衡模板报表", notes = "删除全网水平衡模板报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/deleteWNWBReporTemplate.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除全网水平衡模板报表", notes = "删除全网水平衡模板报表", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteWNWBReporTemplate(Integer tId) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Void.class);
@@ -590,8 +602,8 @@ public class ZoneLossController {
 		return msg.toJson();
 	}
 	
-	@RequestMapping(value = "/queryWNWBTReportDetail.htm", method=RequestMethod.POST,produces={"application/json;charset=UTF-8"})
-	@ApiOperation(value = "查询全网水平衡模板报表详情",notes = "查询全网水平衡报表详情",httpMethod = "POST",consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/queryWNWBTReportDetail.htm", method=RequestMethod.GET,produces={"application/json;charset=UTF-8"})
+	@ApiOperation(value = "查询全网水平衡模板报表详情",notes = "查询全网水平衡报表详情",httpMethod = "GET",consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String queryWNWBTReportDetail(Integer id){
 		MessageBean<WNWBTReportDetailVO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, WNWBTReportDetailVO.class);
@@ -1707,4 +1719,5 @@ public class ZoneLossController {
 			return msg.toJson();
 	    }
 	  
+	    
 }

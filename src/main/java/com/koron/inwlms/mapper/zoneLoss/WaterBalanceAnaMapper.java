@@ -136,7 +136,7 @@ public interface WaterBalanceAnaMapper {
 	 * 根据id删除报表附件
 	 * @param id
 	 */
-	void deleteReportFileById(@Param("id") Integer id);
+	void deleteReportFileById(@Param("fileId") Integer fileId);
 	
 	/**
 	 * 查询报表附件列表信息

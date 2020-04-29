@@ -2,20 +2,23 @@ package com.koron.inwlms.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.swan.bean.MessageBean;
 
-import com.koron.authority.ValidatePermission;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
@@ -32,13 +35,15 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.TitleInfoDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
-import com.koron.inwlms.bean.VO.sysManager.DeptVO;
+import com.koron.inwlms.bean.VO.sysManager.ImportUserResVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
-import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
@@ -46,7 +51,8 @@ import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.sysManager.UserService;
-import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
+import com.koron.inwlms.util.ExportDataUtil;
+import com.koron.inwlms.util.ImportExcelUtil;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -83,10 +89,7 @@ public class SystemManagerController {
 		}
 		if(userDTO.getWorkNo()==null || StringUtils.isBlank(userDTO.getWorkNo())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "工号不能为空", Integer.class).toJson();
-		}
-		if(userDTO.getSex()==null) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "性别不能为空", Integer.class).toJson();
-		}
+		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行插入职员的操作
 		  try{
@@ -2444,4 +2447,235 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	/*
+     * date:2020-04-22
+     * funtion:下载部门职员数据导出到Excel
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/downUserDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载部门职员数据导出到Excel", notes = "下载部门职员数据导出到Excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryUserDTO userDTO = jsonValue.fromJson(objValue, QueryUserDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			userDTO.setPage(1);
+			userDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+		    PageListVO<List<UserVO>> user=ADOConnection.runTask(userService, "queryUser", PageListVO.class, userDTO); 		   
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(user.getDataList(), jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	/*
+     * date:2020-04-22
+     * funtion:下载角色职员数据导出到Excel
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/downRoleUserDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载角色职员数据导出到Excel", notes = "下载角色职员数据导出到Excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downRoleUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			RoleDTO userDTO = jsonValue.fromJson(objValue, RoleDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			userDTO.setPage(1);
+			userDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+		    PageListVO<List<UserVO>> user=ADOConnection.runTask(userService, "queryUserByRoleCode", PageListVO.class, userDTO); 		   
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(user.getDataList(), jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	/*
+     * date:2020-04-22
+     * funtion:下载角色数据导出到Excel
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/downRoleDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载角色数据导出到Excel", notes = "下载角色数据导出到Excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downRoleDataExcel(@RequestParam String titleInfos) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询到导出数据结果
+		    List<RoleVO> roleList=ADOConnection.runTask(userService, "queryAllRole", List.class); 		   
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(roleList, jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	/*
+     * date:2020-04-22
+     * funtion:下载职员导入的空模板的excel
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/downUserTemplateExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载职员导入的空模板的excel", notes = "下载职员导入的空模板的excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downUserTemplateExcel() {
+		try{		
+			Gson jsonValue = new Gson();
+			// 查询到导出数据结果
+			List<UserVO> userList=new  ArrayList<UserVO>();  
+			//TODO
+	        String titleInfos= "[{titleName:\"职员名(必填)\",titleValue:\"name\",changeValue:\"1000\"}," + 
+	        		"	        {titleName:\"登录名称(必填)\",titleValue:\"loginName\",changeValue:\"1000\"}," + 
+	        		"	        {titleName:\"工号(必填)\",titleValue:\"workNo\",changeValue:\"1000\"}," + 
+	        		"	        {titleName:\"性别\",titleValue:\"sex\",changeValue:\"1000\"}," + 
+	        		"	        {titleName:\"手机号\",titleValue:\"photo\",changeValue:\"1000\"}," + 
+	        		"	        {titleName:\"职位\",titleValue:\"position\",changeValue:\"1000\"}," + 
+	        		"	        {titleName:\"邮箱\",titleValue:\"email\",changeValue:\"1000\"}" + 
+	        		"	        ]		";
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {}.getType());								
+			// 导出excel文件
+			return ExportDataUtil.getExcelDataFileInfoByList(userList, jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/*
+     * date:2020-04-22
+     * funtion：添加excel时候导入用户数据
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/addImportUserDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "添加excel导入用户数据接口", notes = "添加excel导入数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String addImportUserDataExcel(MultipartFile file) {
+		 MessageBean<ImportUserResVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ImportUserResVO.class);	       
+		  try{		
+			  List<UserExcelDTO> userList=ImportExcelUtil.readExcel(file,UserExcelDTO.class);
+			  if(userList==null) {
+				 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "插入的数据不能为空", Integer.class).toJson();  
+			  }
+			  if(userList.size()<0) {
+				 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "插入的数据不能为空", Integer.class).toJson();
+			  }
+			  for(int i=0;i<userList.size();i++) {
+				  if(userList.get(i).getName()==null || StringUtils.isBlank(userList.get(i).getName())) {
+						return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员名不能为空", Integer.class).toJson();
+					}
+					if(userList.get(i).getLoginName()==null || StringUtils.isBlank(userList.get(i).getLoginName())) {
+						return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "登录名称不能为空", Integer.class).toJson();
+					}
+					if(userList.get(i).getWorkNo()==null || StringUtils.isBlank(userList.get(i).getWorkNo())) {
+						return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "工号不能为空", Integer.class).toJson();
+					}					
+			  }
+			  ImportUserResVO importUserRes=ADOConnection.runTask(userService, "addImportUserDataExcel", ImportUserResVO.class,userList);	
+			  if(importUserRes.getResult()==0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("批量导入用户数据成功");
+					msg.setData(importUserRes);
+			  }else if(importUserRes.getResult()==-2){
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("批量导入失败,登录名重复"); 
+			        msg.setData(importUserRes);
+			  }	else if(importUserRes.getResult()==-3){
+			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("批量导入失败,工号重复"); 
+			        msg.setData(importUserRes);
+			  }else if(importUserRes.getResult()==-4){
+				   msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("批量导入失败,导入的表存在登录名重复,请检查excel"); 
+			        msg.setData(importUserRes);
+			  }else if(importUserRes.getResult()==-5){
+				   msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			        msg.setDescription("批量导入失败,导入的表存在工号重复,请检查excel"); 
+			        msg.setData(importUserRes);
+			  }
+			  else {
+				   msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			       msg.setDescription("导入失败"); 
+			  }		  
+	        }catch(Exception e){
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("导入失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	 /*
+     * date:2020-03-20
+     * funtion:个人修改密码
+     * author:xiaozhan
+     */  	
+	@RequestMapping(value = "/updateMyPassword.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "重置职员密码接口", notes = "重置职员密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateMyPassword(@RequestBody UpdateWordDTO updateWordDTO) {
+		if(updateWordDTO.getOldPassWord()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+		}
+		if(updateWordDTO.getNewPassWord()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+		}
+		if(updateWordDTO.getSurePassWord()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+		}		
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       		
+		  try{
+			  Integer updateRes=ADOConnection.runTask(userService, "updateMyPassword", Integer.class, updateWordDTO);		 
+			 
+				  if(updateRes==1) {					
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("重置密码成功");
+				  }else if(updateRes==-2){
+					  msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("两次输入的密码不一致");
+				  }else if (updateRes==-3){
+					  msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("新密码和旧密码同样");
+				  }else if(updateRes==-4){
+					  msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("8位到16位,包含大写小写字母，数字，特殊字符");
+				  } 			  				  
+				  else  if(updateRes==-5){
+					  msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("旧密码输入不正确，请重新输入旧密码");
+				  }else {				   
+			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+			        msg.setDescription("重置密码失败");
+				  }
+			  
+	        }catch(Exception e){	        	
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("重置失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
 }

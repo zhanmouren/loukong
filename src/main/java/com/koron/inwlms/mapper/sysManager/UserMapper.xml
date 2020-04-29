@@ -891,4 +891,32 @@
 		    </foreach>
       </select>
       
+      
+      <!-- 批量导入用户 -->
+    <insert id="addManyUser" parameterType="java.util.List">  
+        insert into "SM_user"("loginName",passWord,phone,"email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code") values
+        <foreach collection="list" index="index" separator="," item="item">
+           (#{item.loginName},#{item.password},#{item.phone},#{item.email},#{item.name},#{item.position},#{item.sex},#{item.photo},#{item.openID},0,#{item.workNo},0,#{item.createBy},Now(),#{item.updateBy},Now(),#{item.code})   
+        </foreach>      
+    </insert>
+    
+     <!-- 查询个人密码 -->
+      <select id="queryPassWord"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+           select password
+           from "SM_user"
+           where "loginName" =#{loginName}         
+      </select>
+      
+      
+       <!--修改个人密码 -->
+       <update id="updateMyPassword"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">
+          	update "SM_user" 
+		<set>	    
+             <if test="password != null" > "password" = #{password},  </if>                                        
+             <if test="updateBy != null " > "updateBy" = #{updateBy},</if>                        
+             <if test="updateBy != null" > "updateTime" = Now(),</if>                        
+		</set>
+	    	where "loginName" =#{loginName}  
+       </update>
+      
 </mapper>

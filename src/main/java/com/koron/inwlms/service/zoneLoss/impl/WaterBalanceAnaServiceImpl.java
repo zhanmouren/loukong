@@ -24,10 +24,6 @@ import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
-import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageFZoneLossListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBReportListVO;
-import com.koron.inwlms.bean.VO.zoneLoss.PageWNWBTReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReporFileListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportDetailVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
@@ -42,7 +38,6 @@ import com.koron.inwlms.service.zoneLoss.WaterBalanceAnaService;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.util.Constant;
 
-import oracle.sql.ARRAY;
 
 /**
  * 水平衡分析接口实现层
@@ -390,9 +385,9 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 
 	@TaskAnnotation("deleteReportFileById")
 	@Override
-	public void deleteReportFileById(SessionFactory factory, Integer id) {
+	public void deleteReportFileById(SessionFactory factory, Integer fileId) {
 		WaterBalanceAnaMapper mapper = factory.getMapper(WaterBalanceAnaMapper.class);
-		mapper.deleteReportFileById(id);
+		mapper.deleteReportFileById(fileId);
 	}
 
 	@TaskAnnotation("addWNWBTReport")
@@ -419,7 +414,6 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 		WaterBalanceAnaMapper mapper = factory.getMapper(WaterBalanceAnaMapper.class);
 		mapper.updateWNWBTReport(editWNWBTReportDTO);
 		mapper.deleteTReportIndicatorById(editWNWBTReportDTO.getId());
-		mapper.addWNWBTReport(editWNWBTReportDTO);
 		List<WNWBTReportIndicatorDTO> indicators = editWNWBTReportDTO.getIndicators();
 		 //保存报表模板指标信息
 		 if(indicators != null && indicators.size() > 0){
@@ -450,6 +444,27 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
 		List<IndicatorVO> lists = mapper.queryWBBaseIndicData(indicatorDTO);
 		return lists;
+	}
+
+	@TaskAnnotation("queryWNWBIndicatorData")
+	@Override
+	public List<IndicatorVO> queryWNWBIndicatorData(SessionFactory factory, IndicatorDTO indicatorDTO) {
+		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
+		List<IndicatorVO> result = new ArrayList<>();
+		List<IndicatorVO> lists = mapper.queryCompanyIndicData(indicatorDTO);
+		for (String code : indicatorDTO.getCodes()) {
+			IndicatorVO indicVO = new IndicatorVO();
+			Double value = 0.0;
+			for (IndicatorVO indicatorVO : lists) {
+				if(code.equals(indicatorVO.getCode())) {
+					value += indicatorVO.getValue();
+				}
+			}
+			indicVO.setCode(code);
+			indicVO.setValue(value);
+			result.add(indicVO);
+		}
+		return result;
 	}
 	
 }

@@ -8,7 +8,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Repository;
 
-import com.koron.common.bean.LongTreeBean;
+
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
@@ -16,7 +16,6 @@ import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
-import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
@@ -25,7 +24,9 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptAndUserIdVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
@@ -321,5 +322,14 @@ public interface UserMapper {
 		
 		//修改职员部门
 		public Integer updateUserDept(DeptAndUserDTO deptAndUserDTO);
+		
+		//批量导入用户
+		public Integer addManyUser(List<UserExcelDTO> userList);
+		
+		//查询个人密码
+		public List<UserVO> queryPassWord(UserDTO userDTO);
+		
+		//修改个人密码
+		public Integer updateMyPassword(UserDTO userDTO);
 		
 }

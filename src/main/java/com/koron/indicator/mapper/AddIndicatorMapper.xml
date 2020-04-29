@@ -43,7 +43,7 @@
 			#{item.method},
 			current_timestamp,
 			current_timestamp
-			)
+			)s
 		</foreach>
 	</insert>
 	
@@ -67,5 +67,9 @@
 			current_timestamp
 			)
 		</foreach>
+		on conflict(year,code,"zoneNo")
+		do update set "analysisValue"= #{item.analysisValue},
+		value = #{item.value},
+	    "updateTime = current_timestamp
 	</insert>
 </mapper>

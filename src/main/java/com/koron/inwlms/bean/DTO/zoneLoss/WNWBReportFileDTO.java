@@ -16,7 +16,7 @@ public class WNWBReportFileDTO {
 	 */
 	private Integer reportId;
 	/**
-	 * 上传保存路径
+	 * 上传文件id
 	 */
 	private Integer fileId;
 	/**
