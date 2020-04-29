@@ -1,4 +1,4 @@
-﻿package com.koron.util;
+package com.koron.util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -439,6 +439,18 @@ public class Constant {
 	 */
 	public final static String DATADICTIONARY_OBJECTTYPE = "L101170001";
 	/**
+	 * 任务状态未处理-数据字典
+	 */
+	public final static String DATADICTIONARY_TASKSTATUSUN = "L101110001";
+	/**
+	 * 任务状态处理中-数据字典
+	 */
+	public final static String DATADICTIONARY_TASKSTATUSON = "L101110002";
+	/**
+	 * 任务状态处理结束-数据字典
+	 */
+	public final static String DATADICTIONARY_TASKSTATUSOVER = "L101110003";
+	/**
 	 * 超限报警数据字典编码
 	 */
 	public final static String DATADICTIONARY_OVERRUN = "L101130002";
@@ -451,6 +463,10 @@ public class Constant {
 	 */
 	public final static String DATADICTIONARY_OFFLINE = "L101130004";
 	/**
+	 * 噪声报警数据字典编码
+	 */
+	public final static String DATADICTIONARY_NOISE = "L101130005";
+	/**
 	 * AI报警数据字典编码
 	 */
 	public final static String DATADICTIONARY_AI = "L101130003";
@@ -458,6 +474,100 @@ public class Constant {
 	 * 趋势变化报警数据字典编码
 	 */
 	public final static String DATADICTIONARY_TRENDCHANGE = "L101130001";
+	/**
+	 * 压力/流量监测点 数据字典编码
+	 */
+	public final static String DATADICTIONARY_PFPIONT = "L101170001";
+	/**
+	 * 噪声监测点 数据字典编码
+	 */
+	public final static String DATADICTIONARY_NOISEPIONT = "L101170002";
+	/**
+	 * DMA/PMA分区 数据字典编码
+	 */
+	public final static String DATADICTIONARY_DPZONE = "L101170003";
+	/**
+	 * 一级分区 数据字典编码
+	 */
+	public final static String DATADICTIONARY_FIRSTZONE = "L101170004";
+	/**
+	 * 二级分区 数据字典编码
+	 */
+	public final static String DATADICTIONARY_SECZONE = "L101170005";
+	/**
+	 * 正向瞬时流速-数据字典
+	 */
+	public final static String DATADICTIONARY_FORWARDSPEED = "L101190001";
+	/**
+	 * 反向瞬时流速-数据字典
+	 */
+	public final static String DATADICTIONARY_REVERSESPEED = "L101190002";
+	/**
+	 * 压力1-数据字典
+	 */
+	public final static String DATADICTIONARY_PRESSONE = "L101190003";
+	/**
+	 * 压力2-数据字典
+	 */
+	public final static String DATADICTIONARY_PRESSTWO = "L101190004";
+	/**
+	 * 最不利点压力-数据字典
+	 */
+	public final static String DATADICTIONARY_PRESSBAD = "L101190005";
+	/**
+	 * 状态-数据字典
+	 */
+	public final static String DATADICTIONARY_STATUS = "L101190007";
+	/**
+	 * 日总流量-数据字典
+	 */
+	public final static String DATADICTIONARY_DAYFLOW = "L101190008";
+	/**
+	 * 夜间最小流量-数据字典
+	 */
+	public final static String DATADICTIONARY_MINNIGFLOW = "L101190009";
+	
+	/**
+	 * 正向瞬时流速-指标编码
+	 */
+	public final static String INDICATOR_FORWARDSPEED = "1";
+	/**
+	 * 反向瞬时流速-指标编码
+	 */
+	public final static String INDICATOR_REVERSESPEED = "2";
+	/**
+	 * 压力1-指标编码
+	 */
+	public final static String INDICATOR_PRESSONE = "3";
+	/**
+	 * 压力2-指标编码
+	 */
+	public final static String INDICATOR_PRESSTWO = "4";
+	/**
+	 * 最不利点压力-指标编码
+	 */
+	public final static String INDICATOR_PRESSBAD = "5";
+	/**
+	 * 状态-指标编码
+	 */
+	public final static String INDICATOR_STATUS = "6";
+	/**
+	 * 日总流量-指标编码
+	 */
+	public final static String INDICATOR_DAYFLOW = "7";
+	/**
+	 * 夜间最小流量-指标编码
+	 */
+	public final static String INDICATOR_MINNIGFLOW = "8";
+	
+	/**
+	 * 分区报警
+	 */
+	public final static String OBJECTTYPE_ZONE = "0";
+	/**
+	 * 监测点报警
+	 */
+	public final static String OBJECTTYPE_POINT = "1";
 	
 	/**
 	 * 事项子类型值域
