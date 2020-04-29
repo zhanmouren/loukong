@@ -1445,7 +1445,7 @@ public class SystemManagerController {
     @ResponseBody
 	public String queryDataDic(@RequestBody DataDicDTO dataDicDTO) {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	 
-		 if(dataDicDTO.getDicParent()==null) {
+		 if(dataDicDTO.getDicParent()==null || "".equals(dataDicDTO.getDicParent())) {
 			 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 		     msg.setDescription("查询到相关数据字典键值的信息"); 
 		     msg.setData(new ArrayList<DataDicVO>());
