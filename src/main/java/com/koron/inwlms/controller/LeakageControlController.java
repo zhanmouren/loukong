@@ -19,6 +19,8 @@ import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicyDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO;
@@ -37,6 +39,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
+import com.koron.inwlms.bean.VO.leakageControl.EventSubtypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
@@ -728,12 +731,40 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/queryqueryEventInfoByCode.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项信息查询接口", notes = "事项信息查询接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryqueryEventInfoByCode(String code) {
+		MessageBean<EventInfo> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventInfo.class);
+		
+		if(code == null || code.equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			
+			EventInfo even = ADOConnection.runTask(eis, "queryEventInfoByCode",EventInfo.class,code);
+			msg.setData(even);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项信息查询失败");
+		}
+		
+		
+		return msg.toJson();
+	}
+	
+	
 	@RequestMapping(value = "/deleteEventInfo.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项信息删除接口", notes = "事项信息删除接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String deleteEventInfo(String code) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
-		if(code != null || code.equals("")) {
+		if(code == null || code.equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("事项编码为空");
 		}
@@ -1003,9 +1034,9 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryEventSubtype.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项子类型查询接口", notes = "事项子类型查询接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryEventSubtype(String code) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
-		if(code != null || code.equals(" ")) {
+    public String queryEventSubtype(@RequestBody EventTypeDTO eventTypeDTO) {
+		MessageBean<EventSubtypeVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventSubtypeVO.class);
+		if(eventTypeDTO.getCode() != null || eventTypeDTO.getCode().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("事项类型编码为空");
 	        return msg.toJson();
@@ -1013,20 +1044,27 @@ public class LeakageControlController {
 		
 		try {
 			//查询关联的子级key
-			List<DataDicRelationVO> dataDicRelationVoList = ADOConnection.runTask(eis, "querychildKey",List.class,code);
+			List<DataDicRelationVO> dataDicRelationVoList = ADOConnection.runTask(eis, "querychildKey",List.class,eventTypeDTO);
+			PageInfo pageInfo = new PageInfo();
+			pageInfo.setPage(eventTypeDTO.getPage());
+			pageInfo.setSize(eventTypeDTO.getPageCount());
+			pageInfo.setTotalNumber(dataDicRelationVoList.get(0).getTotalNum());
+			List<DataDicVO> dataEventSubtype = new ArrayList<>();
 			for(DataDicRelationVO dataDicRelationVO : dataDicRelationVoList) {
 				//查询子级key的value
 				DataDicDTO dataDicDTO = new DataDicDTO();
 				dataDicDTO.setDicKey(dataDicRelationVO.getChildKey());
+				
 				List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
 				if(dataDicVoList != null && dataDicVoList.size() != 0) {
-					msg.setData(dataDicVoList);
-					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				}else {
-					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					msg.setDescription("无数据");
+					dataEventSubtype.add(dataDicVoList.get(0));	
 				}
 			}
+			EventSubtypeVO eventSubtypeVO = new EventSubtypeVO();
+			eventSubtypeVO.setEventSubtypeList(dataEventSubtype);
+			eventSubtypeVO.setQuery(pageInfo);
+			msg.setData(eventSubtypeVO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);

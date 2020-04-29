@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
@@ -25,6 +26,14 @@ public class EventInfoServiceImpl implements EventInfoService{
 	public List<EventInfo> queryEventInfo(SessionFactory factory,EventInfoDTO eventInfoDTO){
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
 		List<EventInfo> list = mapper.queryEventInfo(eventInfoDTO);
+		return list;
+	}
+	
+	@TaskAnnotation("queryEventInfoByCode")
+	@Override
+	public EventInfo queryEventInfoByCode(SessionFactory factory,String code){
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		EventInfo list = mapper.queryEventInfoByCode(code);
 		return list;
 	}
 	
@@ -55,9 +64,9 @@ public class EventInfoServiceImpl implements EventInfoService{
 	
 	@TaskAnnotation("querychildKey")
 	@Override
-	public List<DataDicRelationVO> querychildKey(SessionFactory factory,String parentKey){
+	public List<DataDicRelationVO> querychildKey(SessionFactory factory,EventTypeDTO eventTypeDTO){
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
-		List<DataDicRelationVO> list = mapper.querychildKey(parentKey);
+		List<DataDicRelationVO> list = mapper.querychildKey(eventTypeDTO);
 		return list;
 	}
 	

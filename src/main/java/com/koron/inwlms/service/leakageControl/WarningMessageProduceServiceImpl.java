@@ -405,6 +405,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			if(policy.getType().equals(Constant.DATADICTIONARY_FLOWCHANGE)) {
 				if(ali > 1) {
 					double changeNum = pNum*policy.getTabUserRatio();
+					
 				}
 				
 			}

@@ -12,6 +12,18 @@ public class DataDicRelationVO {
 	private String parentKey;
 	
 	private String childKey;
+	
+	private Integer totalNum;
+	
+	
+
+	public Integer getTotalNum() {
+		return totalNum;
+	}
+
+	public void setTotalNum(Integer totalNum) {
+		this.totalNum = totalNum;
+	}
 
 	public Integer getId() {
 		return id;

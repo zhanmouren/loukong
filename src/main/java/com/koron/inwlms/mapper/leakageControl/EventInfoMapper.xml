@@ -15,6 +15,7 @@
  
  
  <delete id="deleteEventInfo" parameterType="java.lang.String">
+ 
  delete from "APP_eventInfo" where code = #{code}
  </delete>
  
@@ -40,8 +41,9 @@
  where code = #{code}
  </update>
  
- <select id="querychildKey" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO">
- select * from "SM_dataDictionaryRelation" where "parentKey" = #{parentKey}
+ <select id="querychildKey" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO">
+ select count(*) as "totalNum", id , "parentKey", "childKey" from "SM_dataDictionaryRelation" where "parentKey" = #{code}
+ limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
  <select id="queryMaxKey" parameterType="java.lang.String" resultType="java.lang.Integer">

@@ -56,7 +56,19 @@ public class WarningInfDTO extends BaseDTO {
 	 * @return
 	 */
 	private String areaCode;
+	/**
+	 * 预警信息编码
+	 */
+	private String code;
 	
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 
 	public String getAreaCode() {
 		return areaCode;

@@ -8,8 +8,10 @@ import org.koron.ebs.mybatis.EnvSource;
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
+
 
 /**
  * 
@@ -27,7 +29,7 @@ public interface EventInfoMapper {
 	Integer updateEventInfo(EventInfo eventInfo); 
 	
 	Integer addEventInfo(EventInfo eventInfo);
-	List<DataDicRelationVO> querychildKey(String parentKey);
+	List<DataDicRelationVO> querychildKey(EventTypeDTO eventTypeDTO);
 	
 	Integer queryMaxKey(@Param("parent") String parent);
 	
@@ -36,4 +38,6 @@ public interface EventInfoMapper {
 	@Select("delete from \"SM_dataDictionaryRelation\" where \"childKey\" = #{childKey}")
 	Integer deleteEventSubType(@Param("childKey") String childKey);
 	
+	@Select("select * from \"APP_eventInfo\" where code = #{code}")
+	EventInfo queryEventInfoByCode(@Param("code") String code);
 }
