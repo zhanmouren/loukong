@@ -13,6 +13,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
 import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
+import com.koron.util.Constant;
 
 @Service
 public class WarningSchemeServiceImpl implements WarningSchemeService {
@@ -27,9 +28,57 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 	
 	@TaskAnnotation("addWarningScheme")
 	@Override
-	public Integer addWarningScheme(SessionFactory factory,WarningSchemeDTO warningSchemeDTO) {
+	public String addWarningScheme(SessionFactory factory,WarningSchemeDTO warningSchemeDTO,List<AlarmRuleDTO> alarmRuleDTOList) {
 		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
-		Integer num = mapper.addWarningScheme(warningSchemeDTO);
+		String num = "";
+		if(warningSchemeDTO.getObjectType().equals(Constant.DATADICTIONARY_SECZONE)) {
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_TRENDCHANGE)) {
+				num = mapper.addWarningSchemeOfSZQS(warningSchemeDTO);
+			}
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN)) {
+				num = mapper.addWarningSchemeOfSZCX(warningSchemeDTO);
+			}
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_AI)) {
+				num = mapper.addWarningSchemeOfSZAI(warningSchemeDTO);
+			}
+		}else if(warningSchemeDTO.getObjectType().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_TRENDCHANGE)) {
+				num = mapper.addWarningSchemeOfFZQS(warningSchemeDTO);
+			}
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN)) {
+				num = mapper.addWarningSchemeOfFZCX(warningSchemeDTO);
+			}
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_AI)) {
+				num = mapper.addWarningSchemeOfFZAI(warningSchemeDTO);
+			}
+		}else if(warningSchemeDTO.getObjectType().equals(Constant.DATADICTIONARY_DPZONE)) {
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_TRENDCHANGE)) {
+				num = mapper.addWarningSchemeOfDPZQS(warningSchemeDTO);
+			}
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN)) {
+				num = mapper.addWarningSchemeOfDPZCX(warningSchemeDTO);
+			}
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_AI)) {
+				num = mapper.addWarningSchemeOfDPZAI(warningSchemeDTO);
+			}
+		}else if(warningSchemeDTO.getObjectType().equals(Constant.DATADICTIONARY_PFPIONT)) {
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN)) {
+				num = mapper.addWarningSchemeOfPFPCX(warningSchemeDTO);
+			}
+			if(warningSchemeDTO.getAlarmType().equals(Constant.DATADICTIONARY_OFFLINE)) {
+				num = mapper.addWarningSchemeOfPFPLX(warningSchemeDTO);
+			}
+		}else if(warningSchemeDTO.getObjectType().equals(Constant.DATADICTIONARY_NOISEPIONT)) {
+			num = mapper.addWarningSchemeOfNPZS(warningSchemeDTO);
+		}
+		
+		if(num != null || num.equals("")) {
+			for(AlarmRuleDTO alarmRuleDTO : alarmRuleDTOList) {
+				alarmRuleDTO.setSchemeCode(num);
+				mapper.addAlarmRule(alarmRuleDTO);
+			}
+			
+		}
 		return num;
 	}
 	

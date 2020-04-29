@@ -99,9 +99,6 @@ public class LeakageControlController {
 	        return msg.toJson();
 		}
 		
-		if(warningInfDTO.getFirstPartion().equals("全部")) {
-			warningInfDTO.setAreaCode(null); 
-		}
 		//TODO 通过分区编码查询出所属的所有0级分区编码，将参数分区编码设置为0级分区编码
 		
 		try {
@@ -230,11 +227,9 @@ public class LeakageControlController {
     public String addAlarmProcess(@RequestBody AlarmProcessVO alarmProcessVO) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
-		//TODO 自动产生任务编码
-		String code = new Date()+"";
-		alarmProcessVO.setTaskCode(code);
 		//添加预警信息处理任务
 		try {
+			
 			Integer num = ADOConnection.runTask(aps, "addAlarmProcess",Integer.class,alarmProcessVO);
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -289,7 +284,6 @@ public class LeakageControlController {
 		
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
-		//TODO 判断分区、状态、对象类型等是否为全部
 		
 		List<WarningSchemeVO> warningSchemeList = new ArrayList<>();
 		List<AlertSchemeListVO> alertSchemeListVO = new ArrayList<>();
@@ -417,31 +411,10 @@ public class LeakageControlController {
 			return msg.toJson();
 		}
 		
-		//TODO 产生一个方案编码,入库判断是否重复
-		
-		long time = new Date().getTime();
-		String code = time+"";
-		warningSchemeDTO.setCode(code);
-		
 		List<AlarmRuleDTO> alarmRuleList = warningSchemeDTO.getAlarmRuleList();
 		try {
-			Integer num = ADOConnection.runTask(wss, "addWarningScheme", Integer.class,warningSchemeDTO);
-			if(num > 0) {
-				//插入报警规则表
-				for(AlarmRuleDTO alarmRule : alarmRuleList) {
-					alarmRule.setSchemeCode(code);
-					Integer ruleNum = ADOConnection.runTask(wss, "addAlarmRule", Integer.class, alarmRule);
-					if(ruleNum > 0) {
-						msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					}else {
-						msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-						msg.setDescription("无报警规则数据插入");
-					}					
-				}	
-			}else {
-				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				msg.setDescription("未有数据插入数据库");
-			}
+			ADOConnection.runTask(wss, "addWarningScheme", String.class,warningSchemeDTO,alarmRuleList);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);

@@ -23,7 +23,7 @@ public interface PartitionSchemeMapper {
 	
 	Integer deleteTotalSchemeDet(List<String> codes);
 	
-	Integer addTotalSchemeDet(TotalSchemeDet totalSchemeDet);
+	String addTotalSchemeDet(TotalSchemeDet totalSchemeDet);
 	
 	List<TotalSchemeDet> queryTotalSchemeDet(TotalSchemeDetDTO totalSchemeDetDTO);
 	

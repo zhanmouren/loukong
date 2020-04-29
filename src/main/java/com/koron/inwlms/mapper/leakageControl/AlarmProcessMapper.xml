@@ -25,6 +25,42 @@
  #{actualFinishTime}, #{content}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime}, #{taskCode})
  </insert>
  
+ <insert id="addAlarmProcessOfZQS" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
+ insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code")
+ values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
+ #{actualFinishTime}, #{content}, #{createBy}, now, #{updateBy}, #{updateTime}, concat('ZQS',nextval('zqs'::regclass)))
+ </insert>
+ 
+ <insert id="addAlarmProcessOfZCX" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
+ insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code")
+ values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
+ #{actualFinishTime}, #{content}, #{createBy}, now, #{updateBy}, #{updateTime}, concat('ZCX',nextval('zcx'::regclass)))
+ </insert>
+ 
+  <insert id="addAlarmProcessOfPCX" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
+ insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code")
+ values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
+ #{actualFinishTime}, #{content}, #{createBy}, now, #{updateBy}, #{updateTime}, concat('PCX',nextval('pcx'::regclass)))
+ </insert>
+ 
+  <insert id="addAlarmProcessOfPLX" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
+ insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code")
+ values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
+ #{actualFinishTime}, #{content}, #{createBy}, now, #{updateBy}, #{updateTime}, concat('PLX',nextval('plx'::regclass)))
+ </insert>
+ 
+ <insert id="addAlarmProcessOfPZS" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
+ insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code")
+ values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
+ #{actualFinishTime}, #{content}, #{createBy}, now, #{updateBy}, #{updateTime}, concat('PZS',nextval('pzs'::regclass)))
+ </insert>
+ 
+ 
  <update id="updateAlarmProcess" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
  update "APP_warningProcessing"
  <set>

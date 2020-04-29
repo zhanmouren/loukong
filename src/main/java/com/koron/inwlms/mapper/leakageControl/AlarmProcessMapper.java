@@ -21,5 +21,11 @@ public interface AlarmProcessMapper {
 	Integer addAlarmProcess(AlarmProcessVO alarmProcessVO);
 	Integer updateAlarmProcess(AlarmProcessVO alarmProcessVO);
 	Integer deleteAlarmProcess(String code);
+	
+	Integer addAlarmProcessOfZQS(AlarmProcessVO alarmProcessVO);
+	Integer addAlarmProcessOfZCX(AlarmProcessVO alarmProcessVO);
+	Integer addAlarmProcessOfPCX(AlarmProcessVO alarmProcessVO);
+	Integer addAlarmProcessOfPLX(AlarmProcessVO alarmProcessVO);
+	Integer addAlarmProcessOfPZS(AlarmProcessVO alarmProcessVO);
 
 }

@@ -1,0 +1,170 @@
+package com.koron.inwlms.bean.DTO.intellectPartition;
+
+/**
+ * 
+ * @author 刘刚
+ *
+ */
+public class GisZonePipeData {
+
+	/**
+	 * 管道点号（本点号）
+	 */
+	private String pip_p;
+	/**
+	 * 管道连接点号（上点号）
+	 */
+	private String pip_p_pre;
+	/**
+	 * 
+	 */
+	private String pip_code;
+	/**
+	 * 管长
+	 */
+	private Double pip_len;
+	/**
+	 * 本节点坐标X
+	 */
+	private Double point_a;
+	/**
+	 * 本节点坐标Y
+	 */
+	private Double point_b;
+	/**
+	 * 本节点高程
+	 */
+	private Double point_c;
+	/**
+	 * 上节点高程
+	 */
+	private Double point_z;
+	/**
+	 * 管线是否有已关闭阀门
+	 */
+	private Integer pip_value;
+	/**
+	 * 管线是否已经安装水表
+	 */
+	private Integer pip_gauge;
+	/**
+	 * 管线是否经过河流、铁路等
+	 */
+	private Integer pip_river;
+	/**
+	 * 管径大小
+	 */
+	private Integer pip_d;
+	/**
+	 * 管径单价
+	 */
+	private Double pip_price;
+
+	public String getPip_p() {
+		return pip_p;
+	}
+
+	public void setPip_p(String pip_p) {
+		this.pip_p = pip_p;
+	}
+
+	public String getPip_p_pre() {
+		return pip_p_pre;
+	}
+
+	public void setPip_p_pre(String pip_p_pre) {
+		this.pip_p_pre = pip_p_pre;
+	}
+
+	public String getPip_code() {
+		return pip_code;
+	}
+
+	public void setPip_code(String pip_code) {
+		this.pip_code = pip_code;
+	}
+
+	public Double getPip_len() {
+		return pip_len;
+	}
+
+	public void setPip_len(Double pip_len) {
+		this.pip_len = pip_len;
+	}
+
+	public Double getPoint_a() {
+		return point_a;
+	}
+
+	public void setPoint_a(Double point_a) {
+		this.point_a = point_a;
+	}
+
+	public Double getPoint_b() {
+		return point_b;
+	}
+
+	public void setPoint_b(Double point_b) {
+		this.point_b = point_b;
+	}
+
+	public Double getPoint_c() {
+		return point_c;
+	}
+
+	public void setPoint_c(Double point_c) {
+		this.point_c = point_c;
+	}
+
+	public Double getPoint_z() {
+		return point_z;
+	}
+
+	public void setPoint_z(Double point_z) {
+		this.point_z = point_z;
+	}
+
+	public Integer getPip_value() {
+		return pip_value;
+	}
+
+	public void setPip_value(Integer pip_value) {
+		this.pip_value = pip_value;
+	}
+
+	public Integer getPip_gauge() {
+		return pip_gauge;
+	}
+
+	public void setPip_gauge(Integer pip_gauge) {
+		this.pip_gauge = pip_gauge;
+	}
+
+	public Integer getPip_river() {
+		return pip_river;
+	}
+
+	public void setPip_river(Integer pip_river) {
+		this.pip_river = pip_river;
+	}
+
+	public Integer getPip_d() {
+		return pip_d;
+	}
+
+	public void setPip_d(Integer pip_d) {
+		this.pip_d = pip_d;
+	}
+
+	public Double getPip_price() {
+		return pip_price;
+	}
+
+	public void setPip_price(Double pip_price) {
+		this.pip_price = pip_price;
+	}
+	
+	
+	
+	
+}

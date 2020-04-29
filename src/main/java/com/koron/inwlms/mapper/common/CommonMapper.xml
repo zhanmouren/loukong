@@ -7,4 +7,7 @@
 	<select id="querySysConfig" resultType="com.koron.inwlms.bean.VO.common.SysConfigVO">
 		SELECT key, value FROM "SM_config"
 	</select>
+	
+
+	
 </mapper>

@@ -104,9 +104,15 @@ public class EventInfoServiceImpl implements EventInfoService{
 	public Integer deleteEventSubType(SessionFactory factory,String key) {
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
 		//删除关联表的相关信息
-		Integer num = mapper.deleteEventSubType(key);
-		//TODO 删除数据字典信息
-		return num;
+		mapper.deleteEventSubType(key);
+		//删除数据字典信息
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		List<DataDicDTO> dataDicDTOList = new ArrayList<DataDicDTO>();
+		DataDicDTO dataDicDTO = new DataDicDTO();
+		dataDicDTO.setDicKey(key);
+		dataDicDTOList.add(dataDicDTO);
+		Integer delRes = userMapper.deleteDetDicByKey(dataDicDTOList);
+		return delRes;
 	}
 
 }

@@ -106,9 +106,23 @@ public class AlarmProcessVO {
 	 * 预警处理任务编码
 	 */
 	private String taskCode;
+	/**
+	 * 标志是漏损预警（0）还是监测预警（1）
+	 */
+	private String objectFlag;
 	
 	
 	
+	
+	
+	public String getObjectFlag() {
+		return objectFlag;
+	}
+
+	public void setObjectFlag(String objectFlag) {
+		this.objectFlag = objectFlag;
+	}
+
 	public String getTaskCode() {
 		return taskCode;
 	}
