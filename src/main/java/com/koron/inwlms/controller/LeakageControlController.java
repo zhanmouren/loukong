@@ -53,6 +53,7 @@ import com.koron.inwlms.service.leakageControl.PolicyService;
 import com.koron.inwlms.service.leakageControl.StatisticalAnalysisService;
 import com.koron.inwlms.service.leakageControl.WarningSchemeService;
 import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
+import com.koron.inwlms.util.UnitUtil;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -793,7 +794,8 @@ public class LeakageControlController {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		//TODO 产生一个编码
-		
+		String code = UUID.randomUUID().toString();
+		eventInfo.setCode(code);
 		try {
 			Integer num = ADOConnection.runTask(eis, "addEventInfo",Integer.class,eventInfo);
 			if(num > 0) {

@@ -379,7 +379,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		double c = recommendStrategy.getC();
 		
 		double lmnf = 0.0;
-		
+		lmnf = (a1*lenghC + a2*lenghNC + a3*pNum)*Math.pow(age, b)*Math.pow(press, c);
 		
 		
 		
