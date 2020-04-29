@@ -439,6 +439,18 @@ public class Constant {
 	 */
 	public final static String DATADICTIONARY_OBJECTTYPE = "L101170001";
 	/**
+	 * 任务状态未处理-数据字典
+	 */
+	public final static String DATADICTIONARY_TASKSTATUSUN = "L101110001";
+	/**
+	 * 任务状态处理中-数据字典
+	 */
+	public final static String DATADICTIONARY_TASKSTATUSON = "L101110002";
+	/**
+	 * 任务状态处理结束-数据字典
+	 */
+	public final static String DATADICTIONARY_TASKSTATUSOVER = "L101110003";
+	/**
 	 * 超限报警数据字典编码
 	 */
 	public final static String DATADICTIONARY_OVERRUN = "L101130002";
@@ -451,6 +463,10 @@ public class Constant {
 	 */
 	public final static String DATADICTIONARY_OFFLINE = "L101130004";
 	/**
+	 * 噪声报警数据字典编码
+	 */
+	public final static String DATADICTIONARY_NOISE = "L101130005";
+	/**
 	 * AI报警数据字典编码
 	 */
 	public final static String DATADICTIONARY_AI = "L101130003";
@@ -458,6 +474,116 @@ public class Constant {
 	 * 趋势变化报警数据字典编码
 	 */
 	public final static String DATADICTIONARY_TRENDCHANGE = "L101130001";
+	/**
+	 * 压力/流量监测点 数据字典编码
+	 */
+	public final static String DATADICTIONARY_PFPIONT = "L101170001";
+	/**
+	 * 噪声监测点 数据字典编码
+	 */
+	public final static String DATADICTIONARY_NOISEPIONT = "L101170002";
+	/**
+	 * DMA/PMA分区 数据字典编码
+	 */
+	public final static String DATADICTIONARY_DPZONE = "L101170003";
+	/**
+	 * 一级分区 数据字典编码
+	 */
+	public final static String DATADICTIONARY_FIRSTZONE = "L101170004";
+	/**
+	 * 二级分区 数据字典编码
+	 */
+	public final static String DATADICTIONARY_SECZONE = "L101170005";
+	/**
+	 * 正向瞬时流速-数据字典
+	 */
+	public final static String DATADICTIONARY_FORWARDSPEED = "L101190001";
+	/**
+	 * 反向瞬时流速-数据字典
+	 */
+	public final static String DATADICTIONARY_REVERSESPEED = "L101190002";
+	/**
+	 * 压力1-数据字典
+	 */
+	public final static String DATADICTIONARY_PRESSONE = "L101190003";
+	/**
+	 * 压力2-数据字典
+	 */
+	public final static String DATADICTIONARY_PRESSTWO = "L101190004";
+	/**
+	 * 最不利点压力-数据字典
+	 */
+	public final static String DATADICTIONARY_PRESSBAD = "L101190005";
+	/**
+	 * 状态-数据字典
+	 */
+	public final static String DATADICTIONARY_STATUS = "L101190007";
+	/**
+	 * 日总流量-数据字典
+	 */
+	public final static String DATADICTIONARY_DAYFLOW = "L101190008";
+	/**
+	 * 夜间最小流量-数据字典
+	 */
+	public final static String DATADICTIONARY_MINNIGFLOW = "L101190009";
+	/**
+	 * 压力控制-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PCSTRA = "L101120001";
+	/**
+	 * 管网捡漏-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PNLDETECTION = "L101120002";
+	/**
+	 * 水表更换-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_FLOWCHANGE = "L101120003";
+	/**
+	 * 管网改造-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PNCHANGE = "L101120004";
+	
+	/**
+	 * 正向瞬时流速-指标编码
+	 */
+	public final static String INDICATOR_FORWARDSPEED = "1";
+	/**
+	 * 反向瞬时流速-指标编码
+	 */
+	public final static String INDICATOR_REVERSESPEED = "2";
+	/**
+	 * 压力1-指标编码
+	 */
+	public final static String INDICATOR_PRESSONE = "3";
+	/**
+	 * 压力2-指标编码
+	 */
+	public final static String INDICATOR_PRESSTWO = "4";
+	/**
+	 * 最不利点压力-指标编码
+	 */
+	public final static String INDICATOR_PRESSBAD = "5";
+	/**
+	 * 状态-指标编码
+	 */
+	public final static String INDICATOR_STATUS = "6";
+	/**
+	 * 日总流量-指标编码
+	 */
+	public final static String INDICATOR_DAYFLOW = "7";
+	/**
+	 * 夜间最小流量-指标编码
+	 */
+	public final static String INDICATOR_MINNIGFLOW = "8";
+	
+	/**
+	 * 分区报警
+	 */
+	public final static String OBJECTTYPE_ZONE = "0";
+	/**
+	 * 监测点报警
+	 */
+	public final static String OBJECTTYPE_POINT = "1";
 	
 	/**
 	 * 事项子类型值域
@@ -502,4 +628,358 @@ public class Constant {
 	 */
 	public final static String LEAK_INDIC = "WNDBLFW,FLDBLFW,SLDBLFW,DMDBLFW,WNMBLFW,FLMBLFW,SLMBLFW,DMMBLFW,WNYBLFW,FLYBLFW,SLYBLFW,DMYBLFW,WNDNBFW,FLDNBFW,SLDNBFW,DMDNBFW,WNMNBFW,FLMNBFW,SLMNBFW,DMMNBFW,WNYNBFW,FLYNBFW,SLYNBFW,DMYNBFW,WNDNPLFW,FLDNPLFW,SLDNPLFW,DMDNPLFW,WNMNPLFW,FLMNPLFW,SLMNPLFW,DMMNPLFW,WNYNPLFW,FLYNPLFW,SLYNPLFW,DMYNPLFW,WNDBRFW,FLDBRFW,SLDBRFW,DMDBRFW,WNMBRFW,FLMBRFW,SLMBRFW,DMMBRFW,WNYBRFW,FLYBRFW,SLYBRFW,DMYBRFW,WNDLRFW,FLDLRFW,SLDLRFW,DMDLRFW,WNMLRFW,FLMLRFW,SLMLRFW,DMMLRFW,WNYLRFW,FLYLRFW,SLYLRFW,DMYLRFW";
 
+	/**
+	 * 全网月管长编码
+	 */
+	public final static String BASE_INDIC_WNMFTPL="WNMFTPL";
+		
+	/**
+	 * 一级分区月管长编码
+	 */
+	public final static String BASE_INDIC_FLMFTPL="FLMFTPL";
+	
+	/**
+	 * 二级分区月管长编码
+	 */
+	public final static String BASE_INDIC_SLMFTPL="SLMFTPL";
+	/**
+	 * DMA/PMA分区月管长编码
+	 */
+	public final static String BASE_INDIC_DMMFTPL="DMMFTPL";
+	
+	/**
+	 *  全网月用户表数编码
+	 */
+	public final static String BASE_INDIC_WNMNOCM="WNMNOCM";
+	
+	/**
+	 *  一级分区月用户表数编码
+	 */
+	public final static String BASE_INDIC_FLMNOCM="FLMNOCM";
+	
+	/**
+	 *  二级分区月用户表数编码
+	 */
+	public final static String BASE_INDIC_SLMNOCM="SLMNOCM";
+	/**
+	 *  DMA/PMA分区月用户表数编码
+	 */
+	public final static String BASE_INDIC_DMMNOCM="DMMNOCM";
+	
+	/**
+	 *  全网月供水量编码
+	 */
+	public final static String BALANCE_INDIC_WNMFWSSITDF="WNMFWSSITDF";
+	
+	/**
+	 *  一级分区月供水量编码
+	 */
+	public final static String BALANCE_INDIC_FLMFWSSITDF="FLMFWSSITDF";
+	
+	/**
+	 *  二级分区月供水量编码
+	 */
+	public final static String BALANCE_INDIC_SLMFWSSITDF="SLMFWSSITDF";
+	
+	/**
+	 *  DMA/PMA分区月供水量编码
+	 */
+	public final static String BALANCE_INDIC_DMMFWSSITDF="DMMFWSSITDF";
+	
+	
+	/**
+	 * 全网年供水量编码
+	 */
+	public final static String BALANCE_INDIC_WNYFWSSITDF="WNYFWSSITDF";
+	/**
+	 * 一级分区年供水量编码
+	 */
+	public final static String BALANCE_INDIC_FLYFWSSITDF="FLYFWSSITDF";
+	/**
+	 * 二级分区年供水量编码
+	 */
+	public final static String BALANCE_INDIC_SLYFWSSITDF="SLYFWSSITDF";
+	
+	/**
+	 *  DMA/PMA分区年供水量编码
+	 */
+	public final static String BALANCE_INDIC_DMYFWSSITDF="DMYFWSSITDF";
+	
+	
+	/**
+	 *  全网月产销差水量编码
+	 */
+	public final static String BALANCE_INDIC_WNMNRW="WNMNRW";
+	
+	/**
+	 *  一级分区月产销差水量编码
+	 */
+	public final static String BALANCE_INDIC_FLMNRW="FLMNRW";
+	
+	/**
+	 *  二级分区月产销差水量编码
+	 */
+	public final static String BALANCE_INDIC_SLMNRW="SLMNRW";
+	
+	/**
+	 *  DMA/PMA分区月产销差水量编码
+	 */
+	public final static String BALANCE_INDIC_DMMNRW="DMMNRW";
+	
+	/**
+	 *  全网年产销差水量编码
+	 */
+	public final static String BALANCE_INDIC_WNYNRW="WNYNRW";
+	
+	/**
+	 *  一级分区年产销差水量编码
+	 */
+	public final static String BALANCE_INDIC_FLYNRW="FLYNRW";
+	
+	/**
+	 *  二级分区年产销差水量编码
+	 */
+	public final static String BALANCE_INDIC_SLYNRW="SLYNRW";
+	/**
+	 *  DMA/PMA分区年产销差水量编码
+	 */
+	public final static String BALANCE_INDIC_DMYNRW="DMYNRW";
+	
+	/**
+	 *  全网月产销差率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_WNMNRR="WNMNRR";
+	
+	/**
+	 *  一级分区月产销差率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_FLMNRR="FLMNRR";
+	
+	/**
+	 *  二级分区月产销差率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_SLMNRR="SLMNRR";
+	
+	/**
+	 * DMA/PMA分区月产销差率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_DMMNRR="DMMNRR";
+	
+	/**
+	 * 全网年产销差率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_WNYNRR="WNYNRR";
+	
+	/**
+	 * 一级分区年产销差率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_FLYNRR="FLYNRR";
+	/**
+	 * 二级分区年产销差率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_SLYNRR="SLYNRR";
+	/**
+	 * DMA/PMA分区年产销差率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_DMYNRR="DMYNRR";
+	
+	/**
+	 * 全网年产销差率编码
+	 */
+	public final static String APPARENT_INDIC_WNYNRR="WNYNRR";
+	
+	/**
+	 * 全网月表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_WNMAL="WNMAL";
+	
+	/**
+	 * 一级分区月表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_FLMAL="FLMAL";
+	
+	/**
+	 * 二级分区月表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_SLMAL="SLMAL";
+	/**
+	 * DMA/PMA分区月表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_DMMAL="DMMAL";
+	/**
+	 * 全网年表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_WNYAL="WNYAL";
+	
+	/**
+	 * 一级分区年表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_FLYAL="FLYAL";
+	/**
+	 * 二级分区年表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_SLYAL="SLYAL";
+	/**
+	 * DMA/PMA分区年表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_DMYAL="DMYAL";
+		
+	
+	/**
+	 * 全网月表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_WNMALCA="WNMALCA";
+	/**
+	 * 一级分区月表观漏损编码
+	 */
+	public final static String APPARENT_INDIC_FLMALCA="FLMALCA";
+	
+	/**
+	 * 二级分区月单位户数表观漏损量编码
+	 */
+	public final static String APPARENT_INDIC_SLMALCA="SLMALCA";
+	
+	/**
+	 * DMA/PMA分区月单位户数表观漏损量编码
+	 */
+	public final static String APPARENT_INDIC_DMMALCA="DMMALCA";
+	
+	/**
+	 * 全网年单位户数表观漏损量编码
+	 */
+	public final static String APPARENT_INDIC_WNYALCA="WNYALCA";
+	
+	/**
+	 * 一级分区年单位户数表观漏损量编码
+	 */
+	public final static String APPARENT_INDIC_FLYALCA="FLYALCA";
+	
+	/**
+	 * 二级分区年单位户数表观漏损量编码
+	 */
+	public final static String APPARENT_INDIC_SLYALCA="SLYALCA";
+	
+	/**
+	 * DMA/PMA分区年单位户数表观漏损量编码
+	 */
+	public final static String APPARENT_INDIC_DMYALCA="DMYALCA";
+	
+	
+	/**
+	 *  全网月夜间漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_WNMMNFTDF="WNMMNFTDF";
+	/**
+	 * 一级分区月夜间漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_FLMMNFTDF="FLMMNFTDF";
+	
+	/**
+	 * 二级分区月夜间漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_SLMMNFTDF="SLMMNFTDF";
+	/**
+	 * DMA/PMA分区月夜间漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_DMMMNFTDF="DMMMNFTDF";
+		
+	
+	
+
+	/**
+	 *  全网年夜间漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_WNYMNFTDF="WNYMNFTDF";
+	/**
+	 * 一级分区年夜间漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_FLYMNFTDF="FLYMNFTDF";
+	
+	/**
+	 * 二级分区年夜间漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_SLYMNFTDF="SLYMNFTDF";
+	/**
+	 * DMA/PMA分区年夜间漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_DMYMNFTDF="DMYMNFTDF";
+		
+	
+	/**
+	 * 全网月计费计量用水量编码
+	 */
+	public final static String BALANCE_INDIC_WNMBMC="WNMBMC";
+	
+	/**
+	 * 一级分区月计费计量用水量编码
+	 */
+	public final static String BALANCE_INDIC_FLMBMC="FLMBMC";
+	
+	/**
+	 * 二级分区月计费计量用水量编码
+	 */
+	public final static String BALANCE_INDIC_SLMBMC="SLMBMC";
+	/**
+	 * DMA/PMA分区月计费计量用水量编码
+	 */
+	public final static String BALANCE_INDIC_DMMBMC="DMMBMC";
+	
+	/**
+	 * 全网年计费计量用水量编码
+	 */
+	public final static String BALANCE_INDIC_WNYBMC="WNYBMC";
+	
+	/**
+	 * 一级分区年计费计量用水量编码
+	 */
+	public final static String BALANCE_INDIC_FLYBMC="FLYBMC";
+	
+	/**
+	 * 二级分区年计费计量用水量编码
+	 */
+	public final static String BALANCE_INDIC_SLYBMC="SLYBMC";
+	
+	/**
+	 * DMA/PMA分区年计费计量用水量编码
+	 */
+	public final static String BALANCE_INDIC_DMYBMC="DMYBMC";
+		
+	/**
+	 * 全网月单位户数漏损量编码
+	 */
+	public final static String ZONE_LOSS_INDIC_WNMLCA="WNMLCA";
+	
+	/**
+	 * 一级分区月单位户数漏损量编码
+	 */
+	public final static String ZONE_LOSS_INDIC_FLMLCA="FLMLCA";
+	/**
+	 * 二级分区月单位户数漏损量编码
+	 */
+	public final static String ZONE_LOSS_INDIC_SLMLCA="SLMLCA";
+	/**
+	 * DMA/PMA分区月单位户数漏损量编码
+	 */
+	public final static String ZONE_LOSS_INDIC_DMMLCA="DMMLCA";
+	
+	/**
+	 * 全网月单位管长漏损量编码
+	 */
+	public final static String ZONE_LOSS_INDIC_WNMLPL="WNMLPL";
+	/**
+	 * 一级分区月单位管长漏损量编码
+	 */
+	public final static String ZONE_LOSS_INDIC_FLMLPL="FLMLPL";
+	/**
+	 * 二级分区月单位管长漏损量编码
+	 */
+	public final static String ZONE_LOSS_INDIC_SLMLPL="SLMLPL";
+	/**
+	 * DMA/PMA分区月单位管长漏损量编码
+	 */
+	public final static String ZONE_LOSS_INDIC_DMMLPL="DMMLPL";
+	
+		
+	
+	
 }
