@@ -20,12 +20,12 @@ public class WNWBTReportIndicatorDTO {
 	/**
 	 * 指标编码
 	 */
-	private String code;
+	private String indicatorCode;
 	
 	/**
 	 * 描述
 	 */
-	private String description;
+	private String indicatorDescribe;
 	
 	/**
 	 * 编辑状态（0-未编辑，1-已编辑）
@@ -48,16 +48,6 @@ public class WNWBTReportIndicatorDTO {
 	private String formula;
 	
 	/**
-	 * 创建时间（时间戳）
-	 */
-	private Integer createTime;
-	
-	/**
-	 * 修改时间（时间戳）
-	 */
-	private Integer updateTime;
-	
-	/**
 	 * 创建人
 	 */
 	private String createBy;
@@ -75,13 +65,6 @@ public class WNWBTReportIndicatorDTO {
 		return templateId;
 	}
 
-	public String getCode() {
-		return code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
 
 	public Integer getEditStatus() {
 		return editStatus;
@@ -99,13 +82,6 @@ public class WNWBTReportIndicatorDTO {
 		return formula;
 	}
 
-	public Integer getCreateTime() {
-		return createTime;
-	}
-
-	public Integer getUpdateTime() {
-		return updateTime;
-	}
 
 	public String getCreateBy() {
 		return createBy;
@@ -121,14 +97,6 @@ public class WNWBTReportIndicatorDTO {
 
 	public void setTemplateId(Integer templateId) {
 		this.templateId = templateId;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public void setEditStatus(Integer editStatus) {
@@ -147,20 +115,28 @@ public class WNWBTReportIndicatorDTO {
 		this.formula = formula;
 	}
 
-	public void setCreateTime(Integer createTime) {
-		this.createTime = createTime;
-	}
-
-	public void setUpdateTime(Integer updateTime) {
-		this.updateTime = updateTime;
-	}
-
 	public void setCreateBy(String createBy) {
 		this.createBy = createBy;
 	}
 
 	public void setUpdateBy(String updateBy) {
 		this.updateBy = updateBy;
+	}
+
+	public String getIndicatorCode() {
+		return indicatorCode;
+	}
+
+	public String getIndicatorDescribe() {
+		return indicatorDescribe;
+	}
+
+	public void setIndicatorCode(String indicatorCode) {
+		this.indicatorCode = indicatorCode;
+	}
+
+	public void setIndicatorDescribe(String indicatorDescribe) {
+		this.indicatorDescribe = indicatorDescribe;
 	}
 	
 }

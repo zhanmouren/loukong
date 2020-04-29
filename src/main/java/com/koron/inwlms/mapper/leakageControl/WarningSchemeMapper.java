@@ -36,4 +36,19 @@ public interface WarningSchemeMapper {
 	
 	@Select("select * from \"APP_warningScheme\" where \"state\" = #{state}")
 	List<WarningSchemeVO> queryWarningSchemeStart(@Param("state") String state);
+	
+	String addWarningSchemeOfSZCX(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfSZQS(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfSZAI(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfDPZCX(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfDPZQS(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfDPZAI(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfFZCX(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfFZQS(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfFZAI(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfPFPCX(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfNPZS(WarningSchemeDTO warningSchemeDTO);
+	String addWarningSchemeOfPFPLX(WarningSchemeDTO warningSchemeDTO);
+	
+	
 }

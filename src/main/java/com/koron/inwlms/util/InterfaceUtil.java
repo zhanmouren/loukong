@@ -83,5 +83,56 @@ public class InterfaceUtil {
         }
 		return null;
     }
+    
+    /**
+     * 调用其他接口方法-post
+     * @param path
+     * @param jsonData
+     * @return
+     */
+    public static JsonObject interfaceOfPostUtil(String path,String jsonData) {
+    	try {
+    		 URL url = new URL(path);
+             //打开和url之间的连接
+             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+             PrintWriter out = null;
+             /**设置URLConnection的参数和普通的请求属性****start***/
+             
+             conn.setRequestProperty("accept", "*/*");
+             conn.setRequestProperty("connection", "Keep-Alive");
+             conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+             
+             conn.setDoOutput(true);
+             conn.setDoInput(true);
+             conn.setRequestMethod("POST");//GET和POST必须全大写
+             
+             out = new PrintWriter(conn.getOutputStream());
+             out.print(jsonData);
+             out.flush();
+             
+             //获取URLConnection对象对应的输入流
+             InputStream is = conn.getInputStream();
+             //构造一个字符流缓存
+             BufferedReader br = new BufferedReader(new InputStreamReader(is));
+             String str = "";
+             JsonObject pIdJson = null;
+             while ((str = br.readLine()) != null) {
+             	 //解析json对象
+                 Gson gsonJson = new Gson();
+         		pIdJson  = gsonJson.fromJson(str, JsonObject.class);
+             }
+           //System.out.println(jsStr.get("firstName"));
+             //关闭流
+             is.close();
+             //断开连接，最好写上，disconnect是在底层tcp socket链接空闲时才切断。如果正在被其他线程使用就不切断。
+             //固定多线程的话，如果不disconnect，链接会增多，直到收发不出信息。写上disconnect后正常一些。
+             conn.disconnect();
+             return pIdJson;
+    		
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    	}
+		return null;	
+    }
 
 }

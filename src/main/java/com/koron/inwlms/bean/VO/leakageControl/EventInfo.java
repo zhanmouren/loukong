@@ -51,6 +51,8 @@ public class EventInfo {
 	 */
 	private String content;
 	
+	private String objectType;
+	
 	private String createBy;
 	
 	private Date createTime;
@@ -58,6 +60,15 @@ public class EventInfo {
 	private String updateBy;
 	
 	private Date updateTime;
+	
+
+	public String getObjectType() {
+		return objectType;
+	}
+
+	public void setObjectType(String objectType) {
+		this.objectType = objectType;
+	}
 
 	public Integer getId() {
 		return id;

@@ -16,9 +16,9 @@ public class AddMonthIndicatorDTO {
 	
 	private String zoneRank;
 	
-	private Long analysisValue;
+	private Integer analysisValue;
 	
-	private Long value;
+	private Integer value;
 	
 	private String method;
 	
@@ -43,25 +43,6 @@ public class AddMonthIndicatorDTO {
 		this.code = code;
 	}
 
-
-	public Long getAnalysisValue() {
-		return analysisValue;
-	}
-
-
-	public Long getValue() {
-		return value;
-	}
-
-
-	public void setAnalysisValue(Long analysisValue) {
-		this.analysisValue = analysisValue;
-	}
-
-
-	public void setValue(Long value) {
-		this.value = value;
-	}
 
 	public void setCreateBy(String createBy) {
 		this.createBy = createBy;
@@ -101,6 +82,22 @@ public class AddMonthIndicatorDTO {
 
 	public void setMethod(String method) {
 		this.method = method;
+	}
+
+	public Integer getAnalysisValue() {
+		return analysisValue;
+	}
+
+	public Integer getValue() {
+		return value;
+	}
+
+	public void setAnalysisValue(Integer analysisValue) {
+		this.analysisValue = analysisValue;
+	}
+
+	public void setValue(Integer value) {
+		this.value = value;
 	}
 	
 }

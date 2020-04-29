@@ -1,4 +1,4 @@
-﻿package com.koron.util;
+package com.koron.util;
 
 import java.util.HashMap;
 import java.util.List;

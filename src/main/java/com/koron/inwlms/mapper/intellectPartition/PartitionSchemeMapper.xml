@@ -10,10 +10,10 @@
  <if test="zoneCode != null and zoneCode != '' "> and "zoneCode" = #{zoneCode}</if>
  </select>
  
- <insert id="addTotalSchemeDet" parameterType="com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet">
+ <select id="addTotalSchemeDet" parameterType="com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet" resultType="java.lang.String">
  insert into "APP_totalSchemeDet"(code, "zoneType", "maxZone", "minZone", "ambientLayer", "flowLayer", "zoneGrade", "zoneCode", "createBy", "createTime", "updateBy", "updateTime", state)
- values(#{code}, #{zoneType}, #{maxZone}, #{minZone}, #{ambientLayer}, #{flowLayer}, #{zoneGrade}, #{zoneCode}, #{createBy}, now, #{updateBy}, #{updateTime}, #{state})
- </insert>
+ values(#{code}, #{zoneType}, #{maxZone}, #{minZone}, #{ambientLayer}, #{flowLayer}, #{zoneGrade}, #{zoneCode}, #{createBy}, now, #{updateBy}, #{updateTime}, #{state}) returning code
+ </select>
  
  <delete id="deleteTotalSchemeDet" parameterType="java.lang.String">
  delete from "APP_totalSchemeDet" where code in

@@ -21,6 +21,78 @@
  values(#{name}, #{state}, #{code}, #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
  </insert>
  
+ <select id="addWarningSchemeOfSZCX" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('SZ_CX',nextval('szcx'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfSZQS" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('SZ_QS',nextval('szqs'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfSZAI" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('SZ_AI',nextval('szai'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfDPZCX" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('DPZ_CX',nextval('dpzcx'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfDPZQS" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('DPZ_QS',nextval('dpzqs'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfDPZAI" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('DPZ_AI',nextval('dpzai'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfFZCX" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('FZ_CX',nextval('fzcx'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfFZQS" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('FZ_QS',nextval('fzqs'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfFZAI" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('FZ_AI',nextval('fzai'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfPFPCX" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('PFP_CX',nextval('pfpcx'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfNPZS" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('NP_ZS',nextval('npzs'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
+ <select id="addWarningSchemeOfPFPLX" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
+ insert into "APP_warningScheme"(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{name}, #{state}, concat('PFP_LX',nextval('pfplx'::regclass)), #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, Now(), #{updateBy}, #{updateTime})
+ returning code
+ </select>
+ 
  <delete id="deleteWarningScheme" parameterType="java.lang.String">
  delete from "APP_warningScheme" where code = #{code}
  </delete>

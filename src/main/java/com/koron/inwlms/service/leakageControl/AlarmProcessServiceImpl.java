@@ -16,6 +16,7 @@ import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.util.TimeUtil;
+import com.koron.util.Constant;
 
 @Service
 public class AlarmProcessServiceImpl implements AlarmProcessService {
@@ -40,7 +41,24 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	@Override
 	public Integer addAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
-		Integer num = mapper.addAlarmProcess(alarmProcessVO);
+		Integer num = 0;
+		//判断报警类型
+		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_TRENDCHANGE)) {
+			num = mapper.addAlarmProcessOfZQS(alarmProcessVO);
+		}
+		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OFFLINE)) {
+			num = mapper.addAlarmProcessOfPLX(alarmProcessVO);
+		}
+		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN) && alarmProcessVO.getObjectFlag().equals(Constant.OBJECTTYPE_POINT)) {
+			num = mapper.addAlarmProcessOfPCX(alarmProcessVO);
+		}
+		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_NOISE)) {
+			num = mapper.addAlarmProcessOfPZS(alarmProcessVO);
+		}
+		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN) && alarmProcessVO.getObjectFlag().equals(Constant.OBJECTTYPE_ZONE)) {
+			num = mapper.addAlarmProcessOfZCX(alarmProcessVO);
+		}
+		
 		return num;
 	}
 	

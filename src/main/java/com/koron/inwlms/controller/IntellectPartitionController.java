@@ -11,11 +11,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.swan.bean.MessageBean;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.intellectPartition.AutomaticPartitionDTO;
+import com.koron.inwlms.bean.DTO.intellectPartition.GisZoneData;
+import com.koron.inwlms.bean.DTO.intellectPartition.GisZonePipeData;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
 import com.koron.inwlms.service.intellectPartition.PartitionSchemeDetService;
+import com.koron.inwlms.util.InterfaceUtil;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -41,9 +47,6 @@ public class IntellectPartitionController {
     @ResponseBody
     public String automaticPartition(@RequestBody AutomaticPartitionDTO automaticPartitionDTO) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
-		//TODO 调用gis接口，获取所选分区管线数据
-		
-		//TODO 使用kafka推送数据，等待模型返回已接收信号时
 		
 		//接收到信号，开始存储方案总表信息
 		TotalSchemeDet totalSchemeDet = new TotalSchemeDet();
@@ -54,14 +57,33 @@ public class IntellectPartitionController {
 		totalSchemeDet.setZoneCode(automaticPartitionDTO.getZoneCode());
 		totalSchemeDet.setZoneType(automaticPartitionDTO.getZoneType());
 		totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
+		String code = "";
 		try {
-			Integer num = ADOConnection.runTask(psds, "addTotalSchemeDet", Integer.class,  totalSchemeDet);
+			code = ADOConnection.runTask(psds, "addTotalSchemeDet", String.class,  totalSchemeDet);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 			msg.setDescription("方案总表数据插入失败");
 		}
+		
+		//TODO 调用gis接口，获取所选分区管线数据
+		String gisPath = "";
+		String gisJsonData = "";
+		JsonObject gisResultData = InterfaceUtil.interfaceOfPostUtil(gisPath, gisJsonData);
+		Gson gson = new Gson(); 
+		List<GisZonePipeData> pipeinfo = gson.fromJson(gisResultData, new TypeToken<List<GisZonePipeData>>(){}.getType());
+		//查询管径数据
+		
+		//TODO 调用模型算法接口推送数据，等待模型返回已接收信号时
+		GisZoneData gisZoneData = new GisZoneData();
+		gisZoneData.setPipe_info(pipeinfo);
+		gisZoneData.setNum_up(automaticPartitionDTO.getMaxZone());
+		gisZoneData.setNum_down(automaticPartitionDTO.getMinZone());
+		gisZoneData.setTotal_plan_code(code);
+		String mlPath = "";
+		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, gson.toJson(pipeinfo));
+		//TODO 解析返回数据
 		return msg.toJson();
 	}
 	

@@ -18,7 +18,7 @@ public interface PartitionSchemeDetService {
 
 	Integer deleteTotalSchemeDet(SessionFactory factory, List<String> codes);
 
-	Integer addTotalSchemeDet(SessionFactory factory, TotalSchemeDet totalSchemeDet);
+	String addTotalSchemeDet(SessionFactory factory, TotalSchemeDet totalSchemeDet);
 
 	List<TotalSchemeDet> queryTotalSchemeDet(SessionFactory factory, TotalSchemeDetDTO totalSchemeDetDTO);
 

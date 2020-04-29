@@ -56,9 +56,9 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	 */
 	@TaskAnnotation("addTotalSchemeDet")
 	@Override
-	public Integer addTotalSchemeDet(SessionFactory factory,TotalSchemeDet totalSchemeDet) {
+	public String addTotalSchemeDet(SessionFactory factory,TotalSchemeDet totalSchemeDet) {
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
-		Integer num = mapper.addTotalSchemeDet(totalSchemeDet);	
+		String num = mapper.addTotalSchemeDet(totalSchemeDet);	
 		return num;
 	}
 	

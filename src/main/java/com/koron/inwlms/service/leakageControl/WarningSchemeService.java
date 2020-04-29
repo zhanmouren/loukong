@@ -18,7 +18,7 @@ public interface WarningSchemeService {
 
 	List<AlertNoticeScheme> queryAlertNoticeSchemeByWarningId(SessionFactory factory, String code);
 
-	Integer addWarningScheme(SessionFactory factory, WarningSchemeDTO warningSchemeDTO);
+	String addWarningScheme(SessionFactory factory, WarningSchemeDTO warningSchemeDTO, List<AlarmRuleDTO> alarmRuleDTOList);
 
 	Integer updateWarningScheme(SessionFactory factory, WarningSchemeDTO warningSchemeDTO);
 

@@ -553,4 +553,27 @@ public class TimeUtil {
 		 return year;
      }
      
+     /**
+      * 获取上个月的有效天数
+      * @param date
+      * @return
+      */
+     public static int getDaysOfPreMonth() {
+    	 Calendar cal=Calendar.getInstance();
+         cal.add(Calendar.MONTH,-1);
+    	 return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+    } 
+     
+     /**
+      * 获取某年的有效天数
+      * @param date
+      * @return
+      */
+     public static int getDaysOfYear(int year) {
+    	 Calendar cal = Calendar.getInstance();
+    	 cal.set(Calendar.YEAR, year);
+    	 return cal.getActualMaximum(Calendar.DAY_OF_YEAR);
+    } 
+     
+     
 }

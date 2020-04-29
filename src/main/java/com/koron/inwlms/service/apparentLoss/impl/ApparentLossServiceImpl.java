@@ -49,7 +49,6 @@ import com.koron.inwlms.bean.VO.apparentLoss.MeterQH;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterReadData;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterUserTimeVO;
-import com.koron.inwlms.bean.VO.apparentLoss.PageALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.TrendAnalysisData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneDatas;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
