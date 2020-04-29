@@ -22,6 +22,10 @@ public class RecommendStrategy {
 	 * 最小夜间流量发生时对应压力平均值
 	 */
 	private Double press;
+	/**
+	 * 表观漏损量
+	 */
+	private Double lossFlow; 
 	
 	private Double a1;
 	
@@ -32,6 +36,15 @@ public class RecommendStrategy {
 	private Double b;
 	
 	private Double c;
+
+	
+	public Double getLossFlow() {
+		return lossFlow;
+	}
+
+	public void setLossFlow(Double lossFlow) {
+		this.lossFlow = lossFlow;
+	}
 
 	public Double getLenghC() {
 		return lenghC;

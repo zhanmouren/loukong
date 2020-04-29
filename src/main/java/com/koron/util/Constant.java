@@ -526,6 +526,22 @@ public class Constant {
 	 * 夜间最小流量-数据字典
 	 */
 	public final static String DATADICTIONARY_MINNIGFLOW = "L101190009";
+	/**
+	 * 压力控制-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PCSTRA = "L101120001";
+	/**
+	 * 管网捡漏-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PNLDETECTION = "L101120002";
+	/**
+	 * 水表更换-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_FLOWCHANGE = "L101120003";
+	/**
+	 * 管网改造-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PNCHANGE = "L101120004";
 	
 	/**
 	 * 正向瞬时流速-指标编码

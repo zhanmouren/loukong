@@ -763,7 +763,7 @@ public class LeakageControlController {
     public String updateEventInfo(@RequestBody EventInfo eventInfo) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
-		if(eventInfo.getCode() != null || eventInfo.getCode().equals("")) {
+		if(eventInfo.getCode() == null || eventInfo.getCode().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("事项信息编码为空");
 	        return msg.toJson(); 
@@ -981,7 +981,7 @@ public class LeakageControlController {
 		try {
 			//通过值域查询出所有事项类型
 			DataDicDTO dataDicDTO = new DataDicDTO();
-			dataDicDTO.setDicParent("");
+			dataDicDTO.setDicParent("10120");
 			List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
 			if(dataDicVoList != null && dataDicVoList.size() != 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);

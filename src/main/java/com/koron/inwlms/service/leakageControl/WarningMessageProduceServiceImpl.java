@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.koron.inwlms.bean.DTO.common.Indicator;
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.RecommendStrategy;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ZoneDayData;
@@ -19,11 +20,14 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.Policy;
+import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.common.CommonMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
+import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
 import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.util.sendMail.SendMail;
@@ -366,7 +370,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 	}
 	
 	
-	public void getRecommendStrategy(RecommendStrategy recommendStrategy) {
+	public void getRecommendStrategy(SessionFactory factory,RecommendStrategy recommendStrategy, double mnf,double ali) {
 		double lenghC = recommendStrategy.getLenghC();
 		double lenghNC = recommendStrategy.getLenghNC();
 		int pNum = recommendStrategy.getpNum();
@@ -378,9 +382,34 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		double b = recommendStrategy.getB();
 		double c = recommendStrategy.getC();
 		
+		//策略标志
+		int stra1 = 0;
+		int stra2 = 0;
+		int stra3 = 0;
+		int stra4 = 0;
+		
+		//计算最低可达最小夜间流量
 		double lmnf = 0.0;
 		lmnf = (a1*lenghC + a2*lenghNC + a3*pNum)*Math.pow(age, b)*Math.pow(press, c);
 		
+		//查询策略信息
+		PolicySchemeDTO policySchemeDTO = new PolicySchemeDTO();
+		policySchemeDTO.setState("0");
+		PolicyMapper mapper = factory.getMapper(PolicyMapper.class);
+		List<PolicySchemeVO> policySchemeList = mapper.queryPolicyScheme(policySchemeDTO);
+		List<Policy> policyList = mapper.queryPolicySetting(policySchemeList.get(0).getCode());
+		
+		for(Policy policy : policyList) {
+			//TODO 判断分区类型
+			
+			if(policy.getType().equals(Constant.DATADICTIONARY_FLOWCHANGE)) {
+				if(ali > 1) {
+					double changeNum = pNum*policy.getTabUserRatio();
+				}
+				
+			}
+			
+		}
 		
 		
 	}

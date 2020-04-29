@@ -12,6 +12,8 @@
  <if test="firstPartition != null and firstPartition != '' "> and "firstPartition" = #{firstPartition}</if>
  </select>
  
+ 
+ 
  <delete id="deleteEventInfo" parameterType="java.lang.String">
  delete from "APP_eventInfo" where code = #{code}
  </delete>
