@@ -370,7 +370,10 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 	}
 	
 	
-	public void getRecommendStrategy(SessionFactory factory,RecommendStrategy recommendStrategy, double mnf,double ali) {
+	public void getRecommendStrategy(SessionFactory factory,RecommendStrategy recommendStrategy, double mnf,double ali,double caliber) {
+		
+		String strategyCode = "";
+		
 		double lenghC = recommendStrategy.getLenghC();
 		double lenghNC = recommendStrategy.getLenghNC();
 		int pNum = recommendStrategy.getpNum();
@@ -399,17 +402,125 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		List<PolicySchemeVO> policySchemeList = mapper.queryPolicyScheme(policySchemeDTO);
 		List<Policy> policyList = mapper.queryPolicySetting(policySchemeList.get(0).getCode());
 		
+		int t1 = 0;
+		int t2 = 0;
+		int t3 = 0;
+		int t4 = 0;
+		double k1 = 0.0;
+		double k2 = 0.0;
+		double k3 = 0.0;
+		double k4 = 0.0;
+		double k5 = 0.0;
+		double k6 = 0.0;
+		double k7 = 0.0;
+		double k8 = 0.0;
 		for(Policy policy : policyList) {
 			//TODO 判断分区类型
 			
 			if(policy.getType().equals(Constant.DATADICTIONARY_FLOWCHANGE)) {
-				if(ali > 1) {
-					double changeNum = pNum*policy.getTabUserRatio();
-					
+				t4 = policy.getTime();
+				k7 = policy.getChangeTabInvest();
+				k8 = pNum*policy.getTabUserRatio();
+			}else if(policy.getType().equals(Constant.DATADICTIONARY_PNCHANGE)) {
+				t2 = policy.getTime();
+				k5 = policy.getChangeNetInvest();
+				k6 = pNum*policy.getNetUserRatio();	
+			}else if(policy.getType().equals(Constant.DATADICTIONARY_PNLDETECTION)) {
+				t3 = policy.getTime();
+				k1 = policy.getRepairCost();
+				k2 = policy.getMissFlow();
+			}else if(policy.getType().equals(Constant.DATADICTIONARY_PCSTRA)) {
+				t1 = policy.getTime();
+				
+			}
+			
+		}
+		//水表更换
+		if(ali > 1) {
+			//年收益计算     表观漏损量*换表户数*365/分区户数*平均水价
+			double n = (recommendStrategy.getLossFlow()*365*k8)/(pNum*recommendStrategy.getAvgFlowP());
+			double m = k7*k8;
+			if((m/n) <= t4) {
+				stra4 = 1;
+			}
+		}
+		//控漏措施
+		if(mnf > lmnf) {
+			//控压策略
+			if(recommendStrategy.getAvgFlowP() > (recommendStrategy.getServiceP() + 5)) {
+				//年收益计算    (mnf - lmnf)*3.6*24*365*单位供水成本
+				double n = (mnf - lmnf)*3.6*24*365*recommendStrategy.getUnitFlowP();
+				//TODO 计算投资    不同口径减压阀组投资k3*(1+工程费用系数k4)
+				
+			}
+			//改造策略
+			if(recommendStrategy.getLeakage() > 0.1) {
+				//年收益计算    (mnf - lmnf)*3.6*24*365*单位供水成本
+				double n = (mnf - lmnf)*3.6*24*365*recommendStrategy.getUnitFlowP();
+				//投资计算      平均每户改造投资*改造户数
+				double m = k5*k6;
+				if((m/n) <= t2) {
+					stra2 = 1;
+				}else {
+					//年收益计算    (mnf - lmnf)*3.6*24*365*单位供水成本
+					double n1 = (mnf - lmnf)*3.6*24*365*recommendStrategy.getUnitFlowP();
+					//投资计算       平均单个捡漏修漏费用k1*((mnf - lmnf)*3.6)/平均单个漏点漏量k2
+					double m1 = k1*((mnf - lmnf)*3.6)/k2;
+					if((m1/n1) <= t3) {
+						stra3 = 1;
+					}
+				}
+			}else {
+				//年收益计算    (mnf - lmnf)*3.6*24*365*单位供水成本
+				double n = (mnf - lmnf)*3.6*24*365*recommendStrategy.getUnitFlowP();
+				//投资计算       平均单个捡漏修漏费用k1*((mnf - lmnf)*3.6)/平均单个漏点漏量k2
+				double m = k1*((mnf - lmnf)*3.6)/k2;
+				if((m/n) <= t3) {
+					stra3 = 1;
 				}
 				
 			}
 			
+		}
+		
+		int flagNum = stra1*1000 + stra2*100 + stra3*10 + stra4;
+		
+		switch(flagNum) {
+		case 1000 :
+			strategyCode = Constant.DATADICTIONARY_PCSTRA;
+			break;
+		case 100 :
+			strategyCode = Constant.DATADICTIONARY_PNCHANGE;
+			break;
+		case 10 :
+			strategyCode = Constant.DATADICTIONARY_PNLDETECTION;
+			break;
+		case 1 :
+			strategyCode = Constant.DATADICTIONARY_FLOWCHANGE;
+			break;
+		case 1100 :
+			strategyCode = Constant.DATADICTIONARY_PCANDPN;
+			break;
+		case 1010 :
+			strategyCode = Constant.DATADICTIONARY_PCANDPNLD;
+			break;
+		case 1001 :
+			strategyCode = Constant.DATADICTIONARY_PCANDFLOWC;
+			break;
+		case 101 :
+			strategyCode = Constant.DATADICTIONARY_PNANDFLOWC;
+			break;
+		case 11 :
+			strategyCode = Constant.DATADICTIONARY_FLOWCANDPNLD;
+			break;
+		case 1101 :
+			strategyCode = Constant.DATADICTIONARY_PCANDPNANDFC;
+			break;
+		case 1011 :
+			strategyCode = Constant.DATADICTIONARY_PCANDPNLDANDFC;
+			break;
+		default :
+			break;
 		}
 		
 		

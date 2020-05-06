@@ -542,6 +542,34 @@ public class Constant {
 	 * 管网改造-策略类型-数据字典
 	 */
 	public final static String DATADICTIONARY_PNCHANGE = "L101120004";
+	/**
+	 * 压力控制和管网改造-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PCANDPN = "L101120005";
+	/**
+	 * 压力控制和管网捡漏-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PCANDPNLD = "L101120006";
+	/**
+	 * 压力控制和水表更换-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PCANDFLOWC = "L101120007";
+	/**
+	 * 管网改造和水表更换-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PNANDFLOWC = "L101120008";
+	/**
+	 * 水表更换和管网捡漏-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_FLOWCANDPNLD = "L101120009";
+	/**
+	 * 压力控制和管网改造和水表更换-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PCANDPNANDFC = "L101120010";
+	/**
+	 * 压力控制和管网捡漏和水表更换-策略类型-数据字典
+	 */
+	public final static String DATADICTIONARY_PCANDPNLDANDFC = "L101120011";
 	
 	/**
 	 * 正向瞬时流速-指标编码

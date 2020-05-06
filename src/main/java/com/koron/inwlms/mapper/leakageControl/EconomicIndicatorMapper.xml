@@ -8,5 +8,6 @@
   select * from "APP_partitionInvest" 
   </select>
  
+
   
   </mapper>

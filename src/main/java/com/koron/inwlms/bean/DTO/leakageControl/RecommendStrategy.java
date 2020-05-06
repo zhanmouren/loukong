@@ -36,8 +36,55 @@ public class RecommendStrategy {
 	private Double b;
 	
 	private Double c;
-
+	/**
+	 * 平均水价
+	 */
+	private Double avgFlowP;
+	/**
+	 * 要求服务压力
+	 */
+	private Double serviceP;
+	/**
+	 * 单位供水成本
+	 */
+	private Double unitFlowP;
 	
+	private Double leakage;
+	
+	
+	
+	public Double getLeakage() {
+		return leakage;
+	}
+
+	public void setLeakage(Double leakage) {
+		this.leakage = leakage;
+	}
+
+	public Double getUnitFlowP() {
+		return unitFlowP;
+	}
+
+	public void setUnitFlowP(Double unitFlowP) {
+		this.unitFlowP = unitFlowP;
+	}
+
+	public Double getServiceP() {
+		return serviceP;
+	}
+
+	public void setServiceP(Double serviceP) {
+		this.serviceP = serviceP;
+	}
+
+	public Double getAvgFlowP() {
+		return avgFlowP;
+	}
+
+	public void setAvgFlowP(Double avgFlowP) {
+		this.avgFlowP = avgFlowP;
+	}
+
 	public Double getLossFlow() {
 		return lossFlow;
 	}
