@@ -4,6 +4,7 @@
     <groupId>com.koron</groupId>
     <artifactId>inwlms</artifactId>
     <version>1.0.0</version>
+    <!--<packaging>jar</packaging>-->
     <packaging>jar</packaging>
     <name>ebs_app</name>
     <url>http://maven.apache.org</url>
@@ -122,6 +123,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

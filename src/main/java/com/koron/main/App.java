@@ -1,9 +1,6 @@
 package com.koron.main;
 
 import com.koron.common.PersonResolver;
-
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
@@ -19,6 +16,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.MultipartConfigElement;
 import java.nio.charset.Charset;
@@ -35,6 +33,15 @@ import java.util.List;
 @EnableCaching
 @EnableScheduling
 public class App extends WebMvcConfigurationSupport{
+//public class App extends SpringBootServletInitializer {
+
+	/**重写config方法**/
+	/*
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+		return builder.sources(App.class);
+	}
+	*/
 	public static void main(String[] args) {
 		SpringApplication app = new SpringApplication(App.class);
 		app.run(args);
@@ -88,11 +95,22 @@ public class App extends WebMvcConfigurationSupport{
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+		/*
+		File path = null;
+		try {
+			path = new File(ResourceUtils.getURL("classpath:").getPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String gitPath=path.getParentFile().getParentFile().getParent()+ File.separator+"logistics"+File.separator+"inwlms"+File.separator;
+		registry.addResourceHandler("/inwlms/**").addResourceLocations("classpath:../../../inwlms/");
+		*/
 		// TODO Auto-generated method stub
 		registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
 		//查找swagger静态页面
 		registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-		registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+			registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
 		super.addResourceHandlers(registry);
 	}
 	

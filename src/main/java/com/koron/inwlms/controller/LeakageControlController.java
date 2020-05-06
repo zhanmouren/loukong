@@ -1,10 +1,14 @@
-﻿package com.koron.inwlms.controller;
+package com.koron.inwlms.controller;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
+import com.koron.inwlms.bean.DTO.leakageControl.*;
+import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
+import com.koron.inwlms.bean.VO.leakageControl.*;
+import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.service.leakageControl.*;
+import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
+import com.koron.util.Constant;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,60 +18,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.swan.bean.MessageBean;
 
-import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
-import com.koron.inwlms.bean.DTO.leakageControl.PolicyDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
-import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
-import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
-import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
-import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
-import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
-import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
-import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
-import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
-import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
-import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
-import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
-import com.koron.inwlms.bean.VO.leakageControl.EventSubtypeVO;
-import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
-import com.koron.inwlms.bean.VO.leakageControl.Policy;
-import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
-import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
-import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
-import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
-import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
-import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
-import com.koron.inwlms.service.leakageControl.AlarmMessageService;
-import com.koron.inwlms.service.leakageControl.AlarmProcessService;
-import com.koron.inwlms.service.leakageControl.EconomicIndicatorServiceImpl;
-import com.koron.inwlms.service.leakageControl.EventInfoService;
-import com.koron.inwlms.service.leakageControl.PolicyService;
-import com.koron.inwlms.service.leakageControl.StatisticalAnalysisService;
-import com.koron.inwlms.service.leakageControl.WarningSchemeService;
-import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
-import com.koron.inwlms.util.UnitUtil;
-import com.koron.util.Constant;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * 漏损控制Controller层
  * @author 刘刚
  * 
  */
-
 @Controller
 @Api(value = "leakageControlController", description = "漏损控制Controller")
 @RequestMapping(value = "/leakageControlController")
