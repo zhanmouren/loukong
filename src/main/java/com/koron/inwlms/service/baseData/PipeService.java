@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface PipeService {
 
-    public  List<PipeVO> queryALList(SessionFactory factory);
 }
