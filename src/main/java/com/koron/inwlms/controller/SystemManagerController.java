@@ -1500,7 +1500,7 @@ public class SystemManagerController {
 		 //执行查询数据字典
 		 try {
 			 PageListVO dicVO=ADOConnection.runTask(userService, "queryMainDataDic", PageListVO.class, dataDicDTO);
-			 if(dicVO!=null) {
+			 if(dicVO!=null && dicVO.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关数据字典的信息"); 
 			     msg.setData(dicVO);

@@ -155,7 +155,7 @@ public interface UserMapper {
 		public List<DataDicVO> queryMainDataDic(DataDicDTO dataDicDTO);
 		
 		//查询数据字典(查询主信息键值)获取总条数
-		public int getDataDicCount();
+		public int getDataDicCount(DataDicDTO dataDicDTO);
 		
 		//修改数据字典主表(批量修改主表信息)
 		public Integer updateDic(DataDicDTO dataDicDTO);

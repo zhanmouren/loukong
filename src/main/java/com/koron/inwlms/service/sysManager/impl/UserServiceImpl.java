@@ -472,7 +472,7 @@ public class UserServiceImpl implements UserService{
 					//只需要返回第一条主的信息集合就行
 					List<DataDicVO> dataDicVOList=userMapper.queryMainDataDic(dataDicDTO);
 					// 查询总条数								
-					int rowNumber = userMapper.getDataDicCount();
+					int rowNumber = userMapper.getDataDicCount(dataDicDTO);
 					// 返回数据结果
 					PageListVO<List<DataDicVO>> result = new PageListVO<>();
 					result.setDataList(dataDicVOList);
