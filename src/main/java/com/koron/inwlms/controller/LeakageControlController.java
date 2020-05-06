@@ -113,6 +113,7 @@ public class LeakageControlController {
 				alarmMessageReturnVO.setAlarmMessageList(alarmMessageList);
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(alarmMessageReturnVO);
+				
 			}else {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("预警信息无");
