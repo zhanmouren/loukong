@@ -25,6 +25,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UploadFileNewDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
@@ -42,6 +43,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
+import com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 /*
@@ -331,5 +333,14 @@ public interface UserMapper {
 		
 		//修改个人密码
 		public Integer updateMyPassword(UserDTO userDTO);
+		
+		 //删除头像(修改状态) 2020/05/06
+		public Integer deleteHeadPortrait(@Param("foreignkey") String foreignkey);
+		
+		//上传头像
+		public Integer insertFileDataNew(UploadFileNewDTO uploadFileNewDTO);
+		
+		//查询头像
+		public List<UploadFileNewVO> queryHeadPortrait(UploadFileNewDTO uploadFileNewDTO);
 		
 }

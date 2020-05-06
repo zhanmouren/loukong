@@ -1,8 +1,14 @@
 package com.koron.inwlms.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.koron.ebs.mybatis.ADOConnection;
@@ -19,8 +25,11 @@ import org.swan.bean.MessageBean;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.koron.common.StaffAttribute;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
+import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
+import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
@@ -41,6 +50,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.ImportUserResVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
@@ -49,7 +59,9 @@ import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
+import com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.inwlms.service.common.impl.FileServiceImpl;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.ImportExcelUtil;
@@ -71,6 +83,8 @@ public class SystemManagerController {
 	
 	@Autowired
 	private UserService userService;
+	@Autowired
+    private FileConfigInfo fileConfigInfo;
      
 	 /*
      * date:2020-03-18
@@ -241,7 +255,7 @@ public class SystemManagerController {
     @ApiOperation(value = "删除职员信息接口", notes = "删除职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String  deleteUser(@RequestBody UserDTO userDTO) {
-		if(userDTO.getCode()==null) {
+		if(userDTO.getCode()==null || "".equals(userDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -317,7 +331,7 @@ public class SystemManagerController {
     @ApiOperation(value = "修改角色属性接口", notes = "修改角色属性接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateRoleAttr(@RequestBody RoleDTO roleDTO) {
-		if(roleDTO.getRoleCode()==null) {
+		if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
 		if(roleDTO.getRoleName()==null || StringUtils.isBlank(roleDTO.getRoleName())) {
@@ -391,7 +405,7 @@ public class SystemManagerController {
     @ApiOperation(value = "根据角色code加载角色人员接口", notes = "根据角色ID加载角色人员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryUserByRoleId(@RequestBody RoleDTO roleDTO) {
-		 if(roleDTO.getRoleCode()==null) {
+		 if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		 }
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -452,7 +466,7 @@ public class SystemManagerController {
     @ApiOperation(value = "插入职员(批量)和角色的关系", notes = "插入职员(批量)和角色的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
-		if(roleUserDTO.getRoleCode()==null) {
+		if(roleUserDTO.getRoleCode()==null || "".equals(roleUserDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
 		if(roleUserDTO.getUserCodeList()==null) {
@@ -500,7 +514,7 @@ public class SystemManagerController {
     @ApiOperation(value = "删除角色中职员接口", notes = "删除角色中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
-		if(roleUserDTO.getRoleCode()==null) {
+		if(roleUserDTO.getRoleCode()==null || "".equals(roleUserDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
 		if(roleUserDTO.getUserCodeList()==null) {
@@ -539,7 +553,7 @@ public class SystemManagerController {
     @ApiOperation(value = "查询角色其他职员接口", notes = "查询角色其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryExceptRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {
-		if(roleUserDTO.getRoleCode()==null) {
+		if(roleUserDTO.getRoleCode()==null || "".equals(roleUserDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -573,7 +587,7 @@ public class SystemManagerController {
     @ApiOperation(value = "查询部门其他职员接口", notes = "查询部门其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryExceptDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {
-		if(deptUserDTO.getDepCode()==null) {
+		if(deptUserDTO.getDepCode()==null || "".equals(deptUserDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -607,7 +621,7 @@ public class SystemManagerController {
     @ApiOperation(value = "插入职员(批量)和部门的关系", notes = "插入职员(批量)和部门的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
-		if(deptUserDTO.getDepCode()==null) {
+		if(deptUserDTO.getDepCode()==null  || "".equals(deptUserDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
 		if(deptUserDTO.getUserCodeList()==null) {
@@ -654,7 +668,7 @@ public class SystemManagerController {
     @ApiOperation(value = "删除部门中职员接口", notes = "删除部门中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
-		if(deptUserDTO.getDepCode()==null) {
+		if(deptUserDTO.getDepCode()==null || "".equals(deptUserDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
 		if(deptUserDTO.getUserCodeList()==null) {
@@ -704,7 +718,7 @@ public class SystemManagerController {
 		if(integrationConfDTO.getSysName()==null || StringUtils.isBlank(integrationConfDTO.getSysName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方系统名称不能为空", Integer.class).toJson();
 		}
-		if(integrationConfDTO.getStatus()==null) {
+		if(integrationConfDTO.getStatus()==null || "".equals(integrationConfDTO.getStatus())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "状态不能为空", Integer.class).toJson();
 		}
 		
@@ -739,19 +753,19 @@ public class SystemManagerController {
     @ApiOperation(value = "添加表格映射功能接口", notes = "添加表格映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {		
-		if(tableMapperDTO.getConfigCode()==null) {
+		if(tableMapperDTO.getConfigCode()==null || "".equals(tableMapperDTO.getConfigCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置编码不能为空", Integer.class).toJson();
 		}
-		if(tableMapperDTO.getOtherTabCode()==null) {
+		if(tableMapperDTO.getOtherTabCode()==null || "".equals(tableMapperDTO.getOtherTabCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方表格编码不能为空", Integer.class).toJson();
 		}	
-		if(tableMapperDTO.getOtherTabName()==null) {
+		if(tableMapperDTO.getOtherTabName()==null || "".equals(tableMapperDTO.getOtherTabName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方表格名不能为空", Integer.class).toJson();
 		}
-		if(tableMapperDTO.getTableCode()==null) {
+		if(tableMapperDTO.getTableCode()==null  || "".equals(tableMapperDTO.getTableCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格编码不能为空", Integer.class).toJson();
 		}
-		if(tableMapperDTO.getTableName()==null) {
+		if(tableMapperDTO.getTableName()==null || "".equals(tableMapperDTO.getTableName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格名称不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -781,28 +795,28 @@ public class SystemManagerController {
     @ApiOperation(value = "添加表格映射功能接口", notes = "添加表格映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {		
-		if(fieldMapperDTO.getTableCode()==null) {
+		if(fieldMapperDTO.getTableCode()==null || "".equals(fieldMapperDTO.getTableCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
 		}	
-		if(fieldMapperDTO.getOtherFieldCode()==null) {
+		if(fieldMapperDTO.getOtherFieldCode()==null || "".equals(fieldMapperDTO.getOtherFieldCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段code不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getOtherFieldName()==null) {
+		if(fieldMapperDTO.getOtherFieldName()==null || "".equals(fieldMapperDTO.getOtherFieldName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段名称不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getFieldCode()==null) {
+		if(fieldMapperDTO.getFieldCode()==null || "".equals(fieldMapperDTO.getFieldCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方字段code不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getFieldName()==null) {
+		if(fieldMapperDTO.getFieldName()==null || "".equals(fieldMapperDTO.getFieldName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方字段名称不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getFieldType()==null) {
+		if(fieldMapperDTO.getFieldType()==null || "".equals(fieldMapperDTO.getFieldType())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段类型不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getFormula()==null) {
+		if(fieldMapperDTO.getFormula()==null || "".equals(fieldMapperDTO.getFormula())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段公式不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getValue()==null) {
+		if(fieldMapperDTO.getValue()==null || "".equals(fieldMapperDTO.getValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "code值不能为空", Integer.class).toJson();
 		}				
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -832,16 +846,16 @@ public class SystemManagerController {
     @ApiOperation(value = "添加枚举值映射明细接口", notes = "添加枚举值映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {		
-		if(enumMapperDTO.getConfCode()==null) {
+		if(enumMapperDTO.getConfCode()==null || "".equals(enumMapperDTO.getConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置编码不能为空", Integer.class).toJson();
 		}
-		if(enumMapperDTO.getOtherFieldValue()==null) {
+		if(enumMapperDTO.getOtherFieldValue()==null || "".equals(enumMapperDTO.getOtherFieldValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段枚举编码不能为空", Integer.class).toJson();
 		}
-		if(enumMapperDTO.getFieldValue()==null) {
+		if(enumMapperDTO.getFieldValue()==null || "".equals(enumMapperDTO.getFieldValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方枚举编码不能为空", Integer.class).toJson();
 		}
-		if(enumMapperDTO.getMapper()==null) {
+		if(enumMapperDTO.getMapper()==null || "".equals(enumMapperDTO.getMapper())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "映射方式不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -898,7 +912,7 @@ public class SystemManagerController {
     @ApiOperation(value = "根据code查询集成配置信息接口", notes = "根据code查询集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryIntegrationByCode(@RequestBody IntegrationConfDTO integrationConfDTO) {
-		if(integrationConfDTO.getInteConfCode()==null) {
+		if(integrationConfDTO.getInteConfCode()==null || "".equals(integrationConfDTO.getInteConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
@@ -929,7 +943,7 @@ public class SystemManagerController {
     @ApiOperation(value = "根据配置主表Code查询表格映射明细列表接口", notes = "根据配置主表Code查询表格映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {
-		if(tableMapperDTO.getConfigCode()==null) {
+		if(tableMapperDTO.getConfigCode()==null || "".equals(tableMapperDTO.getConfigCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -960,7 +974,7 @@ public class SystemManagerController {
     @ApiOperation(value = "根据配置主表Code查询枚举值映射明细列表接口", notes = "根据配置主表Code查询枚举值映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {
-		if(enumMapperDTO.getConfCode()==null) {
+		if(enumMapperDTO.getConfCode()==null || "".equals(enumMapperDTO.getConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -991,7 +1005,7 @@ public class SystemManagerController {
     @ApiOperation(value = "根据表格Code查询表格字段映射明细列表接口", notes = "根据表格Code查询表格字段映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {
-		if(fieldMapperDTO.getTableCode()==null) {
+		if(fieldMapperDTO.getTableCode()==null || "".equals(fieldMapperDTO.getTableCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细code不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -1022,16 +1036,16 @@ public class SystemManagerController {
     @ApiOperation(value = "根据code修改集成配置信息接口", notes = "根据code修改集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateConf(@RequestBody IntegrationConfDTO integrationConfDTO) {
-		if(integrationConfDTO.getInteConfCode()==null) {
+		if(integrationConfDTO.getInteConfCode()==null || "".equals(integrationConfDTO.getInteConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "配置编码不能为空", Integer.class).toJson();
 		}
-		if(integrationConfDTO.getStatus()==null) {
+		if(integrationConfDTO.getStatus()==null || "".equals(integrationConfDTO.getStatus())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "配置状态不能为空", Integer.class).toJson();
 		}	
-		if(integrationConfDTO.getSysName()==null) {
+		if(integrationConfDTO.getSysName()==null || "".equals(integrationConfDTO.getSysName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "系统名称不能为空", Integer.class).toJson();
 		}
-		if(integrationConfDTO.getOtherJDBC()==null) {
+		if(integrationConfDTO.getOtherJDBC()==null || "".equals(integrationConfDTO.getOtherJDBC())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方JDBC不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -1060,19 +1074,19 @@ public class SystemManagerController {
     @ApiOperation(value = "根据code修改表格映射明细信息接口", notes = "根据code修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {
-        if(tableMapperDTO.getTableMapperCode()==null) {
+        if(tableMapperDTO.getTableMapperCode()==null || "".equals(tableMapperDTO.getTableMapperCode())) {
         	return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
         }	
-		if(tableMapperDTO.getOtherTabCode()==null) {
+		if(tableMapperDTO.getOtherTabCode()==null || "".equals(tableMapperDTO.getOtherTabCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方表格编码不能为空", Integer.class).toJson();
 		}	
-		if(tableMapperDTO.getOtherTabName()==null) {
+		if(tableMapperDTO.getOtherTabName()==null || "".equals(tableMapperDTO.getOtherTabName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方表格名不能为空", Integer.class).toJson();
 		}
-		if(tableMapperDTO.getTableCode()==null) {
+		if(tableMapperDTO.getTableCode()==null || "".equals(tableMapperDTO.getTableCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格编码不能为空", Integer.class).toJson();
 		}
-		if(tableMapperDTO.getTableName()==null) {
+		if(tableMapperDTO.getTableName()==null || "".equals(tableMapperDTO.getTableName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格名称不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -1101,16 +1115,16 @@ public class SystemManagerController {
     @ApiOperation(value = "根据id修改表格映射明细信息接口", notes = "根据id修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {
-		if(enumMapperDTO.getId()==null) {
+		if(enumMapperDTO.getId()==null || "".equals(enumMapperDTO.getId())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "id不能为空", Integer.class).toJson();
 		}
-		if(enumMapperDTO.getOtherFieldValue()==null) {
+		if(enumMapperDTO.getOtherFieldValue()==null || "".equals(enumMapperDTO.getOtherFieldValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段枚举编码不能为空", Integer.class).toJson();
 		}
-		if(enumMapperDTO.getFieldValue()==null) {
+		if(enumMapperDTO.getFieldValue()==null || "".equals(enumMapperDTO.getFieldValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方枚举编码不能为空", Integer.class).toJson();
 		}
-		if(enumMapperDTO.getMapper()==null) {
+		if(enumMapperDTO.getMapper()==null || "".equals(enumMapperDTO.getMapper())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "映射方式不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -1140,28 +1154,28 @@ public class SystemManagerController {
     @ApiOperation(value = "根据Code修改表格字段映射明细接口", notes = "根据Code修改表格字段映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {
-		if(fieldMapperDTO.getFieldMapperCode()==null) {
+		if(fieldMapperDTO.getFieldMapperCode()==null || "".equals(fieldMapperDTO.getFieldMapperCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段映射明细编码不能为空", Integer.class).toJson();
 		}	
-		if(fieldMapperDTO.getOtherFieldCode()==null) {
+		if(fieldMapperDTO.getOtherFieldCode()==null || "".equals(fieldMapperDTO.getOtherFieldCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段code不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getOtherFieldName()==null) {
+		if(fieldMapperDTO.getOtherFieldName()==null || "".equals(fieldMapperDTO.getOtherFieldName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方字段名称不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getFieldCode()==null) {
+		if(fieldMapperDTO.getFieldCode()==null || "".equals(fieldMapperDTO.getFieldCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方字段code不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getFieldName()==null) {
+		if(fieldMapperDTO.getFieldName()==null || "".equals(fieldMapperDTO.getFieldName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方字段名称不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getFieldType()==null) {
+		if(fieldMapperDTO.getFieldType()==null || "".equals(fieldMapperDTO.getFieldType())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段类型不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getFormula()==null) {
+		if(fieldMapperDTO.getFormula()==null || "".equals(fieldMapperDTO.getFormula())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段公式不能为空", Integer.class).toJson();
 		}
-		if(fieldMapperDTO.getValue()==null) {
+		if(fieldMapperDTO.getValue()==null || "".equals(fieldMapperDTO.getValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "code值不能为空", Integer.class).toJson();
 		}	
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -1306,10 +1320,10 @@ public class SystemManagerController {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键值不能为空", Integer.class).toJson();
 		}
 		for(int i=0;i<dataDicDTO.getDataDicDTOList().size();i++) {
-			if(dataDicDTO.getDataDicDTOList().get(i).getDicKey()==null) {
+			if(dataDicDTO.getDataDicDTOList().get(i).getDicKey()==null || "".equals(dataDicDTO.getDataDicDTOList().get(i).getDicKey())) {
 				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键不能为空", Integer.class).toJson();
 			}
-			if(dataDicDTO.getDataDicDTOList().get(i).getDicValue()==null) {
+			if(dataDicDTO.getDataDicDTOList().get(i).getDicValue()==null || "".equals(dataDicDTO.getDataDicDTOList().get(i).getDicValue())) {
 				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典值不能为空", Integer.class).toJson();
 			}
 		}
@@ -1513,7 +1527,7 @@ public class SystemManagerController {
     @ApiOperation(value = "通过字典主表parent修改数据字典接口(主表信息))接口", notes = "通过字典主表parent修改数据字典接口(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateDic(@RequestBody DataDicDTO dataDicDTO) {		
-		if(dataDicDTO.getDicParent()==null) {
+		if(dataDicDTO.getDicParent()==null || "".equals(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
 		}
 		if(dataDicDTO.getDicCn()==null || StringUtils.isBlank(dataDicDTO.getDicCn())) {
@@ -1761,7 +1775,7 @@ public class SystemManagerController {
     @ApiOperation(value = "根据日期查询特征日接口", notes = "根据日期查询特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String querySpecialDateByDay(@RequestBody SpecialDayDTO specialDayDTO) {
-		if(specialDayDTO.getSpDate()==null) {
+		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
@@ -1796,7 +1810,7 @@ public class SystemManagerController {
     @ApiOperation(value = "删除特征日接口", notes = "删除特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String deleteSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
-		if(specialDayDTO.getSpDate()==null) {
+		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}			
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -1833,10 +1847,10 @@ public class SystemManagerController {
     @ApiOperation(value = "修改特征日接口", notes = "修改特征日接口接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
-		if(specialDayDTO.getSpDate()==null) {
+		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}	
-		if(specialDayDTO.getSpName()==null) {
+		if(specialDayDTO.getSpName()==null || "".equals(specialDayDTO.getSpName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
 		}	
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -1875,10 +1889,10 @@ public class SystemManagerController {
     @ResponseBody
 	public String addOrgParent(@RequestBody  LongTreeBean child) {
 		Integer type=new Integer(child.getType());
-		if(type==null) {
+		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树的类型不能为空", Integer.class).toJson();
 		}	
-		if(child.getForeignkey()==null) {
+		if(child.getForeignkey()==null || "".equals(child.getForeignkey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "组织的外键不能为空", Integer.class).toJson();
 		}
 		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
@@ -1907,17 +1921,17 @@ public class SystemManagerController {
     @ApiOperation(value = "添加部门接口", notes = "添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addTreeDept(@RequestBody  TreeDTO parentBean) {	
-		if(parentBean.getDepName()==null) {
+		if(parentBean.getDepName()==null || "".equals(parentBean.getDepName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}
-		if(parentBean.getForeignKey()==null) {
+		if(parentBean.getForeignKey()==null || "".equals(parentBean.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "上级部门的外键不能为空", Integer.class).toJson();
 		}	
-		if(parentBean.getType()==null) {
+		if(parentBean.getType()==null || "".equals(parentBean.getType())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树的类型不能为空", Integer.class).toJson();
 		}
 		//0代表组织添加部门,1代表部门下添加部门
-		if(parentBean.getAddType()==null) {
+		if(parentBean.getAddType()==null || "".equals(parentBean.getAddType())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "添加类型不能为空", Integer.class).toJson();
 		}
 		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
@@ -1965,14 +1979,14 @@ public class SystemManagerController {
     @ResponseBody
 	public String deleteTreeDept(@RequestBody  TreeDTO longTreeBean) {
 		Integer type=Integer.valueOf(longTreeBean.getType());
-		if(type==null) {
+		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson();
 		}	
-		if(longTreeBean.getForeignKey()==null) {
+		if(longTreeBean.getForeignKey()==null || "".equals(longTreeBean.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "节点外键不能为空", Integer.class).toJson();
 		}
 		//删除的时候  (deleteType  0代表删除组织下部门,1代表部门下删除部门）
-		if(longTreeBean.getDeleteType()==null) {
+		if(longTreeBean.getDeleteType()==null || "".equals(longTreeBean.getDeleteType())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "删除类型不能为空", Integer.class).toJson();
 		}
 		
@@ -2014,10 +2028,10 @@ public class SystemManagerController {
     @ResponseBody
 	public String updateTreeDept(@RequestBody DeptDTO deptDTO) {
 		//修改的只有部门名称
-		if(deptDTO.getDepCode()==null) {
+		if(deptDTO.getDepCode()==null || "".equals(deptDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
-		if(deptDTO.getDepName()==null) {
+		if(deptDTO.getDepName()==null || "".equals(deptDTO.getDepName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -2051,10 +2065,10 @@ public class SystemManagerController {
     @ResponseBody
 	public String queryTreeOrg(@RequestBody TreeDTO treeDTO) {
 		Integer type=Integer.valueOf(treeDTO.getType());
-		if(type==null) {
+		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
 		}	
-		if(treeDTO.getForeignKey()==null) {
+		if(treeDTO.getForeignKey()==null || "".equals(treeDTO.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
 		}
 		
@@ -2087,7 +2101,7 @@ public class SystemManagerController {
     @ApiOperation(value = "根据部门Code查询职员接口", notes = "根据部门Code查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDeptUser(@RequestBody DeptDTO deptDTO) {		
-		if(deptDTO.getDepCode()==null) {
+		if(deptDTO.getDepCode()==null || "".equals(deptDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -2119,19 +2133,19 @@ public class SystemManagerController {
     @ApiOperation(value = "生成菜单模块接口", notes = "生成菜单模块接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addMenu(@RequestBody MenuTreeDTO menuTreeDTO) {		
-		if(menuTreeDTO.getForeignKey()==null) {
+		if(menuTreeDTO.getForeignKey()==null || "".equals(menuTreeDTO.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "父部门外键不能为空", Integer.class).toJson();
 		}
-		if(menuTreeDTO.getModuleName()==null) {
+		if(menuTreeDTO.getModuleName()==null || "".equals(menuTreeDTO.getModuleName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块菜单名称不能为空", Integer.class).toJson();
 		}
-		if(menuTreeDTO.getModuleNo()==null) {
+		if(menuTreeDTO.getModuleNo()==null || "".equals(menuTreeDTO.getModuleNo())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块编号不能为空", Integer.class).toJson();
 		}
-		if(menuTreeDTO.getType()==null) {
+		if(menuTreeDTO.getType()==null || "".equals(menuTreeDTO.getType())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树类型不能为空", Integer.class).toJson();
 		}
-		if(menuTreeDTO.getLinkAddress()==null) {
+		if(menuTreeDTO.getLinkAddress()==null || "".equals(menuTreeDTO.getLinkAddress())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "链接地址不能为空", Integer.class).toJson();
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
@@ -2162,10 +2176,10 @@ public class SystemManagerController {
     @ResponseBody
 	public String queryTreeMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
 		Integer type=Integer.valueOf(menuTreeDTO.getType());
-		if(type==null) {
+		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
 		}	
-		if(menuTreeDTO.getForeignKey()==null) {
+		if(menuTreeDTO.getForeignKey()==null || "".equals(menuTreeDTO.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
 		}
 		
@@ -2200,10 +2214,10 @@ public class SystemManagerController {
     @ResponseBody
 	public String queryChildTreeMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
 		Integer type=Integer.valueOf(menuTreeDTO.getType());
-		if(type==null) {
+		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
 		}	
-		if(menuTreeDTO.getForeignKey()==null) {
+		if(menuTreeDTO.getForeignKey()==null || "".equals(menuTreeDTO.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
 		}
 		
@@ -2236,7 +2250,7 @@ public class SystemManagerController {
     @ApiOperation(value = "加载角色菜单查看权限接口", notes = "加载角色菜单查看权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryRoleMenuByRoleId(@RequestBody RoleDTO roleDTO) {		
-		if(roleDTO.getRoleCode()==null) {
+		if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
@@ -2382,10 +2396,10 @@ public class SystemManagerController {
     @ResponseBody
 	public String queryChildOneMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
 		Integer type=Integer.valueOf(menuTreeDTO.getType());
-		if(type==null) {
+		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
 		}	
-		if(menuTreeDTO.getForeignKey()==null) {
+		if(menuTreeDTO.getForeignKey()==null || "".equals(menuTreeDTO.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
 		}
 		//TODO 测试用
@@ -2420,10 +2434,10 @@ public class SystemManagerController {
     @ResponseBody
 	public String queryChildAllMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
 		Integer type=Integer.valueOf(menuTreeDTO.getType());
-		if(type==null) {
+		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
 		}	
-		if(menuTreeDTO.getForeignKey()==null) {
+		if(menuTreeDTO.getForeignKey()==null || "".equals(menuTreeDTO.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
 		}
 		//TODO 测试用
@@ -2636,13 +2650,13 @@ public class SystemManagerController {
     @ApiOperation(value = "重置职员密码接口", notes = "重置职员密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateMyPassword(@RequestBody UpdateWordDTO updateWordDTO) {
-		if(updateWordDTO.getOldPassWord()==null) {
+		if(updateWordDTO.getOldPassWord()==null || "".equals(updateWordDTO.getOldPassWord())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
 		}
-		if(updateWordDTO.getNewPassWord()==null) {
+		if(updateWordDTO.getNewPassWord()==null || "".equals(updateWordDTO.getNewPassWord())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
 		}
-		if(updateWordDTO.getSurePassWord()==null) {
+		if(updateWordDTO.getSurePassWord()==null || "".equals(updateWordDTO.getSurePassWord())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       		
@@ -2677,5 +2691,70 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	
+	 /**
+   	 * 上传头像
+   	 * 
+   	 * @param type
+   	 *            上传头像的模块类型
+   	 * @param file
+   	 */
+   	@RequestMapping(value = "/uploadHeadPortrait.htm", method = RequestMethod.POST, produces = { "text/html;charset=UTF-8" })
+   	@ResponseBody
+   	public String uploadFile(@RequestParam("file") MultipartFile file) {
+   	if(file.isEmpty()) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "头像不能为空", Integer.class).toJson();
+	} 		
+   	 MessageBean<UploadFileVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, UploadFileVO.class);	         	
+	 try {
+		 Integer addRes=ADOConnection.runTask(userService, "uploadHeadPortrait", Integer.class, file);
+		 if(addRes==-2) {
+			 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+		     msg.setDescription("删除之前头像失败"); 
+		 }else if(addRes==-3){
+			 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+		     msg.setDescription("上传头像文件类型不对"); 
+		 }else if(addRes==1) {
+			 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+		     msg.setDescription("上传头像文件成功"); 
+		 }else{
+			 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+		     msg.setDescription("上传头像失败");  
+		 }
+	 }catch(Exception e){
+     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+        msg.setDescription("上传失败");
+     }
+	 return msg.toJson();
+   	}
+   	
+   	/**
+   	 * 2020-05-06
+   	 * 根据登录的用户查询头像
+   	 * @author xiaozhan
+   	 */
+   	@RequestMapping(value = "/queryHeadPortrait.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询头像接口", notes = "查询头像接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryHeadPortrait() {
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 try {
+			 List<UploadFileNewVO> fileList=ADOConnection.runTask(userService, "queryHeadPortrait", List.class);
+			 if(fileList!=null && fileList.size()>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到相关头像信息"); 
+			     msg.setData(fileList);
+			 }else {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("该职员没有查询到头像信息"); 
+			 }
+		 }catch(Exception e){
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
 	
 }

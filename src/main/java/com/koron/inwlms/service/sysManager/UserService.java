@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
@@ -25,6 +26,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
@@ -38,6 +40,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
+import com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 
@@ -213,5 +216,13 @@ public interface UserService {
 		  
 		  //修改个人密码
 		  Integer updateMyPassword(SessionFactory factory,UpdateWordDTO updateWordDTO);
+		  
+		  //上传头像2020/04/30
+		  Integer uploadHeadPortrait(SessionFactory factory,MultipartFile file);
+		  
+		  //根据登录名查询头像信息
+		  List<UploadFileNewVO> queryHeadPortrait(SessionFactory factory);
+		 
+		  
 		 
 }

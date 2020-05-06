@@ -1,5 +1,7 @@
 package com.koron.inwlms.service.sysManager.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,17 +13,23 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
 import com.koron.common.web.service.TreeService;
+import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
+import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
@@ -39,10 +47,12 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
+import com.koron.inwlms.bean.DTO.sysManager.UploadFileNewDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
+import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
@@ -56,8 +66,10 @@ import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
+import com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
+import com.koron.inwlms.service.common.impl.FileServiceImpl;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.EncryptionUtil;
 import com.koron.inwlms.util.PageUtil;
@@ -65,6 +77,9 @@ import com.koron.inwlms.util.RandomCodeUtil;
 
 @Service
 public class UserServiceImpl implements UserService{
+	
+	@Autowired
+    private FileConfigInfo fileConfigInfo;
 	
 
 	//管理员添加职员 2020/03/18	
@@ -1392,6 +1407,98 @@ public class UserServiceImpl implements UserService{
 						updateRes=userMapper.updateMyPassword(user);
 					}
 					return updateRes;
+				}
+
+				//上传头像
+				@TaskAnnotation("uploadHeadPortrait")
+				@Override
+				public Integer  uploadHeadPortrait(SessionFactory factory, MultipartFile file) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Integer addRes=null;
+					//TODO 测试使用  获取登录的用户名为： 
+					String userName="测试11";
+					//根据登录的用户名查询Code
+					QueryUserDTO queryUserDTO=new QueryUserDTO();
+					queryUserDTO.setLoginName(userName);
+					List<UserVO> userVOList=userMapper.queryUser(queryUserDTO);	
+					
+					//根据用户code删除在文件表中存在的头像(修改状态)
+					if(userVOList!=null && userVOList.size()>0) {
+						addRes=userMapper.deleteHeadPortrait(userVOList.get(0).getCode());
+					}
+					if(addRes==-1) {
+					   return -2;	
+					}
+					String originalFilename = file.getOriginalFilename();
+			   		// 获取后缀
+			        String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
+			       	//校验文件类型是否为图片
+			   		String reg = ".+(.JPEG|.jpeg|.JPG|.jpg|.GIF|.gif|.BMP|.bmp|.PNG|.png)$"; 
+			   	    Matcher matcher=Pattern.compile(reg).matcher(originalFilename);
+			   	    if(!matcher.find()) {
+			   	    	return -3;
+			   	    }			   		
+			   	   
+			   		// 获取当前月份，时间格式:201910
+			   		SimpleDateFormat dataFormate = new SimpleDateFormat("yyyyMM");
+			   		String time = dataFormate.format(new Date());
+			   		// 保存目录
+			   		String path = fileConfigInfo.getPath() + File.separator + "HeadPortrait" + File.separator + time ;
+			   		// 生成保存文件
+			   		File dirPath = new File(path);
+			   		if (!dirPath.exists()) {
+			   			dirPath.mkdirs();
+			   		}
+			   		
+			   		//用时间戳作为文件名称存储
+			   		String storeName = System.currentTimeMillis()+fileType;
+			   		File uploadFile = new File(path+ File.separator + storeName);
+			   		double size = file.getSize() / 1014;
+
+			   		// 将上传文件保存到路径
+			   		try {
+			   			file.transferTo(uploadFile);
+			   		} catch (IOException e) {
+			   			e.printStackTrace();
+			   		}
+
+			   		UploadFileNewDTO uploadFileDTO = new UploadFileNewDTO();
+			   		if(userVOList!=null && userVOList.size()>0) {
+			   		 uploadFileDTO.setForeignkey(userVOList.get(0).getCode());
+			   		}
+			   		uploadFileDTO.setFileName(originalFilename);
+			   		uploadFileDTO.setFilePath(path);
+			   		uploadFileDTO.setFileSize(size);
+			   		uploadFileDTO.setModuleType("HeadPortrait");
+			   		uploadFileDTO.setStoreName(storeName);
+			   		uploadFileDTO.setStorageTime(new java.util.Date());
+			   		uploadFileDTO.setCreateBy("小詹");
+			   		uploadFileDTO.setFileType(fileType);
+			   		// 上传文件记录入库
+			   		addRes=userMapper.insertFileDataNew(uploadFileDTO);
+					return addRes;
+				}
+
+				//根据登录的用户名查询头像
+				@TaskAnnotation("queryHeadPortrait")
+				@Override
+				public List<UploadFileNewVO> queryHeadPortrait(SessionFactory factory) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					//TODO 测试使用  获取登录的用户名为： 
+					String userName="测试11";
+					//根据登录的用户名查询Code
+					QueryUserDTO queryUserDTO=new QueryUserDTO();
+					queryUserDTO.setLoginName(userName);
+					List<UserVO> userVOList=userMapper.queryUser(queryUserDTO);	
+					String userCode="";
+					if(userVOList!=null && userVOList.size()>0) {
+						userCode=userVOList.get(0).getCode();
+					}
+					UploadFileNewDTO uploadFileNewDTO=new UploadFileNewDTO();
+					uploadFileNewDTO.setForeignkey(userCode);
+					uploadFileNewDTO.setStatus("1");
+					List<UploadFileNewVO> fileList=userMapper.queryHeadPortrait(uploadFileNewDTO);
+					return fileList;
 				}
 		
 					

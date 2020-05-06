@@ -917,5 +917,42 @@
 		</set>
 	    	where "loginName" =#{loginName}  
        </update>
-      
+       
+        <!--删除头像 修改状态-->
+        <update id="deleteHeadPortrait">
+          update "APP_file"
+          set status='0'
+          where foreignkey=#{foreignkey}
+        </update>
+        
+        <!--上传头像-->
+        <insert id="insertFileDataNew" parameterType="com.koron.inwlms.bean.DTO.sysManager.UploadFileNewDTO"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO
+		"APP_file"
+		("fileName","filePath","fileType","fileSize","storageTime",
+		"foreignkey","moduleType","storeName","createBy","createTime","updateBy","updateTime")
+		VALUES
+		(#{fileName,jdbcType=VARCHAR},
+		 #{filePath,jdbcType=VARCHAR},
+		 #{fileType,jdbcType=INTEGER},
+		 #{fileSize,jdbcType=DOUBLE},
+		 #{storageTime,jdbcType=TIMESTAMP},
+		 #{foreignkey,jdbcType=VARCHAR},
+		 #{moduleType,jdbcType=VARCHAR},
+		 #{storeName,jdbcType=VARCHAR},
+		 #{createBy,jdbcType=VARCHAR},
+		 Now(),
+		 #{updateBy,jdbcType=VARCHAR},
+		 Now()
+		 )
+	    </insert>
+	    
+	     <!-- 查询头像 -->
+      <select id="queryHeadPortrait"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UploadFileNewDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO">
+           select id,concat_ws('\',"filePath","storeName") as "filePath","fileType","fileSize"
+           from "APP_file"
+           where "foreignkey" =#{foreignkey}   and status=${status}      
+      </select>
+	    
 </mapper>
