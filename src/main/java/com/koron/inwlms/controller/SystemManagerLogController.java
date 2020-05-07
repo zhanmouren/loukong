@@ -25,6 +25,7 @@ import com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryIntegrationLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLoginLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryOperateLogDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationLogVO;
 import com.koron.inwlms.bean.VO.sysManager.LoginLogVO;
 import com.koron.inwlms.bean.VO.sysManager.OperateLogVO;
@@ -61,11 +62,11 @@ public class SystemManagerLogController {
 	@ApiOperation(value = "查询登录日志接口", notes = "查询登录日志接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryLoginLog(@RequestBody QueryLoginLogDTO 	queryLoginLogDTO) {
-		if(queryLoginLogDTO.getPage() == null ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!页码不能为空", Integer.class).toJson();
+		if(queryLoginLogDTO.getPage() == null || queryLoginLogDTO.getPage() <0 || queryLoginLogDTO.getPage() == 0) {
+			queryLoginLogDTO.setPage(1);
 		}
-		if(queryLoginLogDTO.getPageCount() == null ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!每页数量不能为空", Integer.class).toJson();
+		if(queryLoginLogDTO.getPageCount() == null || queryLoginLogDTO.getPageCount() <0 || queryLoginLogDTO.getPageCount() ==0) {
+			queryLoginLogDTO.setPageCount(20);
 		}
 		if(queryLoginLogDTO.getStartTime() == null || queryLoginLogDTO.getStartTime().equals("")) {
 	        return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间不能为空", Integer.class).toJson();
@@ -99,11 +100,11 @@ public class SystemManagerLogController {
 		}else if(!queryLoginLogDTO.getType().equals("登入") && !queryLoginLogDTO.getType().equals("登出")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“全部、登入或登出”", Integer.class).toJson();
 		} 
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		//执行查询登录日志 
 		try {
-			List<LoginLogVO> loginLogList=ADOConnection.runTask(logService, "queryLoginLog", List.class, queryLoginLogDTO);
-			if(loginLogList.size()>0) {
+			PageListVO loginLogList=ADOConnection.runTask(logService, "queryLoginLog", PageListVO.class, queryLoginLogDTO);
+			if(loginLogList != null && loginLogList.getRowNumber() > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("查询到相关日志的信息"); 
 				msg.setData(loginLogList);
@@ -222,11 +223,11 @@ public class SystemManagerLogController {
 	@ApiOperation(value = "查询操作日志接口", notes = "查询操作日志接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryOperateLog(@RequestBody QueryOperateLogDTO queryOperateLogDTO) {
-		if(queryOperateLogDTO.getPage() == null ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!页码不能为空", Integer.class).toJson();
+		if(queryOperateLogDTO.getPage() == null || queryOperateLogDTO.getPage() <0 || queryOperateLogDTO.getPage() == 0) {
+			queryOperateLogDTO.setPage(1);
 		}
-		if(queryOperateLogDTO.getPageCount() == null ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!每页数量不能为空", Integer.class).toJson();
+		if(queryOperateLogDTO.getPageCount() == null || queryOperateLogDTO.getPageCount() <0 || queryOperateLogDTO.getPageCount() ==0) {
+			queryOperateLogDTO.setPageCount(20);
 		}
 		if(queryOperateLogDTO.getStartTime() == null || queryOperateLogDTO.getStartTime().equals("")) {
 	        return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间不能为空", Integer.class).toJson();
@@ -262,11 +263,11 @@ public class SystemManagerLogController {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“全部、增加、删除、修改或查询”", Integer.class).toJson();
 		} 
 		
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询操作日志
 		 try {
-			 List<OperateLogVO> operateLogList=ADOConnection.runTask(logService, "queryOperateLog", List.class, queryOperateLogDTO);
-			 if(operateLogList.size()>0) {
+			 PageListVO operateLogList=ADOConnection.runTask(logService, "queryOperateLog", PageListVO.class, queryOperateLogDTO);
+			 if(operateLogList != null && operateLogList.getRowNumber() > 0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关日志的信息"); 
 			     msg.setData(operateLogList);
@@ -416,11 +417,11 @@ public class SystemManagerLogController {
     @ResponseBody
     public String queryIntegrationLog(@RequestBody QueryIntegrationLogDTO queryIntegrationLogDTO) {
 		
-		if(queryIntegrationLogDTO.getPage() == null ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!页码不能为空", Integer.class).toJson();
+		if(queryIntegrationLogDTO.getPage() == null || queryIntegrationLogDTO.getPage() <0 || queryIntegrationLogDTO.getPage() == 0) {
+			queryIntegrationLogDTO.setPage(1);
 		}
-		if(queryIntegrationLogDTO.getPageCount() == null ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!每页数量不能为空", Integer.class).toJson();
+		if(queryIntegrationLogDTO.getPageCount() == null || queryIntegrationLogDTO.getPageCount() <0 || queryIntegrationLogDTO.getPageCount() ==0) {
+			queryIntegrationLogDTO.setPageCount(20);
 		}
 		if(queryIntegrationLogDTO.getStartDate()== null || queryIntegrationLogDTO.getStartDate().equals("")) {
 	        return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间不能为空", Integer.class).toJson();
@@ -454,11 +455,11 @@ public class SystemManagerLogController {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!状态必须是“全部、进行中、已结束”", Integer.class).toJson();
 		} 
 		
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询集成日志
 		 try {
-			 List<IntegrationLogVO> integrationLogList=ADOConnection.runTask(logService, "queryIntegrationLog", List.class, queryIntegrationLogDTO);
-			 if(integrationLogList.size()>0) {
+			 PageListVO integrationLogList=ADOConnection.runTask(logService, "queryIntegrationLog", PageListVO.class, queryIntegrationLogDTO);
+			 if(integrationLogList != null && integrationLogList.getRowNumber() > 0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关日志的信息"); 
 			     msg.setData(integrationLogList);

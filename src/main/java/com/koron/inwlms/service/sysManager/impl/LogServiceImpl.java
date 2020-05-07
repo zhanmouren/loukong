@@ -91,10 +91,20 @@ public class LogServiceImpl implements LogService {
 	//查询操作日志 2020/04/01
 	@TaskAnnotation("queryOperateLog")
 	@Override
-	public List<OperateLogVO> queryOperateLog(SessionFactory factory,QueryOperateLogDTO queryOperateLogDTO){
+	public PageListVO<List<OperateLogVO>> queryOperateLog(SessionFactory factory,QueryOperateLogDTO queryOperateLogDTO){
 		LogMapper logMapper = factory.getMapper(LogMapper.class);
-		List<OperateLogVO> OperateLogList=logMapper.queryOperateLog(queryOperateLogDTO);
-		return OperateLogList;
+		List<OperateLogVO> operateLogList=logMapper.queryOperateLog(queryOperateLogDTO);
+		int rowNumber = logMapper.getOperateLogCount(queryOperateLogDTO);
+		//返回数据结果
+		PageListVO<List<OperateLogVO>> result = new PageListVO<>();
+		result.setDataList(operateLogList);
+		
+		PageVO pageVO = PageUtil.getPageBean(queryOperateLogDTO.getPage(), queryOperateLogDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
 	}
 	
 	
@@ -136,10 +146,20 @@ public class LogServiceImpl implements LogService {
 	//查询集成日志 2020/04/01
 	@TaskAnnotation("queryIntegrationLog")
 	@Override
-	public List<IntegrationLogVO> queryIntegrationLog(SessionFactory factory,QueryIntegrationLogDTO queryIntegrationLogDTO){
+	public PageListVO<List<IntegrationLogVO>> queryIntegrationLog(SessionFactory factory,QueryIntegrationLogDTO queryIntegrationLogDTO){
 		LogMapper logMapper = factory.getMapper(LogMapper.class);
-		List<IntegrationLogVO> IntegrationLogList=logMapper.queryIntegrationLog(queryIntegrationLogDTO);
-		return IntegrationLogList;
+		List<IntegrationLogVO> integrationLogList=logMapper.queryIntegrationLog(queryIntegrationLogDTO);
+		int rowNumber = logMapper.getIntegrationLogCount(queryIntegrationLogDTO);
+		//返回数据结果
+		PageListVO<List<IntegrationLogVO>> result = new PageListVO<>();
+		result.setDataList(integrationLogList);
+		
+		PageVO pageVO = PageUtil.getPageBean(queryIntegrationLogDTO.getPage(), queryIntegrationLogDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
 	}
 
 	//下载登录日志列表数据 2020/04/23

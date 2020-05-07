@@ -32,7 +32,7 @@ public interface LogService {
   
 	
 	//查询操作日志（操作人，开始时间与结束时间，操作类型）
-	List<OperateLogVO> queryOperateLog(SessionFactory factory, QueryOperateLogDTO queryOperateLogDTO);
+	PageListVO<List<OperateLogVO>> queryOperateLog(SessionFactory factory, QueryOperateLogDTO queryOperateLogDTO);
 	//插入操作日志
 	Integer addOperateLog(SessionFactory factory,OperateLogDTO operateLogDTO);	
 	//下载操作日志列表数据
@@ -41,7 +41,7 @@ public interface LogService {
 	
 	
 	//查询集成日志（任务名，状态，开始时间与结束时间）
-	List<IntegrationLogVO> queryIntegrationLog(SessionFactory factory, QueryIntegrationLogDTO queryIntegrationLogDTO);
+	PageListVO<List<IntegrationLogVO>> queryIntegrationLog(SessionFactory factory, QueryIntegrationLogDTO queryIntegrationLogDTO);
 	//下载集成日志列表数据
 	PageIntegrationLogListVO downloadIntegrationLogList(SessionFactory factory,QueryIntegrationLogDTO queryIntegrationLogDTO);
 		  

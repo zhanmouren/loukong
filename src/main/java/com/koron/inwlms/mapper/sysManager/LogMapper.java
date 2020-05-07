@@ -30,9 +30,13 @@ public interface LogMapper {
 	
 	//查询操作日志
 	public List<OperateLogVO> queryOperateLog(QueryOperateLogDTO queryOperateLogDTO);
+	//查询操作日志条数
+	public int getOperateLogCount(QueryOperateLogDTO queryOperateLogDTO);
 	//添加操作日志
 	public Integer addOperateLog(OperateLogDTO operateLogDTO);
 	
 	//查询集成日志
 	public List<IntegrationLogVO> queryIntegrationLog(QueryIntegrationLogDTO queryIntegrationLogDTO);
+	//查询集成日志条数
+	public int getIntegrationLogCount(QueryIntegrationLogDTO queryIntegrationLogDTO);
 }

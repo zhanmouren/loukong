@@ -93,11 +93,11 @@ public class SystemManagerQueryLogControllerTest {
 		System.out.println(mvcResult.getResponse().getContentAsString());
 	}
 	
-	//测试点4：除了startTime、endTime、type为默认值和page为正整数（10）外，其他所有的查询参数都为null
+	//测试点4：除了startTime、endTime、type为默认值和page为正整数（1）外，其他所有的查询参数都为null
 	@Test
 	public void testQueryLoginLogTestPage4() throws Exception{
 		QueryLoginLogDTO queryLoginLogDTO = new QueryLoginLogDTO();
-		queryLoginLogDTO.setPage(10);
+		queryLoginLogDTO.setPage(1);
 		queryLoginLogDTO.setPageCount(null);
 		queryLoginLogDTO.setStartTime("2020-03-25");
 		queryLoginLogDTO.setEndTime("2020-04-30");
@@ -146,12 +146,12 @@ public class SystemManagerQueryLogControllerTest {
 		System.out.println(mvcResult.getResponse().getContentAsString());
 	}
 
-	//测试点3：除了startTime、endTime、type为默认值和pageCount为正整数（10）外，其他所有的查询参数都为null
+	//测试点3：除了startTime、endTime、type为默认值和pageCount为正整数（1）外，其他所有的查询参数都为null
 	@Test
 	public void testQueryLoginLogTestPageCount3() throws Exception{
 		QueryLoginLogDTO queryLoginLogDTO = new QueryLoginLogDTO();
 		queryLoginLogDTO.setPage(null);
-		queryLoginLogDTO.setPageCount(10);
+		queryLoginLogDTO.setPageCount(1);
 		queryLoginLogDTO.setStartTime("2020-03-25");
 		queryLoginLogDTO.setEndTime("2020-04-30");
 		queryLoginLogDTO.setType("全部");
@@ -512,11 +512,11 @@ public class SystemManagerQueryLogControllerTest {
 		System.out.println(mvcResult.getResponse().getContentAsString());
 	}
 	
-	//测试点4：除了startTime、endTime、operateType为默认值和page为正整数（10）外，其他所有的查询参数都为null
+	//测试点4：除了startTime、endTime、operateType为默认值和page为正整数（1）外，其他所有的查询参数都为null
 	@Test
 	public void testQueryOperateLogTestPage4() throws Exception{
 		QueryOperateLogDTO queryOperateLogDTO = new QueryOperateLogDTO();
-		queryOperateLogDTO.setPage(10);
+		queryOperateLogDTO.setPage(1);
 		queryOperateLogDTO.setPageCount(null);
 		queryOperateLogDTO.setStartTime("2020-03-25");
 		queryOperateLogDTO.setEndTime("2020-04-30");
@@ -565,12 +565,12 @@ public class SystemManagerQueryLogControllerTest {
 		System.out.println(mvcResult.getResponse().getContentAsString());
 	}
 
-	//测试点3：除了startTime、endTime、operateType为默认值和pageCount为正整数（10）外，其他所有的查询参数都为null
+	//测试点3：除了startTime、endTime、operateType为默认值和pageCount为正整数（20）外，其他所有的查询参数都为null
 	@Test
 	public void testQueryOperateLogTestPageCount3() throws Exception{
 		QueryOperateLogDTO queryOperateLogDTO = new QueryOperateLogDTO();
 		queryOperateLogDTO.setPage(null);
-		queryOperateLogDTO.setPageCount(10);
+		queryOperateLogDTO.setPageCount(20);
 		queryOperateLogDTO.setStartTime("2020-03-25");
 		queryOperateLogDTO.setEndTime("2020-04-30");
 		queryOperateLogDTO.setOperateType("全部");
@@ -964,11 +964,11 @@ public class SystemManagerQueryLogControllerTest {
 		System.out.println(mvcResult.getResponse().getContentAsString());
 	}
 	
-	//测试点4：除了startDate、endDate、status为默认值和page为正整数（10）外，其他所有的查询参数都为null
+	//测试点4：除了startDate、endDate、status为默认值和page为正整数（1）外，其他所有的查询参数都为null
 	@Test
 	public void testQueryIntegrationLogTestPage4() throws Exception{
 		QueryIntegrationLogDTO queryIntegrationLogDTO = new QueryIntegrationLogDTO();
-		queryIntegrationLogDTO.setPage(10);
+		queryIntegrationLogDTO.setPage(1);
 		queryIntegrationLogDTO.setPageCount(null);
 		queryIntegrationLogDTO.setStartDate("2020-03-25");
 		queryIntegrationLogDTO.setEndDate("2020-04-30");
@@ -1017,12 +1017,12 @@ public class SystemManagerQueryLogControllerTest {
 		System.out.println(mvcResult.getResponse().getContentAsString());
 	}
 
-	//测试点3：除了startDate、endDate、status为默认值和pageCount为正整数（10）外，其他所有的查询参数都为null
+	//测试点3：除了startDate、endDate、status为默认值和pageCount为正整数（20）外，其他所有的查询参数都为null
 	@Test
 	public void testQueryIntegrationLogTestPageCount3() throws Exception{
 		QueryIntegrationLogDTO queryIntegrationLogDTO = new QueryIntegrationLogDTO();
 		queryIntegrationLogDTO.setPage(null);
-		queryIntegrationLogDTO.setPageCount(10);
+		queryIntegrationLogDTO.setPageCount(20);
 		queryIntegrationLogDTO.setStartDate("2020-03-25");
 		queryIntegrationLogDTO.setEndDate("2020-04-30");
 		queryIntegrationLogDTO.setStatus("全部");
