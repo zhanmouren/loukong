@@ -15,6 +15,19 @@
 	order by "loginLog"."createTime" desc
     </select>
     
+    <select id="getLoginLogCount" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLoginLogDTO" resultType="java.lang.Integer">
+	select count(*)
+	from "SM_loginLog" as "loginLog"
+	left join "SM_user" as "user" on "user".code = "loginLog"."loginUserCode"
+	<trim prefix="where" prefixOverrides="and|or">
+		<if test="name != null  and name !='' "> and "user".name = #{name}</if>  
+   	    <if test="startTime != null  "> and  to_char("loginLog"."loginTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
+   	    <if test="endTime != null   "> and  to_char("loginLog"."loginTime",'YYYY-MM-dd')  &lt;= #{endTime}</if> 
+   	    <if test="type != null  and type !='' "> and "loginLog".type = #{type}</if>          
+	</trim>
+	order by "loginLog"."createTime" desc
+    </select>
+    
     <insert id="addLoginLog" parameterType="com.koron.inwlms.bean.DTO.sysManager.LoginLogDTO">  
         insert into "SM_loginLog"("loginUserCode",result,"loginIp","errorLog","loginTime","createBy","createTime","updateBy","updateTime",type)
  		values(#{loginUserCode},#{result},#{loginIp},#{errorLog},now(),#{createBy},now(),#{updateBy},now(),#{type})

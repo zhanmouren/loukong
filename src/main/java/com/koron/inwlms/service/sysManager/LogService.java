@@ -9,6 +9,7 @@ import com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryIntegrationLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLoginLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryOperateLogDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationLogVO;
 import com.koron.inwlms.bean.VO.sysManager.LoginLogVO;
 import com.koron.inwlms.bean.VO.sysManager.OperateLogVO;
@@ -22,8 +23,8 @@ import com.koron.inwlms.bean.VO.sysManager.PageOperateLogListVO;
  */
 public interface LogService {
 	
-	//查询登录日志（用户名，开始时间与结束时间）
-	List<LoginLogVO> queryLoginLog(SessionFactory factory, QueryLoginLogDTO queryLoginLogDTO);
+	//查询登录日志
+	PageListVO<List<LoginLogVO>> queryLoginLog(SessionFactory factory, QueryLoginLogDTO queryLoginLogDTO);
 	//插入登录日志
 	Integer addLoginLog(SessionFactory factory,LoginLogDTO loginLogDTO);
 	//下载登录日志列表数据

@@ -25,6 +25,8 @@ public interface LogMapper {
 	public Integer addLoginLog(LoginLogDTO loginLogDTO);
 	//查询登录日志
 	public List<LoginLogVO> queryLoginLog(QueryLoginLogDTO queryLoginLogDTO);
+	//查询登录日志条数
+	public int getLoginLogCount(QueryLoginLogDTO queryLoginLogDTO);
 	
 	//查询操作日志
 	public List<OperateLogVO> queryOperateLog(QueryOperateLogDTO queryOperateLogDTO);

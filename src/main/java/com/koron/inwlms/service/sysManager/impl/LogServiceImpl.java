@@ -14,6 +14,7 @@ import com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryIntegrationLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLoginLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryOperateLogDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationLogVO;
 import com.koron.inwlms.bean.VO.sysManager.LoginLogVO;
@@ -41,10 +42,20 @@ public class LogServiceImpl implements LogService {
 	//查询登录日志 2020/03/30
 	@TaskAnnotation("queryLoginLog")
 	@Override
-	public List<LoginLogVO> queryLoginLog(SessionFactory factory,QueryLoginLogDTO queryLoginLogDTO){
+	public PageListVO<List<LoginLogVO>> queryLoginLog(SessionFactory factory,QueryLoginLogDTO queryLoginLogDTO){
 		LogMapper logMapper = factory.getMapper(LogMapper.class);
-		List<LoginLogVO> LoginLogList=logMapper.queryLoginLog(queryLoginLogDTO);
-		return LoginLogList;
+		List<LoginLogVO> loginLogList=logMapper.queryLoginLog(queryLoginLogDTO);
+		int rowNumber = logMapper.getLoginLogCount(queryLoginLogDTO);
+		//返回数据结果
+		PageListVO<List<LoginLogVO>> result = new PageListVO<>();
+		result.setDataList(loginLogList);
+		
+		PageVO pageVO = PageUtil.getPageBean(queryLoginLogDTO.getPage(), queryLoginLogDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
 	}
 		
 	//插入登录日志 2020/03/31
