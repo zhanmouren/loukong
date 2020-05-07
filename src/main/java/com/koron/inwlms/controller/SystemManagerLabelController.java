@@ -1,6 +1,8 @@
 package com.koron.inwlms.controller;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelExcelBean;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.LabelVO;
 import com.koron.inwlms.bean.VO.sysManager.PageLabelListVO;
 import com.koron.inwlms.service.sysManager.LabelService;
@@ -60,17 +63,47 @@ public class SystemManagerLabelController {
 	@ApiOperation(value = "查询标签接口", notes = "查询标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryLabel(@RequestBody QueryLabelDTO queryLabelDTO) {
-		if(queryLabelDTO.getPage() == null ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "页码不能为空", Integer.class).toJson();
+		if(queryLabelDTO.getPage() == null || queryLabelDTO.getPage() <0 || queryLabelDTO.getPage() == 0) {
+			queryLabelDTO.setPage(1);
 		}
-		if(queryLabelDTO.getPageCount() == null ) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "每页数量不能为空", Integer.class).toJson();
+		if(queryLabelDTO.getPageCount() == null || queryLabelDTO.getPageCount() <0 || queryLabelDTO.getPageCount() ==0) {
+			queryLabelDTO.setPageCount(20);
 		}
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		if(queryLabelDTO.getStartTime() == null || queryLabelDTO.getStartTime().equals("")) {
+	        return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间不能为空", Integer.class).toJson();
+		}else {
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				formatter.parse(queryLabelDTO.getStartTime());
+			}catch(Exception e){
+				return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间格式不是yyyy-mm-dd", Integer.class).toJson();
+			}
+		}
+		if(queryLabelDTO.getEndTime() == null || queryLabelDTO.getEndTime().equals("")) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!结束时间不能为空", Integer.class).toJson();
+		}else {
+			DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				formatter.parse(queryLabelDTO.getEndTime());
+			}catch(Exception e){
+				return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!结束时间格式不是yyyy-mm-dd", Integer.class).toJson();
+			}
+		}
+		int res = queryLabelDTO.getStartTime().compareTo(queryLabelDTO.getEndTime());
+		if(res > 0) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间大于结束时间", Integer.class).toJson();
+		}
+		
+		if(queryLabelDTO.getType()==null || StringUtils.isBlank(queryLabelDTO.getType())) {
+			queryLabelDTO.setType(null);
+		}else if(queryLabelDTO.getType().equals("全部")) {
+			queryLabelDTO.setType(null);
+		}
+		MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		//执行查询标签
 		 try {
-			 List<LabelVO> labelList=ADOConnection.runTask(labelSerivce, "queryLabel", List.class, queryLabelDTO);
-			 if(labelList.size()>0) {
+			 PageListVO labelList=ADOConnection.runTask(labelSerivce, "queryLabel", PageListVO.class, queryLabelDTO);
+			 if(labelList != null && labelList.getRowNumber() > 0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到标签的信息"); 
 			     msg.setData(labelList);

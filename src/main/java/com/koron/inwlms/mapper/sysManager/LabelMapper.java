@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.koron.inwlms.bean.DTO.sysManager.LabelDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelExcelBean;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
+import com.koron.inwlms.bean.DTO.sysManager.QueryLoginLogDTO;
 import com.koron.inwlms.bean.VO.sysManager.LabelVO;
 
 /**
@@ -20,6 +21,9 @@ public interface LabelMapper {
 	
 	//查询标签
 	public List<LabelVO> queryLabel(QueryLabelDTO queryLabelDTO);
+	//查询标签条数
+	public int getLabelCount(QueryLabelDTO queryLabelDTO);
+		
 	//添加标签
 	public Integer addLabel(LabelDTO labelDTO);	
 	//删除标签

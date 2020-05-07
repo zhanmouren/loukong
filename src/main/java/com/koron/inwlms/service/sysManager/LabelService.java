@@ -22,7 +22,7 @@ import com.koron.inwlms.bean.VO.sysManager.UserVO;
 public interface LabelService {
 
 	//查询标签
-	List<LabelVO> queryLabel(SessionFactory factory, QueryLabelDTO queryLabelDTO);
+	PageListVO<List<LabelVO>> queryLabel(SessionFactory factory, QueryLabelDTO queryLabelDTO);
 	//添加标签
 	MessageBean<String> addLabel(SessionFactory factory,LabelDTO labelDTO);
 	//删除标签

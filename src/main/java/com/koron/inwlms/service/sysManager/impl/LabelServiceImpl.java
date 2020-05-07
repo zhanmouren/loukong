@@ -15,8 +15,10 @@ import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelExcelBean;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.sysManager.LabelVO;
+import com.koron.inwlms.bean.VO.sysManager.LoginLogVO;
 import com.koron.inwlms.bean.VO.sysManager.PageLabelListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserListVO;
 import com.koron.inwlms.mapper.common.FileMapper;
@@ -39,10 +41,20 @@ public class LabelServiceImpl implements LabelService{
 	//查询标签 2020/04/17
 	@TaskAnnotation("queryLabel")
 	@Override
-	public List<LabelVO> queryLabel(SessionFactory factory, QueryLabelDTO queryLabelDTO) {
+	public PageListVO<List<LabelVO>> queryLabel(SessionFactory factory, QueryLabelDTO queryLabelDTO) {
 		LabelMapper labelMapper = factory.getMapper(LabelMapper.class);
 		List<LabelVO> labelList=labelMapper.queryLabel(queryLabelDTO);
-		return labelList;
+		int rowNumber = labelMapper.getLabelCount(queryLabelDTO);
+		//返回数据结果
+		PageListVO<List<LabelVO>> result = new PageListVO<>();
+		result.setDataList(labelList);
+		
+		PageVO pageVO = PageUtil.getPageBean(queryLabelDTO.getPage(), queryLabelDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
 	}
 	
 	//插入标签 2020/04/17

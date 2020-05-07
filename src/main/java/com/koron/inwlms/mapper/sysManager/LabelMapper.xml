@@ -9,16 +9,29 @@
 		<if test="name != null  and name !='' "> and "label".cn = #{name} or "label".en = #{name} or "label"."cn_HK" = #{name}</if>  
    	    <if test="code != null  and code !='' "> and "label".code = #{code} </if>  
    	    <if test="type != null  and type !='' "> and "label".type = #{type} </if>  
-   	    <if test="startTime != null  "> and  "label"."createTime" &gt;= #{startTime}</if>
-   	    <if test="endTime != null   "> and  "label"."createTime" &lt;= #{endTime}</if>         
+   	    <if test="startTime != null  "> and to_char( "label"."createTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
+   	    <if test="endTime != null   "> and  to_char( "label"."createTime",'YYYY-MM-dd') &lt;= #{endTime}</if>         
 	</trim>
 	order by "label"."createTime" desc
+	limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
    
    
+   <select id="getLabelCount" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="java.lang.Integer">
+	select count(*)
+	from "SM_label" as "label"
+	<trim prefix="where" prefixOverrides="and|or">
+		<if test="name != null  and name !='' "> and "label".cn = #{name} or "label".en = #{name} or "label"."cn_HK" = #{name}</if>  
+   	    <if test="code != null  and code !='' "> and "label".code = #{code} </if>  
+   	    <if test="type != null  and type !='' "> and "label".type = #{type} </if>  
+   	    <if test="startTime != null  "> and to_char( "label"."createTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
+   	    <if test="endTime != null   "> and  to_char( "label"."createTime",'YYYY-MM-dd') &lt;= #{endTime}</if>         
+	</trim>
+    </select>
+   
      <insert id="addLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelDTO">  
-        insert into "SM_label"(id,cn,en,"cn_HK",code,type,remark,"createBy","createTime","updateBy","updateTime")
- 		values('3',#{cn},#{en},#{cnHK},#{code},#{type},#{remark},#{createBy},now(),#{updateBy},now())
+        insert into "SM_label"(cn,en,"cn_HK",code,type,remark,"createBy","createTime","updateBy","updateTime")
+ 		values(#{cn},#{en},#{cnHK},#{code},#{type},#{remark},#{createBy},now(),#{updateBy},now())
     </insert>
     
     

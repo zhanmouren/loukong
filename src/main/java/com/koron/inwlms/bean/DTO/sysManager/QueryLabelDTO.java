@@ -18,9 +18,9 @@ public class QueryLabelDTO extends BaseDTO {
 	//标签类型
 	private String type;
 	//开始时间
-	private Timestamp startTime;
+	private String startTime;
 	//结束时间
-	private Timestamp endTime;
+	private String endTime;
 	
 	
 	public String getName() {
@@ -41,16 +41,16 @@ public class QueryLabelDTO extends BaseDTO {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public Timestamp getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
-	public void setStartTime(Timestamp startTime) {
+	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
-	public Timestamp getEndTime() {
+	public String getEndTime() {
 		return endTime;
 	}
-	public void setEndTime(Timestamp endTime) {
+	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
 
