@@ -7,6 +7,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
+import com.koron.inwlms.bean.VO.sysManager.DataDicNewVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.common.impl.CommonServiceImpl;
@@ -287,7 +288,7 @@ public class CommonController {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	 
 		 //执行查询数据字典
 		 try {
-			 List<DataDicVO> dicList=ADOConnection.runTask(new CommonServiceImpl(), "queryAllDataDic", List.class, dataDicDTO);
+			 List<DataDicNewVO> dicList=ADOConnection.runTask(new CommonServiceImpl(), "queryAllDataDic", List.class, dataDicDTO);
 			 if(dicList.size()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关数据字典键值的信息"); 

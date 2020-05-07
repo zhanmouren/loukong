@@ -7,6 +7,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.VO.common.SysConfigVO;
+import com.koron.inwlms.bean.VO.sysManager.DataDicNewVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.mapper.common.CommonMapper;
 import com.koron.inwlms.service.common.CommonService;
@@ -25,9 +26,9 @@ public class CommonServiceImpl implements CommonService {
 	//查询所有数据字典说明
 	@TaskAnnotation("queryAllDataDic")
 	@Override
-	public List<DataDicVO> queryAllDataDic(SessionFactory factory) {
+	public List<DataDicNewVO> queryAllDataDic(SessionFactory factory) {
 		CommonMapper mapper = factory.getMapper(CommonMapper.class);
-		List<DataDicVO> dicList=mapper.queryAllDataDic();
+		List<DataDicNewVO> dicList=mapper.queryAllDataDic();
 		return dicList;
 	}
 

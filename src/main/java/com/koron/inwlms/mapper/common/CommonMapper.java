@@ -9,6 +9,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.DTO.common.Indicator;
 import com.koron.inwlms.bean.VO.common.SysConfigVO;
+import com.koron.inwlms.bean.VO.sysManager.DataDicNewVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 
 /**
@@ -24,6 +25,6 @@ public interface CommonMapper {
 	@Select("select * from \"LC_APP_Dim_Indicator\" where code = #{code}")
 	Indicator queryIndicatorByCode(@Param("code") String code); 
 	
-	List<DataDicVO> queryAllDataDic();
+	List<DataDicNewVO> queryAllDataDic();
 	
 }
