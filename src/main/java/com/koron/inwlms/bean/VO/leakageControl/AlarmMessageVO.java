@@ -66,7 +66,17 @@ public class AlarmMessageVO {
 	 */
 	private String taskState;
 	
+	private Integer totalNumber;
 	
+	
+
+	public Integer getTotalNumber() {
+		return totalNumber;
+	}
+
+	public void setTotalNumber(Integer totalNumber) {
+		this.totalNumber = totalNumber;
+	}
 
 	public String getObjectType() {
 		return ObjectType;

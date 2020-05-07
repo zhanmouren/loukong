@@ -23,4 +23,6 @@ public interface AlarmProcessService {
 
 	TreatmentEffectVO queryTreatmentEffect(SessionFactory factory, TreatmentEffectDTO treatmentEffectDTO);
 
+	List<AlarmProcessVO> queryAlarmProcessByTaskCode(SessionFactory factory, String taskCode);
+
 }

@@ -7,17 +7,21 @@ import org.koron.ebs.mybatis.SessionFactory;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 
 public interface AlarmMessageService {
 
-	List<AlarmMessageVO> queryAlarmMessage(SessionFactory factory, WarningInfDTO warningInfDTO);
+	AlarmMessageReturnVO queryAlarmMessage(SessionFactory factory, WarningInfDTO warningInfDTO);
 
 
-	List<AlarmMessageByTypeVO> queryAlarmMessageByType(SessionFactory factory,
-			List<AlarmMessageVO> alarmMessageList);
+	AlarmMessageByTypeVO queryAlarmMessageByObjectType(SessionFactory factory,
+			WarningInfDTO warningInfDTO);
 
 
 	List<AlarmMessageVO> queryAlarmMessageByPointCode(SessionFactory factory, String code);
+
+
+	AlarmMessageByTypeVO queryAlarmMessageByAlarmType(SessionFactory factory, WarningInfDTO warningInfDTO);
 
 }

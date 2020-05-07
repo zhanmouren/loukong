@@ -28,6 +28,13 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		List<AlarmProcessVO> list = mapper.queryAlarmProcess(alarmProcessDTO);
 		return list;
 	}
+	@TaskAnnotation("queryAlarmProcessByTaskCode")
+	@Override
+	public List<AlarmProcessVO> queryAlarmProcessByTaskCode(SessionFactory factory,String taskCode){
+		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		List<AlarmProcessVO> list = mapper.queryAlarmProcessByTaskCode(taskCode);
+		return list;
+	}
 	
 	@TaskAnnotation("updateAlarmProcess")
 	@Override
@@ -49,13 +56,13 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OFFLINE)) {
 			num = mapper.addAlarmProcessOfPLX(alarmProcessVO);
 		}
-		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN) && alarmProcessVO.getObjectFlag().equals(Constant.OBJECTTYPE_POINT)) {
+		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN) && alarmProcessVO.getType() == 1) {
 			num = mapper.addAlarmProcessOfPCX(alarmProcessVO);
 		}
 		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_NOISE)) {
 			num = mapper.addAlarmProcessOfPZS(alarmProcessVO);
 		}
-		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN) && alarmProcessVO.getObjectFlag().equals(Constant.OBJECTTYPE_ZONE)) {
+		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN) && alarmProcessVO.getType() == 0) {
 			num = mapper.addAlarmProcessOfZCX(alarmProcessVO);
 		}
 		

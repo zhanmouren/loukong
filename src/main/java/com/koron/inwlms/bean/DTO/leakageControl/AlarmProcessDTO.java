@@ -49,8 +49,32 @@ public class AlarmProcessDTO extends BaseDTO{
 	
 	private String state;
 	
+	private String taskCode;
+	/**
+	 * 任务类型，0漏损预警任务；1监测预警任务
+	 */
+	private Integer type;
+	
+	
 
 	
+	
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+
+	public String getTaskCode() {
+		return taskCode;
+	}
+
+	public void setTaskCode(String taskCode) {
+		this.taskCode = taskCode;
+	}
+
 	public Integer getId() {
 		return id;
 	}

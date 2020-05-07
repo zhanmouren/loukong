@@ -109,18 +109,19 @@ public class AlarmProcessVO {
 	/**
 	 * 标志是漏损预警（0）还是监测预警（1）
 	 */
-	private String objectFlag;
+	private Integer type;
 	
 	
 	
 	
 	
-	public String getObjectFlag() {
-		return objectFlag;
+
+	public Integer getType() {
+		return type;
 	}
 
-	public void setObjectFlag(String objectFlag) {
-		this.objectFlag = objectFlag;
+	public void setType(Integer type) {
+		this.type = type;
 	}
 
 	public String getTaskCode() {

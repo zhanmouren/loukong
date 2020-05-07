@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
  <mapper namespace="com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper">
   
-  <select id="queryAlarmMessage" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
+  <!--<select id="queryAlarmMessage" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
   select c.id as id, c."pointCode" as "pointCode", c.code as code, c."schemeCode" as "schemeCode", select_value(c."alarmType") as "alarmType", c."objectCode" as "objectCode", c."areaCode" as "areaCode",
   select_value(c."objectType") as "objectType", c."createTime" as "createTime", c.content as content, c."createBy" as "createBy", c."alarmTime" as "alarmTime", c."updateBy" as "updateBy",
   c."updateTime" as "updateTime", d."code" as "taskCode", d.state as "taskState" from
@@ -18,11 +18,35 @@
   <if test="objectCode != null and objectCode != '' "> and "objectCode" = #{objectCode}</if>
   <if test="orderby != null and orderby != '' "> order by ${orderby}</if>) a inner join "APP_warningScheme" b on a."schemeCode" = b.code) c inner join "APP_warningProcessing" d on c.code = d."warningCode"
   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+  </select>  -->
+  
+  <select id="queryAlarmMessage" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
+  select c.id as id, c."pointCode" as "pointCode", c.code as code, c."schemeCode" as "schemeCode", c."alarmType" as "alarmType", c."objectCode" as "objectCode", c."areaCode" as "areaCode",
+  c."objectType" as "objectType", c."createTime" as "createTime", c.content as content, c."createBy" as "createBy", c."alarmTime" as "alarmTime", c."updateBy" as "updateBy",
+  c."updateTime" as "updateTime", d."code" as "taskCode", d.state as "taskState" from
+  (select a.id as id, a."pointCode" as "pointCode", a.code as code, a."schemeCode" as "schemeCode", a."alarmType" as "alarmType", a."objectCode" as "objectCode", a."areaCode" as "areaCode",
+  b."objectType" as "objectType", a."createTime" as "createTime", a.content as content, a."createBy" as "createBy", a."alarmTime" as "alarmTime", a."updateBy" as "updateBy",
+  a."updateTime" as "updateTime" from
+  (select * from "APP_warningInf" where "alarmTime" between '${startTime}' and '${endTime}' 
+  <if test="alarmType != null and alarmType != '' "> and "alarmType" = #{alarmType} </if>
+  <if test="areaCode != null and areaCode != '' "> and "areaCode" = #{areaCode}</if>
+  <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
+  <if test="objectCode != null and objectCode != '' "> and "objectCode" = #{objectCode}</if>
+  <if test="orderby != null and orderby != '' "> order by ${orderby}</if>) a inner join "APP_warningScheme" b on a."schemeCode" = b.code) c inner join "APP_warningProcessing" d on c.code = d."warningCode"
+  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+  </select>
+  
+  <select id="queryAlarmMessageTotalNumber" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO" resultType="java.lang.Integer">
+  select count(*) from "APP_warningInf"  where "alarmTime" between '${startTime}' and '${endTime}' 
+  <if test="alarmType != null and alarmType != '' "> and "alarmType" = #{alarmType} </if>
+  <if test="areaCode != null and areaCode != '' "> and "areaCode" = #{areaCode}</if>
+  <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
+  <if test="objectCode != null and objectCode != '' "> and "objectCode" = #{objectCode}</if>
   </select>
   
   <insert id="addWarningInf" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
   insert into "APP_warningInf"(code, "pointCode", "schemeCode", "alarmType", "objectCode", "areaCode", "alarmTime", "content", "createBy", "createTime", "updateBy", "updateTime")
-  values(#{code}, #{pointCode}, #{schemeCode}, #{alarmType}, #{objectCode}, #{areaCode}, #{alarmTime}, #{content}, #{createBy}, now, #{updateBy}, #{updateTime})
+  values(#{code}, #{pointCode}, #{schemeCode}, #{alarmType}, #{objectCode}, #{areaCode}, #{alarmTime}, #{content}, #{createBy}, Now(), #{updateBy}, Now())
   </insert>
 
   

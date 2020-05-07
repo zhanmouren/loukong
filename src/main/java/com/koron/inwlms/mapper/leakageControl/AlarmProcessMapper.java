@@ -18,6 +18,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 public interface AlarmProcessMapper {
 	
 	List<AlarmProcessVO> queryAlarmProcess(AlarmProcessDTO alarmProcessDTO);
+	List<AlarmProcessVO> queryAlarmProcessByTaskCode(String taskCode);
 	Integer addAlarmProcess(AlarmProcessVO alarmProcessVO);
 	Integer updateAlarmProcess(AlarmProcessVO alarmProcessVO);
 	Integer deleteAlarmProcess(String code);

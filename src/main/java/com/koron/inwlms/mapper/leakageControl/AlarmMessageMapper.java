@@ -27,5 +27,7 @@ public interface AlarmMessageMapper {
 	
 	Integer addWarningInf(AlarmMessageVO alarmMessageVO);
 	
+	Integer queryAlarmMessageTotalNumber(WarningInfDTO warningInfDTO);
+	
 
 }
