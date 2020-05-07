@@ -94,7 +94,7 @@ public class SystemManagerLogController {
 		}
 		
 		if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())) {
-			
+			queryLoginLogDTO.setType(null);
 		}else if(queryLoginLogDTO.getType().equals("全部")) {
 			queryLoginLogDTO.setType(null);
 		}else if(!queryLoginLogDTO.getType().equals("登入") && !queryLoginLogDTO.getType().equals("登出")) {
@@ -255,7 +255,7 @@ public class SystemManagerLogController {
 		}
 		
 		if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType())) {
-			
+			queryOperateLogDTO.setOperateType(null);
 		}else if(queryOperateLogDTO.getOperateType().equals("全部")) {
 			queryOperateLogDTO.setOperateType(null);
 		}else if(!queryOperateLogDTO.getOperateType().equals("增加") && !queryOperateLogDTO.getOperateType().equals("删除") && 
@@ -448,7 +448,7 @@ public class SystemManagerLogController {
 			}
 		}
 		if(queryIntegrationLogDTO.getStatus()==null || StringUtils.isBlank(queryIntegrationLogDTO.getStatus())) {
-			
+			queryIntegrationLogDTO.setStatus(null);
 		}else if(queryIntegrationLogDTO.getStatus().equals("全部")) {
 			queryIntegrationLogDTO.setStatus(null);
 		}else if(!queryIntegrationLogDTO.getStatus().equals("进行中") && !queryIntegrationLogDTO.getStatus().equals("已结束")) {
