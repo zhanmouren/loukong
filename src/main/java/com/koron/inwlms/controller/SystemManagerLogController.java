@@ -93,7 +93,7 @@ public class SystemManagerLogController {
 		}
 		
 		if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型不能为空", Integer.class).toJson();
+			
 		}else if(queryLoginLogDTO.getType().equals("全部")) {
 			queryLoginLogDTO.setType(null);
 		}else if(!queryLoginLogDTO.getType().equals("登入") && !queryLoginLogDTO.getType().equals("登出")) {
@@ -189,7 +189,7 @@ public class SystemManagerLogController {
 			}
 			
 			if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())) {
-				return new HttpEntity<String>("参数错误!操作类型不能为空");
+				
 			}else if(queryLoginLogDTO.getType().equals("全部")) {
 				queryLoginLogDTO.setType(null);
 			}else if(!queryLoginLogDTO.getType().equals("登入") && !queryLoginLogDTO.getType().equals("登出")) {
@@ -252,8 +252,9 @@ public class SystemManagerLogController {
 		if(res > 0) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间大于结束时间", Integer.class).toJson();
 		}
+		
 		if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType())) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型不能为空", Integer.class).toJson();
+			
 		}else if(queryOperateLogDTO.getOperateType().equals("全部")) {
 			queryOperateLogDTO.setOperateType(null);
 		}else if(!queryOperateLogDTO.getOperateType().equals("增加") && !queryOperateLogDTO.getOperateType().equals("删除") && 
@@ -379,7 +380,7 @@ public class SystemManagerLogController {
 				return new HttpEntity<String>("参数错误!开始时间大于结束时间");
 			}
 			if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType())) {
-				return new HttpEntity<String>("参数错误!操作类型不能为空");
+				
 			}else if(queryOperateLogDTO.getOperateType().equals("全部")) {
 				queryOperateLogDTO.setOperateType(null);
 			}else if(!queryOperateLogDTO.getOperateType().equals("增加") && !queryOperateLogDTO.getOperateType().equals("删除") && 
@@ -446,7 +447,7 @@ public class SystemManagerLogController {
 			}
 		}
 		if(queryIntegrationLogDTO.getStatus()==null || StringUtils.isBlank(queryIntegrationLogDTO.getStatus())) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!状态不能为空", Integer.class).toJson();
+			
 		}else if(queryIntegrationLogDTO.getStatus().equals("全部")) {
 			queryIntegrationLogDTO.setStatus(null);
 		}else if(!queryIntegrationLogDTO.getStatus().equals("进行中") && !queryIntegrationLogDTO.getStatus().equals("已结束")) {
@@ -512,7 +513,7 @@ public class SystemManagerLogController {
 				}
 			}
 			if(queryIntegrationLogDTO.getStatus()==null || StringUtils.isBlank(queryIntegrationLogDTO.getStatus())) {
-				return new HttpEntity<String>("参数错误!状态不能为空");
+				
 			}else if(queryIntegrationLogDTO.getStatus().equals("全部")) {
 				queryIntegrationLogDTO.setStatus(null);
 			}else if(!queryIntegrationLogDTO.getStatus().equals("进行中") && !queryIntegrationLogDTO.getStatus().equals("已结束")) {
