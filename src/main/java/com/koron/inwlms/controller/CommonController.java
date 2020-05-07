@@ -3,10 +3,13 @@ package com.koron.inwlms.controller;
 import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
+import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
+import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.inwlms.service.common.impl.CommonServiceImpl;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.util.FileUtil;
@@ -272,5 +275,35 @@ public class CommonController {
 		return msg.toJson();
 	}
 	
+	 /*
+     * date:2020-05-06
+     * funtion:查询所有数据字典接口
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryAllDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询所有数据字典接口", notes = "查询所有数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryAllDataDic(@RequestBody DataDicDTO dataDicDTO) {
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	 
+		 //执行查询数据字典
+		 try {
+			 List<DataDicVO> dicList=ADOConnection.runTask(new CommonServiceImpl(), "queryAllDataDic", List.class, dataDicDTO);
+			 if(dicList.size()>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到相关数据字典键值的信息"); 
+			     msg.setData(dicList);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("没有查询到该数据字典键值的信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询数据字典键值失败");
+	     }
+		 return msg.toJson();
+		 
+	}
 	
 }
