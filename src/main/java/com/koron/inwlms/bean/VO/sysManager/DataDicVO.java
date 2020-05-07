@@ -19,6 +19,8 @@ public class DataDicVO {
    private String dicCn;
 	//数据字典英文名称
 	private String dicEn;
+	//数据字典繁体名称
+	private String dicTc;
 	//数据字典备注
 	private String dicRemark;
    
@@ -29,6 +31,12 @@ public class DataDicVO {
 	//数据字典明细顺序
 	private Integer dicSeq;
 	
+	public String getDicTc() {
+		return dicTc;
+	}
+	public void setDicTc(String dicTc) {
+		this.dicTc = dicTc;
+	}
 	public String getDicParent() {
 		return dicParent;
 	}

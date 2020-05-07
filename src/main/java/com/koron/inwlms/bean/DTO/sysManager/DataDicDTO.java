@@ -50,6 +50,8 @@ public class DataDicDTO extends BaseDTO{
 	private String dicCn;
 	//数据字典英文名称
 	private String dicEn;
+	//数据字典繁体名称
+	private String dicTc;
 	//数据字典备注
 	private String dicRemark;
 	//创建人
@@ -69,8 +71,17 @@ public class DataDicDTO extends BaseDTO{
 		private Integer dicSeq;
 	    //装key Value的List列表
 		private	List<DataDicDTO> dataDicDTOList;
+		
+		
 
-	 public List<DataDicDTO> getDataDicDTOList() {
+	
+	public String getDicTc() {
+			return dicTc;
+		}
+		public void setDicTc(String dicTc) {
+			this.dicTc = dicTc;
+		}
+	public List<DataDicDTO> getDataDicDTOList() {
 			return dataDicDTOList;
 		}
 		public void setDataDicDTOList(List<DataDicDTO> dataDicDTOList) {

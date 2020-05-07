@@ -1310,6 +1310,9 @@ public class SystemManagerController {
 		if(dataDicDTO.getDicEn()==null || StringUtils.isBlank(dataDicDTO.getDicEn())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表英文名称不能为空", Integer.class).toJson();
 		}
+		if(dataDicDTO.getDicTc()==null ||  StringUtils.isBlank(dataDicDTO.getDicTc())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表繁体文名称不能为空", Integer.class).toJson();
+		}
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
 		}
@@ -1371,6 +1374,9 @@ public class SystemManagerController {
 		if(dataDicDTO.getDicEn()==null || StringUtils.isBlank(dataDicDTO.getDicEn())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表英文名称不能为空", Integer.class).toJson();
 		}
+		if(dataDicDTO.getDicTc()==null ||  StringUtils.isBlank(dataDicDTO.getDicTc())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表繁体文名称不能为空", Integer.class).toJson();
+		}
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
 		}			
@@ -1416,7 +1422,7 @@ public class SystemManagerController {
 		}
 		if(dataDicDTO.getDicKey()==null || StringUtils.isBlank(dataDicDTO.getDicKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键不能为空", Integer.class).toJson();
-		}
+		}        
 		if(dataDicDTO.getDicValue()==null || StringUtils.isBlank(dataDicDTO.getDicValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典值不能为空", Integer.class).toJson();
 		}
@@ -1535,6 +1541,9 @@ public class SystemManagerController {
 		}
 		if(dataDicDTO.getDicEn()==null || StringUtils.isBlank(dataDicDTO.getDicEn())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表英文名称不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicTc()==null ||  StringUtils.isBlank(dataDicDTO.getDicTc())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表繁体文名称不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行查询数据字典

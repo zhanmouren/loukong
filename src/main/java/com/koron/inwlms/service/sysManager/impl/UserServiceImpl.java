@@ -433,6 +433,7 @@ public class UserServiceImpl implements UserService{
 						DataDicDTO dataDicDTONew=new DataDicDTO();
 						dataDicDTONew.setDicCn(dataDicDTO.getDicCn());
 						dataDicDTONew.setDicEn(dataDicDTO.getDicEn());
+						dataDicDTONew.setDicTc(dataDicDTO.getDicTc());
 						dataDicDTONew.setDicParent(dataDicDTO.getDicParent());
 						dataDicDTONew.setDicRemark(dataDicDTO.getDicRemark());
 						dataDicDTONew.setDicKey(dataDicDTO.getDataDicDTOList().get(i).getDicKey());
@@ -1007,9 +1008,10 @@ public class UserServiceImpl implements UserService{
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					//根据parent查询主表信息
 					List<DataDicVO>  dataList=userMapper.queryDic(dataDicDTO);
-					if(dataList.size()>0) {
+					if(dataList!=null && dataList.size()>0) {
 						dataDicDTO.setDicCn(dataList.get(0).getDicCn());
 						dataDicDTO.setDicEn(dataList.get(0).getDicEn());
+						dataDicDTO.setDicTc(dataList.get(0).getDicTc());
 						dataDicDTO.setDicRemark(dataList.get(0).getDicRemark());
 					}
 					//添加时候判断key是否重复
