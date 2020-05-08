@@ -228,7 +228,7 @@ public class SystemManagerLabelController {
      * 下载标签列表模板接口
      * date:2020-04-20
      */  
-	@RequestMapping(value = "/downloadFileByFileId.htm", method = RequestMethod.GET, produces = {"text/html;charset=UTF-8"})
+	@RequestMapping(value = "/downloadFileByFileId.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
     @ResponseBody
     public void downloadFileByFileId(Integer fileId, HttpServletResponse response, HttpServletRequest request) {
         UploadFileDTO data = ADOConnection.runTask(labelSerivce, "getAttachmentInfoById", UploadFileDTO.class, fileId);
