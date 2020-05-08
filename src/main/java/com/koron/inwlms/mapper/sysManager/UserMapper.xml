@@ -411,8 +411,8 @@
 		<set>	                                 
              <if test="dicKey != null" > key= #{dicKey},</if>            
              <if test="dicValue != null" > value= #{dicValue},</if>
-             <if test="dicEnValue != null" > enValue= #{dicEnValue},</if>
-             <if test="dicTcValue != null" > tcValue= #{dicTcValue},</if>
+             <if test="dicEnValue != null" > "enValue"= #{dicEnValue},</if>
+             <if test="dicTcValue != null" > "tcValue"= #{dicTcValue},</if>
              <if test="dicSeq != null" > seq= #{dicSeq},</if>
              <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if>   
