@@ -1,5 +1,6 @@
 package com.koron.inwlms.service.leakageControl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
@@ -8,11 +9,15 @@ import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeMessage;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
 import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
+import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.util.Constant;
 
 @Service
@@ -144,15 +149,45 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 	
 	@TaskAnnotation("queryNoticeSchemeByWarningCode")
 	@Override
-	public List<AlertNoticeSchemeVO> queryNoticeSchemeByWarningCode(SessionFactory factory,String code) {
+	public List<AlertNoticeMessage> queryNoticeSchemeByWarningCode(SessionFactory factory,String code) {
+		List<AlertNoticeMessage> alertNoticeMessageList = new ArrayList<>();
 		WarningSchemeMapper warnMapper = factory.getMapper(WarningSchemeMapper.class);
 		List<AlertNoticeSchemeVO> alertNoticeSchemeList = warnMapper.queryNoticeSchemeByWarningCode(code);
 		
-		//TODO 通过角色ID查询用户
+		for(AlertNoticeSchemeVO alertNoticeSchemeVO : alertNoticeSchemeList) {
+			String userCode = alertNoticeSchemeVO.getRoleCode();
+			//查询角色下的用户信息
+			RoleDTO roleDTO = new RoleDTO();
+			roleDTO.setRoleCode(userCode);
+			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			List<UserVO> userList = userMapper.queryUserByRoleCode(roleDTO);
+			for(UserVO userVO : userList) {
+				AlertNoticeMessage alertNoticeMessage = new AlertNoticeMessage();
+				if(alertNoticeSchemeVO.getType().equals("邮件")) {
+					alertNoticeMessage.setContact(userVO.getEmail());
+					alertNoticeMessage.setName(userVO.getName());
+					alertNoticeMessage.setType(alertNoticeSchemeVO.getType());
+					//TODO 状态
+				}else if(alertNoticeSchemeVO.getType().equals("短信")) {
+					alertNoticeMessage.setContact(userVO.getPhone());
+					alertNoticeMessage.setName(userVO.getName());
+					alertNoticeMessage.setType(alertNoticeSchemeVO.getType());
+					//TODO 状态
+				}else if(alertNoticeSchemeVO.getType().equals("系统")) {
+					alertNoticeMessage.setName(userVO.getName());
+					alertNoticeMessage.setType(alertNoticeSchemeVO.getType());
+					//TODO 状态
+				}else if(alertNoticeSchemeVO.getType().equals("代办")) {
+					alertNoticeMessage.setName(userVO.getName());
+					alertNoticeMessage.setType(alertNoticeSchemeVO.getType());
+					//TODO 状态
+				}
+				alertNoticeMessageList.add(alertNoticeMessage);
+			}
+					
+		}
 		
-		//TODO 通过用户ID查询用户信息
-		
-		return alertNoticeSchemeList;
+		return alertNoticeMessageList;
 	}
 
 }

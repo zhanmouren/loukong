@@ -51,6 +51,16 @@
   </set>
   where "policyCode" = #{policyCode}
   </update>
+  
+  <update id="updatePolicyScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO">
+  update "APP_policyScheme"
+  <set>
+  <if test="name != null and name != '' "> name = #{name}</if>
+  <if test="content != null and content != '' "> content = #{content}</if>
+  <if test="state != null and state != '' "> state = #{state}</if>
+  </set>
+  where code = #{code}
+  </update>
  
  
  </mapper>

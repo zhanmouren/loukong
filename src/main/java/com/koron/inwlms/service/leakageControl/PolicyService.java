@@ -32,4 +32,6 @@ public interface PolicyService {
 
 	Integer addPolicySetting(SessionFactory factory, PolicySettingDTO policyDTO);
 
+	Integer updatePolicyScheme(SessionFactory factory, PolicySchemeDTO policySchemeDTO);
+
 }

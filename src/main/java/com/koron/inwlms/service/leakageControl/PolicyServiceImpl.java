@@ -51,6 +51,14 @@ public  class PolicyServiceImpl implements PolicyService{
 		return num;
 	}
 	
+	@TaskAnnotation("updatePolicyScheme")
+	@Override
+	public Integer updatePolicyScheme(SessionFactory factory,PolicySchemeDTO policySchemeDTO) {
+		PolicyMapper mapper = factory.getMapper(PolicyMapper.class);
+		Integer num = mapper.updatePolicyScheme(policySchemeDTO);
+		return num;
+	}
+	
 	@TaskAnnotation("updatePolicySetting")
 	@Override
 	public Integer updatePolicySetting(SessionFactory factory,PolicySettingDTO policyDTO) {

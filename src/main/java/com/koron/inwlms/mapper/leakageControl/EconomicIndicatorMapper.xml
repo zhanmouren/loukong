@@ -8,6 +8,12 @@
   select * from "APP_partitionInvest" 
   </select>
  
+ <insert id="addPartitionInvest" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PartitionInvestDTO">
+ insert into "APP_partitionInvest"(type, caliber, money, "otherInvest", "projectCost", "totalCost", "createBy", "createTime", "updateBy", "updateTime") values
+    <foreach collection="list" item="invest"  index="index" separator=",">
+			(#{invest.type}, #{invest.caliber}, #{invest.money}, #{invest.otherInvest}, #{invest.projectCost}, #{invest.totalCost}, #{invest.createBy}, Now(), #{invest.updateBy}, Now())
+	</foreach>
+ </insert>
 
   
   </mapper>

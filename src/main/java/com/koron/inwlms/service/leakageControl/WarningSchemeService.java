@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
+import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeMessage;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
@@ -32,6 +33,6 @@ public interface WarningSchemeService {
 
 	Integer updateAlarmRule(SessionFactory factory, AlarmRuleDTO alarmRuleDTO);
 
-	List<AlertNoticeSchemeVO> queryNoticeSchemeByWarningCode(SessionFactory factory, String code);
+	List<AlertNoticeMessage> queryNoticeSchemeByWarningCode(SessionFactory factory, String code);
 
 }

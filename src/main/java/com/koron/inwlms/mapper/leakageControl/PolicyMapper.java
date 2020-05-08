@@ -33,5 +33,6 @@ public interface PolicyMapper {
 	
 	Integer deletePolicySetting(String policyCode);
 	
+	Integer updatePolicyScheme(PolicySchemeDTO policySchemeDTO);
 	
 }

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import org.koron.ebs.mybatis.EnvSource;
 import org.springframework.stereotype.Repository;
 
+import com.koron.inwlms.bean.DTO.leakageControl.PartitionInvestDTO;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 
 @Repository
@@ -17,5 +18,10 @@ public interface EconomicIndicatorMapper {
 	
 	@Select("select * from \"APP_partitionInvest\" where type = #{type} and caliber = #{caliber}")
 	PartitionInvestVO queryPartitionInvestByCal(@Param("type") String type,@Param("caliber") String caliber);
+	
+	@Select("delete from \"APP_partitionInvest\"")
+	Integer deletePartitionInvest();
+	
+	Integer addPartitionInvest(List<PartitionInvestDTO> partitionInvestDTO);
 
 }

@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 
+import com.koron.inwlms.bean.DTO.leakageControl.PartitionInvestDTO;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 
 public interface EconomicIndicatorService {
 
 	List<PartitionInvestVO> queryPartitionInvest(SessionFactory factory);
+
+	Integer updatePartitionInvest(SessionFactory factory, List<PartitionInvestDTO> partitionInvestDTOList);
 
 	
 	

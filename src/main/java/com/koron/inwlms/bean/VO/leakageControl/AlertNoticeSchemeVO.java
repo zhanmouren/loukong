@@ -17,9 +17,9 @@ public class AlertNoticeSchemeVO {
 	private String type;
 	
 	/**
-	 * 需通知的角色ID
+	 * 需通知的角色code
 	 */
-	private Integer roleCode;
+	private String roleCode;
 	
 	private String createBy;
 	
@@ -100,13 +100,15 @@ public class AlertNoticeSchemeVO {
 		this.schemeCode = schemeCode;
 	}
 
-	public Integer getRoleCode() {
+	public String getRoleCode() {
 		return roleCode;
 	}
 
-	public void setRoleCode(Integer roleCode) {
+	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
 	}
+
+	
 	
 	
 

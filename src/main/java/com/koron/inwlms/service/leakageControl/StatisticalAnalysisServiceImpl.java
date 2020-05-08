@@ -42,18 +42,15 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		String minNightFlowCode = "";
 		List<String> zoneCodeList = new ArrayList<>();
 		Integer timeType = Constant.TIME_TYPE_M;
+		//TODO 漏损水量指标编码和供水量指标编码
 		String lossFlowCode = "";
 		String allFlowCode = "";
+		//TODO 最小夜间流量指标编码
+		String minFlowCode = "";
 		zoneCodeList.add(areaCode);
 		
 		
-		//TODO  1.1处理前后最小夜间流量
-		
-		//TODO  1.2处理前后漏损水量
-		
-		//2获取漏损处理情况统计
-		//2.2所选时间内每月漏损处理状态统计
-		  //获取选择的所有月份
+		//获取选择的所有月份
 		  Date startDate = format.parse(processingStatisticsDTO.getStartTime());
 		  Date endDate = format.parse(processingStatisticsDTO.getEndTime());
 		  int startY = TimeUtil.getYears(startDate);
@@ -63,15 +60,22 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		  
 		  int start = startY*10 + startM;
 		  int end = endY*10 + endM;
+		  
+		//TODO  1.1处理前后最小夜间流量7天平均值
+		  
+		  
+		
+		//TODO  1.2处理前后漏损水量
+		
+		//2获取漏损处理情况统计
+		//2.2所选时间内每月漏损处理状态统计
+		  
 		  int i = 0;
 		  int loadNum = 0;
 		  int finishNum = 0;
 		  int untreatedNum = 0;
 		  
-		  
-		  
-		  
-		  
+		   
 		  
 		  List<ProcessingStatisticsVO> proStatList = new ArrayList<>();
 		  while(start <= end) {

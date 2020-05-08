@@ -6,7 +6,7 @@ public class PartitionInvestVO {
 	
 	private Integer id;
 	
-	private String Type;
+	private String type;
 	
 	/**
 	 * 口径
@@ -38,12 +38,14 @@ public class PartitionInvestVO {
 	
 	
 
+	
+
 	public String getType() {
-		return Type;
+		return type;
 	}
 
 	public void setType(String type) {
-		Type = type;
+		this.type = type;
 	}
 
 	public Integer getId() {
