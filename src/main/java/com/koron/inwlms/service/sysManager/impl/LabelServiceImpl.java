@@ -57,7 +57,7 @@ public class LabelServiceImpl implements LabelService{
 		return result;
 	}
 	
-	//插入标签 2020/04/17
+	//添加标签 2020/04/17
 	@TaskAnnotation("addLabel")
 	@Override
 	public MessageBean<String> addLabel(SessionFactory factory,LabelDTO  labelDTO) {
