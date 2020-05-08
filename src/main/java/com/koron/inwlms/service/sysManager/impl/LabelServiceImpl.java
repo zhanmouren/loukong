@@ -111,8 +111,13 @@ public class LabelServiceImpl implements LabelService{
 		MessageBean<String> msg =MessageBean.create(Constant.MESSAGE_INT_SUCCESS,Constant.MESSAGE_STRING_SUCCESS, String.class);
 		LabelMapper labelMapper = factory.getMapper(LabelMapper.class);
 		try {
-			LabelVO label = labelMapper.queryLabelByCode(labelDTO.getCode());
-			if (label !=null && !label.getId().equals(labelDTO.getId())) {
+			LabelVO label1 = labelMapper.queryLabelByCode(labelDTO.getCode());
+			LabelVO label2 = labelMapper.queryLabelById(labelDTO.getId());
+			if(label2 == null) {
+				msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				msg.setDescription("不存在该标签");
+			}
+			else if (label1 !=null && !label1.getId().equals(label2.getId())) {
 				msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 				msg.setDescription("标签code已存在");
 			}
@@ -124,7 +129,7 @@ public class LabelServiceImpl implements LabelService{
 			}
 		} catch (Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
-			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
+			msg.setDescription("修改失败");
 		}
 		
 		return msg;

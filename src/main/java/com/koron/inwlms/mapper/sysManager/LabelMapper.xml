@@ -3,11 +3,12 @@
 <mapper namespace="com.koron.inwlms.mapper.sysManager.LabelMapper">
  
     <select id="queryLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
-	select "label".cn,"label".en,"label"."cn_HK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
+	select "label".id,"label".cn,"label".en,"label"."cn_HK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
 	from "SM_label" as "label"
 	<trim prefix="where" prefixOverrides="and|or">
-		<if test="name != null  and name !='' "> and "label".cn = #{name} or "label".en = #{name} or "label"."cn_HK" = #{name}</if>  
-   	    <if test="code != null  and code !='' "> and "label".code = #{code} </if>  
+		<if test="id != null  and id !='' "> and "label".id = #{id} </if>  
+		<if test="name != null  and name !='' "> and "label".cn like '%'||#{name}||'%' or "label".en like '%'||#{name}||'%' or "label"."cn_HK" like '%'||#{name}||'%'</if>  
+   	    <if test="code != null  and code !='' "> and "label".code like '%'||#{code}||'%' </if>  
    	    <if test="type != null  and type !='' "> and "label".type = #{type} </if>  
    	    <if test="startTime != null  "> and to_char( "label"."createTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
    	    <if test="endTime != null   "> and  to_char( "label"."createTime",'YYYY-MM-dd') &lt;= #{endTime}</if>         
@@ -21,8 +22,8 @@
 	select count(*)
 	from "SM_label" as "label"
 	<trim prefix="where" prefixOverrides="and|or">
-		<if test="name != null  and name !='' "> and "label".cn = #{name} or "label".en = #{name} or "label"."cn_HK" = #{name}</if>  
-   	    <if test="code != null  and code !='' "> and "label".code = #{code} </if>  
+		<if test="name != null  and name !='' "> and "label".cn like '%'||#{name}||'%' or "label".en like '%'||#{name}||'%' or "label"."cn_HK" like '%'||#{name}||'%'</if>  
+   	    <if test="code != null  and code !='' "> and "label".code like '%'||#{code}||'%' </if>  
    	    <if test="type != null  and type !='' "> and "label".type = #{type} </if>  
    	    <if test="startTime != null  "> and to_char( "label"."createTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
    	    <if test="endTime != null   "> and  to_char( "label"."createTime",'YYYY-MM-dd') &lt;= #{endTime}</if>         
@@ -49,9 +50,14 @@
 	<select id="queryLabelByCode"  resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
 		select "label".id ,"label".cn,"label".en,"label"."cn_HK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
 		from "SM_label" as "label"
-		where  "label".code = #{code} 
+		where  "label".code = #{code}
     </select>
 
+	<select id="queryLabelById"  resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
+		select "label".id ,"label".cn,"label".en,"label"."cn_HK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
+		from "SM_label" as "label"
+		where  "label".id = #{id}
+    </select>
 
 	<update id="updateLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelDTO">
 		update "SM_label" 

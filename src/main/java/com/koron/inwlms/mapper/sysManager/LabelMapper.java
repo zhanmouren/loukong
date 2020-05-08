@@ -32,12 +32,16 @@ public interface LabelMapper {
   	public Integer deleteBatchLabel(List<String> labelCodeList);
   	//根据code查找标签
   	public LabelVO queryLabelByCode(String code);
+    //根据id查找标签
+    public LabelVO queryLabelById(Integer id);
   	//修改标签
   	public Integer updateLabel(LabelDTO labelDTO);	
   	
 
   	//根据code查重
     public int countLabelByCode(String code);
+    
+
 
   	//excel批量新增
     public int uploadBatchLabel(List<LabelExcelBean> labelExcelBeanList);
