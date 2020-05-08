@@ -158,7 +158,7 @@ public class SystemManagerLabelController {
 				  }else {
 				    //删除标签失败
 			        msg.setCode(Constant.MESSAGE_INT_DELERROR);
-			        msg.setDescription("删除标签失败");
+			        msg.setDescription("无该标签");
 				  }
 			  }
 	        }catch(Exception e){

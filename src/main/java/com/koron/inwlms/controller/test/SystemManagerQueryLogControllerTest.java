@@ -35,9 +35,11 @@ public class SystemManagerQueryLogControllerTest {
 	
 	@Autowired
 	private LogService logService;
-	
+
+	//在测试方法运行之前运行，每一个方法前都会运行一遍
 	@Before
 	public void setUp() throws Exception {
+		//初始化MockMvc对象
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 

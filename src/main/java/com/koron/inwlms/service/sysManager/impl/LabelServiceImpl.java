@@ -69,11 +69,11 @@ public class LabelServiceImpl implements LabelService{
 				msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 				msg.setDescription("添加标签失败(已存在相同code)");
 			} else {
-				Gson jsonValue = new Gson();
-				// 查询条件字符串转对象，查询数据结果
-				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-				labelDTO.setCreateBy(userListVO.getLoginName());
-				labelDTO.setUpdateBy(userListVO.getLoginName());
+//				Gson jsonValue = new Gson();
+//				// 查询条件字符串转对象，查询数据结果
+//				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+//				labelDTO.setCreateBy(userListVO.getLoginName());
+//				labelDTO.setUpdateBy(userListVO.getLoginName());
 				labelMapper.addLabel(labelDTO);
 			}
 		} catch (Exception e) {
@@ -117,9 +117,9 @@ public class LabelServiceImpl implements LabelService{
 				msg.setDescription("标签code已存在");
 			}
 			else {
-				Gson jsonValue = new Gson();
-				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-				labelDTO.setUpdateBy(userListVO.getLoginName());
+//				Gson jsonValue = new Gson();
+//				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+//				labelDTO.setUpdateBy(userListVO.getLoginName());
 				labelMapper.updateLabel(labelDTO);
 			}
 		} catch (Exception e) {
@@ -169,10 +169,10 @@ public class LabelServiceImpl implements LabelService{
                 flag = false;
                 break;
             }
-            Gson jsonValue = new Gson();
-			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-            labelExcelBean.setCreateBy(userListVO.getLoginName());
-            labelExcelBean.setUpdateBy(userListVO.getLoginName());
+//            Gson jsonValue = new Gson();
+//			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+//            labelExcelBean.setCreateBy(userListVO.getLoginName());
+//            labelExcelBean.setUpdateBy(userListVO.getLoginName());
         }
         if (flag) {
             try {
