@@ -299,30 +299,33 @@
     
      <!-- 插入数据字典明细信息一条记录 -->
     <insert id="addOneDataDet" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
-        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,seq,"createBy","createTime","updateBy","updateTime")
-        values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicSeq},#{createBy},Now(),#{updateBy},Now())            
+        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,"enValue","tcValue",seq,"createBy","createTime","updateBy","updateTime")
+        values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicEnValue},#{dicTcValue},#{dicSeq},#{createBy},Now(),#{updateBy},Now())            
     </insert>
     
      <!-- 查询数据字典 主标识明细的信息-->
       <select id="queryDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
-          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".sc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          ,"dic"."enValue" as "dicEnValue","dic"."tcValue" as "dicTcValue"
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
 			<if test="dicParent != null"> and "dic".parent =#{dicParent}</if>  
 	   	    <if test="dicEn != null"> and "dic".en like  '%'||#{dicEn}||'%' or "dic".cn like '%'||#{dicEn}||'%' or "dic".tc like '%'||#{dicEn}||'%'</if>	   	
 	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
-	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
-	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
+	   	    <if test="dicKey != null"> and "dic".key =#{dicKey}</if>
+	   	    <if test="dicValue != null"> and "dic"."value" =#{dicValue}</if>  
+	   	    <if test="dicEnValue != null"> and "dic"."enValue" =#{dicEnValue}</if>  
+	   	    <if test="dicTcValue != null"> and "dic"."tcValue" =#{dicTcValue}</if>       
 		  </trim>
 		  order by "dic".seq
       </select>
        <!-- 查询数据字典 是否已经存在该Parent的信息-->
       <select id="queryParentDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
-          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic"."enValue" as "dicEnValue","dic"."tcValue" as "dicTcValue","dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
-			<if test="dicParent != null"> and "dic".parent = '${dicParent}'</if>          
+			<if test="dicParent != null"> and "dic".parent = #{dicParent}</if>          
 		  </trim>
       </select>
       
@@ -348,9 +351,9 @@
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
 			<if test="dicParent != null"> and "dic".parent like  '%'||#{dicParent}||'%'</if>  
 	   	    <if test="dicEn != null"> and "dic".en like  '%'||#{dicEn}||'%' or "dic".cn like '%'||#{dicEn}||'%' or "dic".tc like '%'||#{dicEn}||'%'</if>
-	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
-	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
-	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
+	   	    <if test="dicRemark != null"> and "dic".remark =#{dicRemark}</if>  
+	   	    <if test="dicKey != null"> and "dic".key =#{dicKey}</if>
+	   	    <if test="dicValue != null"> and "dic"."value" =#{dicValue}</if>          
 		  </trim>	  
 		 group by "dic".parent ,"dic".cn ,"dic".en ,"dic".tc,"dic".remark
 		 order by "dic"."parent" desc
@@ -365,9 +368,9 @@
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
 			<if test="dicParent != null"> and "dic".parent like  '%'||#{dicParent}||'%'</if>  
 	   	    <if test="dicEn != null"> and "dic".en like  '%'||#{dicEn}||'%' or "dic".cn like '%'||#{dicEn}||'%' or "dic".tc like '%'||#{dicEn}||'%'</if>	   	 
-	   	    <if test="dicRemark != null"> and "dic".remark ='${dicRemark}'</if>  
-	   	    <if test="dicKey != null"> and "dic".key ='${dicKey}'</if>
-	   	    <if test="dicValue != null"> and "dic"."value" ='${dicValue}'</if>          
+	   	    <if test="dicRemark != null"> and "dic".remark =#{dicRemark}</if>  
+	   	    <if test="dicKey != null"> and "dic".key =#{dicKey}</if>
+	   	    <if test="dicValue != null"> and "dic"."value" =#{dicValue}</if>          
 		  </trim>	    
 		  group by "dic".parent ,"dic".cn ,"dic".en,"dic".tc ,"dic".remark
 		  
@@ -408,6 +411,8 @@
 		<set>	                                 
              <if test="dicKey != null" > key= #{dicKey},</if>            
              <if test="dicValue != null" > value= #{dicValue},</if>
+             <if test="dicEnValue != null" > enValue= #{dicEnValue},</if>
+             <if test="dicTcValue != null" > tcValue= #{dicTcValue},</if>
              <if test="dicSeq != null" > seq= #{dicSeq},</if>
              <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if>   

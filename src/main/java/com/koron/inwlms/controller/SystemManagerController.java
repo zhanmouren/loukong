@@ -1327,7 +1327,13 @@ public class SystemManagerController {
 				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键不能为空", Integer.class).toJson();
 			}
 			if(dataDicDTO.getDataDicDTOList().get(i).getDicValue()==null || "".equals(dataDicDTO.getDataDicDTOList().get(i).getDicValue())) {
-				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典值不能为空", Integer.class).toJson();
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典中文值不能为空", Integer.class).toJson();
+			}
+			if(dataDicDTO.getDataDicDTOList().get(i).getDicEnValue()==null || "".equals(dataDicDTO.getDataDicDTOList().get(i).getDicEnValue())) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典英文值不能为空", Integer.class).toJson();
+			}
+			if(dataDicDTO.getDataDicDTOList().get(i).getDicTcValue()==null || "".equals(dataDicDTO.getDataDicDTOList().get(i).getDicTcValue())) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典繁文值不能为空", Integer.class).toJson();
 			}
 		}
 			
@@ -1424,7 +1430,13 @@ public class SystemManagerController {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典键不能为空", Integer.class).toJson();
 		}        
 		if(dataDicDTO.getDicValue()==null || StringUtils.isBlank(dataDicDTO.getDicValue())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典值不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典中文值不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicEnValue()==null || StringUtils.isBlank(dataDicDTO.getDicEnValue())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典英文值不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicTcValue()==null || StringUtils.isBlank(dataDicDTO.getDicTcValue())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典繁体值不能为空", Integer.class).toJson();
 		}
 			
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
@@ -1624,9 +1636,15 @@ public class SystemManagerController {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表键不能为空", Integer.class).toJson();
 		}
 		if(dataDicDTO.getDicValue()==null || StringUtils.isBlank(dataDicDTO.getDicValue())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表中文值不能为空", Integer.class).toJson();
 		}
-		
+		if(dataDicDTO.getDicEnValue()==null || StringUtils.isBlank(dataDicDTO.getDicEnValue())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典英文值不能为空", Integer.class).toJson();
+		}
+		if(dataDicDTO.getDicTcValue()==null || StringUtils.isBlank(dataDicDTO.getDicTcValue())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典繁体值不能为空", Integer.class).toJson();
+		}
+				
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行修改数据字典明细
 		 try {

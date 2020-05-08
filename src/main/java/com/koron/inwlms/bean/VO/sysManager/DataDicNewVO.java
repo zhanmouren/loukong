@@ -12,11 +12,11 @@ public class DataDicNewVO {
 		private Integer dicId;
 		//数据字典标识
 		private String parentCode;
-		//数据字典中文名称
+		//数据字典值中文名称
 	   private String scName;
-		//数据字典英文名称
+		//数据字典值英文名称
 		private String enName;
-		//数据字典繁体名称
+		//数据字典值繁体名称
 		private String tcName;
 		//数据字典备注
 		private String description;

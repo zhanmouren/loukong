@@ -65,8 +65,12 @@ public class DataDicDTO extends BaseDTO{
 	       
 	//数据字典明细键
 		private String dicKey;
-		//数据字典明细值
+		//数据字典明细中文值
 		private String dicValue;
+		//数据字典明细英文值
+		private String dicEnValue;
+		//数据字典明细繁体值
+		private String dicTcValue;
 		//数据字典明细顺序
 		private Integer dicSeq;
 	    //装key Value的List列表
@@ -75,6 +79,18 @@ public class DataDicDTO extends BaseDTO{
 		
 
 	
+	public String getDicEnValue() {
+			return dicEnValue;
+		}
+		public String getDicTcValue() {
+			return dicTcValue;
+		}
+		public void setDicEnValue(String dicEnValue) {
+			this.dicEnValue = dicEnValue;
+		}
+		public void setDicTcValue(String dicTcValue) {
+			this.dicTcValue = dicTcValue;
+		}
 	public String getDicTc() {
 			return dicTc;
 		}
