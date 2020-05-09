@@ -25,7 +25,7 @@ public class EconomicIndicatorServiceImpl implements EconomicIndicatorService{
 	public Integer updatePartitionInvest(SessionFactory factory, List<PartitionInvestDTO> partitionInvestDTOList) {
 		EconomicIndicatorMapper mapper = factory.getMapper(EconomicIndicatorMapper.class);
 		//先删除数据库数据
-		mapper.deletePartitionInvest();
+		mapper.deletePartitionInvest(partitionInvestDTOList.get(0).getType());
 		//添加修改后的数据
 		Integer addNum = mapper.addPartitionInvest(partitionInvestDTOList);
 		

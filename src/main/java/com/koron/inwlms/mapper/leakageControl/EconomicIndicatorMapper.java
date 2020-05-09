@@ -19,8 +19,8 @@ public interface EconomicIndicatorMapper {
 	@Select("select * from \"APP_partitionInvest\" where type = #{type} and caliber = #{caliber}")
 	PartitionInvestVO queryPartitionInvestByCal(@Param("type") String type,@Param("caliber") String caliber);
 	
-	@Select("delete from \"APP_partitionInvest\"")
-	Integer deletePartitionInvest();
+	@Select("delete from \"APP_partitionInvest\" where type = #{type}")
+	Integer deletePartitionInvest(@Param("type") String type);
 	
 	Integer addPartitionInvest(List<PartitionInvestDTO> partitionInvestDTO);
 
