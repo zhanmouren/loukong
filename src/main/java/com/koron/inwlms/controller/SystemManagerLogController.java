@@ -50,6 +50,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/systemManagerLog")
 public class SystemManagerLogController {
 
+	//TODO 权限
 	@Autowired
 	private LogService logService;
 	

@@ -51,6 +51,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/systemManagerLabel")
 public class SystemManagerLabelController {
 
+	//TODO 权限
 	@Autowired
 	private LabelService labelSerivce;
 	
@@ -128,6 +129,9 @@ public class SystemManagerLabelController {
 	@ApiOperation(value = "添加标签接口",notes = "添加标签接口", httpMethod = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String addLabel(@RequestBody LabelDTO labelDTO) {
+		if(labelDTO.getId() == null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签id不能为空", Integer.class).toJson();
+		}
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
 		}
