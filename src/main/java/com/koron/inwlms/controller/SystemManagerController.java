@@ -792,7 +792,7 @@ public class SystemManagerController {
      * author:xiaozhan
      */  
 	@RequestMapping(value = "/addFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "添加表格映射功能接口", notes = "添加表格映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "添加表格字段映射功能接口", notes = "添加表格字段映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {		
 		if(fieldMapperDTO.getTableCode()==null || "".equals(fieldMapperDTO.getTableCode())) {
@@ -903,6 +903,7 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	
 	/*
      * date:2020-04-16
      * funtion:根据code查询集成配置信息

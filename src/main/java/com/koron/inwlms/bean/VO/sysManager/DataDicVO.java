@@ -32,9 +32,18 @@ public class DataDicVO {
 	private String dicEnValue;
 	//数据字典明细繁体值
 	private String dicTcValue;
+	//数据字典明细备注
+	private String dicDetRemark;
 	//数据字典明细顺序
 	private Integer dicSeq;
 	
+	
+	public String getDicDetRemark() {
+		return dicDetRemark;
+	}
+	public void setDicDetRemark(String dicDetRemark) {
+		this.dicDetRemark = dicDetRemark;
+	}
 	public String getDicEnValue() {
 		return dicEnValue;
 	}

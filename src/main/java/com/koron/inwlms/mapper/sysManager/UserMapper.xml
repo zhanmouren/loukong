@@ -285,9 +285,9 @@
     
     <!-- 遍历插入数据字典主表信息记录 -->
     <insert id="addDataDic" parameterType="java.util.List">  
-        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,seq,"createBy","createTime","updateBy","updateTime")values
+        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,seq,"detRemark","createBy","createTime","updateBy","updateTime")values
         <foreach collection="list" index="index" separator="," item="item">
-          (#{item.dicCn},#{item.dicEn},#{item.dicTc},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.createBy},Now(),#{item.updateBy},Now())  
+          (#{item.dicCn},#{item.dicEn},#{item.dicTc},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.dicDetRemark},#{item.createBy},Now(),#{item.updateBy},Now())  
         </foreach>      
     </insert>
     
@@ -299,14 +299,14 @@
     
      <!-- 插入数据字典明细信息一条记录 -->
     <insert id="addOneDataDet" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
-        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,"enValue","tcValue",seq,"createBy","createTime","updateBy","updateTime")
-        values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicEnValue},#{dicTcValue},#{dicSeq},#{createBy},Now(),#{updateBy},Now())            
+        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,"enValue","tcValue",seq,"detRemark","createBy","createTime","updateBy","updateTime")
+        values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicEnValue},#{dicTcValue},#{dicSeq},#{dicDetRemark},#{createBy},Now(),#{updateBy},Now())            
     </insert>
     
      <!-- 查询数据字典 主标识明细的信息-->
       <select id="queryDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
-          ,"dic"."enValue" as "dicEnValue","dic"."tcValue" as "dicTcValue"
+          ,"dic"."enValue" as "dicEnValue","dic"."tcValue" as "dicTcValue","dic"."detRemark" as "dicDetRemark"
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
@@ -405,7 +405,7 @@
          and "key" is null and "value" is null
      </delete>
      
-      <!-- 修改数据字典主的信息 根据Id-->
+      <!-- 修改数据字典明细的信息 根据Id-->
        <update id="updateDicDetById" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
 		update "SM_dataDictionary" 
 		<set>	                                 
@@ -413,6 +413,7 @@
              <if test="dicValue != null" > value= #{dicValue},</if>
              <if test="dicEnValue != null" > "enValue"= #{dicEnValue},</if>
              <if test="dicTcValue != null" > "tcValue"= #{dicTcValue},</if>
+             <if test="dicDetRemark != null" > "detRemark"= #{dicDetRemark},</if>
              <if test="dicSeq != null" > seq= #{dicSeq},</if>
              <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if>   

@@ -440,6 +440,7 @@ public class UserServiceImpl implements UserService{
 						dataDicDTONew.setDicValue(dataDicDTO.getDataDicDTOList().get(i).getDicValue());
 						dataDicDTONew.setDicEnValue(dataDicDTO.getDataDicDTOList().get(i).getDicEnValue());
 						dataDicDTONew.setDicTcValue(dataDicDTO.getDataDicDTOList().get(i).getDicTcValue());
+						dataDicDTONew.setDicDetRemark(dataDicDTO.getDataDicDTOList().get(i).getDicDetRemark());
 						if(dataDicDTO.getDataDicDTOList().get(i).getDicSeq()==null) {
 							dataDicDTONew.setDicSeq(i);
 						}else {
