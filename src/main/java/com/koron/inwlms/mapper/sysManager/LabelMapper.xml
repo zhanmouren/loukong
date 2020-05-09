@@ -6,7 +6,6 @@
 	select "label".id,"label".cn,"label".en,"label"."cn_HK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
 	from "SM_label" as "label"
 	<trim prefix="where" prefixOverrides="and|or">
-		<if test="id != null  and id !='' "> and "label".id = #{id} </if>  
 		<if test="name != null  and name !='' "> and "label".cn like '%'||#{name}||'%' or "label".en like '%'||#{name}||'%' or "label"."cn_HK" like '%'||#{name}||'%'</if>  
    	    <if test="code != null  and code !='' "> and "label".code like '%'||#{code}||'%' </if>  
    	    <if test="type != null  and type !='' "> and "label".type = #{type} </if>  
