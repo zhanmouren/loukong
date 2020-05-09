@@ -14,9 +14,9 @@ public class EconomicIndicatorServiceImpl implements EconomicIndicatorService{
 
 	@TaskAnnotation("queryPartitionInvest")
 	@Override
-	public List<PartitionInvestVO> queryPartitionInvest(SessionFactory factory) {
+	public List<PartitionInvestVO> queryPartitionInvest(SessionFactory factory,String type) {
 		EconomicIndicatorMapper mapper = factory.getMapper(EconomicIndicatorMapper.class);
-		List<PartitionInvestVO> list = mapper.queryPartitionInvest();
+		List<PartitionInvestVO> list = mapper.queryPartitionInvest(type);
 		return list;
 	}
 	

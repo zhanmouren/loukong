@@ -14,7 +14,8 @@ import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 @EnvSource("_default")
 public interface EconomicIndicatorMapper {
 	
-	List<PartitionInvestVO> queryPartitionInvest();
+	@Select("select * from \"APP_partitionInvest\" where type = #{type}")
+	List<PartitionInvestVO> queryPartitionInvest(@Param("type") String type);
 	
 	@Select("select * from \"APP_partitionInvest\" where type = #{type} and caliber = #{caliber}")
 	PartitionInvestVO queryPartitionInvestByCal(@Param("type") String type,@Param("caliber") String caliber);

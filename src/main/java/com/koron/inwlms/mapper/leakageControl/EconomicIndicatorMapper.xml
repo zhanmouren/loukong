@@ -4,9 +4,9 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   <mapper namespace="com.koron.inwlms.mapper.leakageControl.EconomicIndicatorMapper">
   
-  <select id="queryPartitionInvest" resultType="com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO">
-  select * from "APP_partitionInvest" 
-  </select>
+  <!-- <select id="queryPartitionInvest" resultType="com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO">
+  select * from "APP_partitionInvest" where type = #{type}
+  </select> -->
  
  <insert id="addPartitionInvest" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PartitionInvestDTO">
  insert into "APP_partitionInvest"(type, caliber, money, "otherInvest", "projectCost", "totalCost", "createBy", "createTime", "updateBy", "updateTime") values

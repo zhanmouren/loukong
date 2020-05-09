@@ -9,7 +9,7 @@ import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 
 public interface EconomicIndicatorService {
 
-	List<PartitionInvestVO> queryPartitionInvest(SessionFactory factory);
+	List<PartitionInvestVO> queryPartitionInvest(SessionFactory factory,String type);
 
 	Integer updatePartitionInvest(SessionFactory factory, List<PartitionInvestDTO> partitionInvestDTOList);
 

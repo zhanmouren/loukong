@@ -696,11 +696,17 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryPartitionInvest.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "分区投资曲线查询接口", notes = "分区投资曲线查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryPartitionInvest() {
-		
+    public String queryPartitionInvest(PartitionInvestDTO partitionInvestDTO) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(partitionInvestDTO.getType() == null || partitionInvestDTO.getType().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("分区类型为空");
+	        return msg.toJson();
+		}
+		
+		
 		try {
-			List<PartitionInvestVO> List = ADOConnection.runTask(new EconomicIndicatorServiceImpl(), "queryPartitionInvest",List.class);
+			List<PartitionInvestVO> List = ADOConnection.runTask(new EconomicIndicatorServiceImpl(), "queryPartitionInvest",List.class, partitionInvestDTO.getType());
 			if(List != null && List.size() != 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(List);
