@@ -28,6 +28,8 @@ public class PartitionInvestVO {
 	 */
 	private Double projectCost;
 	
+	private Double totalCost;
+	
 	private String createBy;
 	
 	private Date createTime;
@@ -39,6 +41,14 @@ public class PartitionInvestVO {
 	
 
 	
+
+	public Double getTotalCost() {
+		return totalCost;
+	}
+
+	public void setTotalCost(Double totalCost) {
+		this.totalCost = totalCost;
+	}
 
 	public String getType() {
 		return type;

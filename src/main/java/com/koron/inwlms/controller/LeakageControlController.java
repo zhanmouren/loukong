@@ -1096,13 +1096,13 @@ public class LeakageControlController {
 		try {
 			//通过值域查询出所有事项类型
 			DataDicDTO dataDicDTO = new DataDicDTO();
-			dataDicDTO.setDicParent("10120");
+			dataDicDTO.setDicParent("10120"); 
 			List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
 			if(dataDicVoList != null && dataDicVoList.size() != 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(dataDicVoList);
 			}else {
-				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 				msg.setDescription("无数据");
 			}
 			

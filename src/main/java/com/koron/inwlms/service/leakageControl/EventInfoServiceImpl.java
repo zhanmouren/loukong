@@ -94,9 +94,12 @@ public class EventInfoServiceImpl implements EventInfoService{
 				DataDicDTO dataDicDTONew = new DataDicDTO();
 				dataDicDTONew.setDicCn(dataDicDTO.getDicCn());
 				dataDicDTONew.setDicEn(dataDicDTO.getDicEn());
+				dataDicDTONew.setDicTc(dataDicDTO.getDicTc());
 				dataDicDTONew.setDicParent(Constant.EVENTSUBTYPE);
 				dataDicDTONew.setDicRemark(dataDicDTO.getDicRemark());
 				dataDicDTONew.setDicKey(dataDicDTO.getDicKey());
+				dataDicDTONew.setDicEnValue(dataDicDTO.getDicEnValue());
+				dataDicDTONew.setDicTcValue(dataDicDTO.getDicTcValue());
 				dataDicDTONew.setDicValue(dataDicDTO.getDicValue());
 				dataDicDTONew.setDicSeq(i);
 				//TODO 创建人等
