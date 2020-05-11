@@ -629,6 +629,7 @@
 		"menu"."moduleName" ,"menu"."linkAddress",
 		"SM_treeDet".seq,"SM_treeDet".childmask,"SM_treeDet".foreignkey,"SM_treeDet".mask,
 		"SM_treeDet".parentmask,"SM_treeDet".id
+		order by "SM_treeDet".seq
       </select>
       
       <!--根据moduleName 查询moduleCode -->
