@@ -576,6 +576,7 @@
 		"menu"."moduleName" ,"menu"."linkAddress",		
 		"SM_treeDet".seq,"SM_treeDet".childmask,"SM_treeDet".foreignkey,"SM_treeDet".mask,
 		"SM_treeDet".parentmask,"SM_treeDet".id
+		order by "SM_treeDet".seq
       </select>
       
        <!-- 批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode) -->
