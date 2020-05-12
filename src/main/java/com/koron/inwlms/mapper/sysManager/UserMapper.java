@@ -136,6 +136,9 @@ public interface UserMapper {
 	   //添加数据字典主表
 		public Integer addDataDic(List<DataDicDTO> dataDicDTOList);
 		
+		//根据Parent查询key(查询最大编号的key)
+		public List<DataDicVO> queryMaxDataKey(DataDicDTO dataDicDTO);
+		
 		//添加数据字典主表信息
 		public Integer addMainDataDic(DataDicDTO dataDicDTO);
 		

@@ -1417,6 +1417,40 @@ public class SystemManagerController {
 	
 	/*
      * date:2020-03-25
+     * funtion:生成数据字典Key
+     * author:xiaozhan
+     */  
+	@RequestMapping(value = "/createDataKey.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "新建数据字典接口(主表)", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String createDataKey(@RequestBody DataDicDTO dataDicDTO) {	
+		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
+		}			
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		//执行新数据字典功能的操作
+		  try{
+			  String insertRes=ADOConnection.runTask(userService, "createDataKey", String.class, dataDicDTO);		 
+			  if(insertRes!=null) {
+				/*
+				 * if(insertRes==-1) { msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				 * msg.setDescription("生成数据字典key失败"); }else {
+				 * msg.setCode(Constant.MESSAGE_INT_SUCCESS); msg.setDescription("生成数据字典key成功");
+				 * }
+				 */
+			  }
+	        }catch(Exception e){
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("生成字典key失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	
+	
+	/*
+     * date:2020-03-25
      * funtion:新建数据字典(明细信息)
      * author:xiaozhan
      */  

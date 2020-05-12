@@ -912,11 +912,11 @@ public class UserServiceImpl implements UserService{
 				public Integer updateRoleMenuByRoleCode(SessionFactory factory, RoleMenuDTO roleMenuDTO) {
 					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					//先执行批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode)
+					//先执行批量删除SM_roleMenus的操作(根据roleCode)
 					  List<RoleMenuDTO> roleMenuDTOList=new ArrayList<RoleMenuDTO>();
 					for(int i=0;i<roleMenuDTO.getRoleMenuList().size();i++) {
 						RoleMenuDTO roleMenuDTONew =new RoleMenuDTO();
-						roleMenuDTONew.setModuleCode(roleMenuDTO.getRoleMenuList().get(i).getModuleCode());
+					//	roleMenuDTONew.setModuleCode(roleMenuDTO.getRoleMenuList().get(i).getModuleCode());
 						roleMenuDTONew.setRoleCode(roleMenuDTO.getRoleMenuList().get(i).getRoleCode());
 						roleMenuDTOList.add(roleMenuDTONew);
 					}
@@ -1504,6 +1504,20 @@ public class UserServiceImpl implements UserService{
 					uploadFileNewDTO.setStatus("1");
 					List<UploadFileNewVO> fileList=userMapper.queryHeadPortrait(uploadFileNewDTO);
 					return fileList;
+				}
+
+				@TaskAnnotation("createDataKey")
+				@Override
+				public String createDataKey(SessionFactory factory, DataDicDTO dataDicDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					//根据数据字典dicParent查询最大序列号
+					List<DataDicVO> dataList=userMapper.queryMaxDataKey(dataDicDTO);
+		/*
+		 * if(dataList!=null &&) {
+		 * 
+		 * }
+		 */
+					return null;
 				}
 		
 					

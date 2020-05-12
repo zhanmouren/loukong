@@ -581,9 +581,9 @@
       
        <!-- 批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode) -->
      <delete id="deleteManyOP">
-         delete from "SM_roleMenus" where ("roleCode","moduleCode") in
+         delete from "SM_roleMenus" where "roleCode" in
          <foreach item="item" index="index" collection="list" separator="," open="(" close=")">
-           (#{item.roleCode},#{item.moduleCode})
+           #{item.roleCode}
           </foreach>
      </delete>
      
@@ -972,5 +972,12 @@
            from "APP_file"
            where "foreignkey" =#{foreignkey}   and status=${status}      
       </select>
+      
+       <!-- 根据Parent查询Key -->
+       <select id="queryKeyByParent"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+           select key as "dicKey"
+           from "SM_dataDictionary" as "dic"
+           where parent="#{dicParent}"
+       </select>
 	    
 </mapper>

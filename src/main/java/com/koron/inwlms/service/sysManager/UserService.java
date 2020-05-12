@@ -85,6 +85,8 @@ public interface UserService {
 	
 	  //添加数据字典
 		Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
+		//生成数据字典key
+		String createDataKey(SessionFactory factory, DataDicDTO dataDicDTO);
 		//添加数据字典主表信息
 		Integer addMainDataDic(SessionFactory factory, DataDicDTO dataDicDTO);
 		//添加数据字典明细信息
