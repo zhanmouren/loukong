@@ -17,6 +17,8 @@ import com.koron.inwlms.bean.DTO.sysManager.LabelExcelBean;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
+import com.koron.inwlms.bean.VO.sysManager.LabelNameListVO;
+import com.koron.inwlms.bean.VO.sysManager.LabelNameVO;
 import com.koron.inwlms.bean.VO.sysManager.LabelVO;
 import com.koron.inwlms.bean.VO.sysManager.LoginLogVO;
 import com.koron.inwlms.bean.VO.sysManager.PageLabelListVO;
@@ -193,6 +195,26 @@ public class LabelServiceImpl implements LabelService{
         }
         return msg;
     }
+
+	//查询标签名称列表 2020/05/11
+	@TaskAnnotation("queryLabelNameList")
+	@Override
+	public LabelNameListVO<List<LabelNameVO>> queryLabelNameList(SessionFactory factory, QueryLabelDTO queryLabelDTO) {
+		LabelMapper labelMapper = factory.getMapper(LabelMapper.class);
+		
+		List<LabelNameVO> labelCnList = labelMapper.queryLabelCnList(queryLabelDTO);
+		List<LabelNameVO> labelEnList = labelMapper.queryLabelEnList(queryLabelDTO);
+		List<LabelNameVO> labelCnHKList = labelMapper.queryLabelCnHKList(queryLabelDTO);
+		
+		LabelNameListVO<List<LabelNameVO>> result = new LabelNameListVO<>();
+		result.setCnList(labelCnList);
+		result.setEnList(labelEnList);
+		result.setCnHKList(labelCnHKList);
+		
+		
+		
+		return result;
+	}
 	
 	
 }

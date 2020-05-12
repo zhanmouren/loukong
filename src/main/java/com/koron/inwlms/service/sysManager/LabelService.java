@@ -3,7 +3,6 @@ package com.koron.inwlms.service.sysManager;
 import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
-import org.springframework.web.multipart.MultipartFile;
 import org.swan.bean.MessageBean;
 
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
@@ -11,9 +10,10 @@ import com.koron.inwlms.bean.DTO.sysManager.LabelDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelExcelBean;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.sysManager.LabelNameListVO;
+import com.koron.inwlms.bean.VO.sysManager.LabelNameVO;
 import com.koron.inwlms.bean.VO.sysManager.LabelVO;
 import com.koron.inwlms.bean.VO.sysManager.PageLabelListVO;
-import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 /**
  * @author lzy
@@ -35,10 +35,8 @@ public interface LabelService {
   	PageLabelListVO queryAllList(SessionFactory factory,QueryLabelDTO queryLabelDTO);
   	//根据id，获取附件基本信息
 	UploadFileDTO getAttachmentInfoById(SessionFactory factory,Integer fileId);
-
-	
 	//excel批量导入标签
 	MessageBean<String> uploadBatchLabel(SessionFactory factory, List<LabelExcelBean> LabelExcelBeanList);
-	
-  	
+	//查询标签列表
+	LabelNameListVO<List<LabelNameVO>> queryLabelNameList(SessionFactory factory, QueryLabelDTO queryLabelDTO);
 }

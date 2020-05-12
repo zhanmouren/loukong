@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.leakageControl.LeakageMessageMapper">
+ 
+   <select id="queryAlarmMessage" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
+	select *
+	from "APP_warningInf" as "warningInf"
+	where "warningInf"."schemeCode" in
+	(
+		select "Scheme"."schemeCode"
+		from "APP_alertNoticeScheme" as "Scheme"
+		where "Scheme"."roleCode"  in
+		(
+			select "relation"."roleCode"
+			from "SM_userRoleRelation" as "relation"
+			where "relation"."userCode" in
+			(
+				select "user".code
+				from "SM_user" as "user"
+				where "user"."loginName" = #{loginName}
+			)
+		)
+	)
+	order by "warningInf"."alarmTime" desc 
+    </select>
+   
+   
+</mapper>

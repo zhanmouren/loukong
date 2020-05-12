@@ -29,6 +29,7 @@ import com.koron.inwlms.bean.DTO.sysManager.LabelDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelExcelBean;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.sysManager.LabelNameListVO;
 import com.koron.inwlms.bean.VO.sysManager.LabelVO;
 import com.koron.inwlms.bean.VO.sysManager.PageLabelListVO;
 import com.koron.inwlms.service.sysManager.LabelService;
@@ -302,6 +303,35 @@ public class SystemManagerLabelController {
             }
         }
         return msg.toJson();
+	}
+	
+	/*
+	 * 查询标签列表接口
+     * date:2020-04-17
+     */  
+	@RequestMapping(value = "queryLabelNameList.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询标签列表接口", notes = "查询标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryLabelNameList(@RequestBody QueryLabelDTO queryLabelDTO) {
+		MessageBean<LabelNameListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LabelNameListVO.class);	       
+		//执行查询标签
+		 try {
+			 LabelNameListVO labelNameList = ADOConnection.runTask(labelSerivce, "queryLabelNameList", LabelNameListVO.class, queryLabelDTO);
+			 if(labelNameList != null) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到标签的信息"); 
+			     msg.setData(labelNameList);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("无标签信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询标签失败");
+	     }
+		 return msg.toJson();
 	}
 	
 }
