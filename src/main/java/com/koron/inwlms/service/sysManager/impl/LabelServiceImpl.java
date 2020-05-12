@@ -211,8 +211,6 @@ public class LabelServiceImpl implements LabelService{
 		result.setEnList(labelEnList);
 		result.setCnHKList(labelCnHKList);
 		
-		
-		
 		return result;
 	}
 	

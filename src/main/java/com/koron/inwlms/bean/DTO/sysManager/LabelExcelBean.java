@@ -13,7 +13,7 @@ public class LabelExcelBean {
 	
 	@ImportExcelUtil.ExcelColumn("繁体中文标签名")
     @ImportExcelUtil.RequiredColumn
-    private String cn_HK;
+    private String cnHK;
 	
 	@ImportExcelUtil.ExcelColumn("英文标签名")
     @ImportExcelUtil.RequiredColumn
@@ -55,12 +55,12 @@ public class LabelExcelBean {
 		this.updateBy = updateBy;
 	}
 
-	public String getCn_HK() {
-		return cn_HK;
+	public String getCnHK() {
+		return cnHK;
 	}
 
-	public void setCn_HK(String cn_HK) {
-		this.cn_HK = cn_HK;
+	public void setCnHK(String cnHK) {
+		this.cnHK = cnHK;
 	}
 
 	public String getEn() {
@@ -104,7 +104,7 @@ public class LabelExcelBean {
     public String toString() {
         return "ExcelBean{" +
                 "cn='" + cn + '\'' +
-                ", cn_HK='" + cn_HK + '\'' +
+                ", cn_HK='" + cnHK + '\'' +
                 ", en='" + en + '\'' +
                 ", code='" + code + '\'' +
                 ", type='" + type + '\'' +
