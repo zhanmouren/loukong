@@ -285,28 +285,28 @@
     
     <!-- 遍历插入数据字典主表信息记录 -->
     <insert id="addDataDic" parameterType="java.util.List">  
-        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,seq,"detRemark","createBy","createTime","updateBy","updateTime")values
+        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,seq,"detRemark","type","createBy","createTime","updateBy","updateTime")values
         <foreach collection="list" index="index" separator="," item="item">
-          (#{item.dicCn},#{item.dicEn},#{item.dicTc},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.dicDetRemark},#{item.createBy},Now(),#{item.updateBy},Now())  
+          (#{item.dicCn},#{item.dicEn},#{item.dicTc},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.dicDetRemark},#{item.dicType},#{item.createBy},Now(),#{item.updateBy},Now())  
         </foreach>      
     </insert>
     
     <!-- 插入数据字典主表信息记录 -->
     <insert id="addMainDataDic" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
-        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,"createBy","createTime","updateBy","updateTime")
-        values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{createBy},Now(),#{updateBy},Now())            
+        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,type,"createBy","createTime","updateBy","updateTime")
+        values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{dicType},#{createBy},Now(),#{updateBy},Now())            
     </insert>
     
      <!-- 插入数据字典明细信息一条记录 -->
     <insert id="addOneDataDet" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
-        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,"enValue","tcValue",seq,"detRemark","createBy","createTime","updateBy","updateTime")
-        values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicEnValue},#{dicTcValue},#{dicSeq},#{dicDetRemark},#{createBy},Now(),#{updateBy},Now())            
+        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,"enValue","tcValue",seq,"detRemark","type","createBy","createTime","updateBy","updateTime")
+        values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicEnValue},#{dicTcValue},#{dicSeq},#{dicDetRemark},#{dicType},#{createBy},Now(),#{updateBy},Now())            
     </insert>
     
      <!-- 查询数据字典 主标识明细的信息-->
       <select id="queryDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
-          ,"dic"."enValue" as "dicEnValue","dic"."tcValue" as "dicTcValue","dic"."detRemark" as "dicDetRemark"
+          ,"dic"."enValue" as "dicEnValue","dic"."tcValue" as "dicTcValue","dic"."detRemark" as "dicDetRemark","dic".type as "dicType"
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
@@ -331,21 +331,21 @@
       
        <!-- 根据parent查询数据字典主信息-->
       <select id="queryDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
-          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic".type as "dicType","dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
           from "SM_dataDictionary" as "dic"	      
 		  where  "dic".parent = #{dicParent}       	  
       </select>
       
         <!-- 根据key查询数据字典主信息-->
       <select id="queryKey"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
-          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
+          select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic".type as "dicType","dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
           from "SM_dataDictionary" as "dic"	      
 		  where  "dic".key = #{dicKey}       	  
       </select>
       
         <!-- 查询数据字典 主标识主的信息-->
       <select id="queryMainDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
-          select distinct "dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark
+          select distinct "dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".type as "dicType"
           from "SM_dataDictionary" as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
@@ -362,7 +362,7 @@
         <!-- 查询数据字典 主标识主的信息 总条数-->
       <select id="getDataDicCount"     resultType="java.lang.Integer">
           select count(*)
-          from (select distinct "dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark
+          from (select distinct "dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".type as "dicType"
           from "SM_dataDictionary" as "dic"	     
            <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
@@ -389,19 +389,19 @@
              <if test="updateBy != null" >  "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if>   
         </set>
-		where  parent=#{dicParent}
+		where  parent=#{dicParent} and "type"!=0 
      </update>
      
       <!-- 删除数据字典(通过parent),还要实现批量 -->
      <delete id="deleteDicByParent">
-         delete from "SM_dataDictionary" where "parent" in
+         delete from "SM_dataDictionary" where "type"!=0 and "parent" in
           <foreach item="dicitem" collection="list" open="(" separator="," close=")">
             #{dicitem.dicParent}
           </foreach>
      </delete>
       <!-- 删除数据字典(通过parent) -->
       <delete id="deleteOneDic">
-         delete from "SM_dataDictionary" where "parent" =#{dicParent}
+         delete from "SM_dataDictionary" where "type"!=0 and "parent" =#{dicParent}
          and "key" is null and "value" is null
      </delete>
      
@@ -418,12 +418,12 @@
              <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if>   
         </set>
-		where  id=#{dicId}
+		where  id=#{dicId} and "type"!=0 
 	   </update>
 	   
 	  <!-- 删除数据字典(通过key),还要实现批量 -->
      <delete id="deleteDetDicByKey">
-         delete from "SM_dataDictionary" where "key" in
+         delete from "SM_dataDictionary" where "type"!=0 and "key" in
           <foreach item="dicitem" collection="list" open="(" separator="," close=")">
             #{dicitem.dicKey}
           </foreach>
@@ -974,10 +974,10 @@
       </select>
       
        <!-- 根据Parent查询Key -->
-       <select id="queryKeyByParent"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
+       <select id="queryMaxDataKey"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
            select key as "dicKey"
-           from "SM_dataDictionary" as "dic"
-           where parent="#{dicParent}"
+           from "SM_dataDictionary" 
+           where parent=#{dicParent}
        </select>
 	    
 </mapper>

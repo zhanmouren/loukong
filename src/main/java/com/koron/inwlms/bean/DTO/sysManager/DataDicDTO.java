@@ -54,6 +54,8 @@ public class DataDicDTO extends BaseDTO{
 	private String dicTc;
 	//数据字典备注
 	private String dicRemark;
+	//数据字典的类型  (type 0代表系统的数据字典，1代表是用户自建的数据字典)
+	private Integer dicType;
 	//创建人
 	private String createBy;
 	//创建时间
@@ -81,6 +83,12 @@ public class DataDicDTO extends BaseDTO{
 		
 
 	
+	public Integer getDicType() {
+			return dicType;
+		}
+		public void setDicType(Integer dicType) {
+			this.dicType = dicType;
+		}
 	public String getDicDetRemark() {
 			return dicDetRemark;
 		}

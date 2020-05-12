@@ -1368,7 +1368,7 @@ public class SystemManagerController {
 	
 	/*
      * date:2020-03-25
-     * funtion:新建数据字典(主表)
+     * funtion:新建数据字典(主表)(type 0代表系统的数据字典，1代表是用户自建的数据字典)
      * author:xiaozhan
      */  
 	@RequestMapping(value = "/addMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1427,17 +1427,18 @@ public class SystemManagerController {
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
 		}			
-		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		 MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);	       
 		//执行新数据字典功能的操作
 		  try{
-			  String insertRes=ADOConnection.runTask(userService, "createDataKey", String.class, dataDicDTO);		 
-			  if(insertRes!=null) {
-				/*
-				 * if(insertRes==-1) { msg.setCode(Constant.MESSAGE_INT_ADDERROR);
-				 * msg.setDescription("生成数据字典key失败"); }else {
-				 * msg.setCode(Constant.MESSAGE_INT_SUCCESS); msg.setDescription("生成数据字典key成功");
-				 * }
-				 */
+			  String finalKey=ADOConnection.runTask(userService, "createDataKey", String.class, dataDicDTO);		 
+			  if(!"".equals(finalKey)) {
+				  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			      msg.setDescription("生成数据字典key成功");
+			      msg.setData(finalKey); 
+			  }else {
+				//添加数据字典功能失败
+				  msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+			      msg.setDescription("生成数据字典key失败");
 			  }
 	        }catch(Exception e){
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);

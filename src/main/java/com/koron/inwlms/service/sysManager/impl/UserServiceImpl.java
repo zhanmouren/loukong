@@ -441,6 +441,7 @@ public class UserServiceImpl implements UserService{
 						dataDicDTONew.setDicEnValue(dataDicDTO.getDataDicDTOList().get(i).getDicEnValue());
 						dataDicDTONew.setDicTcValue(dataDicDTO.getDataDicDTOList().get(i).getDicTcValue());
 						dataDicDTONew.setDicDetRemark(dataDicDTO.getDataDicDTOList().get(i).getDicDetRemark());
+						dataDicDTONew.setDicType(1);
 						if(dataDicDTO.getDataDicDTOList().get(i).getDicSeq()==null) {
 							dataDicDTONew.setDicSeq(i);
 						}else {
@@ -995,7 +996,8 @@ public class UserServiceImpl implements UserService{
 					  //说明已经存在
 						addResult=-2;
 						return addResult;
-					}				
+					}	
+					dataDicDTO.setDicType(1);
 					dataDicDTO.setUpdateBy("小詹");
 					dataDicDTO.setCreateBy("小詹");				
 					// 插入主表信息					
@@ -1016,6 +1018,7 @@ public class UserServiceImpl implements UserService{
 						dataDicDTO.setDicEn(dataList.get(0).getDicEn());
 						dataDicDTO.setDicTc(dataList.get(0).getDicTc());
 						dataDicDTO.setDicRemark(dataList.get(0).getDicRemark());
+						dataDicDTO.setDicType(1);
 					}
 					//添加时候判断key是否重复
 					List<DataDicVO> keyList=userMapper.queryKey(dataDicDTO);
@@ -1024,7 +1027,8 @@ public class UserServiceImpl implements UserService{
 					}
 					//先执行删除主表信息的操作(键值为空的)
 					Integer delRes=userMapper.deleteOneDic(dataDicDTO);
-					//插入数据字典的操作(一条)					
+					//插入数据字典的操作(一条)	
+					dataDicDTO.setDicType(1);
 					dataDicDTO.setUpdateBy("小詹");
 					dataDicDTO.setCreateBy("小詹");					
 					if(dataDicDTO.getDicSeq()==null) {
@@ -1506,18 +1510,43 @@ public class UserServiceImpl implements UserService{
 					return fileList;
 				}
 
+				//返回key
 				@TaskAnnotation("createDataKey")
 				@Override
 				public String createDataKey(SessionFactory factory, DataDicDTO dataDicDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					//根据数据字典dicParent查询最大序列号
 					List<DataDicVO> dataList=userMapper.queryMaxDataKey(dataDicDTO);
-		/*
-		 * if(dataList!=null &&) {
-		 * 
-		 * }
-		 */
-					return null;
+					String finalKey="L"+dataDicDTO.getDicParent()+"0001";
+					boolean flag=false;
+					int maxNum=0;
+		            if(dataList!=null && dataList.size()>0) {
+		            	//截取最后4位
+		            	for(int i=0;i<dataList.size();i++) {
+			            	if(dataList.get(i).getDicKey().length()>4) {
+			            		flag=true;			            		
+			            		if(Integer.parseInt(dataList.get(i).getDicKey().substring(dataList.get(i).getDicKey().length() - 4))>maxNum) {
+			            		 maxNum=Integer.parseInt(dataList.get(i).getDicKey().substring(dataList.get(i).getDicKey().length() - 4));
+			            		}
+			            	}
+		            	}
+		            	if(flag) {
+		            		if(1<=maxNum && maxNum<10) {
+		            		 finalKey="L"+dataDicDTO.getDicParent()+"000"+String.valueOf(maxNum);
+		                    }else if(10<=maxNum && maxNum<100) {
+		                     finalKey="L"+dataDicDTO.getDicParent()+"00"+String.valueOf(maxNum);
+		                    }else if(100<=maxNum && maxNum<1000){
+		                     finalKey="L"+dataDicDTO.getDicParent()+"0"+String.valueOf(maxNum);
+		                    }else {
+		                     finalKey="L"+dataDicDTO.getDicParent()+String.valueOf(maxNum);	
+		                    }
+		            	}else {
+		            		finalKey="L"+dataDicDTO.getDicParent()+"0001";	
+		            	}
+		            }else {
+		            	finalKey="L"+dataDicDTO.getDicParent()+"0001";
+		            }
+					return finalKey;
 				}
 		
 					
