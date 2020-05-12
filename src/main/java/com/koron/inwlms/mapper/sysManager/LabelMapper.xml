@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.koron.inwlms.mapper.sysManagerLabelMapper">
+<mapper namespace="com.koron.inwlms.mapper.sysManager.LabelMapper">
  
     <select id="queryLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
 	select "label".id,"label".cn,"label".en,"label"."cnHK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"

@@ -312,10 +312,11 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "queryLabelNameList.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询标签列表接口", notes = "查询标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryLabelNameList(@RequestBody QueryLabelDTO queryLabelDTO) {
+    public String queryLabelNameList(HttpServletRequest request) {
 		MessageBean<LabelNameListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LabelNameListVO.class);	       
 		//执行查询标签
 		 try {
+			 QueryLabelDTO queryLabelDTO = new QueryLabelDTO();
 			 LabelNameListVO labelNameList = ADOConnection.runTask(labelSerivce, "queryLabelNameList", LabelNameListVO.class, queryLabelDTO);
 			 if(labelNameList != null) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
