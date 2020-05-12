@@ -1520,7 +1520,7 @@ public class UserServiceImpl implements UserService{
 					String finalKey="L"+dataDicDTO.getDicParent()+"0001";
 					boolean flag=false;
 					int maxNum=0;
-		            if(dataList!=null && dataList.size()>0) {
+		            if(dataList!=null && dataList.size()>0 && dataList.get(0)!=null) {
 		            	//截取最后4位
 		            	for(int i=0;i<dataList.size();i++) {
 			            	if(dataList.get(i).getDicKey().length()>4) {
