@@ -355,7 +355,7 @@
 	   	    <if test="dicKey != null"> and "dic".key =#{dicKey}</if>
 	   	    <if test="dicValue != null"> and "dic"."value" =#{dicValue}</if>          
 		  </trim>	  
-		 group by "dic".parent ,"dic".cn ,"dic".en ,"dic".tc,"dic".remark
+		 group by "dic".parent ,"dic".cn ,"dic".en ,"dic".tc,"dic".remark,"dic".type
 		 order by "dic"."parent" desc
 		 limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
       </select>
@@ -372,7 +372,7 @@
 	   	    <if test="dicKey != null"> and "dic".key =#{dicKey}</if>
 	   	    <if test="dicValue != null"> and "dic"."value" =#{dicValue}</if>          
 		  </trim>	    
-		  group by "dic".parent ,"dic".cn ,"dic".en,"dic".tc ,"dic".remark
+		  group by "dic".parent ,"dic".cn ,"dic".en,"dic".tc ,"dic".remark,"dic".type
 		  
 		  ) as "dic"
 		  
