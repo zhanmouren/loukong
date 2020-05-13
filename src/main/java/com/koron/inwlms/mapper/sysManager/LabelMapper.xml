@@ -47,7 +47,7 @@
     </delete>
 
 	<select id="queryLabelByCode"  resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
-		select "label".id ,"label".cn,"label".en,"label"."cn_HK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
+		select "label".id ,"label".cn,"label".en,"label"."cnHK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
 		from "SM_label" as "label"
 		where  "label".code = #{code}
     </select>

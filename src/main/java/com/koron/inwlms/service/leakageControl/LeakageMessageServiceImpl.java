@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.mapper.leakageControl.LeakageMessageMapper;
 
 /**
@@ -32,5 +33,38 @@ public class LeakageMessageServiceImpl implements LeakageMessageService{
 		result.setPageCount(5);
 		return result;
 	}
+	
+	//查询漏损待办/已办
+	@TaskAnnotation("queryLeakageProcessing")
+	@Override
+	public PageListVO<List<AlarmProcessVO>> queryLeakageProcessing(SessionFactory factory, String loginName) {
+		LeakageMessageMapper leakageMessageMapper = factory.getMapper(LeakageMessageMapper.class);
+		List<AlarmProcessVO> leakageProcessList = leakageMessageMapper.queryLeakageProcessing(loginName);
+		
+		PageListVO<List<AlarmProcessVO>> result = new PageListVO<>();
+		result.setDataList(leakageProcessList);
+		result.setTotalPage(1);
+		result.setRowNumber(5);
+		result.setPage(1);
+		result.setPageCount(5);
+		return result;
+	}
+
+	//查询监测待办/已办
+	@TaskAnnotation("queryMonitorProcessing")
+	@Override
+	public PageListVO<List<AlarmProcessVO>> queryMonitorProcessing(SessionFactory factory, String loginName) {
+		LeakageMessageMapper leakageMessageMapper = factory.getMapper(LeakageMessageMapper.class);
+		List<AlarmProcessVO> leakageProcessList = leakageMessageMapper.queryMonitorProcessing(loginName);
+		
+		PageListVO<List<AlarmProcessVO>> result = new PageListVO<>();
+		result.setDataList(leakageProcessList);
+		result.setTotalPage(1);
+		result.setRowNumber(5);
+		result.setPage(1);
+		result.setPageCount(5);
+		return result;
+	}
+
 
 }
