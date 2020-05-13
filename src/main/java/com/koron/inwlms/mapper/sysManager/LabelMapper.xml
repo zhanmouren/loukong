@@ -101,14 +101,14 @@
     
     
     <select id="queryLabelCnList" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelNameVO">
-	select "label".code,"label".cn from "SM_label" as "label"
+	select "label".code,"label".cn as value from "SM_label" as "label"
     </select>
     
     <select id="queryLabelEnList" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelNameVO">
-	select "label".code,"label".en from "SM_label" as "label"
+	select "label".code,"label".en as value from "SM_label" as "label"
     </select>
     
     <select id="queryLabelCnHKList" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelNameVO">
-	select "label".code,"label"."cnHK" from "SM_label" as "label"
+	select "label".code,"label"."cnHK" as value from "SM_label" as "label"
     </select>
 </mapper>

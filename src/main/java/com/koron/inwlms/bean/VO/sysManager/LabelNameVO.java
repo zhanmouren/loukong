@@ -4,12 +4,8 @@ public class LabelNameVO {
 
 	private String code;
 	
-	private String cn;
+	private String value;
 
-	private String en;
-	
-	private String cnHK;
-	
 	public String getCode() {
 		return code;
 	}
@@ -18,29 +14,15 @@ public class LabelNameVO {
 		this.code = code;
 	}
 
-	public String getCn() {
-		return cn;
+	public String getValue() {
+		return value;
 	}
 
-	public void setCn(String cn) {
-		this.cn = cn;
+	public void setValue(String value) {
+		this.value = value;
 	}
 
-	public String getEn() {
-		return en;
-	}
-
-	public void setEn(String en) {
-		this.en = en;
-	}
-
-	public String getCnHK() {
-		return cnHK;
-	}
-
-	public void setCnHK(String cnHK) {
-		this.cnHK = cnHK;
-	}
+	
 	
 	
 }
