@@ -191,7 +191,7 @@ public class LabelServiceImpl implements LabelService{
             }
         } else {
             msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
-            msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
+            msg.setDescription("存在重复的code");
         }
         return msg;
     }
