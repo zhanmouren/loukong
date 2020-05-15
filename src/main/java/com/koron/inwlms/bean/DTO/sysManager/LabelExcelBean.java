@@ -104,7 +104,7 @@ public class LabelExcelBean {
     public String toString() {
         return "ExcelBean{" +
                 "cn='" + cn + '\'' +
-                ", cn_HK='" + cnHK + '\'' +
+                ", cnHK='" + cnHK + '\'' +
                 ", en='" + en + '\'' +
                 ", code='" + code + '\'' +
                 ", type='" + type + '\'' +

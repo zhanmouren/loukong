@@ -24,7 +24,6 @@
 	order by "warningInf"."alarmTime" desc 
     </select>
    
-   
    <select id="queryLeakageProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
 	select * 
 	from "APP_warningProcessing" as "warningProcessing"
