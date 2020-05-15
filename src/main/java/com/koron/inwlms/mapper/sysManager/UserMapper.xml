@@ -9,7 +9,8 @@
      <!-- 查询相关职员信息 -->
     <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
-	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname","user".code  as code    
+	  "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
+       else string_agg(distinct("dept".name),';') end as "depname","user".code  as code    
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"      
@@ -24,13 +25,16 @@
    	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if> 
    	    <if test="code != null"> and "user"."code" = #{code}</if>         
 	  </trim>
+	   group by "user".id ,"user"."loginName","user".phone,"user"."email",
+		"user".name,"user".position,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
+		"user"."createBy","user"."createTime"
 	   order by "user"."createTime" desc
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
     
     <!-- 查询相关职员信息总条数 -->
     <select id="getUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO" resultType="java.lang.Integer">
-        select count(*) from "SM_user" as "user"
+        select count(distinct("user"."loginName")) from "SM_user" as "user"
         left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   
 	    left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
        <trim prefix="where" prefixOverrides="and|or">
@@ -130,19 +134,23 @@
     <!--根据角色Code加载角色人员列表接口 -->
      <select id="queryUserByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
        select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
-	  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when  "dept".name is null then '' else "dept".name end as "depname","user".code as code
+	  "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
+       else string_agg(distinct("dept".name),';') end as "depname","user".code  as code ,"user".code as code
        from "SM_userRoleRelation" as "userRela"
        left join "SM_user" as "user" on "userRela"."userCode"="user".code
        left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
        where "userRela"."roleCode"=#{roleCode} and "user"."whetUse"=0
+       group by "user".id ,"user"."loginName","user".phone,"user"."email",
+		"user".name,"user".position,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
+		"user"."createBy","user"."createTime" 
        order by "user"."createTime" desc
         limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
     
      <!--根据角色Code加载角色人员总条数 -->
      <select id="getRoleUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="java.lang.Integer">
-       select count(*) 
+       select count(distinct("user"."loginName")) 
        from "SM_userRoleRelation" as "userRela"
        left join "SM_user" as "user" on "userRela"."userCode"="user".code
        left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
@@ -192,7 +200,8 @@
      <!-- 角色弹窗选择职员 -->
      <select id="queryExceptRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
        select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,"user"."email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname","user".code as code     
+	   "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
+       else string_agg(distinct("dept".name),';') end as "depname","user".code as code     
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
@@ -202,12 +211,15 @@
 	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>
+	    group by "user".id ,"user"."loginName","user".phone,"user"."email",
+		"user".name,"user".position,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
+		"user"."createBy","user"."createTime" 
 	   order by "user"."createTime" desc 
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
      </select>
      <!-- 角色弹窗选择职员 查询总条数 -->
      <select id="getExceptRoleUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="java.lang.Integer">
-       select count(*) 
+       select count(distinct("user"."loginName")) 
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
@@ -222,7 +234,8 @@
       <!-- 部门弹窗选择职员 -->
      <select id="queryExceptDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
        select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,"user"."email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
-	   "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name  end as "depname" ,"user".code     
+	   "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
+       else string_agg(distinct("dept".name),';') end as "depname","user".code     
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
@@ -232,13 +245,16 @@
 	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>
+	    group by "user".id ,"user"."loginName","user".phone,"user"."email",
+		"user".name,"user".position,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
+		"user"."createBy","user"."createTime"
 	   order by "user"."createTime" desc	
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1); 
      </select>
      
       <!-- 部门弹窗选择职员 查询总条数 -->
      <select id="getExceptDeptUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="java.lang.Integer">
-       select count(*)
+       select count(distinct("user"."loginName"))
 	   from "SM_user" as "user"       
 	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
 	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
@@ -540,9 +556,9 @@
       <select id="queryDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
           select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."email" is null then '' else "user"."email" end,"user".name,case when "user".position is null then -1 else "user".position end,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 		  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name end as "depname"      
-		   from "SM_user" as "user"       
-		   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
-		   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"   
+		   from "SM_department" as "dept"     
+		   left join "SM_userDept" as "userdept" on "userdept"."deptCode"="dept".code    
+		   left join "SM_user" as "user"     on "user".code="userdept"."userCode"   
           where "dept".code=#{depCode} and "user"."whetUse"=0
           order by "user"."createTime" desc
           limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
@@ -550,9 +566,9 @@
       <!--根据角色Code加载角色人员总条数 -->
      <select id="getDeptUserCount"   resultType="java.lang.Integer">
          select count(*)
-           from "SM_user" as "user"       
-		   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
-		   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"   
+          from "SM_department" as "dept"     
+		   left join "SM_userDept" as "userdept" on "userdept"."deptCode"="dept".code    
+		   left join "SM_user" as "user"     on "user".code="userdept"."userCode" 
           where "dept".code=#{depCode}  and "user"."whetUse"=0
       </select>
       

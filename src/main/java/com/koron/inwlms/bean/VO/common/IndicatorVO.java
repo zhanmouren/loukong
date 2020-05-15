@@ -14,6 +14,18 @@ public class IndicatorVO {
 	private Integer timeId;
 	
 	private String zoneNo;
+	
+	//首页专用
+	private String type;
+	
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	public String getCode() {
 		return code;
