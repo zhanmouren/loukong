@@ -268,9 +268,9 @@
      
      <!--遍历插入职员与部门的关系 -->
     <insert id="addDeptUser" parameterType="java.util.List">  
-        insert into "SM_userDept"("userCode", "deptCode","createBy","createTime","updateBy","updateTime")values
+        insert into "SM_userDept"("userCode", "deptCode","mainDeptFlag","createBy","createTime","updateBy","updateTime")values
 		<foreach collection="list" item="deptuser"  index="index" separator=",">
-			(#{deptuser.userCode}, #{deptuser.depCode}, #{deptuser.createBy}, Now(), #{deptuser.updateBy}, Now())
+			(#{deptuser.userCode}, #{deptuser.depCode},#{deptuser.mainDeptFlag},#{deptuser.createBy}, Now(), #{deptuser.updateBy}, Now())
 		</foreach>
     </insert>
     
@@ -554,7 +554,7 @@
       
         <!-- 根据部门Code查询部门人员-->
       <select id="queryDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-          select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."email" is null then '' else "user"."email" end,"user".name,case when "user".position is null then -1 else "user".position end,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
+          select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."email" is null then '' else "user"."email" end,"user".name,case when "user".position is null then '' else "user".position end,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 		  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name end as "depname"      
 		   from "SM_department" as "dept"     
 		   left join "SM_userDept" as "userdept" on "userdept"."deptCode"="dept".code    
@@ -995,5 +995,23 @@
            from "SM_dataDictionary" 
            where parent=#{dicParent}
        </select>
+       
+        <!-- 查询主部门是否存在 -->
+       <select id="queryMainDept"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DeptAndUserVO">
+           select "deptCode" as "depCode","userCode" as "userCode"
+           from "SM_userDept"
+           where "deptCode"=#{depCode} and "userCode"=#{code} and  "mainDeptFlag"=0
+       </select>
+       
+        <!--修改职员主部门 -->
+       <update id="editDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">	    	 
+	    	 <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+               update "SM_userDept"
+               <set>
+                 "mainDeptFlag"=#{item.mainDeptFlag},"updateTime"=Now(),"updateBy"=#{item.updateBy}
+               </set>
+                where "deptCode"=#{item.depCode} and "userCode"=#{item.userCode}
+            </foreach>
+       </update>
 	    
 </mapper>

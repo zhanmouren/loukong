@@ -30,6 +30,7 @@ import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptAndUserIdVO;
+import com.koron.inwlms.bean.VO.sysManager.DeptAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
@@ -63,6 +64,9 @@ public interface UserMapper {
 	
 	//修改职员
     public Integer updateUser(UserDTO userDTO);
+    
+    //根据用户code查询主部门是否已经存在
+    List<DeptAndUserVO> queryMainDept(UserDTO userDTO);
     
     //批量重置职员密码
     public Integer updateUserPassword(UserDTO userDTO);
@@ -118,6 +122,9 @@ public interface UserMapper {
 	
 	//添加用户(批量)和部门关系的操作
 	public Integer addDeptUser(List<DeptAndUserDTO> deptUserDTOList);
+	
+	//修改用户和部门关系的操作
+	public Integer editDeptUser(List<DeptAndUserDTO> deptUserDTOList);
 	
 	//查询deptCode是否存在
 	public List<DeptVO> queryExistDept(DeptDTO deptDTO);

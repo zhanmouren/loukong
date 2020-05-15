@@ -11,14 +11,15 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 * @Date 2020.03.25
 */
 public class DeptAndUserDTO extends BaseDTO{
-     private Integer id;
-	//人员名称
+        private Integer id;
+	   //人员名称
 		private String name;
 		//登录名称
 		private String loginName;
-		//
+		//是否停用
 		private Integer whetUse;
-		
+		//是否是主部门(0代表是主部门，1代表不是主部门)
+		private Integer mainDeptFlag;
 	     //存储userCode的List
 	    private List<String> userCodeList;
 	    //单个的userCode
@@ -43,6 +44,13 @@ public class DeptAndUserDTO extends BaseDTO{
 		private String updateBy;
 		//修改时间
 		private Timestamp updateTime;
+		
+		public Integer getMainDeptFlag() {
+			return mainDeptFlag;
+		}
+		public void setMainDeptFlag(Integer mainDeptFlag) {
+			this.mainDeptFlag = mainDeptFlag;
+		}
 		public Integer getId() {
 			return id;
 		}

@@ -31,10 +31,8 @@ public class UserDTO{
   //职员Email	
   private String Email;
   //职员职位
-  private Integer position;
-  public void setPosition(Integer position) {
-	this.position = position;
-}
+  private String position;
+
 //职员性别
   private Integer sex;
   //职员电话
@@ -58,15 +56,19 @@ public class UserDTO{
   //部门code
   private String depCode;
   
+public String getPosition() {
+	return position;
+}
+public void setPosition(String position) {
+	this.position = position;
+}
 public List<String> getUserCodeList() {
 	return userCodeList;
 }
 public void setUserCodeList(List<String> userCodeList) {
 	this.userCodeList = userCodeList;
 }
-public Integer getPosition() {
-	return position;
-}
+
 public String getDepCode() {
 	return depCode;
 }

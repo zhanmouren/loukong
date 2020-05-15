@@ -54,6 +54,7 @@ import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.DeptAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.DeptVO;
 import com.koron.inwlms.bean.VO.sysManager.EnumMapperVO;
@@ -77,6 +78,9 @@ import com.koron.inwlms.util.RandomCodeUtil;
 
 @Service
 public class UserServiceImpl implements UserService{
+	
+	private Integer mainDeptFlag=0;
+	private Integer secDeptFlag=-1;
 	
 	@Autowired
     private FileConfigInfo fileConfigInfo;
@@ -113,13 +117,14 @@ public class UserServiceImpl implements UserService{
 		}
 	     addResult=userMapper.addUser(userDTO);
 	    //获取usercode
-	    if(addResult==1 && userDTO.getDepCode()!=null) {
+	    if(addResult==1 && userDTO.getDepCode()!=null && !"".equals(userDTO.getDepCode())) {
 	    	 //准备数据
 		    DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
 		    deptAndUserDTO.setDepCode(userDTO.getDepCode());
 		    deptAndUserDTO.setUserCode(userCode);
 		    deptAndUserDTO.setCreateBy("小詹");
 		    deptAndUserDTO.setUpdateBy("小詹");
+		    deptAndUserDTO.setMainDeptFlag(mainDeptFlag);
 		    List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
 		    deptUserDTOList.add(deptAndUserDTO);
 		    //添加用户和部门关系的操作
@@ -155,6 +160,28 @@ public class UserServiceImpl implements UserService{
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
 		userDTO.setUpdateBy("小詹");
 		Integer editResult=userMapper.updateUser(userDTO);
+	    List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
+		
+	  if(editResult==1 && userDTO.getDepCode()!=null && !"".equals(userDTO.getDepCode())) {
+		 //准备数据
+	    DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
+	    deptAndUserDTO.setDepCode(userDTO.getDepCode());
+	    deptAndUserDTO.setUserCode(userDTO.getCode());
+	    deptAndUserDTO.setCreateBy("小詹");
+	    deptAndUserDTO.setUpdateBy("小詹");
+	    deptAndUserDTO.setMainDeptFlag(mainDeptFlag);  
+	    deptUserDTOList.add(deptAndUserDTO);
+	    //修改前先查询是否存在主部门，没有的话先插入	
+		List<DeptAndUserVO> deptUserList=userMapper.queryMainDept(userDTO);
+		if(deptUserList!=null && deptUserList.size()>0) {
+			 //修改用户和部门关系的操作
+			editResult=userMapper.editDeptUser(deptUserDTOList);
+		}
+		else {	 			  
+		     //添加用户和部门关系的操作
+	        editResult=userMapper.addDeptUser(deptUserDTOList);		   
+		}
+	  }
 		return editResult;
 	}
    
@@ -380,6 +407,7 @@ public class UserServiceImpl implements UserService{
 				deptUserDTONew.setUserCode(deptUserDTO.getUserCodeList().get(i));				
 				deptUserDTONew.setCreateBy("小詹");			
 				deptUserDTONew.setUpdateBy("小詹");
+				deptUserDTONew.setMainDeptFlag(secDeptFlag);
 				deptUserDTOList.add(deptUserDTONew);
 				//插入之前判断职员code是否在sm_user是否存在
 				QueryUserDTO queryUserDTO=new QueryUserDTO();
