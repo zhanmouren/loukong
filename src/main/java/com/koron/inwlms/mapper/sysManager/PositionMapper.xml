@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.sysManager.PositionMapper">
+
+
+	<select id="queryPosition" parameterType="com.koron.inwlms.bean.DTO.sysManager.PositionDTO" resultType="com.koron.inwlms.bean.VO.sysManager.PositionVO">
+	select *
+	from "SM_position" as "position"
+	<trim prefix="where" prefixOverrides="and|or">
+		<if test="name != null  and name !='' "> and "position".name like '%'||#{name}||'%'</if>         
+	</trim>
+	order by "position"."createTime" desc
+	limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+
+	<select id="getPositionCount" parameterType="com.koron.inwlms.bean.DTO.sysManager.PositionDTO" resultType="java.lang.Integer">
+	select count(*)
+	from "SM_position" as "position"
+	<trim prefix="where" prefixOverrides="and|or">
+		<if test="name != null  and name !='' "> and "position".name like '%'||#{name}||'%'</if>         
+	</trim>
+    </select>
+
+	<select id="queryPositionDetail" parameterType="com.koron.inwlms.bean.DTO.sysManager.PositionDTO" resultType="com.koron.inwlms.bean.VO.sysManager.PositionVO">
+	select *
+	from "SM_position" as "position"
+	where "position".code = #{code}
+    </select>
+</mapper>
