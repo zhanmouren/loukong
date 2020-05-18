@@ -1,6 +1,9 @@
 package com.koron.inwlms.service.leakageControl;
 
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -10,6 +13,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.common.Indicator;
+import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
@@ -17,6 +21,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.RecommendStrategy;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ZoneDayData;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
@@ -25,11 +30,13 @@ import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.common.CommonMapper;
+import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
 import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
+import com.koron.inwlms.util.TimeUtil;
 import com.koron.inwlms.util.sendMail.SendMail;
 import com.koron.inwlms.util.sendNote.SendNoteUtil;
 import com.koron.util.Constant;
@@ -525,6 +532,96 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		
 		//查询控漏损策略数据字典信息
 		
+	}
+	
+	public String aiWarning(SessionFactory factory,double maxMNF,double midMNF,double minMNF,double maxFlow,double midFlow,double minFlow) throws ParseException {
+		//获取时间
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		  Date nowDate = new Date();
+		//获取7天前的日期
+		  Date startOldDate = TimeUtil.addDay(nowDate, -7);
+		  int startOldY = TimeUtil.getYears(startOldDate);
+		  int startOldM = TimeUtil.getMonth(startOldDate);
+		  int startOldD = TimeUtil.getDays(startOldDate);
+		  int endY = TimeUtil.getYears(nowDate);
+		  int endM = TimeUtil.getMonth(nowDate);
+		  int endD = TimeUtil.getDays(nowDate);
+		  
+		  int start = startOldY*100 + startOldM*10 + startOldD;
+		  int end = endY*100 + endM*10 +endD;
+		  
+		//获取前7日的平均流量和最小夜间流量
+		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
+		//TODO 获取分区供水量的指标编码
+		String allFlowCode = "";
+		String mnfFlowCode = "";
+		List<String> codes = new ArrayList<>();
+		codes.add(allFlowCode);
+		codes.add(mnfFlowCode);
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setTimeType(2);
+		indicatorDTO.setCodes(codes);
+		indicatorDTO.setStartTime(start);
+		indicatorDTO.setEndTime(end);
+		
+		double allAvgFlow = 0.0;
+		double allMNF = 0.0;
+		
+		List<IndicatorVO> indicList = indicMapper.queryWBBaseIndicData(indicatorDTO);
+		for(IndicatorVO indicatorVO : indicList) {
+			if(indicatorVO.getCode().equals(allFlowCode)) {
+				double allFlow = indicatorVO.getValue();
+				allAvgFlow = allAvgFlow + allFlow/24;
+			}else if(indicatorVO.getCode().equals(mnfFlowCode)) {
+				double mnf = indicatorVO.getValue();
+				allMNF = allMNF + mnf;
+			}
+		}
+		//7天平均流量和最小夜间流量
+		double avgFlow = allAvgFlow/7;
+		double avgMNF = allMNF/7;
+		
+		//TODO 查询历史所有数据的平均流量和最小夜间流量
+		double avgOldFlow = 0.0;
+		double avgOldMNF = 0.0;
+		
+		
+		//TODO 判断报警
+		//最小夜间流量判断标志，1为小，2为中，3为大
+		int mnfFlag = 0;
+		int flowFlag = 0;
+		if((avgMNF - avgOldMNF) >= maxMNF) {
+			mnfFlag = 3;
+		}else if((avgMNF - avgOldMNF) >= midMNF) {
+			mnfFlag = 2;
+		}else if((avgMNF - avgOldMNF) >= minMNF) {
+			mnfFlag = 1;
+		}else {
+			mnfFlag = 0;
+		}
+		
+		if((avgFlow - avgOldFlow) >= maxFlow) {
+			flowFlag = 3;
+		}else if((avgFlow - avgOldFlow) >= midFlow) {
+			flowFlag = 2;
+		}else if((avgFlow - avgOldFlow) >= minFlow) {
+			flowFlag = 1;
+		}else {
+			flowFlag = 0;
+		}
+		
+		//判断最终结果
+		int endFlag = 0;
+		if(mnfFlag == 0 || flowFlag == 0) {
+			endFlag = 0;
+		}else if(mnfFlag >=  flowFlag) {
+			endFlag = flowFlag;
+		}else if(mnfFlag < flowFlag) {
+			endFlag = mnfFlag;
+		}
+		
+		
+		return null;
 	}
 	
 	

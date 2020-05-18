@@ -5,6 +5,7 @@ import java.util.List;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
@@ -24,5 +25,7 @@ public interface AlarmProcessService {
 	TreatmentEffectVO queryTreatmentEffect(SessionFactory factory, TreatmentEffectDTO treatmentEffectDTO);
 
 	List<AlarmProcessVO> queryAlarmProcessByTaskCode(SessionFactory factory, String taskCode);
+
+	List<UploadFileDTO> queryAlarmProcessFile(SessionFactory factory, String type);
 
 }

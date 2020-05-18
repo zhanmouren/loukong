@@ -17,7 +17,7 @@ public class KafkaProducer {
     private KafkaTemplate<String, String> kafkaTemplate;
 
    
-    private String topicUser="firstTop";//topic名称
+    private String topicUser="test2";//topic名称
 
     /**
      * 发送用户消息

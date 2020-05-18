@@ -48,6 +48,7 @@ public class IntellectPartitionController {
     public String automaticPartition(@RequestBody AutomaticPartitionDTO automaticPartitionDTO) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
+		
 		//接收到信号，开始存储方案总表信息
 		TotalSchemeDet totalSchemeDet = new TotalSchemeDet();
 		totalSchemeDet.setAmbientLayer(automaticPartitionDTO.getAmbientLayer());
@@ -57,35 +58,18 @@ public class IntellectPartitionController {
 		totalSchemeDet.setZoneCode(automaticPartitionDTO.getZoneCode());
 		totalSchemeDet.setZoneType(automaticPartitionDTO.getZoneType());
 		totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
-		String code = "";
 		try {
-			code = ADOConnection.runTask(psds, "addTotalSchemeDet", String.class,  totalSchemeDet);
+			String data = ADOConnection.runTask(psds, "getModelReturnData", String.class, automaticPartitionDTO, totalSchemeDet);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
-			msg.setDescription("方案总表数据插入失败");
+			msg.setDescription("智能分区数据传输失败！");
 		}
 		
-		//TODO 调用gis接口，获取所选分区管线数据
-		String gisPath = "";
-		String gisJsonData = "";
-		JsonObject gisResultData = InterfaceUtil.interfaceOfPostUtil(gisPath, gisJsonData);
-		Gson gson = new Gson(); 
-		List<GisZonePipeData> pipeinfo = gson.fromJson(gisResultData, new TypeToken<List<GisZonePipeData>>(){}.getType());
-		//查询管径数据
-		
-		//TODO 调用模型算法接口推送数据，等待模型返回已接收信号时
-		GisZoneData gisZoneData = new GisZoneData();
-		gisZoneData.setPipe_info(pipeinfo);
-		gisZoneData.setNum_up(automaticPartitionDTO.getMaxZone());
-		gisZoneData.setNum_down(automaticPartitionDTO.getMinZone());
-		gisZoneData.setTotal_plan_code(code);
-		String mlPath = "";
-		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, gson.toJson(pipeinfo));
-		//TODO 解析返回数据
 		return msg.toJson();
 	}
+
 	
 	@RequestMapping(value = "/queryTotalSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询方案总表数据", notes = "查询方案总表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")

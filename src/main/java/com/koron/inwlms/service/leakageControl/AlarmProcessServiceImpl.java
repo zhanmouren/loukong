@@ -9,6 +9,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
@@ -69,6 +70,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		return num;
 	}
 	
+	
 	@TaskAnnotation("deleteAlarmProcess")
 	@Override
 	public Integer deleteAlarmProcess(SessionFactory factory,String code) {
@@ -77,6 +79,20 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		return num;
 	}
 	
+	/**
+	 * 按模块查询上传附件信息
+	 */
+	@TaskAnnotation("queryAlarmProcessFile")
+	@Override
+	public List<UploadFileDTO> queryAlarmProcessFile(SessionFactory factory,String type) {
+		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		List<UploadFileDTO> list = mapper.queryAlarmProcessFile(type);
+		return list;
+	}
+	
+	/**
+	 * 漏损预警处理效果
+	 */
 	@TaskAnnotation("queryTreatmentEffect")
 	@Override
 	public TreatmentEffectVO queryTreatmentEffect(SessionFactory factory,TreatmentEffectDTO treatmentEffectDTO) {

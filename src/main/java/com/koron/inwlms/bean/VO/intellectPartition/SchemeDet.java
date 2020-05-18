@@ -12,6 +12,10 @@ public class SchemeDet {
 
 	private BigInteger id;
 	/**
+	 * 分区方案编码
+	 */
+	private String code;
+	/**
 	 * 分区方案汇总编码
 	 */
 	private String totalSchemeCode;
@@ -43,6 +47,15 @@ public class SchemeDet {
 	private String updateBy;
 	
 	private Date updateTime;
+
+	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 
 	public BigInteger getId() {
 		return id;

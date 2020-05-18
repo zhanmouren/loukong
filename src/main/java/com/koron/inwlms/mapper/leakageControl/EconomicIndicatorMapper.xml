@@ -14,6 +14,10 @@
 			(#{invest.type}, #{invest.caliber}, #{invest.money}, #{invest.otherInvest}, #{invest.projectCost}, #{invest.totalCost}, #{invest.createBy}, Now(), #{invest.updateBy}, Now())
 	</foreach>
  </insert>
+ 
+ <select id="queryPartitionInvestCaliber" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO">
+ select id , type , select_value(caliber) as caliber, money, "otherInvest", "projectCost", "totalCost", "createBy", "createTime", "updateBy", "updateTime" from "APP_partitionInvest" where type = #{type}
+ </select>
 
   
   </mapper>

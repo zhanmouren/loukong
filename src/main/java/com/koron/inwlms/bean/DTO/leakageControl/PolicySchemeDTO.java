@@ -22,7 +22,7 @@ public class PolicySchemeDTO {
 	 */
 	private String content;
 	/**
-	 * 控漏损策略方案状态
+	 * 控漏损策略方案状态 0：非启用，1：已启用
 	 */
 	private String state;
 	

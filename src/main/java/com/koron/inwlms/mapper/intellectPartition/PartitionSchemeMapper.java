@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import com.koron.inwlms.bean.DTO.intellectPartition.PipePreZoneRelationDTO;
+import com.koron.inwlms.bean.DTO.intellectPartition.PreZoneRelationDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
@@ -30,6 +32,12 @@ public interface PartitionSchemeMapper {
 	
 	Integer updateTotalSchemeDet(List<String> codes);
 	
-	
 	Integer updateSchemeDet(List<String> codes);
+	
+	String addSchemeDet(SchemeDet schemeDet);
+	
+	Integer addPreZone(PreZoneRelationDTO preZoneRelationDTO);
+	
+	Integer addPipePreZone(List<PipePreZoneRelationDTO> pipeList);
+	
 }

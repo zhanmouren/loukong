@@ -24,5 +24,7 @@ public interface EconomicIndicatorMapper {
 	Integer deletePartitionInvest(@Param("type") String type);
 	
 	Integer addPartitionInvest(List<PartitionInvestDTO> partitionInvestDTO);
+	
+	List<PartitionInvestVO> queryPartitionInvestCaliber(String type);
 
 }

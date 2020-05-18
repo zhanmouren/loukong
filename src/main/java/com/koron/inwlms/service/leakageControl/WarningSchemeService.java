@@ -10,6 +10,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeMessage;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 
 @Service
@@ -34,5 +35,7 @@ public interface WarningSchemeService {
 	Integer updateAlarmRule(SessionFactory factory, AlarmRuleDTO alarmRuleDTO);
 
 	List<AlertNoticeMessage> queryNoticeSchemeByWarningCode(SessionFactory factory, String code);
+
+	List<AlertSchemeListVO> queryWarningSchemeList(SessionFactory factory, WarningSchemeDTO warningSchemeDTO);
 
 }

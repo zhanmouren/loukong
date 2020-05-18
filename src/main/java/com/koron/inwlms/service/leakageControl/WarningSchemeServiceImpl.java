@@ -13,6 +13,7 @@ import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeMessage;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
@@ -29,6 +30,39 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
 		List<WarningSchemeVO> list = mapper.queryWarningScheme(warningSchemeDTO);
 		return list;
+	}
+	
+	/**
+	 * 查询预警方案列表数据
+	 */
+	@TaskAnnotation("queryWarningSchemeList")
+	@Override
+	public List<AlertSchemeListVO> queryWarningSchemeList(SessionFactory factory,WarningSchemeDTO warningSchemeDTO){
+		List<AlertSchemeListVO> alertSchemeListVO = new ArrayList<>();
+		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
+		List<WarningSchemeVO> warningSchemeList = mapper.queryWarningScheme(warningSchemeDTO);
+		for(WarningSchemeVO warningScheme : warningSchemeList) {
+			AlertSchemeListVO alertSchemeVO = new AlertSchemeListVO();
+			//拼接通知方式字段
+			String noticeType = "";
+			List<AlertNoticeScheme> alertNoticeSchemeList = mapper.queryAlertNoticeSchemeByWarningId(warningScheme.getCode());
+			for(AlertNoticeScheme alertNoticeScheme : alertNoticeSchemeList) {
+				//TODO 通过通知方式的key查询其值
+				
+				//拼装返回格式
+				noticeType = noticeType + alertNoticeScheme.getType() + "/";
+			}
+			
+			alertSchemeVO.setNoticeType(noticeType);
+			alertSchemeVO.setAlarmType(warningScheme.getAlarmType());
+			alertSchemeVO.setName(warningScheme.getName());
+			alertSchemeVO.setAlarmIndex(warningScheme.getAlarmIndex());
+			alertSchemeVO.setId(warningScheme.getId());
+			alertSchemeVO.setCode(warningScheme.getCode());
+			alertSchemeVO.setObjectType(warningScheme.getObjectType());
+			alertSchemeListVO.add(alertSchemeVO);
+		}
+		return alertSchemeListVO;
 	}
 	
 	@TaskAnnotation("addWarningScheme")
@@ -146,6 +180,7 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 		Integer num = mapper.updateAlarmRule(alarmRuleDTO);
 		return num;
 	}
+	
 	
 	@TaskAnnotation("queryNoticeSchemeByWarningCode")
 	@Override
