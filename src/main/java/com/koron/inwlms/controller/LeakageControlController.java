@@ -62,6 +62,7 @@ import com.koron.inwlms.bean.VO.leakageControl.EventSubtypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsAllDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
@@ -822,7 +823,7 @@ public class LeakageControlController {
     @ApiOperation(value = "漏控处理统计接口", notes = "漏控处理统计接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryProcessingStatistics(@RequestBody ProcessingStatisticsDTO processingStatisticsDTO) {
-		MessageBean<ProcessingStatisticsVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ProcessingStatisticsVO.class);
+		MessageBean<ProcessingStatisticsAllDataVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ProcessingStatisticsAllDataVO.class);
 		
 		if(processingStatisticsDTO.getStartTime() == null || processingStatisticsDTO.getEndTime().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -836,11 +837,55 @@ public class LeakageControlController {
 		}
 		
 		try {
+			//测试数据（待数据连通后删除）
+			ProcessingStatisticsAllDataVO psadv = new ProcessingStatisticsAllDataVO();
+			psadv.setMnfBefor(100.01);
+			psadv.setMnfAfther(81.2);
+			psadv.setLossFlowBefor(111.3);
+			psadv.setLossFlowAfther(80.4);
+			ProcessingStatisticsVO processingStatisticsVO = new ProcessingStatisticsVO();
+			processingStatisticsVO.setLoadingNum(10.0);
+			processingStatisticsVO.setFinishNum(5.0);
+			processingStatisticsVO.setUntreatedNum(8.0);
+			List<ProcessingStatisticsVO> processingStatisticsVOList = new ArrayList<>();
+			ProcessingStatisticsVO processingStatisticsVO1 = new ProcessingStatisticsVO();
+			processingStatisticsVO1.setLoadingNum(10.0);
+			processingStatisticsVO1.setFinishNum(5.0);
+			processingStatisticsVO1.setUntreatedNum(8.0);
+			processingStatisticsVO1.setLossFlowNum(340.2);
+			processingStatisticsVO1.setAllFlowNum(700.4);
+			processingStatisticsVO1.setMonth(1);
+			processingStatisticsVOList.add(processingStatisticsVO1);
+			ProcessingStatisticsVO processingStatisticsVO2 = new ProcessingStatisticsVO();
+			processingStatisticsVO2.setLoadingNum(11.0);
+			processingStatisticsVO2.setFinishNum(6.0);
+			processingStatisticsVO2.setUntreatedNum(7.0);
+			processingStatisticsVO2.setAllFlowNum(800.6);
+			processingStatisticsVO2.setLossFlowNum(300.4);
+			processingStatisticsVO2.setMonth(2);
+			processingStatisticsVOList.add(processingStatisticsVO2);
+			ProcessingStatisticsVO processingStatisticsVO3 = new ProcessingStatisticsVO();
+			processingStatisticsVO3.setLoadingNum(11.0);
+			processingStatisticsVO3.setFinishNum(8.0);
+			processingStatisticsVO3.setUntreatedNum(4.0);
+			processingStatisticsVO3.setAllFlowNum(780.6);
+			processingStatisticsVO3.setLossFlowNum(300.1);
+			processingStatisticsVO3.setMonth(3);
+			processingStatisticsVOList.add(processingStatisticsVO3);
+			ProcessingStatisticsVO processingStatisticsVO4 = new ProcessingStatisticsVO();
+			processingStatisticsVO4.setLoadingNum(11.0);
+			processingStatisticsVO4.setFinishNum(8.0);
+			processingStatisticsVO4.setUntreatedNum(4.0);
+			processingStatisticsVO4.setAllFlowNum(600.5);
+			processingStatisticsVO4.setLossFlowNum(500.1);
+			processingStatisticsVO4.setMonth(4);
+			processingStatisticsVOList.add(processingStatisticsVO4);
+			
 			//TODO 数据统计
-			ProcessingStatisticsVO processingStatisticsVO = ADOConnection.runTask(sas, "queryProcessingStatistics",ProcessingStatisticsVO.class,processingStatisticsDTO);
+			//ProcessingStatisticsVO processingStatisticsVO = ADOConnection.runTask(sas, "queryProcessingStatistics",ProcessingStatisticsVO.class,processingStatisticsDTO);
 			
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			msg.setData(processingStatisticsVO);
+			msg.setData(psadv);
 			
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -1113,12 +1158,12 @@ public class LeakageControlController {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		PolicySchemeDTO policySchemeDTO = policyDTO.getPolicySchemeDTO();
 		List<PolicySettingDTO> policySettingDTOList = policyDTO.getPolicySettingDTOList();
-		if(policySchemeDTO.getName() != null || policySchemeDTO.getName().equals("")) {
+		if(policySchemeDTO.getName() == null || policySchemeDTO.getName().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("方案名称为空");
 	        return msg.toJson();
 		}
-		if(policySchemeDTO.getState() != null || policySchemeDTO.getState().equals("")) {
+		if(policySchemeDTO.getState() == null || policySchemeDTO.getState().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("方案状态为空");
 	        return msg.toJson();

@@ -18,7 +18,7 @@
   
   <insert id="addPolicyScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO">
   insert into "APP_policyScheme"(code, name, content, state, "createBy", "createTime", "updateBy", "updateTime")
-  values(#{code}, #{name}, #{content}, #{state}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
+  values(#{code}, #{name}, #{content}, #{state}, #{createBy}, Now(), #{updateBy}, Now())
   </insert>
   
   <select id="queryPolicySetting" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.Policy">
@@ -33,7 +33,7 @@
   insert into "APP_policySetting"("policyCode", type, "areaType", "repairCost", "missFlow", time, day, "changeTabInvest", "tabUserRatio",
   "changeNetInvest", "netUserRatio", "createBy", "createTime", "updateBy", "updateTime")
   values(#{policyCode}, #{type}, #{areaType}, #{repairCost}, #{missFlow}, #{time}, #{day}, #{changeTabInvest}, #{tabUserRatio},
-  #{changeNetInvest}, #{netUserRatio}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
+  #{changeNetInvest}, #{netUserRatio}, #{createBy}, Now(), #{updateBy}, Now())
   </insert>
   
   <update id="updatePolicySetting" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO">
