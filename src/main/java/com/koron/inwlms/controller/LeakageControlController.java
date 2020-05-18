@@ -67,6 +67,7 @@ import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.ZoneSaveWaterData;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
@@ -880,6 +881,49 @@ public class LeakageControlController {
 			processingStatisticsVO4.setLossFlowNum(500.1);
 			processingStatisticsVO4.setMonth(4);
 			processingStatisticsVOList.add(processingStatisticsVO4);
+			List<ZoneSaveWaterData> zswd = new ArrayList<>();
+			ZoneSaveWaterData zoneSaveWaterData = new ZoneSaveWaterData();
+			zoneSaveWaterData.setName("分区1");
+			zoneSaveWaterData.setProportion(50.0);
+			zoneSaveWaterData.setSaveWater(1800.0);
+			zswd.add(zoneSaveWaterData);
+			ZoneSaveWaterData zoneSaveWaterData1 = new ZoneSaveWaterData();
+			zoneSaveWaterData1.setName("分区2");
+			zoneSaveWaterData1.setProportion(20.0);
+			zoneSaveWaterData1.setSaveWater(800.0);
+			zswd.add(zoneSaveWaterData1);
+			ZoneSaveWaterData zoneSaveWaterData2 = new ZoneSaveWaterData();
+			zoneSaveWaterData2.setName("分区3");
+			zoneSaveWaterData2.setProportion(20.0);
+			zoneSaveWaterData2.setSaveWater(800.0);
+			zswd.add(zoneSaveWaterData2);
+			ZoneSaveWaterData zoneSaveWaterData3 = new ZoneSaveWaterData();
+			zoneSaveWaterData3.setName("分区4");
+			zoneSaveWaterData3.setProportion(10.0);
+			zoneSaveWaterData3.setSaveWater(400.0);
+			zswd.add(zoneSaveWaterData3);
+			psadv.setSaveWaterList(zswd);
+			List<ZoneSaveWaterData> zscd = new ArrayList<>();
+			ZoneSaveWaterData zoneSaveWaterData4 = new ZoneSaveWaterData();
+			zoneSaveWaterData4.setName("分区1");
+			zoneSaveWaterData4.setSaveCost(10.0);
+			zswd.add(zoneSaveWaterData4);
+			ZoneSaveWaterData zoneSaveWaterData5 = new ZoneSaveWaterData();
+			zoneSaveWaterData5.setName("分区2");
+			zoneSaveWaterData5.setSaveCost(12.3);
+			zswd.add(zoneSaveWaterData5);
+			ZoneSaveWaterData zoneSaveWaterData6 = new ZoneSaveWaterData();
+			zoneSaveWaterData6.setName("分区3");
+			zoneSaveWaterData6.setSaveCost(14.7);
+			zswd.add(zoneSaveWaterData6);
+			ZoneSaveWaterData zoneSaveWaterData7 = new ZoneSaveWaterData();
+			zoneSaveWaterData7.setName("分区4");
+			zoneSaveWaterData7.setSaveCost(20.6);
+			zswd.add(zoneSaveWaterData7);
+			psadv.setSaveWaterList(zscd);
+			
+			
+			
 			
 			//TODO 数据统计
 			//ProcessingStatisticsVO processingStatisticsVO = ADOConnection.runTask(sas, "queryProcessingStatistics",ProcessingStatisticsVO.class,processingStatisticsDTO);
@@ -1393,7 +1437,7 @@ public class LeakageControlController {
     public String deleteEventSubtype(String key) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
-		if(key != null || key.equals("")) {
+		if(key == null || key.equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("事项子类型编码为空");
 	        return msg.toJson();

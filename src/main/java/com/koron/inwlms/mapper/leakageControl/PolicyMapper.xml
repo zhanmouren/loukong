@@ -39,14 +39,14 @@
   <update id="updatePolicySetting" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO">
   update "APP_policySetting"
   <set>
-   <if test="repairCost != null"> "repairCost" = #{repairCost}</if>
-   <if test="missFlow !=null"> "missFlow" = #{missFlow}</if>
-   <if test="time !=null"> time = #{time}</if>
-   <if test="day !=null"> day = #{day}</if>
-   <if test="changeTabInvest !=null"> "changeTabInvest" = #{changeTabInvest}</if>
-   <if test="tabUserRatio !=null"> "tabUserRatio" = #{tabUserRatio}</if>
-   <if test="changeNetInvest !=null"> "changeNetInvest" = #{changeNetInvest}</if>
-   <if test="netUserRatio !=null"> "netUserRatio" = #{netUserRatio}</if>
+   <if test="repairCost != null"> "repairCost" = #{repairCost},</if>
+   <if test="missFlow !=null"> "missFlow" = #{missFlow},</if>
+   <if test="time !=null"> time = #{time},</if>
+   <if test="day !=null"> day = #{day},</if>
+   <if test="changeTabInvest !=null"> "changeTabInvest" = #{changeTabInvest},</if>
+   <if test="tabUserRatio !=null"> "tabUserRatio" = #{tabUserRatio},</if>
+   <if test="changeNetInvest !=null"> "changeNetInvest" = #{changeNetInvest},</if>
+   <if test="netUserRatio !=null"> "netUserRatio" = #{netUserRatio},</if>
    <if test="updateTime !=null"> "updateTime" = #{updateTime}</if>
   </set>
   where "policyCode" = #{policyCode}
@@ -55,8 +55,8 @@
   <update id="updatePolicyScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO">
   update "APP_policyScheme"
   <set>
-  <if test="name != null and name != '' "> name = #{name}</if>
-  <if test="content != null and content != '' "> content = #{content}</if>
+  <if test="name != null and name != '' "> name = #{name},</if>
+  <if test="content != null and content != '' "> content = #{content},</if>
   <if test="state != null and state != '' "> state = #{state}</if>
   </set>
   where code = #{code}

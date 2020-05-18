@@ -1,5 +1,7 @@
 package com.koron.inwlms.bean.VO.leakageControl;
 
+import java.util.List;
+
 public class ProcessingStatisticsAllDataVO {
 
 	private Double mnfBefor;
@@ -11,6 +13,27 @@ public class ProcessingStatisticsAllDataVO {
 	private Double lossFlowAfther;
 	
 	private ProcessingStatisticsVO psv;
+	
+	private List<ZoneSaveWaterData> saveWaterList;
+	
+	private List<ZoneSaveWaterData> saveCostList;
+
+	
+	public List<ZoneSaveWaterData> getSaveWaterList() {
+		return saveWaterList;
+	}
+
+	public void setSaveWaterList(List<ZoneSaveWaterData> saveWaterList) {
+		this.saveWaterList = saveWaterList;
+	}
+
+	public List<ZoneSaveWaterData> getSaveCostList() {
+		return saveCostList;
+	}
+
+	public void setSaveCostList(List<ZoneSaveWaterData> saveCostList) {
+		this.saveCostList = saveCostList;
+	}
 
 	public Double getMnfBefor() {
 		return mnfBefor;

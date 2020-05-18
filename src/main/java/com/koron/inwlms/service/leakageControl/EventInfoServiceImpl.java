@@ -92,15 +92,16 @@ public class EventInfoServiceImpl implements EventInfoService{
 			relationNum = mapper.addEventTypeRelation(eventSubTypeDTO.getParentKey(), dataDicDTO.getDicKey());
 			if(relationNum > 0) {
 				DataDicDTO dataDicDTONew = new DataDicDTO();
-				dataDicDTONew.setDicCn(dataDicDTO.getDicCn());
-				dataDicDTONew.setDicEn(dataDicDTO.getDicEn());
-				dataDicDTONew.setDicTc(dataDicDTO.getDicTc());
+				dataDicDTONew.setDicCn(Constant.EVENTSUBTYPE_CN);
+				dataDicDTONew.setDicEn(Constant.EVENTSUBTYPE_EN);
+				dataDicDTONew.setDicTc(Constant.EVENTSUBTYPE_TC);
 				dataDicDTONew.setDicParent(Constant.EVENTSUBTYPE);
-				dataDicDTONew.setDicRemark(dataDicDTO.getDicRemark());
+				dataDicDTONew.setDicRemark("");
 				dataDicDTONew.setDicKey(dataDicDTO.getDicKey());
 				dataDicDTONew.setDicEnValue(dataDicDTO.getDicEnValue());
 				dataDicDTONew.setDicTcValue(dataDicDTO.getDicTcValue());
 				dataDicDTONew.setDicValue(dataDicDTO.getDicValue());
+				dataDicDTONew.setDicDetRemark(dataDicDTO.getDicDetRemark());
 				dataDicDTONew.setDicSeq(i);
 				//TODO 创建人等
 				dataDicDTOList.add(dataDicDTONew);
