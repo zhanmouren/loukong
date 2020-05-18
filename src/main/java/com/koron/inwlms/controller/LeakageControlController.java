@@ -1419,7 +1419,6 @@ public class LeakageControlController {
 		
 		try {
 			//添加子类型
-
 			Integer num = ADOConnection.runTask(eis, "addEventSubType", Integer.class, eventSubTypeDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
