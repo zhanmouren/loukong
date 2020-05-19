@@ -907,20 +907,20 @@ public class LeakageControlController {
 			ZoneSaveWaterData zoneSaveWaterData4 = new ZoneSaveWaterData();
 			zoneSaveWaterData4.setName("分区1");
 			zoneSaveWaterData4.setSaveCost(10.0);
-			zswd.add(zoneSaveWaterData4);
+			zscd.add(zoneSaveWaterData4);
 			ZoneSaveWaterData zoneSaveWaterData5 = new ZoneSaveWaterData();
 			zoneSaveWaterData5.setName("分区2");
 			zoneSaveWaterData5.setSaveCost(12.3);
-			zswd.add(zoneSaveWaterData5);
+			zscd.add(zoneSaveWaterData5);
 			ZoneSaveWaterData zoneSaveWaterData6 = new ZoneSaveWaterData();
 			zoneSaveWaterData6.setName("分区3");
 			zoneSaveWaterData6.setSaveCost(14.7);
-			zswd.add(zoneSaveWaterData6);
+			zscd.add(zoneSaveWaterData6);
 			ZoneSaveWaterData zoneSaveWaterData7 = new ZoneSaveWaterData();
 			zoneSaveWaterData7.setName("分区4");
 			zoneSaveWaterData7.setSaveCost(20.6);
-			zswd.add(zoneSaveWaterData7);
-			psadv.setSaveWaterList(zscd);
+			zscd.add(zoneSaveWaterData7);
+			psadv.setSaveCostList(zscd);
 			
 			
 			
