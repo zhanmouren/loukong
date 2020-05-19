@@ -581,7 +581,7 @@
      <!--加载角色权限菜单-->
      <select id="queryRoleMenuByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
          select "SM_treeDet".*,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
-		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP"
+		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP",
 		case when string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') end as op
 		from "SM_moduleMenu" as "menu"
 		left join "SM_treeDet" on "SM_treeDet".foreignkey="menu".code
