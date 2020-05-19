@@ -1626,7 +1626,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			Double flux = meterMFlowData.getFlux();
 			for (DrqlMeterErrUseData dmeud : dmeuList) {
 				if(meterMFlowData.getCode().equals(dmeud.getMeterNo())
-						&& (flux < dmeud.getMinV() || flux> dmeud.getMaxV())) {
+						&& dmeud.getMinV() != null && dmeud.getMaxV() != null && (flux < dmeud.getMinV() || flux> dmeud.getMaxV())) {
 					//异常用水
 					for (MeterInfo meterInfo : lists) {
 						if(meterInfo.getMeterNo().equals(dmeud.getMeterNo())) {

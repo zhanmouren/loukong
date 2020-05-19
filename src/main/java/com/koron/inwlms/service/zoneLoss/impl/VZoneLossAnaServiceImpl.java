@@ -47,7 +47,7 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 		GisZoneServiceImpl gzsImpl = new GisZoneServiceImpl();
 		List<String> vZoneCodes = new ArrayList<>();
 		QueryVZoneInfoDTO queryVZoneInfoDTO = new QueryVZoneInfoDTO();
-		queryVZoneInfoDTO.setZoneNo(queryVSZoneListDTO.getvZoneNo());
+		queryVZoneInfoDTO.setZoneNo(queryVSZoneListDTO.getVirtualZoneNo());
 		queryVZoneInfoDTO.setZoneType(2);
 		List<VZoneInfoVO> vZoneInfos = gzsImpl.queryVZoneInfo(factory,queryVZoneInfoDTO);
 		//判空，及判断分页
@@ -228,7 +228,7 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 		GisZoneServiceImpl gzsImpl = new GisZoneServiceImpl();
 		List<String> vZoneCodes = new ArrayList<>();
 		QueryVZoneInfoDTO queryVZoneInfoDTO = new QueryVZoneInfoDTO();
-		queryVZoneInfoDTO.setZoneNo(queryVCZoneListDTO.getvZoneNo());
+		queryVZoneInfoDTO.setZoneNo(queryVCZoneListDTO.getVirtualZoneNo());
 		queryVZoneInfoDTO.setZoneType(1);
 		List<VZoneInfoVO> vZoneInfos = gzsImpl.queryVZoneInfo(factory,queryVZoneInfoDTO);
 		//判空，及判断分页

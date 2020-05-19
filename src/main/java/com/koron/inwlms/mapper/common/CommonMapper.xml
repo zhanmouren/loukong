@@ -5,12 +5,12 @@
 <mapper namespace="com.koron.inwlms.mapper.common.CommonMapper">
 
 	<select id="querySysConfig" resultType="com.koron.inwlms.bean.VO.common.SysConfigVO">
-		SELECT key, value FROM "SM_config"
+		SELECT key, value FROM sm_config
 	</select>
 	
      <select id="queryAllDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicNewVO">
           select "dic".id as dicId,"dic".parent as "parentCode","dic".value as "scName","dic"."enValue" as "enName","dic"."tcValue" as "tcName","dic".remark as description,"dic".key as code,"dic".value as dicValue,"dic".seq as sort
-          from "SM_dataDictionary" as "dic"
+          from sm_datadictionary as "dic"
 		  order by "dic".parent
       </select>
 	

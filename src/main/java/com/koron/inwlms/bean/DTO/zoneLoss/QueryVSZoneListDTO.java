@@ -32,12 +32,12 @@ public class QueryVSZoneListDTO extends BaseDTO{
 	 */
 	private Integer endTime;
 	
-	private Integer vZoneType;
+	private Integer virtualZoneType;
 	
 	/**
 	 * 虚拟分区编码
 	 */
-	private String  vZoneNo;
+	private String  virtualZoneNo;
 
 	public Double getMinNrw() {
 		return minNrw;
@@ -96,20 +96,22 @@ public class QueryVSZoneListDTO extends BaseDTO{
 		this.endTime = endTime;
 	}
 
-	public Integer getvZoneType() {
-		return vZoneType;
+
+
+	public Integer getVirtualZoneType() {
+		return virtualZoneType;
 	}
 
-	public String getvZoneNo() {
-		return vZoneNo;
+	public void setVirtualZoneType(Integer virtualZoneType) {
+		this.virtualZoneType = virtualZoneType;
 	}
 
-	public void setvZoneType(Integer vZoneType) {
-		this.vZoneType = vZoneType;
+	public String getVirtualZoneNo() {
+		return virtualZoneNo;
 	}
 
-	public void setvZoneNo(String vZoneNo) {
-		this.vZoneNo = vZoneNo;
+	public void setVirtualZoneNo(String virtualZoneNo) {
+		this.virtualZoneNo = virtualZoneNo;
 	}
 
 }

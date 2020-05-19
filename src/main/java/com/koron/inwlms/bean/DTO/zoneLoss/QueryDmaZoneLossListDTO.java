@@ -35,7 +35,7 @@ public class QueryDmaZoneLossListDTO extends BaseDTO{
 	/**
 	 * dma编码
 	 */
-	private String dmaNo;
+	private String zoneNo;
 	
 	/**
 	 * 警报状态（0：不报警，1：报警）
@@ -107,13 +107,15 @@ public class QueryDmaZoneLossListDTO extends BaseDTO{
 		this.alarmStatus = alarmStatus;
 	}
 
-	public String getDmaNo() {
-		return dmaNo;
+	public String getZoneNo() {
+		return zoneNo;
 	}
 
-	public void setDmaNo(String dmaNo) {
-		this.dmaNo = dmaNo;
+	public void setZoneNo(String zoneNo) {
+		this.zoneNo = zoneNo;
 	}
+
+
 	
 	
 }

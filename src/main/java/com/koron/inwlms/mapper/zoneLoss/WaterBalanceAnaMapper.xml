@@ -11,7 +11,7 @@
 		from
 		(select a.id,m."yearMonth",a.code,a.value,ind.precision as precision
 		from (
-			select id,"yearMonth",code,value from "ANA_company_month"
+			select id,"yearMonth",code,value from ana_company_month
 			where 1= 1
 			<if test="codes != null and codes.size > 0">
 				and code in 
@@ -19,7 +19,7 @@
 					#{item}    
 				</foreach> 
 			</if>
-		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
+		) a, lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code 
 		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qzlDTO.startTime} 
 		and m."yearMonth" &lt;= #{qzlDTO.endTime}) b
 	</select>
@@ -33,7 +33,7 @@
 		from
 		(select a.id,a.year,a.code,a.value,ind.precision as precision
 		from (
-			select id,year,code,value from "ANA_company_year"
+			select id,year,code,value from ana_company_year
 			where year &gt;= #{qzlDTO.startTime} and year &lt;= #{qzlDTO.endTime}
 			<if test="codes != null and codes.size > 0">
 				and code in 
@@ -41,7 +41,7 @@
 					#{item}    
 				</foreach> 
 			</if>
-		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
+		) a,lc_app_dim_indicator ind where ind.code = a.code 
 		) b
 	</select>
 
@@ -74,7 +74,7 @@
 		from
 		(select a.id,m."yearMonth",a.code,a.value,ind.precision as precision,a."zoneNo"
 		from (
-			select id,"yearMonth",code,value,"zoneNo" from "ANA_zone_balance_month"
+			select id,"yearMonth",code,value,"zoneNo" from ana_zone_balance_month
 			where 1= 1
 			<if test="codes != null and codes.size > 0">
 				and code in 
@@ -88,7 +88,7 @@
 					#{item.zoneNo}    
 				</foreach> 
 			</if>
-		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
+		) a, lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code 
 		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qzlDTO.startTime} 
 		and m."yearMonth" &lt;= #{qzlDTO.endTime}) b
 		group by b."zoneNo"
@@ -127,7 +127,7 @@
 		from
 		(select a.id,a.year,a.code,a.value,ind.precision as precision,a."zoneNo"
 		from (
-			select id,year,code,value,"zoneNo" from "ANA_zone_balance_year"
+			select id,year,code,value,"zoneNo" from ana_zone_balance_year
 			where year &gt;= #{qzlDTO.startTime} and year &lt;= #{qzlDTO.endTime}
 			<if test="codes != null and codes.size > 0">
 				and code in 
@@ -141,7 +141,7 @@
 					#{item.zoneNo}    
 				</foreach> 
 			</if>
-		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
+		) a,lc_app_dim_indicator ind where ind.code = a.code 
 		) b
 		group by b."zoneNo"
 		<if test="qzlDTO.orderBy != null and qzlDTO.orderBy != ''">
@@ -154,7 +154,7 @@
 		select 
 		a.id,a."reportName",a."dateType" as "timeType",a."reportTime",a.description,
 		a."createTime",a."createBy",a."updateTime", b.id as "templateId",b."templateName"
-		from "APP_company_report" a left join "APP_company_t_report" b
+		from app_company_report a left join app_company_t_report b
 		on a."templateId" = b.id
 		where a.status = 1
 		<if test="timeType != null and timeType != ''">
@@ -177,7 +177,7 @@
 	
 	<select id="countWNWBReportList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO" 
 	resultType="java.lang.Integer">
-		select count(1) from "APP_company_report"
+		select count(1) from app_company_report
 		where status = 1
 		<if test="timeType != null and timeType != ''">
 			and "dateType" = #{timeType}
@@ -194,7 +194,7 @@
 	</select>
 	
 	 <update id="deleteWNWBReport" parameterType="java.lang.Integer" >
-      	   update "APP_company_report" set status= 0 where id = #{id}
+      	   update app_company_report set status= 0 where id = #{id}
       </update>
       
       <select id="queryWNWBTReportList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBTReportListDTO"
@@ -202,7 +202,7 @@
 		select 
 		id,"templateName" as "reportName",description,
 		"createTime","createBy","updateTime","updateBy"
-		from "APP_company_t_report"
+		from app_company_t_report
 		where status = 1
 		<if test="templateName != null and templateName != ''">
 			and "templateName" like '%'||#{templateName}||'%'
@@ -215,7 +215,7 @@
 	
 	<select id="countWNWBTReportList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBTReportListDTO" 
 	resultType="java.lang.Integer">
-		select count(1) from "APP_company_t_report"
+		select count(1) from app_company_t_report
 		where status = 1
 		<if test="templateName != null and templateName != ''">
 			and "templateName" like '%'||#{templateName}||'%'
@@ -223,13 +223,13 @@
 	</select>
 	
 	<update id="deleteWNWBTReport" parameterType="java.lang.Integer" >
-      	 update "APP_company_t_report" set status= 0 where id = #{tId}
+      	 update app_company_t_report set status= 0 where id = #{tId}
     </update>
     
     <insert id="addWNWBReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO"
 		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		INSERT INTO
-		"APP_company_report"
+		app_company_report
 		("templateId",
 		"reportName",
 		"dateType",
@@ -256,7 +256,7 @@
 	 <insert id="addReportIndicator" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportIndicatorDTO"
 		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		INSERT INTO
-		"APP_company_report_indicator"
+		app_company_report_indicator
 		("reportId",
 		"templateIndicId",
 		value,
@@ -277,7 +277,7 @@
 	 <insert id="addReportFile" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO"
 		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		INSERT INTO
-		"APP_company_report_attach"
+		app_company_report_attach
 		("reportId",
 		"fileId",
 		"createBy",
@@ -294,7 +294,7 @@
 	</insert>
 	
 	  <update id="updateWNWBReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO" >
-      	   update "APP_company_report" 
+      	   update app_company_report
       	   set 
       	   "reportName"=#{reportName},
       	   description=#{description},
@@ -305,18 +305,18 @@
       </update>
       
       <delete id="deleteReportIndicatorById">
-           delete from "APP_company_report_indicator" where "reportId" = #{id}
+           delete from app_company_report_indicator where "reportId" = #{id}
       </delete>
       
       <delete id="deleteReportFileById">
-           delete from "APP_company_report_attach" where "fileId" = #{fileId}
+           delete from app_company_report_attach where "fileId" = #{fileId}
       </delete>
       
       <select id="queryWNWBReporFileList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO"
 		resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReporFileListVO">
 		select 
 		a.id,b."fileName",b."fileSize" as size,b."fileType"
-		from "APP_company_report_attach" a
+		from app_company_report_attach a
 		left join "APP_file" b on a."fileId" = b.id
 	</select>
 	
@@ -324,15 +324,15 @@
 		select 
 		id,"reportName","dateType" as "timeType","reportTime","templateId",description,
 		"createTime","createBy","updateTime" 
-		from "APP_company_report"
+		from app_company_report
 		where status = 1 and id = #{id}
 	</select>
 	
 	<select id="queryWNWBReportFileById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportFile">
 		select 
 		a.id,b."fileName",b."fileSize" as size,b."fileType"
-		from "APP_company_report_attach" a
-		left join "APP_file" b on a."fileId" = b.id
+		from app_company_report_attach a
+		left join app_file b on a."fileId" = b.id
 		where a."reportId" = #{id}
 	</select>
 	
@@ -340,7 +340,7 @@
 		select 
 		a.id,a."reportId",a."templateIndicId" as "templateIndicatorId",b.code as "indicatorCode",a.value,
 		a."createTime",a."updateTime",a."createBy",a."updateBy"
-		from "APP_company_report_indicator" a left join "APP_company_t_report_indicator" b
+		from app_company_report_indicator a left join app_company_t_report_indicator b
 		on a."templateIndicId" = b.id
 		where "reportId" =  #{id}
 	</select>
@@ -348,7 +348,7 @@
 	 <insert id="addWNWBTReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO"
 		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		INSERT INTO
-		"APP_company_t_report"
+		app_company_t_report
 		("templateName",
 		description,
 		remark,
@@ -369,7 +369,7 @@
 	 <insert id="addTReportIndicator" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBTReportIndicatorDTO"
 		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		INSERT INTO
-		"APP_company_t_report_indicator"
+		app_company_t_report_indicator
 		("templateId",
 		code,
 		description,
@@ -396,7 +396,7 @@
 	</insert>
 	
 	 <update id="updateWNWBTReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO" >
-      	   update "APP_company_t_report" 
+      	   update app_company_t_report
       	   set 
       	   "templateName"=#{reportName},
       	   description=#{description},
@@ -407,14 +407,14 @@
       </update>
       
       <delete id="deleteTReportIndicatorById">
-           delete from "APP_company_t_report_indicator" where "templateId" = #{id}
+           delete from app_company_t_report_indicator where "templateId" = #{id}
       </delete>
       
       <select id="queryWNWBTReportById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportDetailVO">
 		select 
 		id,"templateName" as "reportName",description,
 		"createTime","createBy","updateTime","updateBy"
-		from "APP_company_t_report"
+		from app_company_t_report
 		where status = 1 and id = #{id}
 	</select>
 	
@@ -422,7 +422,7 @@
 		select 
 		id,"templateId",code as "indicatorCode",description as "indicatorDescribe","editStatus","editAble","formulaAble",
 		formula,"createTime","updateTime","createBy","updateBy"
-		from "APP_company_t_report_indicator"
+		from app_company_t_report_indicator
 		where "templateId" = #{id}
 	</select>
 </mapper>

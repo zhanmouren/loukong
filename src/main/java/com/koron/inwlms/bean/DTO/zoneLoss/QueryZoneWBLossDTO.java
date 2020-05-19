@@ -36,7 +36,7 @@ public class QueryZoneWBLossDTO {
 	/**
 	 * 排序方式 eg: "lossRate" desc
 	 */
-	private String orderBy;
+	private String orderby;
 
 	public Integer getTimeType() {
 		return timeType;
@@ -78,13 +78,12 @@ public class QueryZoneWBLossDTO {
 		this.zoneRank = zoneRank;
 	}
 
-	public String getOrderBy() {
-		return orderBy;
+	public String getOrderby() {
+		return orderby;
 	}
 
-	public void setOrderBy(String orderBy) {
-		this.orderBy = orderBy;
+	public void setOrderby(String orderby) {
+		this.orderby = orderby;
 	}
 
-	
 }

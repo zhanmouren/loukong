@@ -71,12 +71,12 @@
 		from
 		(select a.id,a."yearMonth",a.code,a.value,ind.precision as precision 
 		from (
-			select id,"yearMonth",code,value from "ANA_apparent_month"
+			select id,"yearMonth",code,value from ana_apparent_month
 			where 1= 1
 			<if test="zoneNo != null and zoneNo != ''">
 			and "zoneNo" = #{zoneNo}
 			</if>
-		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
+		) a, lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code 
 		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{startTime} 
 		and m."yearMonth" &lt;= #{endTime}) b
 		group by b."yearMonth") c
@@ -151,12 +151,12 @@
 		from
 		(select a.id,a.year,a.code,a.value,ind.precision 
 		from (
-			select id,year,code,value from "ANA_apparent_year"
+			select id,year,code,value from ana_apparent_year
 			where year &gt;= #{startTime} and year &lt;= #{endTime}
 			<if test="zoneNo != null and zoneNo != ''">
 			and "zoneNo" = #{zoneNo}
 			</if>
-		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
+		) a,lc_app_dim_indicator ind where ind.code = a.code 
 		) b
 		group by b.year
 	</select>
@@ -208,7 +208,7 @@
 		from
 		(select a.id,a."yearMonth",a.code,a.value,ind.precision as precision, a."zoneNo" 
 		from (
-			select id,"yearMonth",code,value, "zoneNo" from "ANA_apparent_month"
+			select id,"yearMonth",code,value, "zoneNo" from ana_apparent_month
 			where 1= 1
 			<if test="lists != null and lists.size > 0">
 				and "zoneNo" in 
@@ -216,7 +216,7 @@
 					#{item.zoneNo}    
 				</foreach> 
 			</if>
-		) a, "LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code 
+		) a, lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code 
 		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qaDTO.startTime} 
 		and m."yearMonth" &lt;= #{qaDTO.endTime}) b
 		group by b."yearMonth",b."zoneNo"
@@ -226,7 +226,7 @@
 	<select id="countMALList" resultType="java.lang.Integer">
 		select count(1) from (select b."yearMonth", b."zoneNo" from 
 		(select a.id,a."yearMonth",a.code,a."zoneNo" from
-		(select id,"yearMonth",code,value,"zoneNo" from "ANA_apparent_month" where 1= 1
+		(select id,"yearMonth",code,value,"zoneNo" from ana_apparent_month where 1= 1
 			<if test="lists != null and lists.size > 0">
 				and "zoneNo" in 
 				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
@@ -234,7 +234,7 @@
 				</foreach> 
 			</if>
 		) a, 
-		"LC_APP_dim_indicator" ind, "APP_dim_month" m where ind.code = a.code and m.id = a."yearMonth" and 
+		lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code and m.id = a."yearMonth" and 
 		m."yearMonth" &gt;= #{qaDTO.startTime} and m."yearMonth" &lt;= #{qaDTO.endTime}) b group by b."yearMonth",b."zoneNo") bb
 	</select>
 	
@@ -285,7 +285,7 @@
 		from
 		(select a.id,a.year,a.code,a.value,ind.precision,a."zoneNo" 
 		from (
-			select id,year,code,value, "zoneNo" from "ANA_apparent_year"
+			select id,year,code,value, "zoneNo" from ana_apparent_year
 			where year &gt;= #{qaDTO.startTime} and year &lt;= #{qaDTO.endTime}
 			<if test="lists != null and lists.size > 0">
 				and "zoneNo" in 
@@ -293,7 +293,7 @@
 					#{item.zoneNo}    
 				</foreach> 
 			</if>
-		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
+		) a,lc_app_dim_indicator ind where ind.code = a.code 
 		) b
 		group by b.year,b."zoneNo"
 		limit #{qaDTO.pageCount} OFFSET #{qaDTO.pageCount}*(#{qaDTO.page}-1);
@@ -303,7 +303,7 @@
 		select count(1) from
 		(select a.id,a.year,a.code,a.value,ind.precision 
 		from (
-			select id,year,code,value from "ANA_apparent_year"
+			select id,year,code,value from ana_apparent_year
 			where year &gt;= #{qaDTO.startTime} and year &lt;= #{qaDTO.endTime}
 			<if test="lists != null and lists.size > 0">
 				and "zoneNo" in 
@@ -311,13 +311,13 @@
 					#{item.zoneNo}    
 				</foreach> 
 			</if>
-		) a,"LC_APP_dim_indicator" ind where ind.code = a.code 
+		) a,lc_app_dim_indicator ind where ind.code = a.code 
 		) b 
 	</select>
 	
 	<select id="queryMeterQH" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterQH">
 		select code as "meterNo",round( max(flux/day/24*2) :: NUMERIC, 6 ) as qh
-		from "gdh_month_flux_C001_jc" 
+		from gdh_month_flux_c001_jc
 		where month &gt;= #{qaDTO.startTime} || '' and month  &lt;= #{qaDTO.endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
@@ -330,7 +330,7 @@
 	
 	<select id="queryFSMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO">
 		select month as date,sum(flux) as value
-		from "gdh_month_flux_C001_jc" 
+		from gdh_month_flux_c001_jc 
 		where month &gt;= #{qaDTO.startTime} || '' and month  &lt;= #{qaDTO.endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
@@ -346,7 +346,7 @@
 	<select id="queryMMeterReadFlow" resultType="java.lang.Double">
 		select round(avg(c.avgFlow) :: NUMERIC, 2 ) from(
 		select month,avg(flux) as avgFlow
-		from "gdh_month_flux_C001_jc" 
+		from gdh_month_flux_c001_jc 
 		where month &gt;= #{qaDTO.startTime} || '' and month  &lt;= #{qaDTO.endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
@@ -359,7 +359,7 @@
 	
 	<select id="queryFsMeterReadData" resultType="java.lang.String">
 		select code
-		from "gdh_month_flux_C001_jc" where
+		from gdh_month_flux_c001_jc where
 		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
@@ -373,7 +373,7 @@
 	
 	<select id="queryTotalMFlow" resultType="java.lang.Double">
 		select round( sum(flux) :: NUMERIC, 2 ) as mFlow
-		from "gdh_month_flux_C001_jc" where
+		from gdh_month_flux_c001_jc where
 		month = #{time} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
@@ -386,7 +386,7 @@
 	
 	<select id="queryMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
 		select code,month,flux
-		from "gdh_month_flux_C001_jc" where
+		from gdh_month_flux_c001_jc where
 		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
@@ -399,7 +399,7 @@
 	
 	<select id="queryMeterMZeroFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
 		select code,month,flux
-		from "gdh_month_flux_C001_jc" where
+		from gdh_month_flux_c001_jc where
 		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
 		and flux = 0
 		<if test="lists != null and lists.size > 0">
@@ -415,7 +415,7 @@
 		select 
 		code,
 		round( avg(flux) :: NUMERIC, 2 ) as flux
-		from "gdh_month_flux_C001_jc" where
+		from gdh_month_flux_c001_jc where
 		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
@@ -429,7 +429,7 @@
 	<select id="queryMeterMMaxFlow" resultType="java.lang.Double">
 		select 
 		round( max(flux) :: NUMERIC, 2 ) as flux
-		from "gdh_month_flux_C001_jc" where
+		from gdh_month_flux_c001_jc where
 		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
@@ -444,7 +444,7 @@
 		select code as meterNo,
 		avg(flux)-3*stddev(flux) as minV,
 		avg(flux)+3*stddev(flux) as maxV
-		from "gdh_month_flux_C001_jc" where
+		from gdh_month_flux_c001_jc where
 		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 

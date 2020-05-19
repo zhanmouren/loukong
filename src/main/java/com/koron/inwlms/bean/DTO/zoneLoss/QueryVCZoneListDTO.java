@@ -55,7 +55,7 @@ public class QueryVCZoneListDTO extends BaseDTO{
 	/**
 	 * 虚拟分区编码
 	 */
-	private String vZoneNo;
+	private String virtualZoneNo;
 	
 	/**
 	 * dma编码
@@ -120,12 +120,13 @@ public class QueryVCZoneListDTO extends BaseDTO{
 	}
 
 
-	public String getvZoneNo() {
-		return vZoneNo;
+	
+	public String getVirtualZoneNo() {
+		return virtualZoneNo;
 	}
 
-	public void setvZoneNo(String vZoneNo) {
-		this.vZoneNo = vZoneNo;
+	public void setVirtualZoneNo(String virtualZoneNo) {
+		this.virtualZoneNo = virtualZoneNo;
 	}
 
 	public Double getMinLossRate() {
