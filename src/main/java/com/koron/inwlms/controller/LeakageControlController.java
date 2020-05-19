@@ -1146,7 +1146,7 @@ public class LeakageControlController {
 		
 		try {
 			List<PolicySchemeVO> policySchemeList = ADOConnection.runTask(ps, "queryPolicyScheme",List.class,policySchemeDTO);
-			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 			msg.setData(policySchemeList);
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);

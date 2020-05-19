@@ -26,19 +26,19 @@ public class KafkaReturnData {
 	 */
 	private Integer partition_no;
 	/**
-	 * 
+	 * 结构度
 	 */
 	private Double tightness;
 	/**
-	 * 
+	 * 经济性
 	 */
 	private Double economy;
 	/**
-	 * 
+	 * 新增设备数量
 	 */
 	private Integer flow_num;
 	/**
-	 * 
+	 * 是否完成全部分区 
 	 */
 	private Integer is_end;
 	/**

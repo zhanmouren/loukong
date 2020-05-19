@@ -153,6 +153,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		String mlPath = "";
 		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, gson.toJson(pipeinfo));
 		//TODO 解析返回数据
+		
 		return null;
 	}
 	
