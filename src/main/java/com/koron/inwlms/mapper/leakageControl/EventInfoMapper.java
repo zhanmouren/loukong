@@ -2,6 +2,7 @@ package com.koron.inwlms.mapper.leakageControl;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.koron.ebs.mybatis.EnvSource;
@@ -33,6 +34,8 @@ public interface EventInfoMapper {
 	
 	Integer queryMaxKey(@Param("parent") String parent);
 	
+	@Insert("insert into \"SM_dataDictionaryRelation\"(\"parentKey\", \"childKey\")\r\n" + 
+			" values(#{parentKey}, #{childKey})")
 	Integer addEventTypeRelation(@Param("parentKey") String parentKey,@Param("childKey") String childKey);
 	
 	@Select("delete from \"SM_dataDictionaryRelation\" where \"childKey\" = #{childKey}")

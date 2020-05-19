@@ -627,11 +627,11 @@ public class Constant {
 	 */
 	public final static String EVENTSUBTYPE = "10122";
 	
-	public final static String EVENTSUBTYPE_EN = "";
+	public final static String EVENTSUBTYPE_EN = "envetSubType";
 	
-	public final static String EVENTSUBTYPE_CN = "";
+	public final static String EVENTSUBTYPE_CN = "事项子类型";
 	
-	public final static String EVENTSUBTYPE_TC = "";
+	public final static String EVENTSUBTYPE_TC = "事项子类型";
 	/**
 	 * 最小夜间流量指标编码
 	 */
