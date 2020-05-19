@@ -881,6 +881,8 @@ public class LeakageControlController {
 			processingStatisticsVO4.setLossFlowNum(500.1);
 			processingStatisticsVO4.setMonth(4);
 			processingStatisticsVOList.add(processingStatisticsVO4);
+			processingStatisticsVO.setProStatList(processingStatisticsVOList);
+			psadv.setPsv(processingStatisticsVO);
 			List<ZoneSaveWaterData> zswd = new ArrayList<>();
 			ZoneSaveWaterData zoneSaveWaterData = new ZoneSaveWaterData();
 			zoneSaveWaterData.setName("分区1");
