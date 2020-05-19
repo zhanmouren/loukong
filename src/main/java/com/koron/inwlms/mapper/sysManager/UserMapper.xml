@@ -630,7 +630,7 @@
        <!--通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限-->
      <select id="queryRoleMenuByRoleMenu"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
          	select "SM_treeDet".*, "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
-		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress",
+		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP",
 		case when string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') end as op
 		from (
 		select * from  "SM_moduleMenu" where code in 
@@ -651,7 +651,7 @@
       
       <!--根据moduleName 查询moduleCode -->
      <select id="queryMenuOP"  parameterType="com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO">
-        select  "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+        select  "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo","menu"."ownOP" as "ownOP",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress"
         from "SM_moduleMenu" as "menu"
         where "menu"."moduleName"=#{moduleName}
@@ -659,7 +659,7 @@
 
      <!--通过模块菜单Code和用户code查询该模块菜单操作权限 -->
      <select id="queryOPByCode"   parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
-        select "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+        select "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo","menu"."ownOP" as "ownOP",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress",case when string_agg(to_char("rolemenu".op,'9'),',') is null then '' else string_agg(to_char("rolemenu".op,'9'),',') end as op
         from "SM_roleMenus" as "rolemenu"
         left join "SM_moduleMenu" as "menu" on "menu".code="rolemenu"."moduleCode"
