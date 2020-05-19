@@ -43,7 +43,12 @@
  </update>
  
  <select id="querychildKey" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO">
- select count(*) as "totalNum", id , "parentKey", "childKey" from "SM_dataDictionaryRelation" where "parentKey" = #{code}
+ select "parentKey", "childKey" from "SM_dataDictionaryRelation" where "parentKey" = #{code}
+ limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+ </select>
+ 
+ <select id="queryChildKeyNum" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO" resultType="java.lang.Tnteger">
+ select count(*) from "SM_dataDictionaryRelation" where "parentKey" = #{code}
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  

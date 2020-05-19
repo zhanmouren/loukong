@@ -14,11 +14,22 @@ public class ProcessingStatisticsAllDataVO {
 	
 	private ProcessingStatisticsVO psv;
 	
+	private PolicyTypeNum ptn;
+	
 	private List<ZoneSaveWaterData> saveWaterList;
 	
 	private List<ZoneSaveWaterData> saveCostList;
 
 	
+	
+	public PolicyTypeNum getPtn() {
+		return ptn;
+	}
+
+	public void setPtn(PolicyTypeNum ptn) {
+		this.ptn = ptn;
+	}
+
 	public List<ZoneSaveWaterData> getSaveWaterList() {
 		return saveWaterList;
 	}

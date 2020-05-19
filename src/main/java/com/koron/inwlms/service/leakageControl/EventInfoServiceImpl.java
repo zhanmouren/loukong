@@ -67,6 +67,8 @@ public class EventInfoServiceImpl implements EventInfoService{
 	public List<DataDicRelationVO> querychildKey(SessionFactory factory,EventTypeDTO eventTypeDTO){
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
 		List<DataDicRelationVO> list = mapper.querychildKey(eventTypeDTO);
+		Integer num = mapper.queryChildKeyNum(eventTypeDTO);
+		list.get(0).setTotalNum(num);
 		return list;
 	}
 	

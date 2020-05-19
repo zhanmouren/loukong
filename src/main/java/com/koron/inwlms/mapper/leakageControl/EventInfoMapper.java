@@ -43,4 +43,6 @@ public interface EventInfoMapper {
 	
 	@Select("select * from \"APP_eventInfo\" where code = #{code}")
 	EventInfo queryEventInfoByCode(@Param("code") String code);
+	
+	Integer queryChildKeyNum(EventTypeDTO eventTypeDTO);
 }

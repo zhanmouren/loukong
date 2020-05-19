@@ -62,6 +62,7 @@ import com.koron.inwlms.bean.VO.leakageControl.EventSubtypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.PolicyTypeNum;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsAllDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
@@ -923,7 +924,20 @@ public class LeakageControlController {
 			zoneSaveWaterData7.setSaveCost(20.6);
 			zscd.add(zoneSaveWaterData7);
 			psadv.setSaveCostList(zscd);
-			
+			PolicyTypeNum policyTypeNum = new PolicyTypeNum();
+			policyTypeNum.setP1(2);
+			policyTypeNum.setP2(5);
+			policyTypeNum.setP3(4);
+			policyTypeNum.setP4(7);
+			policyTypeNum.setP5(1);
+			policyTypeNum.setP6(0);
+			policyTypeNum.setP7(2);
+			policyTypeNum.setP8(10);
+			policyTypeNum.setP9(0);
+			policyTypeNum.setP10(5);
+			policyTypeNum.setP11(3);
+			policyTypeNum.setP12(2);
+			psadv.setPtn(policyTypeNum);
 			
 			
 			
