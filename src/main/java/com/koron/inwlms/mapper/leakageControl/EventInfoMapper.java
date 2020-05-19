@@ -34,14 +34,14 @@ public interface EventInfoMapper {
 	
 	Integer queryMaxKey(@Param("parent") String parent);
 	
-	@Insert("insert into \"SM_dataDictionaryRelation\"(\"parentKey\", \"childKey\")\r\n" + 
+	@Insert("insert into sm_datadictionaryrelation(\"parentKey\", \"childKey\")\r\n" + 
 			" values(#{parentKey}, #{childKey})")
 	Integer addEventTypeRelation(@Param("parentKey") String parentKey,@Param("childKey") String childKey);
 	
-	@Select("delete from \"SM_dataDictionaryRelation\" where \"childKey\" = #{childKey}")
+	@Select("delete from sm_datadictionaryrelation where \"childKey\" = #{childKey}")
 	Integer deleteEventSubType(@Param("childKey") String childKey);
 	
-	@Select("select * from \"APP_eventInfo\" where code = #{code}")
+	@Select("select * from app_eventinfo where code = #{code}")
 	EventInfo queryEventInfoByCode(@Param("code") String code);
 	
 	Integer queryChildKeyNum(EventTypeDTO eventTypeDTO);

@@ -14,13 +14,13 @@ import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 @EnvSource("_default")
 public interface EconomicIndicatorMapper {
 	
-	@Select("select * from \"APP_partitionInvest\" where type = #{type}")
+	@Select("select * from app_partitioninvest where type = #{type}")
 	List<PartitionInvestVO> queryPartitionInvest(@Param("type") String type);
 	
-	@Select("select * from \"APP_partitionInvest\" where type = #{type} and caliber = #{caliber}")
+	@Select("select * from app_partitioninvest where type = #{type} and caliber = #{caliber}")
 	PartitionInvestVO queryPartitionInvestByCal(@Param("type") String type,@Param("caliber") String caliber);
 	
-	@Select("delete from \"APP_partitionInvest\" where type = #{type}")
+	@Select("delete from app_partitioninvest where type = #{type}")
 	Integer deletePartitionInvest(@Param("type") String type);
 	
 	Integer addPartitionInvest(List<PartitionInvestDTO> partitionInvestDTO);

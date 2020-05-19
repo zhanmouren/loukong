@@ -8,12 +8,12 @@
  a."leadingCadre" as "leadingCadre",a."projectCost" as "projectCost",a."waterSave" as "waterSave",a."actualStrategyType" as "actualStrategyType",a."actualCost" as "actualCost",a."actualFinishTime" as "actualFinishTime",
  a.content as content,a."createBy" as "createBy",a."createTime" as "createTime",a."updateBy" as "updateBy",a."updateTime" as "updateTime",d.content as "alarmContent",d."alarmType" as "alarmType",d."objectType" as "objectType"
  from 
- (select * from "APP_warningProcessing" where "createTime" between '${startTime}' and '${endTime}' and type = #{type}
+ (select * from app_warningprocessing where "createTime" between '${startTime}' and '${endTime}' and type = #{type}
  <if test="state != null and state != '' "> and state = #{processState}</if>
  <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>
  ) a
  inner join 
- (select b.code as code,b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType" from "APP_warningInf" b inner join "APP_warningScheme" c on b."schemeCode" = c.code) d
+ (select b.code as code,b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType" from "APP_warningInf" b inner join app_warningscheme c on b."schemeCode" = c.code) d
  on a."warningCode" = d.code
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1); 
  </select>
@@ -23,50 +23,50 @@
  a."leadingCadre" as "leadingCadre",a."projectCost" as "projectCost",a."waterSave" as "waterSave",a."actualStrategyType" as "actualStrategyType",a."actualCost" as "actualCost",a."actualFinishTime" as "actualFinishTime",
  a.content as content,a."createBy" as "createBy",a."createTime" as "createTime",a."updateBy" as "updateBy",a."updateTime" as "updateTime",d.content as "alarmContent",d."alarmType" as "alarmType",d."objectType" as "objectType"
  from 
- (select * from "APP_warningProcessing" where code = #{taskCode}
+ (select * from app_warningprocessing where code = #{taskCode}
  ) a
  inner join 
- (select b.code as code,b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType" from "APP_warningInf" b inner join "APP_warningScheme" c on b."schemeCode" = c.code) d
+ (select b.code as code,b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType" from app_warninginf b inner join app_warningscheme c on b."schemeCode" = c.code) d
  on a."warningCode" = d.code 
  </select>
  
  <insert id="addAlarmProcess" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ insert into app_warningprocessing("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
  "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code")
  values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
  #{actualFinishTime}, #{content}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime}, #{taskCode})
  </insert>
  
  <insert id="addAlarmProcessOfZQS" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ insert into app_warningprocessing("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
  "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code", type)
  values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
  #{actualFinishTime}, #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime}, concat('ZQS',nextval('zqs'::regclass)), #{type})
  </insert>
  
  <insert id="addAlarmProcessOfZCX" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ insert into app_warningprocessing("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
  "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code", type)
  values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
  #{actualFinishTime}, #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime}, concat('ZCX',nextval('zcx'::regclass)), #{type})
  </insert>
  
   <insert id="addAlarmProcessOfPCX" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ insert into app_warningprocessing("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
  "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code", type)
  values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
  #{actualFinishTime}, #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime}, concat('PCX',nextval('pcx'::regclass)), #{type})
  </insert>
  
   <insert id="addAlarmProcessOfPLX" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ insert into app_warningprocessing("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
  "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code", type)
  values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
  #{actualFinishTime}, #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime}, concat('PLX',nextval('plx'::regclass)), #{type})
  </insert>
  
  <insert id="addAlarmProcessOfPZS" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- insert into "APP_warningProcessing"("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
+ insert into app_warningprocessing("warningCode", "executorCode", state, "expectFinishTime", "recommendStrategy", "actualStrategy", "leadingCadre", "projectCost", "waterSave", "actualStrategyType",
  "actualCost", "actualFinishTime", content, "createBy", "createTime", "updateBy", "updateTime", "code", type)
  values(#{warningCode}, #{executorCode}, #{state}, #{expectFinishTime}, #{recommendStrategy}, #{actualStrategy}, #{leadingCadre}, #{projectCost}, #{waterSave}, #{actualStrategyType}, #{actualCost},
  #{actualFinishTime}, #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime}, concat('PZS',nextval('pzs'::regclass)), #{type})
@@ -74,7 +74,7 @@
  
  
  <update id="updateAlarmProcess" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- update "APP_warningProcessing"
+ update app_warningprocessing
  <set>
  <if test="leadingCadre != null and leadingCadre != '' "> "leadingCadre" = #{leadingCadre}, </if>
  <if test="expectFinishTime != null and expectFinishTime != '' "> "expectFinishTime" = #{expectFinishTime}, </if>
@@ -92,7 +92,7 @@
  </update>
  
  <delete id="deleteAlarmProcess" parameterType="java.lang.String">
- delete from "APP_warningProcessing" where code = #{code}
+ delete from app_warningprocessing where code = #{code}
  </delete>
 
 </mapper>

@@ -22,7 +22,7 @@ public interface AlarmMessageMapper {
 	
 	List<AlarmMessageVO> queryAlarmMessage(WarningInfDTO warningInfDTO);
 	
-	@Select("select * from \"APP_warningInf\" where \"pointCode\" = #{code}")
+	@Select("select * from app_warninginf where \"pointCode\" = #{code}")
 	List<AlarmMessageVO> queryAlarmMessageByPointCode(@Param("code") String code);
 	
 	Integer addWarningInf(AlarmMessageVO alarmMessageVO);

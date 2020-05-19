@@ -5,7 +5,7 @@
  <mapper namespace="com.koron.inwlms.mapper.leakageControl.PolicyMapper">
  
   <select id="queryPolicyScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO">
-  select * from "APP_policyScheme" 
+  select * from app_policyscheme 
   <trim prefix="where" prefixOverrides="and|or">
    <if test="code != null and code != '' "> code = #{code} and</if>
    <if test="state != null and state != '' "> state = #{state}</if>
@@ -13,31 +13,31 @@
   </select>
   
   <delete id="deletePolicyScheme" parameterType="java.lang.String">
-  delete from "APP_policyScheme" where code = #{code}
+  delete from app_policyscheme where code = #{code}
   </delete>
   
   <insert id="addPolicyScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO">
-  insert into "APP_policyScheme"(code, name, content, state, "createBy", "createTime", "updateBy", "updateTime")
+  insert into app_policyscheme(code, name, content, state, "createBy", "createTime", "updateBy", "updateTime")
   values(#{code}, #{name}, #{content}, #{state}, #{createBy}, Now(), #{updateBy}, Now())
   </insert>
   
   <select id="queryPolicySetting" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.Policy">
-  select * from "APP_policySetting" where "policyCode" = #{policyCode}
+  select * from app_policysetting where "policyCode" = #{policyCode}
   </select>
  
   <delete id="deletePolicySetting" parameterType="java.lang.String">
-  delete from "APP_policySetting" where "policyCode" = #{policyCode}
+  delete from app_policysetting where "policyCode" = #{policyCode}
   </delete>
   
   <insert id="addPolicySetting" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO">
-  insert into "APP_policySetting"("policyCode", type, "areaType", "repairCost", "missFlow", time, day, "changeTabInvest", "tabUserRatio",
+  insert into app_policysetting("policyCode", type, "areaType", "repairCost", "missFlow", time, day, "changeTabInvest", "tabUserRatio",
   "changeNetInvest", "netUserRatio", "createBy", "createTime", "updateBy", "updateTime")
   values(#{policyCode}, #{type}, #{areaType}, #{repairCost}, #{missFlow}, #{time}, #{day}, #{changeTabInvest}, #{tabUserRatio},
   #{changeNetInvest}, #{netUserRatio}, #{createBy}, Now(), #{updateBy}, Now())
   </insert>
   
   <update id="updatePolicySetting" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO">
-  update "APP_policySetting"
+  update app_policysetting
   <set>
    <if test="repairCost != null"> "repairCost" = #{repairCost},</if>
    <if test="missFlow !=null"> "missFlow" = #{missFlow},</if>
@@ -53,7 +53,7 @@
   </update>
   
   <update id="updatePolicyScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO">
-  update "APP_policyScheme"
+  update app_policyscheme
   <set>
   <if test="name != null and name != '' "> name = #{name},</if>
   <if test="content != null and content != '' "> content = #{content},</if>

@@ -34,7 +34,7 @@ public interface WarningSchemeMapper {
 	
 	List<AlertNoticeSchemeVO> queryNoticeSchemeByWarningCode(String code);
 	
-	@Select("select * from \"APP_warningScheme\" where \"state\" = #{state}")
+	@Select("select * from app_warningscheme where \"state\" = #{state}")
 	List<WarningSchemeVO> queryWarningSchemeStart(@Param("state") String state);
 	
 	String addWarningSchemeOfSZCX(WarningSchemeDTO warningSchemeDTO);

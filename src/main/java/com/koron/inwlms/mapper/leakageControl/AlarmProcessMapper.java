@@ -32,7 +32,7 @@ public interface AlarmProcessMapper {
 	Integer addAlarmProcessOfPLX(AlarmProcessVO alarmProcessVO);
 	Integer addAlarmProcessOfPZS(AlarmProcessVO alarmProcessVO);
 	
-	@Select(" select * from \"APP_file\" where \"moduleType\" = #{type}")
+	@Select(" select * from app_file where \"moduleType\" = #{type}")
 	List<UploadFileDTO> queryAlarmProcessFile(@Param("type") String type);
 
 }

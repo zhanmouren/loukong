@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.koron.inwlms.mapper.leakageControl.EventInfoMapper">
  <select id="queryEventInfo" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
- select * from "APP_eventInfo" where "createTime" between '${startTime}' and '${endTime}'
+ select * from app_eventinfo where "createTime" between '${startTime}' and '${endTime}'
  <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
  <if test="type != null and type != '' "> and "type" = #{type}</if>
  <if test="subtype != null and subtype != '' "> and "subtype" = #{subtype}</if>
@@ -17,18 +17,18 @@
  
  <delete id="deleteEventInfo" parameterType="java.lang.String">
  
- delete from "APP_eventInfo" where code = #{code}
+ delete from app_eventinfo where code = #{code}
  </delete>
  
  <insert id="addEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
- insert into "APP_eventInfo"(code, name, type, subtype, "objectCode", "firstPartition", "secondPartition", "dmaCode", "objectType", "happenTime", 
+ insert into app_eventinfo(code, name, type, subtype, "objectCode", "firstPartition", "secondPartition", "dmaCode", "objectType", "happenTime", 
  "content", "createBy", "createTime", "updateBy", "updateTime")
  values(#{code}, #{name}, #{type}, #{subtype}, #{objectCode}, #{firstPartition}, #{secondPartition}, #{dmaCode}, #{objectType}, #{happenTime},
  #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime})
  </insert>
  
  <update id="updateEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
- update "APP_eventInfo"
+ update app_eventinfo
  <set>
  <if test="type != null and type != '' "> type = #{type}</if>
  <if test="subtype != null and subtype != '' "> subtype = #{subtype}</if>
@@ -43,17 +43,17 @@
  </update>
  
  <select id="querychildKey" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO">
- select "parentKey", "childKey" from "SM_dataDictionaryRelation" where "parentKey" = #{code}
+ select "parentKey", "childKey" from sm_datadictionaryrelation where "parentKey" = #{code}
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
  <select id="queryChildKeyNum" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO" resultType="java.lang.Tnteger">
- select count(*) from "SM_dataDictionaryRelation" where "parentKey" = #{code}
+ select count(*) from sm_datadictionaryrelation where "parentKey" = #{code}
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
  <select id="queryMaxKey" parameterType="java.lang.String" resultType="java.lang.Integer">
- select cast(MAX(substring(key,2,9)) as integer) from "SM_dataDictionary" where parent = #{parent}
+ select cast(MAX(substring(key,2,9)) as integer) from sm_datadictionary where parent = #{parent}
  </select>
  
 
