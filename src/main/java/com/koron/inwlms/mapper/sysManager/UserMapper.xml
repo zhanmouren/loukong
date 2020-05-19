@@ -581,7 +581,7 @@
      <!--加载角色权限菜单-->
      <select id="queryRoleMenuByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
          select "SM_treeDet".*,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
-		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress",
+		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP"
 		case when string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') end as op
 		from "SM_moduleMenu" as "menu"
 		left join "SM_treeDet" on "SM_treeDet".foreignkey="menu".code
@@ -1000,11 +1000,11 @@
        <select id="queryMainDept"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DeptAndUserVO">
            select "deptCode" as "depCode","userCode" as "userCode"
            from "SM_userDept"
-           where "deptCode"=#{depCode} and "userCode"=#{code} and  "mainDeptFlag"=0
+           where   "userCode"=#{code} and  "mainDeptFlag"=0
        </select>
        
-        <!--修改职员主部门 -->
-       <update id="editDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">	    	 
+        <!--修改职员主部门设置为0 -->
+       <update id="editDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO">	    	 
 	    	 <foreach collection="list" item="item" index="index" open="" close="" separator=";">
                update "SM_userDept"
                <set>
@@ -1012,6 +1012,13 @@
                </set>
                 where "deptCode"=#{item.depCode} and "userCode"=#{item.userCode}
             </foreach>
+       </update>
+       
+          <!--修改职员之前主部门maindeptFlag设置为1 -->
+       <update id="updateUserDeptFlag"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">	    	 
+               update "SM_userDept"
+                set "mainDeptFlag"=1
+                where "userCode"=#{code}  
        </update>
 	    
 </mapper>

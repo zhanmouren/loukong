@@ -31,7 +31,17 @@ public class RoleMenusVO extends TreeBean.Long{
 	//菜单操作权限的op
 	private String op;
 	
+	//菜单拥有的权限
+	private String ownOP;
 	
+	
+	
+	public String getOwnOP() {
+		return ownOP;
+	}
+	public void setOwnOP(String ownOP) {
+		this.ownOP = ownOP;
+	}
 	public String getOp() {
 		return op;
 	}

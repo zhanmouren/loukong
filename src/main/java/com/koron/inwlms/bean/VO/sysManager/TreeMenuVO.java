@@ -16,7 +16,19 @@ public class TreeMenuVO extends TreeBean.Long{
 		//操作
 		private String op;
 		
+		//菜单拥有的权限
+		private String ownOP;
 		
+		
+		
+		public String getOwnOP() {
+			return ownOP;
+		}
+
+		public void setOwnOP(String ownOP) {
+			this.ownOP = ownOP;
+		}
+
 		public java.lang.Integer getMenuId() {
 			return menuId;
 		}

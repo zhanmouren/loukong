@@ -1,7 +1,11 @@
 package com.koron.common.web.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
@@ -126,6 +130,9 @@ public class TreeService {
 				}
 			}
 		}
+	
+
+		
 		return deptList;
 	}
 	/**

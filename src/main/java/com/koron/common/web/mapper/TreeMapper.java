@@ -100,7 +100,7 @@ public interface TreeMapper {
      * @param bean 节点
      * @return 节点集合
      */
-    @Select("select \"SM_treeDet\".*,\"SM_moduleMenu\".code \"menuCode\",\"SM_moduleMenu\".id \"menuId\",\"SM_moduleMenu\".\"moduleNo\",\"SM_moduleMenu\".\"moduleName\",\"SM_moduleMenu\".\"linkAddress\"\r\n" + 
+    @Select("select \"SM_treeDet\".*,\"SM_moduleMenu\".code \"menuCode\",\"SM_moduleMenu\".id \"menuId\",\"SM_moduleMenu\".\"ownOP\" \"ownOP\",\"SM_moduleMenu\".\"moduleNo\",\"SM_moduleMenu\".\"moduleName\",\"SM_moduleMenu\".\"linkAddress\"\r\n" + 
     		"		  ,case when string_agg(DISTINCT(to_char(\"rolemenu\".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char(\"rolemenu\".op,'9')),',') end as op\r\n" + 
     		"		 from \"SM_treeDet\"\r\n" + 
     		"		 left join \"SM_moduleMenu\" on \"SM_moduleMenu\".code=\"SM_treeDet\".foreignkey\r\n" + 

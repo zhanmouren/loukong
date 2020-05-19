@@ -123,6 +123,9 @@ public interface UserMapper {
 	//添加用户(批量)和部门关系的操作
 	public Integer addDeptUser(List<DeptAndUserDTO> deptUserDTOList);
 	
+	//修改用户之前maindeptFlag所有为1的操作
+	public Integer updateUserDeptFlag(UserDTO userDTO);
+	
 	//修改用户和部门关系的操作
 	public Integer editDeptUser(List<DeptAndUserDTO> deptUserDTOList);
 	

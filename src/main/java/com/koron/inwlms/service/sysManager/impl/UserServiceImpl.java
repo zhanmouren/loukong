@@ -174,6 +174,10 @@ public class UserServiceImpl implements UserService{
 	    //修改前先查询是否存在主部门，没有的话先插入	
 		List<DeptAndUserVO> deptUserList=userMapper.queryMainDept(userDTO);
 		if(deptUserList!=null && deptUserList.size()>0) {
+			 //根据职员修改中间表MainDeptFlag为1的操作
+		     UserDTO user=new UserDTO();
+		     user.setCode(userDTO.getCode()); 
+			 userMapper.updateUserDeptFlag(user);
 			 //修改用户和部门关系的操作
 			editResult=userMapper.editDeptUser(deptUserDTOList);
 		}
