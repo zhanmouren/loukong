@@ -548,7 +548,7 @@
 	    <!-- 根据Code查询组织-->
       <select id="queryOrgByCode"  resultType="com.koron.inwlms.bean.VO.sysManager.OrgVO">
           select  id as "orgId",code as "orgCode",name as "orgName",type as "orgType"
-          from "SM_organize"  
+          from sm_organize  
           where    code=#{orgCode}
       </select>
       
