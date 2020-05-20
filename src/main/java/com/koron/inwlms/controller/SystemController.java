@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.koron.inwlms.bean.DTO.sysManager.LoginLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserLoginDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserListVO;
 import com.koron.inwlms.service.common.CommonLoginService;
 import com.koron.inwlms.service.sysManager.LogService;
@@ -65,10 +66,11 @@ public class SystemController {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "登录密码不能为空", Integer.class).toJson();
 		}
 		// 根据用户账号，密码，查询用户信息表，都正确返回登录成功，否则登录失败
-		MessageBean<List<?>> msg = new MessageBean<>();
+		MessageBean<UserListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, UserListVO.class);	       
 		try {
 			UserListVO userListVO = ADOConnection.runTask(commonLoginService, "login", UserListVO.class, userLoginDTO);
 			if (userListVO != null) {
+				
 				LoginLogDTO loginLogDTO = new LoginLogDTO();
 				String ip = SysUtil.getIpAddr(request);
 				loginLogDTO.setLoginIp(ip);
@@ -77,6 +79,7 @@ public class SystemController {
 				loginLogDTO.setUpdateBy(userListVO.getLoginName());
 				loginLogDTO.setType("登入");
 				if(userListVO.getPassword().equals(userLoginDTO.getPassword())) {
+					msg.setData(userListVO);
 					loginLogDTO.setResult("登录成功");
 					loginLogDTO.setErrorLog("————");
 					// 用户权限信息入缓存
@@ -104,7 +107,7 @@ public class SystemController {
 			msg.setDescription(Constant.MESSAGE_STRING_LOGINERROR);
 			msg.setStatus(0);
 		}
-		return ResponseUtil.toJson(msg);
+		return msg.toJson();
 	}
 	
 	

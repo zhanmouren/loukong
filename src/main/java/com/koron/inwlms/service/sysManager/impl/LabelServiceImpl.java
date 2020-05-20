@@ -145,7 +145,7 @@ public class LabelServiceImpl implements LabelService{
 	//分页查询标签列表 2020/04/21 
 	@TaskAnnotation("queryAllList")
 	@Override
-	public PageLabelListVO queryAllList(SessionFactory factory, QueryLabelDTO queryLabelDTO) {
+	public PageLabelListVO downloadAllList(SessionFactory factory, QueryLabelDTO queryLabelDTO) {
 		LabelMapper labelMapper = factory.getMapper(LabelMapper.class);
 		List<LabelVO> labelList=labelMapper.queryLabel(queryLabelDTO);
 		// 返回数据结果
