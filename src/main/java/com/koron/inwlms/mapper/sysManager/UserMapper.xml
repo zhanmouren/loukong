@@ -3,7 +3,7 @@
 <mapper namespace="com.koron.inwlms.mapper.sysManager.UserMapper">
    <!-- 插入职员信息 -->
    <insert id="addUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO" >  
-        insert into "SM_user"("loginName",passWord,phone,"email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code")
+        insert into sm_user("loginName",passWord,phone,"email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code")
         values(#{loginName},#{password},#{phone},#{email},#{name},#{position},#{sex},#{photo},#{openID},0,#{workNo},0,#{createBy},Now(),#{updateBy},Now(),#{code})   
     </insert>
      <!-- 查询相关职员信息 -->
@@ -11,9 +11,9 @@
       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 	  "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
        else string_agg(distinct("dept".name),';') end as "depname","user".code  as code    
-	   from "SM_user" as "user"       
-	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   
-	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"      
+	   from sm_user as "user"       
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"      
        <trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user".name like '%'||#{name}||'%'</if>  
    	    <if test="depName != null  and depName !='' "> and "dept".name like '%'||#{depName}||'%'</if>
@@ -34,9 +34,9 @@
     
     <!-- 查询相关职员信息总条数 -->
     <select id="getUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO" resultType="java.lang.Integer">
-        select count(distinct("user"."loginName")) from "SM_user" as "user"
-        left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".Code   
-	    left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
+        select count(distinct("user"."loginName")) from sm_user as "user"
+        left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
+	    left join sm_department as "dept"   on "dept".code="userdept"."deptCode" 
        <trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user".name like '%'||#{name}||'%'</if>  
    	    <if test="depName != null  and depName !='' "> and "dept".name like '%'||#{depName}||'%'</if>
@@ -51,7 +51,7 @@
     
     <!-- 修改职员信息 -->
     <update id="updateUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
-		update "SM_user" 
+		update sm_user 
 		<set>	    
              <if test="name != null  and name !=''" > name = #{name},  </if>                       
              <if test="loginName != null and loginName !=''" > "loginName" = #{loginName},</if>                                 
@@ -67,13 +67,13 @@
      <!--查询职员部门关系表的Id -->
     <select id="queryUserDeptId"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DeptAndUserIdVO">
         select id
-        from "SM_userDept"
+        from sm_userdept
         where "deptCode"=#{depCode} and "userCode"=#{userCode}
     </select>
      
      <!--根据id修改职员部门信息 -->
     <update id="updateUserDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO">   
-		update "SM_userDept" 
+		update sm_userdept 
 		<set>	    
              <if test="deptCode != null" > "deptCode" = #{deptCode},  </if>                                         
              <if test="userCode != null " > "userCode" = #{userCode}, </if>               
@@ -84,7 +84,7 @@
      </update>
      <!-- 修改用户信息,删除 -->
     <update id="deleteUser" parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">   
-		update "SM_user" 
+		update sm_user 
 		<set>	                                 
              <if test="whetUse != null" > "whetUse" = #{whetUse},</if> 
         </set>
@@ -92,20 +92,20 @@
      </update>
       <!-- 添加新角色 -->
      <insert id="addNewRole" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">  
-        insert into "SM_userRole"(name,remark,"createBy","createTime","updateBy","updateTime",code)
+        insert into sm_userrole(name,remark,"createBy","createTime","updateBy","updateTime",code)
         values(#{roleName},#{roleRemark},#{createBy},Now(),#{updateBy},Now(),#{roleCode})     
     </insert>
     
      <!-- 查询添加的新角色名称是否重复 -->
     <select id="queryRoleByName"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
        select "role".name as "roleName","role".code as "roleCode"
-       from  "SM_userRole" as "role"
+       from  sm_userrole as "role"
        where "role"."name"=#{roleName}
     </select>
     
      <!-- 修改角色属性 -->
     <update id="updateRoleAttr" parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO">   
-		update "SM_userRole" 
+		update sm_userrole 
 		<set>	                                 
              <if test="roleName != null" > name= #{roleName},</if>            
              <if test="roleRemark != null" > remark= #{roleName},</if>
@@ -117,15 +117,15 @@
      <!-- 查询该角色下有没有绑定职员 -->
      <select id="queryRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleMsgVO">
        select "userRole".name as roleName
-       from  "SM_userRoleRelation" as "userRela"
-       left join  "SM_userRole" as "userRole" on "userRole".code="userRela"."roleCode"
+       from  sm_userrolerelation as "userRela"
+       left join  sm_userrole as "userRole" on "userRole".code="userRela"."roleCode"
        where "userRela"."roleCode"=#{roleCode}
        order by "userRole"."createTime" desc
     </select>
     
     <!-- 批量删除角色信息 -->
     <delete id="delRole" parameterType="String">
-        delete from "SM_userRole" where code in
+        delete from sm_userrole where code in
         <foreach item="roleItem" collection="list" open="(" separator="," close=")">
             #{roleItem}
         </foreach>
@@ -136,10 +136,10 @@
        select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 	  "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
        else string_agg(distinct("dept".name),';') end as "depname","user".code  as code ,"user".code as code
-       from "SM_userRoleRelation" as "userRela"
-       left join "SM_user" as "user" on "userRela"."userCode"="user".code
-       left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
-	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
+       from sm_userrolerelation as "userRela"
+       left join sm_user as "user" on "userRela"."userCode"="user".code
+       left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
        where "userRela"."roleCode"=#{roleCode} and "user"."whetUse"=0
        group by "user".id ,"user"."loginName","user".phone,"user"."email",
 		"user".name,"user".position,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
@@ -151,23 +151,23 @@
      <!--根据角色Code加载角色人员总条数 -->
      <select id="getRoleUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="java.lang.Integer">
        select count(distinct("user"."loginName")) 
-       from "SM_userRoleRelation" as "userRela"
-       left join "SM_user" as "user" on "userRela"."userCode"="user".code
-       left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
-	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
+       from sm_userrolerelation as "userRela"
+       left join sm_user as "user" on "userRela"."userCode"="user".code
+       left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
        where "userRela"."roleCode"=#{roleCode}     
     </select>
     
     <!--查询所有角色列表 -->
     <select id="queryAllRole"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
        select id as "roleId",name as "roleName",remark as "roleRemark","createBy","createTime","updateBy","updateTime",code as "roleCode" 
-       from "SM_userRole" 
+       from sm_userrole 
        order by "createTime" desc
     </select>
     
     <!--遍历插入职员与角色的关系 -->
     <insert id="addRoleUser" parameterType="java.util.List">  
-        insert into "SM_userRoleRelation"("userCode", "roleCode","createBy","createTime","updateBy","updateTime")values
+        insert into sm_userrolerelation ("userCode", "roleCode","createBy","createTime","updateBy","updateTime")values
 		<foreach collection="list" item="roleuser"  index="index" separator=",">
 			(#{roleuser.userCode}, #{roleuser.roleCode}, #{roleuser.createBy},Now(), #{roleuser.updateBy},Now())
 		</foreach>
@@ -176,21 +176,21 @@
       <!--判断角色编码在职员表是否存在 -->
     <select id="queryExistRole"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleVO">
          select code as "roleCode",name as "roleName"
-         from "SM_userRole"
+         from sm_userrole
          where   "code" =  #{roleCode}
     </select>
     
      <!--先判断职员code和roleCode是否已经存在在用户角色关系表 -->
     <select id="judgeExistCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO">
          select "userCode","roleCode"
-         from "SM_userRoleRelation"
+         from sm_userrolerelation 
          where "userCode" =   #{userCode}
          and  "roleCode" =  #{roleCode}
     </select>
     
      <!-- 批量删除角色中员工信息 -->
     <delete id="deleteRoleUser">
-        delete from "SM_userRoleRelation" where "roleCode"=#{roleCode} 
+        delete from sm_userrolerelationwhere "roleCode"=#{roleCode} 
         and "userCode" in
         <foreach item="userItem" collection="list" open="(" separator="," close=")">
             #{userItem}
@@ -202,13 +202,13 @@
        select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,"user"."email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
 	   "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
        else string_agg(distinct("dept".name),';') end as "depname","user".code as code     
-	   from "SM_user" as "user"       
-	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
-	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode"
+	   from sm_user as "user"       
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
 	   <trim prefix="where" prefixOverrides="and|or"> 
 	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
 	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%' </if> 
-	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
+	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from sm_userrolerelationas "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>
 	    group by "user".id ,"user"."loginName","user".phone,"user"."email",
@@ -220,13 +220,13 @@
      <!-- 角色弹窗选择职员 查询总条数 -->
      <select id="getExceptRoleUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="java.lang.Integer">
        select count(distinct("user"."loginName")) 
-	   from "SM_user" as "user"       
-	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
-	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
+	   from sm_user as "user"       
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode" 
 	   <trim prefix="where" prefixOverrides="and|or"> 
 	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
 	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
-	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from "SM_userRoleRelation" as "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
+	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from sm_userrolerelationas "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>   
      </select>
@@ -236,13 +236,13 @@
        select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,"user"."email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
 	   "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
        else string_agg(distinct("dept".name),';') end as "depname","user".code     
-	   from "SM_user" as "user"       
-	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
-	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
+	   from sm_user as "user"       
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode" 
 	   <trim prefix="where" prefixOverrides="and|or"> 
 	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
 	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
-	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
+	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from sm_userdept as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>
 	    group by "user".id ,"user"."loginName","user".phone,"user"."email",
@@ -255,20 +255,20 @@
       <!-- 部门弹窗选择职员 查询总条数 -->
      <select id="getExceptDeptUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="java.lang.Integer">
        select count(distinct("user"."loginName"))
-	   from "SM_user" as "user"       
-	   left join "SM_userDept" as "userdept" on "userdept"."userCode"="user".code    
-	   left join "SM_department" as "dept"   on "dept".code="userdept"."deptCode" 
+	   from sm_user as "user"       
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode" 
 	  <trim prefix="where" prefixOverrides="and|or"> 
 	     <if test="loginName != null"> and "user"."loginName" like  '%'||#{loginName}||'%'</if> 
 	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
-	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from "SM_userDept" as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
+	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from sm_userdept as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>
      </select>
      
      <!--遍历插入职员与部门的关系 -->
     <insert id="addDeptUser" parameterType="java.util.List">  
-        insert into "SM_userDept"("userCode", "deptCode","mainDeptFlag","createBy","createTime","updateBy","updateTime")values
+        insert into sm_userdept("userCode", "deptCode","mainDeptFlag","createBy","createTime","updateBy","updateTime")values
 		<foreach collection="list" item="deptuser"  index="index" separator=",">
 			(#{deptuser.userCode}, #{deptuser.depCode},#{deptuser.mainDeptFlag},#{deptuser.createBy}, Now(), #{deptuser.updateBy}, Now())
 		</foreach>
@@ -277,21 +277,21 @@
      <!--查询deptCode是否存在 -->
      <select id="queryExistDept"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DeptVO">
          select code as "depCode",name as "depName"
-         from "SM_department"
+         from sm_department
          where   "code" =  #{depCode}
     </select>
     
       <!--先判断职员code和depCode是否已经存在在用户部门关系表 -->
     <select id="judgeExistDeptUserCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DeptUserCodeVO">
          select "userCode","deptCode"
-         from "SM_userDept"
+         from sm_userdept
          where "userCode" =   #{userCode}
          and  "deptCode" =  #{depCode}
     </select>
     
      <!-- 批量删除部门中员工信息 -->
     <delete id="deleteDeptUser">
-        delete from "SM_userDept" where "deptCode"=#{depCode} 
+        delete from sm_userdept where "deptCode"=#{depCode} 
         and "userCode" in
         <foreach item="userItem" collection="list" open="(" separator="," close=")">
             #{userItem}
@@ -301,7 +301,7 @@
     
     <!-- 遍历插入数据字典主表信息记录 -->
     <insert id="addDataDic" parameterType="java.util.List">  
-        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,seq,"detRemark","type","createBy","createTime","updateBy","updateTime")values
+        insert into sm_datadictionary(cn,en,tc,remark,parent,key,value,seq,"detRemark","type","createBy","createTime","updateBy","updateTime")values
         <foreach collection="list" index="index" separator="," item="item">
           (#{item.dicCn},#{item.dicEn},#{item.dicTc},#{item.dicRemark},#{item.dicParent},#{item.dicKey},#{item.dicValue},#{item.dicSeq},#{item.dicDetRemark},#{item.dicType},#{item.createBy},Now(),#{item.updateBy},Now())  
         </foreach>      
@@ -309,13 +309,13 @@
     
     <!-- 插入数据字典主表信息记录 -->
     <insert id="addMainDataDic" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
-        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,type,"createBy","createTime","updateBy","updateTime")
+        insert into sm_datadictionary(cn,en,tc,remark,parent,type,"createBy","createTime","updateBy","updateTime")
         values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{dicType},#{createBy},Now(),#{updateBy},Now())            
     </insert>
     
      <!-- 插入数据字典明细信息一条记录 -->
     <insert id="addOneDataDet" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">  
-        insert into "SM_dataDictionary"(cn,en,tc,remark,parent,key,value,"enValue","tcValue",seq,"detRemark","type","createBy","createTime","updateBy","updateTime")
+        insert into sm_datadictionary(cn,en,tc,remark,parent,key,value,"enValue","tcValue",seq,"detRemark","type","createBy","createTime","updateBy","updateTime")
         values  (#{dicCn},#{dicEn},#{dicTc},#{dicRemark},#{dicParent},#{dicKey},#{dicValue},#{dicEnValue},#{dicTcValue},#{dicSeq},#{dicDetRemark},#{dicType},#{createBy},Now(),#{updateBy},Now())            
     </insert>
     
@@ -323,7 +323,7 @@
       <select id="queryDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
           ,"dic"."enValue" as "dicEnValue","dic"."tcValue" as "dicTcValue","dic"."detRemark" as "dicDetRemark","dic".type as "dicType"
-          from "SM_dataDictionary" as "dic"
+          from sm_datadictionary as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
 			<if test="dicParent != null"> and "dic".parent =#{dicParent}</if>  
@@ -339,7 +339,7 @@
        <!-- 查询数据字典 是否已经存在该Parent的信息-->
       <select id="queryParentDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic"."enValue" as "dicEnValue","dic"."tcValue" as "dicTcValue","dic".seq as dicSeq,"dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
-          from "SM_dataDictionary" as "dic"
+          from sm_datadictionary as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 			<if test="dicParent != null"> and "dic".parent = #{dicParent}</if>          
 		  </trim>
@@ -348,21 +348,21 @@
        <!-- 根据parent查询数据字典主信息-->
       <select id="queryDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic".type as "dicType","dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
-          from "SM_dataDictionary" as "dic"	      
+          from sm_datadictionary as "dic"	      
 		  where  "dic".parent = #{dicParent}       	  
       </select>
       
         <!-- 根据key查询数据字典主信息-->
       <select id="queryKey"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select "dic".id as dicId,"dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".key as dicKey,"dic".value as dicValue,"dic".seq as dicSeq,"dic".type as "dicType","dic"."createBy" as createBy,"dic"."createTime" as createTime,"dic"."updateBy" as updateBy,"dic"."updateTime" as updateTime 
-          from "SM_dataDictionary" as "dic"	      
+          from sm_datadictionary as "dic"	      
 		  where  "dic".key = #{dicKey}       	  
       </select>
       
         <!-- 查询数据字典 主标识主的信息-->
       <select id="queryMainDataDic"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
           select distinct "dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".type as "dicType"
-          from "SM_dataDictionary" as "dic"
+          from sm_datadictionary as "dic"
 	      <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
 			<if test="dicParent != null"> and "dic".parent like  '%'||#{dicParent}||'%'</if>  
@@ -379,7 +379,7 @@
       <select id="getDataDicCount"     resultType="java.lang.Integer">
           select count(*)
           from (select distinct "dic".parent as dicParent,"dic".cn as "dicCn","dic".en as "dicEn","dic".tc as "dicTc","dic".remark as dicRemark,"dic".type as "dicType"
-          from "SM_dataDictionary" as "dic"	     
+          from sm_datadictionary as "dic"	     
            <trim prefix="where" prefixOverrides="and|or">
 	        <if test="dicId != null"> and "dic".id = '${dicId}'</if>
 			<if test="dicParent != null"> and "dic".parent like  '%'||#{dicParent}||'%'</if>  
@@ -396,7 +396,7 @@
       
        <!-- 修改数据字典主的信息 根据parent-->
        <update id="updateDic" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
-		update "SM_dataDictionary" 
+		update sm_datadictionary 
 		<set>	                                 
              <if test="dicEn != null"> en = #{dicEn},</if>
 	   	     <if test="dicCn != null"> cn = #{dicCn},</if>
@@ -410,20 +410,20 @@
      
       <!-- 删除数据字典(通过parent),还要实现批量 -->
      <delete id="deleteDicByParent">
-         delete from "SM_dataDictionary" where "type"!=0 and "parent" in
+         delete from sm_datadictionary where "type"!=0 and "parent" in
           <foreach item="dicitem" collection="list" open="(" separator="," close=")">
             #{dicitem.dicParent}
           </foreach>
      </delete>
       <!-- 删除数据字典(通过parent) -->
       <delete id="deleteOneDic">
-         delete from "SM_dataDictionary" where "type"!=0 and "parent" =#{dicParent}
+         delete from sm_datadictionary where "type"!=0 and "parent" =#{dicParent}
          and "key" is null and "value" is null
      </delete>
      
       <!-- 修改数据字典明细的信息 根据Id-->
        <update id="updateDicDetById" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
-		update "SM_dataDictionary" 
+		update sm_datadictionary 
 		<set>	                                 
              <if test="dicKey != null" > key= #{dicKey},</if>            
              <if test="dicValue != null" > value= #{dicValue},</if>
@@ -439,7 +439,7 @@
 	   
 	  <!-- 删除数据字典(通过key),还要实现批量 -->
      <delete id="deleteDetDicByKey">
-         delete from "SM_dataDictionary" where "type"!=0 and "key" in
+         delete from sm_datadictionary where "type"!=0 and "key" in
           <foreach item="dicitem" collection="list" open="(" separator="," close=")">
             #{dicitem.dicKey}
           </foreach>
@@ -447,14 +447,14 @@
     
      <!-- 插入特征日表信息一条记录 -->
     <insert id="addSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO">  
-        insert into "SM_specialDay"(name,remark,"spDate","createBy","createTime","updateBy","updateTime")values
+        insert into sm_specialday(name,remark,"spDate","createBy","createTime","updateBy","updateTime")values
          (#{spName},#{spRemark},#{spDate},#{createBy},Now(),#{updateBy},Now())
     </insert>
     
      <!-- 查询特征日 是否已经存在该特征日的信息-->
       <select id="queryExistSp"  parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.SpecialDayVO">
           select "sp".id as spId,"sp".name as spName,"sp".remark as spRemark,"sp"."spDate" as spDate,"sp"."createBy" as createBy,"sp"."createTime" as createTime,"sp"."updateBy" as updateBy,"sp"."updateTime" as updateTime 
-          from "SM_specialDay" as "sp"
+          from sm_specialday as "sp"
 	      <trim prefix="where" prefixOverrides="and|or">
 			<if test="spDate != null"> and "sp"."spDate" = '${spDate}'</if>          
 		  </trim>
@@ -469,25 +469,25 @@
 		                               cast(to_char(to_date('${endTime}', 'YYYY-MM'), 'yyyy-mm') || '-01' as timestamp) + '-1 d'
 		                               as date), '1 d') as day) as tt
 		order by orderDate) as yearmonth
-		left join "SM_specialDay" as sp on sp."spDate"=yearmonth.orderdate
+		left join sm_specialday as sp on sp."spDate"=yearmonth.orderdate
       </select>
       
         <!-- 查询根据某日日期查询特征日信息-->
       <select id="querySpecialDateByDay"  parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.SpecialDayVO">
          select "sp".id as "spId","sp".Name as "spName",case when "sp".remark is null then '' else "sp".remark end as "spRemark","sp"."spDate" as "spDate"
-         from "SM_specialDay" as "sp"
+         from sm_specialday as "sp"
          where "sp"."spDate" =#{spDate}
       </select>
       
       <!-- 根据日期删除特征日 -->
      <delete id="deleteSpecialDate">
-         delete from "SM_specialDay" 
+         delete from sm_specialday 
          where "spDate"=#{spDate}
      </delete>
      
       <!-- 修改数据字典主的信息 根据日期-->
        <update id="updateSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
-		update "SM_specialDay" 
+		update sm_specialday 
 		<set>	                                 
              <if test="spName != null" > name= #{spName},</if>            
              <if test="spRemark != null" > remark= #{spRemark},</if> 
@@ -499,7 +499,7 @@
     
       <!-- 插入部门主表信息一条记录 -->
     <select id="addDeptNew" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO" resultType="Integer">  
-        insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
+        insert into sm_department(code,name,status,"createBy","createTime","updateBy","updateTime")
         values(#{depCode},#{depName},#{depStatus},#{createBy},Now(),#{updateBy},Now())returning id         
     </select>
      <!-- 插入组织部门表中-->
@@ -509,22 +509,22 @@
      </insert>
       <!--部门下添加部门-->
      <insert id="deptAddTreeDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
-        insert into "SM_department"(code,name,status,"createBy","createTime","updateBy","updateTime")
+        insert into sm_department(code,name,status,"createBy","createTime","updateBy","updateTime")
         values(#{depCode},#{depName},#{depStatus},#{createBy},Now(),#{updateBy},Now())      
      </insert>
      
       <!-- 根据外键Code查询删除的部门节点下是否存在职员-->
       <select id="judgeExistUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.DeptAndUserVO">
           select  "dept".name as "depName","user".id as "userId","user".name as "name"
-          from "SM_user" as "user"
-          left join "SM_userDept" as "userdept" on "user".code="userdept"."userCode"
-          left join  "SM_department" as "dept" on "userdept"."deptCode"= "dept".code 
+          from sm_user as "user"
+          left join sm_userdept as "userdept" on "user".code="userdept"."userCode"
+          left join  sm_department as "dept" on "userdept"."deptCode"= "dept".code 
           where "dept".code=#{depCode}       
       </select>
      
        <!--物理删除部门，部门表 根据外键Code -->
      <delete id="deleteTreeDept">
-         delete from "SM_department" 
+         delete from sm_department 
          where "code"=#{depCode}
      </delete>
      
@@ -536,7 +536,7 @@
      
      <!-- 修改部门名称，通过部门ID-->
        <update id="updateTreeDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO">   
-		update "SM_department" 
+		update sm_department 
 		<set>	                                 
              <if test="depName != null" > name= #{depName},</if>            
              <if test="updateBy != null" > "updateBy" =#{updateBy},</if>                        
@@ -556,9 +556,9 @@
       <select id="queryDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
           select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."email" is null then '' else "user"."email" end,"user".name,case when "user".position is null then '' else "user".position end,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 		  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name end as "depname"      
-		   from "SM_department" as "dept"     
-		   left join "SM_userDept" as "userdept" on "userdept"."deptCode"="dept".code    
-		   left join "SM_user" as "user"     on "user".code="userdept"."userCode"   
+		   from sm_department as "dept"     
+		   left join sm_userdept as "userdept" on "userdept"."deptCode"="dept".code    
+		   left join sm_user as "user"     on "user".code="userdept"."userCode"   
           where "dept".code=#{depCode} and "user"."whetUse"=0
           order by "user"."createTime" desc
           limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
@@ -566,38 +566,38 @@
       <!--根据角色Code加载角色人员总条数 -->
      <select id="getDeptUserCount"   resultType="java.lang.Integer">
          select count(*)
-          from "SM_department" as "dept"     
-		   left join "SM_userDept" as "userdept" on "userdept"."deptCode"="dept".code    
-		   left join "SM_user" as "user"     on "user".code="userdept"."userCode" 
+          from sm_department as "dept"     
+		   left join sm_userdept as "userdept" on "userdept"."deptCode"="dept".code    
+		   left join sm_user as "user"     on "user".code="userdept"."userCode" 
           where "dept".code=#{depCode}  and "user"."whetUse"=0
       </select>
       
      <!--添加菜单-->
      <insert id="addMenu" parameterType="com.koron.inwlms.bean.DTO.sysManager.MenuDTO">  
-        insert into "SM_moduleMenu"(code,"moduleNo","moduleName","linkAddress","createBy","createTime","updateBy","updateTime")
+        insert into sm_modulemenu(code,"moduleNo","moduleName","linkAddress","createBy","createTime","updateBy","updateTime")
         values(#{menuCode},#{moduleNo},#{moduleName},#{linkAddress},#{createBy},Now(),#{updateBy},Now())      
      </insert>
      
      <!--加载角色权限菜单-->
      <select id="queryRoleMenuByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
-         select "SM_treeDet".*,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+         select sm_treedet.*,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP",
 		case when string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') end as op
-		from "SM_moduleMenu" as "menu"
-		left join "SM_treeDet" on "SM_treeDet".foreignkey="menu".code
-		left join "SM_roleMenus" as "rolemenu" on "rolemenu"."moduleCode"="menu".code and "rolemenu"."roleCode"=
+		from sm_modulemenu as "menu"
+		left join sm_treedet on sm_treedet.foreignkey="menu".code
+		left join sm_rolemenus as "rolemenu" on "rolemenu"."moduleCode"="menu".code and "rolemenu"."roleCode"=
 		#{roleCode}
-		left join "SM_userRole" as "role" on "role"."code"="rolemenu"."roleCode" and "role".code=#{roleCode}
+		left join sm_userrole as "role" on "role"."code"="rolemenu"."roleCode" and "role".code=#{roleCode}
 		GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo",
 		"menu"."moduleName" ,"menu"."linkAddress",	"menu"."ownOP",	
-		"SM_treeDet".seq,"SM_treeDet".childmask,"SM_treeDet".foreignkey,"SM_treeDet".mask,
-		"SM_treeDet".parentmask,"SM_treeDet".id
-		order by "SM_treeDet".seq
+		sm_treedet.seq,sm_treedet.childmask,sm_treedet.foreignkey,sm_treedet.mask,
+		sm_treedet.parentmask,sm_treedet.id
+		order by sm_treedet.seq
       </select>
       
        <!-- 批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode) -->
      <delete id="deleteManyOP">
-         delete from "SM_roleMenus" where "roleCode" in
+         delete from sm_rolemenus where "roleCode" in
          <foreach item="item" index="index" collection="list" separator="," open="(" close=")">
            #{item.roleCode}
           </foreach>
@@ -605,7 +605,7 @@
      
      <!-- 遍历插入角色菜单权限明细表SM_roleMenus信息记录 -->
     <insert id="addManyRoleMenu" parameterType="java.util.List">  
-        insert into "SM_roleMenus"("roleCode","moduleCode",op,"createBy","createTime","updateBy","updateTime")values
+        insert into sm_rolemenus("roleCode","moduleCode",op,"createBy","createTime","updateBy","updateTime")values
         <foreach collection="list" index="index" separator="," item="item">
           (#{item.roleCode},#{item.moduleCode},#{item.op},#{item.createBy},Now(),#{item.updateBy},Now())  
         </foreach>      
@@ -614,7 +614,7 @@
      <!--模糊查询部门接口-->
      <select id="queryDept"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DeptVO">
          select "dept".id as "depId","dept"."name" as "depName","dept".code as "depCode","dept".status as "status"
-         from "SM_department" as "dept"
+         from sm_department as "dept"
         <trim prefix="where" prefixOverrides="and|or">
 		 <if test="depName != null"> and "dept".name like '%'||#{depName}||'%'</if>  
 		 <if test="status != null"> and "dept".status=#{status}</if>         
@@ -624,36 +624,36 @@
        <!--模糊查询部门接口部门总数量-->
       <select id="getDeptCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="java.lang.Integer">
          select count(*)
-         from "SM_department" as "dept"      
+         from sm_department as "dept"      
       </select>
           
        <!--通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限-->
      <select id="queryRoleMenuByRoleMenu"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
-         	select "SM_treeDet".*, "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+         	select sm_treedet.*, "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP",
 		case when string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') end as op
 		from (
-		select * from  "SM_moduleMenu" where code in 
+		select * from  sm_modulemenu where code in 
 		<foreach item="item" collection="list" open="(" separator="," close=")">
             #{item}
         </foreach>
         )
 		as "menu"
-		left join "SM_treeDet" on "SM_treeDet".foreignkey="menu".code
-		left join "SM_roleMenus" as "rolemenu" on "rolemenu"."moduleCode"="menu".code  and "rolemenu"."roleCode"=#{roleMenuDTO.roleCode}
-		left join "SM_userRole" as "role" on "role"."code"="rolemenu"."roleCode"  and "role"."code"=#{roleMenuDTO.roleCode}
+		left join sm_treedet on sm_treedet.foreignkey="menu".code
+		left join sm_rolemenus as "rolemenu" on "rolemenu"."moduleCode"="menu".code  and "rolemenu"."roleCode"=#{roleMenuDTO.roleCode}
+		left join sm_userrole as "role" on "role"."code"="rolemenu"."roleCode"  and "role"."code"=#{roleMenuDTO.roleCode}
 		GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo",
 		"menu"."moduleName" ,"menu"."linkAddress","menu"."ownOP",
-		"SM_treeDet".seq,"SM_treeDet".childmask,"SM_treeDet".foreignkey,"SM_treeDet".mask,
-		"SM_treeDet".parentmask,"SM_treeDet".id
-		order by "SM_treeDet".seq
+		sm_treedet.seq,sm_treedet.childmask,sm_treedet.foreignkey,sm_treedet.mask,
+		sm_treedet.parentmask,sm_treedet.id
+		order by sm_treedet.seq
       </select>
       
       <!--根据moduleName 查询moduleCode -->
      <select id="queryMenuOP"  parameterType="com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO">
         select  "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo","menu"."ownOP" as "ownOP",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress"
-        from "SM_moduleMenu" as "menu"
+        from sm_modulemenu as "menu"
         where "menu"."moduleName"=#{moduleName}
       </select>
 
@@ -661,10 +661,10 @@
      <select id="queryOPByCode"   parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
         select "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo","menu"."ownOP" as "ownOP",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress",case when string_agg(to_char("rolemenu".op,'9'),',') is null then '' else string_agg(to_char("rolemenu".op,'9'),',') end as op
-        from "SM_roleMenus" as "rolemenu"
-        left join "SM_moduleMenu" as "menu" on "menu".code="rolemenu"."moduleCode"
-        left join "SM_userRoleRelation" as "rela" on "rela"."roleCode"="rolemenu"."roleCode"
-        left join "SM_user" as "user" on "user".code="rela"."userCode"
+        from sm_rolemenus as "rolemenu"
+        left join sm_modulemenu as "menu" on "menu".code="rolemenu"."moduleCode"
+        left join sm_userrolerelation as "rela" on "rela"."roleCode"="rolemenu"."roleCode"
+        left join sm_user as "user" on "user".code="rela"."userCode"
         where "rolemenu"."moduleCode"=#{moduleCode} and "user".code=#{userCode}
         GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo","menu"."ownOP",
 		"menu"."moduleName" ,"menu"."linkAddress"
@@ -673,7 +673,7 @@
       <!--批量重置职员的密码 -->
        <update id="updateUserPassword"  parameterType="java.util.List">
          <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-               update "SM_user"
+               update sm_user
                <set>
                  password=#{item.password}
                </set>
@@ -684,32 +684,32 @@
        
       <!-- 插入集成配置主表 -->
      <insert id="addIntegration" parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO">  
-        insert into "SM_integrationConf"(code,status,"sysName","otherJDBC","createBy","createTime","updateBy","updateTime")values
+        insert into sm_integrationconf(code,status,"sysName","otherJDBC","createBy","createTime","updateBy","updateTime")values
          (#{inteConfCode},#{status},#{sysName},#{otherJDBC},#{createBy},Now(),#{updateBy},Now())
      </insert>
      
       <!-- 添加表格映射主表信息 -->
      <insert id="addTableMapper" parameterType="com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO">  
-        insert into "SM_tableMapper"(code,"confCode","otherTabName","otherTabCode","tableName","tableCode","createBy","createTime","updateBy","updateTime")values
+        insert into sm_tablemapper(code,"confCode","otherTabName","otherTabCode","tableName","tableCode","createBy","createTime","updateBy","updateTime")values
          (#{tableMapperCode},#{configCode},#{otherTabName},#{otherTabCode},#{tableName},#{tableCode},#{createBy},Now(),#{updateBy},Now())
      </insert>
      
        <!-- 添加表格字段映射信息 -->
      <insert id="addFieldMapper" parameterType="com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO">  
-        insert into "SM_fieldMapper"(code,"tableCode","tableNames","otherFieldCode","otherFieldName","fieldCode","fieldName","fieldType","formula","value","createBy","createTime","updateBy","updateTime")values
+        insert into sm_fieldmapper(code,"tableCode","tableNames","otherFieldCode","otherFieldName","fieldCode","fieldName","fieldType","formula","value","createBy","createTime","updateBy","updateTime")values
          (#{fieldMapperCode},#{tableCode},#{tableNames},#{otherFieldCode},#{otherFieldName},#{fieldCode},#{fieldName},#{fieldType},#{formula},#{value},#{createBy},Now(),#{updateBy},Now())
      </insert>
      
       <!-- 添加枚举值映射明细-->
      <insert id="addEnumMapper" parameterType="com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO">  
-        insert into "SM_enumMapper"("confCode","otherFieldValue","fieldValue","mapper","createBy","createTime","updateBy","updateTime")values
+        insert into sm_enummapper("confCode","otherFieldValue","fieldValue","mapper","createBy","createTime","updateBy","updateTime")values
          (#{confCode},#{otherFieldValue},#{fieldValue},#{mapper},#{createBy},Now(),#{updateBy},Now())
      </insert>
      
      <!--查询集成配置列表-->
      <select id="queryIntegration"  parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO" resultType="com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO">
          select "conf"."sysName" as "sysName","conf"."otherJDBC" as "otherJDBC","conf".code as "inteConfCode","conf".status as "status"
-         from "SM_integrationConf" as "conf"
+         from sm_integrationconf as "conf"
         <trim prefix="where" prefixOverrides="and|or">
 		 <if test="sysName != null"> and "conf"."sysName" like '%'||#{sysName}||'%'</if>  
 		 <if test="otherJDBC != null"> and "conf"."otherJDBC" like '%'||#{otherJDBC}||'%'</if>  
@@ -723,7 +723,7 @@
        <!--查询集成配置列表总数-->
       <select id="getIntegrationCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO" resultType="java.lang.Integer">
          select count(*) 
-         from "SM_integrationConf" as "conf"
+         from sm_integrationconf as "conf"
         <trim prefix="where" prefixOverrides="and|or">
 		 <if test="sysName != null"> and "conf"."sysName" like '%'||#{sysName}||'%'</if>  
 		 <if test="otherJDBC != null"> and "conf"."otherJDBC" like '%'||#{otherJDBC}||'%'</if>  
@@ -735,7 +735,7 @@
         <!--根据code查询集成配置 查询一条详细信息-->
      <select id="queryIntegrationByCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO" resultType="com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO">
          select "conf"."sysName" as "sysName","conf"."otherJDBC" as "otherJDBC","conf".code as "inteConfCode","conf".status as "status"
-         from "SM_integrationConf" as "conf"
+         from sm_integrationconf as "conf"
 	     where 	"conf".code=#{inteConfCode}
       </select>
       
@@ -747,7 +747,7 @@
          "table"."otherTabCode" as "otherTabCode","table"."tableName" as "tableName","table"."tableCode" as "tableCode",
          "table"."createTime" as "createTime","table"."updateTime" as "updateTime","table"."createBy" as "createBy",
          "table"."updateBy" as "updateBy"
-         from "SM_tableMapper" as "table"
+         from sm_tablemapper as "table"
         <trim prefix="where" prefixOverrides="and|or">
 		 <if test="configCode != null"> and "table"."confCode"=#{configCode}</if>  
 		 <if test="otherTabName != null"> and "table"."otherTabName" like '%'||#{otherTabName}||'%'</if> 
@@ -760,7 +760,7 @@
        <!--根据配置主表Code查询集成配置列表数量-->
       <select id="getTableMapperCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO" resultType="java.lang.Integer">
          select count(*) 
-         from "SM_tableMapper" as "table" 
+         from sm_tablemapper as "table" 
         <trim prefix="where" prefixOverrides="and|or">
 		 <if test="configCode != null"> and "table"."confCode"=#{configCode}</if>  
 		 <if test="otherTabName != null"> and "table"."otherTabName" like '%'||#{otherTabName}||'%'</if> 
@@ -773,7 +773,7 @@
          select "enummapper".id as "id","enummapper"."confCode" as "confCode","enummapper"."otherFieldValue" as "otherFieldValue","enummapper"."fieldValue" ,"enummapper"."mapper",
          "enummapper"."createTime" as "createTime","enummapper"."updateTime" as "updateTime","enummapper"."createBy" as "createBy",
          "enummapper"."updateBy" as "updateBy"
-         from "SM_enumMapper" as "enummapper"
+         from sm_enummapper as "enummapper"
         <trim prefix="where" prefixOverrides="and|or">
 		 <if test="confCode != null"> and "enummapper"."confCode"=#{confCode}</if>  
 		 <if test="otherFieldValue != null"> and "enummapper"."otherFieldValue" like '%'||#{otherFieldValue}||'%'</if> 
@@ -787,7 +787,7 @@
        <!--查询枚举值映射明细列表条数-->
       <select id="getEnumMapperCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO" resultType="java.lang.Integer">
          select count(*) 
-         from "SM_enumMapper" as "enummapper" 
+         from sm_enummapper as "enummapper" 
        <trim prefix="where" prefixOverrides="and|or">
 		 <if test="confCode != null"> and "enummapper"."confCode"=#{confCode}</if>  
 		 <if test="otherFieldValue != null"> and "enummapper"."otherFieldValue" like '%'||#{otherFieldValue}||'%'</if> 
@@ -802,7 +802,7 @@
          "field"."otherFieldName" as "otherFieldName","field"."fieldType" as "fieldType",
          "field"."formula" as "formula","field".value as "value","field"."tableNames" as "tableNames","field"."fieldCode" as "fieldCode","field"."fieldName" as "fieldName",
          "field"."createBy", "field"."createTime","field"."updateBy","field"."updateTime"
-         from "SM_fieldMapper" as "field"
+         from sm_fieldmapper as "field"
         <trim prefix="where" prefixOverrides="and|or">
 		 <if test="tableCode != null"> and "field"."tableCode"=#{tableCode}</if>  
 		 <if test="otherFieldName != null"> and "field"."otherFieldName" like '%'||#{otherFieldName}||'%'</if> 
@@ -816,7 +816,7 @@
        <!--根据表格Code查询表格字段映射明细列表条数-->
       <select id="getFieldMapperCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO" resultType="java.lang.Integer">
          select count(*) 
-         from "SM_fieldMapper" as "field" 
+         from sm_fieldmapper as "field" 
         <trim prefix="where" prefixOverrides="and|or">
 		 <if test="tableCode != null"> and "field"."tableCode"=#{tableCode}</if>  
 		 <if test="otherFieldName != null"> and "field"."otherFieldName" like '%'||#{otherFieldName}||'%'</if> 
@@ -827,7 +827,7 @@
       
        <!--根据code修改集成配置信息接口 -->
        <update id="updateConf"  parameterType="com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO">
-          	update "SM_integrationConf" 
+          	update sm_integrationconf 
 		<set>	    
              <if test="otherJDBC != null  " > "otherJDBC" = #{otherJDBC},  </if>                       
              <if test="sysName != null " > "sysName" = #{sysName},</if>                                               
@@ -840,7 +840,7 @@
        
        <!--根据Code修改集成配置信息接口 -->
        <update id="updateTableMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO">
-          	update "SM_tableMapper" 
+          	update sm_tablemapper 
 		<set>	    
              <if test="otherTabName != null  " > "otherTabName" = #{otherTabName},  </if>                       
              <if test="otherTabCode != null " > "otherTabCode" = #{otherTabCode},</if>    
@@ -855,7 +855,7 @@
        
        <!--根据id修改表格映射明细信息 -->
        <update id="updateEnumMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO">
-          	update "SM_enumMapper" 
+          	update sm_enummapper 
 		<set>	    
              <if test="otherFieldValue != null  " > "otherFieldValue" = #{otherFieldValue},  </if>                       
              <if test="fieldValue != null " > "fieldValue" = #{fieldValue},</if>    
@@ -868,7 +868,7 @@
      
      <!--根据Code修改表格字段映射明细 -->
        <update id="updateFieldMapper"  parameterType="com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO">
-          	update "SM_fieldMapper" 
+          	update sm_fieldmapper 
 		<set>	    
              <if test="otherFieldCode != null  " > "otherFieldCode" = #{otherFieldCode},  </if>                                    
              <if test="otherFieldName != null" > "otherFieldName" = #{otherFieldName},  </if>   
@@ -887,7 +887,7 @@
        
         <!-- 批量删除表格映射明细 -->
 	    <delete id="deleteTableMapper" parameterType="String">
-	        delete  from "SM_tableMapper"	      
+	        delete  from sm_tablemapper	      
 	        where "code" in
 	        <foreach item="item" collection="list" open="(" separator="," close=")">
 	            #{item}
@@ -896,7 +896,7 @@
 	    
 	     <!-- 批量删除字段映射明细 -->
 	    <delete id="deleteFieldMapper" parameterType="String">
-	        delete from "SM_fieldMapper"	      
+	        delete from sm_fieldmapper	      
 	        where "code" in
 	        <foreach item="item" collection="list" open="(" separator="," close=")">
 	            #{item}
@@ -905,7 +905,7 @@
 	    
 	    <!-- 批量删除枚举值映射明细-->
 	    <delete id="deleteEnumMapper" parameterType="String">
-	        delete from "SM_enumMapper"	      
+	        delete from sm_enummapper      
 	        where "id" in
 	        <foreach item="item" collection="list" open="(" separator="," close=")">
 	            #{item}
@@ -915,10 +915,10 @@
 	    
 	   <!--根据主表code查询明细字段code-->
       <select id="queryFieldMapperCode"   resultType="com.koron.inwlms.bean.VO.sysManager.FieldMapperVO">      
-		select "SM_fieldMapper".code as "fieldMapperCode"
-		from "SM_fieldMapper" 
-		left join "SM_tableMapper" on "SM_fieldMapper"."tableCode"="SM_tableMapper".code 
-		where "SM_tableMapper".code in
+		select sm_fieldmapper.code as "fieldMapperCode"
+		from sm_fieldmapper 
+		left join sm_tablemapper on sm_fieldmapper."tableCode"=sm_tablemapper.code 
+		where sm_tablemapper.code in
 	       <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
 		      #{item}
 		    </foreach>
@@ -927,7 +927,7 @@
       
       <!-- 批量导入用户 -->
     <insert id="addManyUser" parameterType="java.util.List">  
-        insert into "SM_user"("loginName",passWord,phone,"email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code") values
+        insert into sm_user("loginName",passWord,phone,"email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code") values
         <foreach collection="list" index="index" separator="," item="item">
            (#{item.loginName},#{item.password},#{item.phone},#{item.email},#{item.name},#{item.position},#{item.sex},#{item.photo},#{item.openID},0,#{item.workNo},0,#{item.createBy},Now(),#{item.updateBy},Now(),#{item.code})   
         </foreach>      
@@ -936,14 +936,14 @@
      <!-- 查询个人密码 -->
       <select id="queryPassWord"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
            select password
-           from "SM_user"
+           from sm_user
            where "loginName" =#{loginName}         
       </select>
       
       
        <!--修改个人密码 -->
        <update id="updateMyPassword"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">
-          	update "SM_user" 
+          	update sm_user 
 		<set>	    
              <if test="password != null" > "password" = #{password},  </if>                                        
              <if test="updateBy != null " > "updateBy" = #{updateBy},</if>                        
@@ -954,7 +954,7 @@
        
         <!--删除头像 修改状态-->
         <update id="deleteHeadPortrait">
-          update "APP_file"
+          update app_file
           set status='0'
           where foreignkey=#{foreignkey}
         </update>
@@ -963,7 +963,7 @@
         <insert id="insertFileDataNew" parameterType="com.koron.inwlms.bean.DTO.sysManager.UploadFileNewDTO"
 		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
 		INSERT INTO
-		"APP_file"
+		app_file
 		("fileName","filePath","fileType","fileSize","storageTime",
 		"foreignkey","moduleType","storeName","createBy","createTime","updateBy","updateTime")
 		VALUES
@@ -985,28 +985,28 @@
 	     <!-- 查询头像 -->
       <select id="queryHeadPortrait"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UploadFileNewDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO">
            select id,concat_ws('\',"filePath","storeName") as "filePath","fileType","fileSize"
-           from "APP_file"
+           from app_file
            where "foreignkey" =#{foreignkey}   and status=${status}      
       </select>
       
        <!-- 根据Parent查询Key -->
        <select id="queryMaxDataKey"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DataDicVO">
            select key as "dicKey"
-           from "SM_dataDictionary" 
+           from sm_datadictionary 
            where parent=#{dicParent}
        </select>
        
         <!-- 查询主部门是否存在 -->
        <select id="queryMainDept"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO" resultType="com.koron.inwlms.bean.VO.sysManager.DeptAndUserVO">
            select "deptCode" as "depCode","userCode" as "userCode"
-           from "SM_userDept"
+           from sm_userdept
            where   "userCode"=#{code} and  "mainDeptFlag"=0
        </select>
        
         <!--修改职员主部门设置为0 -->
        <update id="editDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO">	    	 
 	    	 <foreach collection="list" item="item" index="index" open="" close="" separator=";">
-               update "SM_userDept"
+               update sm_userdept
                <set>
                  "mainDeptFlag"=#{item.mainDeptFlag},"updateTime"=Now(),"updateBy"=#{item.updateBy}
                </set>
@@ -1016,7 +1016,7 @@
        
           <!--修改职员之前主部门maindeptFlag设置为1 -->
        <update id="updateUserDeptFlag"  parameterType="com.koron.inwlms.bean.DTO.sysManager.UserDTO">	    	 
-               update "SM_userDept"
+               update sm_userdept
                 set "mainDeptFlag"=1
                 where "userCode"=#{code}  
        </update>

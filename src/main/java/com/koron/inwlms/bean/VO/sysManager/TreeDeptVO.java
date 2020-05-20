@@ -1,6 +1,9 @@
 package com.koron.inwlms.bean.VO.sysManager;
 
+import org.apache.poi.ss.formula.functions.T;
+
 import com.koron.common.web.mapper.TreeBean;
+import com.koron.common.web.mapper.TreeBean.AbstractLevelBean;
 
 /**
  * 返回树形 结构的组织部门
@@ -9,6 +12,16 @@ import com.koron.common.web.mapper.TreeBean;
 * @Date 2020.04.02
 */
 public class TreeDeptVO extends TreeBean.Long{
+	private java.lang.Integer sequence;
+	
+	public java.lang.Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(java.lang.Integer sequence) {
+		this.sequence = sequence;
+	}
+
 
 	private java.lang.Integer depId;
 	//部门名称
@@ -18,10 +31,8 @@ public class TreeDeptVO extends TreeBean.Long{
 	//部门状态
 	private java.lang.Integer  depstatus;
 
-	
 
 	
-
 	public java.lang.Integer getDepId() {
 		return depId;
 	}
@@ -115,11 +126,9 @@ public class TreeDeptVO extends TreeBean.Long{
 		return foreignkey;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "TreeDeptVO [id=" + id + ", type=" + type + ", foreignkey=" + foreignkey + "]";
+		return "TreeDeptVO [sequence=" + sequence + ", depId=" + depId + ", depName=" + depName + ", depCode=" + depCode
+				+ ", depstatus=" + depstatus + ", id=" + id + ", type=" + type + ", foreignkey=" + foreignkey + ",parentMask=" + super.getParentMask() + ", mask=" + super.getMask() + ", childMask=" + super.getChildMask() + "]";
 	}
 }
