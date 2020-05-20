@@ -54,7 +54,7 @@ public class SystemManagerLabelController {
 
 	//TODO 权限
 	@Autowired
-	private LabelService labelSerivce;
+	private LabelService labelService;
 	
 	
 	/*
@@ -104,7 +104,7 @@ public class SystemManagerLabelController {
 		MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		//执行查询标签
 		 try {
-			 PageListVO labelList=ADOConnection.runTask(labelSerivce, "queryLabel", PageListVO.class, queryLabelDTO);
+			 PageListVO labelList=ADOConnection.runTask(labelService, "queryLabel", PageListVO.class, queryLabelDTO);
 			 if(labelList != null && labelList.getRowNumber() > 0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到标签的信息"); 
@@ -134,7 +134,7 @@ public class SystemManagerLabelController {
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
 		}
-		MessageBean<?>  insertRes = ADOConnection.runTask(labelSerivce, "addLabel",MessageBean.class,labelDTO);
+		MessageBean<?>  insertRes = ADOConnection.runTask(labelService, "addLabel",MessageBean.class,labelDTO);
 		return insertRes.toJson();
 	}
 
@@ -152,7 +152,7 @@ public class SystemManagerLabelController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除标签的操作
 		  try{
-			  Integer delRes=ADOConnection.runTask(labelSerivce, "deleteLabel", Integer.class, labelDTO);		 
+			  Integer delRes=ADOConnection.runTask(labelService, "deleteLabel", Integer.class, labelDTO);		 
 			  if(delRes!=null) {
 				  if(delRes==1) {
 					//删除标签成功
@@ -190,7 +190,7 @@ public class SystemManagerLabelController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行批量删除标签的操作
 		  try{
-			  Integer delRes=ADOConnection.runTask(labelSerivce, "deleteBatchLabel", Integer.class, labelDTO);		 
+			  Integer delRes=ADOConnection.runTask(labelService, "deleteBatchLabel", Integer.class, labelDTO);		 
 			  if(delRes!=null) {
 				  if(delRes==1) {
 					//批量删除标签成功
@@ -226,7 +226,7 @@ public class SystemManagerLabelController {
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
 		}
-		MessageBean<?>  updateRes = ADOConnection.runTask(labelSerivce, "updateLabel",MessageBean.class,labelDTO);
+		MessageBean<?>  updateRes = ADOConnection.runTask(labelService, "updateLabel",MessageBean.class,labelDTO);
 		return updateRes.toJson();
 	}
 	
@@ -237,7 +237,7 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/downloadFileByFileId.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
     @ResponseBody
     public void downloadFileByFileId(Integer fileId, HttpServletResponse response, HttpServletRequest request) {
-        UploadFileDTO data = ADOConnection.runTask(labelSerivce, "getAttachmentInfoById", UploadFileDTO.class, fileId);
+        UploadFileDTO data = ADOConnection.runTask(labelService, "getAttachmentInfoById", UploadFileDTO.class, fileId);
         //调用文件工具类下载文件
         if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
     }
@@ -263,7 +263,7 @@ public class SystemManagerLabelController {
 			queryLabelDTO.setPage(1);
 			queryLabelDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageLabelListVO pageBean = ADOConnection.runTask(labelSerivce, "queryAllList", PageLabelListVO.class,queryLabelDTO);
+			PageLabelListVO pageBean = ADOConnection.runTask(labelService, "queryAllList", PageLabelListVO.class,queryLabelDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -295,7 +295,7 @@ public class SystemManagerLabelController {
             msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
         } else {
             try {
-                msg = ADOConnection.runTask(labelSerivce, "uploadBatchLabel", MessageBean.class, excelBeans);
+                msg = ADOConnection.runTask(labelService, "uploadBatchLabel", MessageBean.class, excelBeans);
 
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
@@ -317,7 +317,7 @@ public class SystemManagerLabelController {
 		//执行查询标签
 		 try {
 			 QueryLabelDTO queryLabelDTO = new QueryLabelDTO();
-			 LabelNameListVO labelNameList = ADOConnection.runTask(labelSerivce, "queryLabelNameList", LabelNameListVO.class, queryLabelDTO);
+			 LabelNameListVO labelNameList = ADOConnection.runTask(labelService, "queryLabelNameList", LabelNameListVO.class, queryLabelDTO);
 			 if(labelNameList != null) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到标签的信息"); 
