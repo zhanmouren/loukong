@@ -4,19 +4,19 @@
  
    <select id="queryAlarmMessage" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
 	select *
-	from "APP_warningInf" as "warningInf"
+	from app_warningInf as "warningInf"
 	where "warningInf"."schemeCode" in
 	(
 		select "Scheme"."schemeCode"
-		from "APP_alertNoticeScheme" as "Scheme"
+		from app_alertNoticeScheme as "Scheme"
 		where "Scheme"."roleCode"  in
 		(
 			select "relation"."roleCode"
-			from "SM_userRoleRelation" as "relation"
+			from sm_userRoleRelation as "relation"
 			where "relation"."userCode" in
 			(
 				select "user".code
-				from "SM_user" as "user"
+				from sm_user as "user"
 				where "user"."loginName" = #{loginName}
 			)
 		)
@@ -26,23 +26,23 @@
    
    <select id="queryLeakageProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
 	select * 
-	from "APP_warningProcessing" as "warningProcessing"
+	from app_warningProcessing as "warningProcessing"
 	where type = 0 and "warningCode" in
 	(
 		select "warningInf".code
-		from "APP_warningInf" as "warningInf"
+		from app_warningInf as "warningInf"
 		where "warningInf"."schemeCode" in
 		(
 			select "Scheme"."schemeCode"
-			from "APP_alertNoticeScheme" as "Scheme"
+			from app_alertNoticeScheme as "Scheme"
 			where "Scheme"."roleCode"  in
 			(
 				select "relation"."roleCode"
-				from "SM_userRoleRelation" as "relation"
+				from sm_userRoleRelation as "relation"
 				where "relation"."userCode" in
 				(
 					select "user".code
-					from "SM_user" as "user"
+					from sm_user as "user"
 					where "user"."loginName" = #{loginName}
 				)
 			)
@@ -53,23 +53,23 @@
     
     <select id="queryMonitorProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
 	select * 
-	from "APP_warningProcessing" as "warningProcessing"
+	from app_warningProcessing as "warningProcessing"
 	where type = 1 and "warningCode" in
 	(
 		select "warningInf".code
-		from "APP_warningInf" as "warningInf"
+		from app_warningInf as "warningInf"
 		where "warningInf"."schemeCode" in
 		(
 			select "Scheme"."schemeCode"
-			from "APP_alertNoticeScheme" as "Scheme"
+			from app_alertNoticeScheme as "Scheme"
 			where "Scheme"."roleCode"  in
 			(
 				select "relation"."roleCode"
-				from "SM_userRoleRelation" as "relation"
+				from sm_userRoleRelation as "relation"
 				where "relation"."userCode" in
 				(
 					select "user".code
-					from "SM_user" as "user"
+					from sm_user as "user"
 					where "user"."loginName" = #{loginName}
 				)
 			)

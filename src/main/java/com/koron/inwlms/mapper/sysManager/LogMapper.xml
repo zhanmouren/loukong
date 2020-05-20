@@ -4,8 +4,8 @@
  
     <select id="queryLoginLog" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLoginLogDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LoginLogVO">
 	select "user".name,"user".position,"loginLog".result,"loginLog"."loginTime" ,"loginLog"."errorLog"
-	from "SM_loginLog" as "loginLog"
-	left join "SM_user" as "user" on "user".code = "loginLog"."loginUserCode"
+	from sm_loginLog as "loginLog"
+	left join sm_user as "user" on "user".code = "loginLog"."loginUserCode"
 	<trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user".name like '%'||#{name}||'%'</if>  
    	    <if test="startTime != null  "> and  to_char("loginLog"."loginTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
@@ -18,8 +18,8 @@
     
     <select id="getLoginLogCount" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLoginLogDTO" resultType="java.lang.Integer">
 	select count(*)
-	from "SM_loginLog" as "loginLog"
-	left join "SM_user" as "user" on "user".code = "loginLog"."loginUserCode"
+	from sm_loginLog as "loginLog"
+	left join sm_user as "user" on "user".code = "loginLog"."loginUserCode"
 	<trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user".name like '%'||#{name}||'%'</if>  
    	    <if test="startTime != null  "> and  to_char("loginLog"."loginTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
@@ -29,7 +29,7 @@
     </select>
     
     <insert id="addLoginLog" parameterType="com.koron.inwlms.bean.DTO.sysManager.LoginLogDTO">  
-        insert into "SM_loginLog"("loginUserCode",result,"loginIp","errorLog","loginTime","createBy","createTime","updateBy","updateTime",type)
+        insert into sm_loginLog("loginUserCode",result,"loginIp","errorLog","loginTime","createBy","createTime","updateBy","updateTime",type)
  		values(#{loginUserCode},#{result},#{loginIp},#{errorLog},now(),#{createBy},now(),#{updateBy},now(),#{type})
     </insert>
     
@@ -37,9 +37,9 @@
     
     <select id="queryOperateLog" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryOperateLogDTO" resultType="com.koron.inwlms.bean.VO.sysManager.OperateLogVO">
 	select "moduleMenu"."moduleName","operateLog"."operateType","operateLog"."operateTime","user"."name","operateLog"."result"
-	from "SM_operateLog" as "operateLog"
-	left join "SM_moduleMenu" as "moduleMenu" on "moduleMenu"."moduleNo" = "operateLog"."operateModuleNo"
-	left join "SM_user" as "user" on "user".code = "operateLog"."operateUserCode"
+	from sm_operateLog as "operateLog"
+	left join sm_moduleMenu as "moduleMenu" on "moduleMenu"."moduleNo" = "operateLog"."operateModuleNo"
+	left join sm_user as "user" on "user".code = "operateLog"."operateUserCode"
 	<trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user"."name" like '%'||#{name}||'%'</if>  
    	    <if test="startTime != null  "> and  to_char("operateLog"."operateTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
@@ -52,9 +52,9 @@
     
     <select id="getOperateLogCount" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryOperateLogDTO" resultType="java.lang.Integer">
 	select count(*)
-	from "SM_operateLog" as "operateLog"
-	left join "SM_moduleMenu" as "moduleMenu" on "moduleMenu"."moduleNo" = "operateLog"."operateModuleNo"
-	left join "SM_user" as "user" on "user".code = "operateLog"."operateUserCode"
+	from sm_operateLog as "operateLog"
+	left join sm_moduleMenu as "moduleMenu" on "moduleMenu"."moduleNo" = "operateLog"."operateModuleNo"
+	left join sm_user as "user" on "user".code = "operateLog"."operateUserCode"
 	<trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user"."name" like '%'||#{name}||'%'</if>  
    	    <if test="startTime != null  "> and  to_char("operateLog"."operateTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
@@ -64,7 +64,7 @@
     </select>
     
     <insert id="addOperateLog" parameterType="com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO">  
- 		insert into "SM_operateLog"("operateType","operateModuleNo","operateTime","operateUserCode",result,"createBy","createTime","updateBy","updateTime")
+ 		insert into sm_operateLog("operateType","operateModuleNo","operateTime","operateUserCode",result,"createBy","createTime","updateBy","updateTime")
  		values(#{operateType},#{operateModuleNo},now(),#{operateUserCode},#{result},#{createBy},now(),#{updateBy},now())
     </insert>
     
@@ -72,7 +72,7 @@
     
     <select id="queryIntegrationLog" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryIntegrationLogDTO" resultType="com.koron.inwlms.bean.VO.sysManager.IntegrationLogVO">
 	select "integrationLog"."jobName","integrationLog"."startDate","integrationLog"."endDate","integrationLog".status
-	from "SM_integrationLog" as "integrationLog"
+	from sm_integrationLog as "integrationLog"
 	<trim prefix="where" prefixOverrides="and|or">
 		<if test="jobName != null  and jobName !='' "> and "integrationLog"."jobName" like '%'||#{jobName}||'%'</if>  
    	    <if test="status != null and status !=''   "> and "integrationLog".status = #{status}</if>         
@@ -85,7 +85,7 @@
     
     <select id="getIntegrationLogCount" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryIntegrationLogDTO" resultType="java.lang.Integer">
 	select count(*)
-	from "SM_integrationLog" as "integrationLog"
+	from sm_integrationLog as "integrationLog"
 	<trim prefix="where" prefixOverrides="and|or">
 		<if test="jobName != null  and jobName !='' "> and "integrationLog"."jobName" like '%'||#{jobName}||'%'</if>  
    	    <if test="status != null and status !=''   "> and "integrationLog".status = #{status}</if>         

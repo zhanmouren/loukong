@@ -4,7 +4,7 @@
  
     <select id="queryLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
 	select "label".id,"label".cn,"label".en,"label"."cnHK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
-	from "SM_label" as "label"
+	from sm_label as "label"
 	<trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and( "label".cn like '%'||#{name}||'%' or "label".en like '%'||#{name}||'%' or "label"."cnHK" like '%'||#{name}||'%')</if>  
    	    <if test="code != null  and code !='' "> and "label".code like '%'||#{code}||'%' </if>  
@@ -19,7 +19,7 @@
    
    <select id="getLabelCount" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="java.lang.Integer">
 	select count(*)
-	from "SM_label" as "label"
+	from sm_label as "label"
 	<trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and ( "label".cn like '%'||#{name}||'%' or "label".en like '%'||#{name}||'%' or "label"."cnHK" like '%'||#{name}||'%')</if>  
    	    <if test="code != null  and code !='' "> and "label".code like '%'||#{code}||'%' </if>  
@@ -30,17 +30,17 @@
     </select>
    
      <insert id="addLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelDTO">  
-        insert into "SM_label"(cn,en,"cnHK",code,type,remark,"createBy","createTime","updateBy","updateTime")
+        insert into sm_label(cn,en,"cnHK",code,type,remark,"createBy","createTime","updateBy","updateTime")
  		values(#{cn},#{en},#{cnHK},#{code},#{type},#{remark},#{createBy},now(),#{updateBy},now())
     </insert>
     
     
     <delete id="deleteLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelDTO">   
-		delete from "SM_label" where code = #{code}
+		delete from sm_label where code = #{code}
     </delete>
     
     <delete id="deleteBatchLabel" parameterType="String">
-   		delete from "SM_label" where code in
+   		delete from sm_label where code in
         <foreach item="labelItem" collection="list" open="(" separator="," close=")">
             #{labelItem}
         </foreach>
@@ -48,18 +48,18 @@
 
 	<select id="queryLabelByCode"  resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
 		select "label".id ,"label".cn,"label".en,"label"."cnHK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
-		from "SM_label" as "label"
+		from sm_label as "label"
 		where  "label".code = #{code}
     </select>
 
 	<select id="queryLabelById"  resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
 		select "label".id ,"label".cn,"label".en,"label"."cnHK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
-		from "SM_label" as "label"
+		from sm_label as "label"
 		where  "label".id = #{id}
     </select>
 
 	<update id="updateLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelDTO">
-		update "SM_label" 
+		update sm_label 
 		<set>
 			<if test="cn != null  and cn !='' "> cn = #{cn}, </if>  
    	  	 	<if test="en != null  and en !='' ">en = #{en} ,</if>  
@@ -76,12 +76,12 @@
 	
 	 <select id="countLabelByCode" parameterType="java.lang.String" resultType="java.lang.Integer">
         select count(*) total
-        from "SM_label" as "label"
+        from sm_label as "label"
         where "label".code = #{code}
     </select>
 	
 	<insert id="uploadBatchLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelExcelBean">
-        insert into "SM_label"(cn,en,"cnHK",code,type,remark,"createBy","createTime","updateBy","updateTime")
+        insert into sm_label(cn,en,"cnHK",code,type,remark,"createBy","createTime","updateBy","updateTime")
  		(
  		<foreach collection="list" item="item" index="" separator="union all">
             select
@@ -101,14 +101,14 @@
     
     
     <select id="queryLabelCnList" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelNameVO">
-	select "label".code,"label".cn as value from "SM_label" as "label"
+	select "label".code,"label".cn as value from sm_label as "label"
     </select>
     
     <select id="queryLabelEnList" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelNameVO">
-	select "label".code,"label".en as value from "SM_label" as "label"
+	select "label".code,"label".en as value from sm_label as "label"
     </select>
     
     <select id="queryLabelCnHKList" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelNameVO">
-	select "label".code,"label"."cnHK" as value from "SM_label" as "label"
+	select "label".code,"label"."cnHK" as value from sm_label as "label"
     </select>
 </mapper>

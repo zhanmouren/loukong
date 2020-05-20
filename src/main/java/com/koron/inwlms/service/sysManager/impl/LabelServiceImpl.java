@@ -118,12 +118,10 @@ public class LabelServiceImpl implements LabelService{
 			if(label2 == null) {
 				msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 				msg.setDescription("不存在该标签");
-			}
-			else if (label1 !=null && !label1.getId().equals(label2.getId())) {
+			}else if (label1 !=null && !label1.getId().equals(label2.getId())) {
 				msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 				msg.setDescription("标签code已存在");
-			}
-			else {
+			}else {
 //				Gson jsonValue = new Gson();
 //				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
 //				labelDTO.setUpdateBy(userListVO.getLoginName());
@@ -133,7 +131,6 @@ public class LabelServiceImpl implements LabelService{
 			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 			msg.setDescription("修改失败");
 		}
-		
 		return msg;
 	}
 	
