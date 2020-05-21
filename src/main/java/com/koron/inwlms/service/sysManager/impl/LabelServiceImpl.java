@@ -142,8 +142,8 @@ public class LabelServiceImpl implements LabelService{
 		return mapper.getAttachmentInfoById(fileId);
 	}
 	
-	//分页查询标签列表 2020/04/21 
-	@TaskAnnotation("queryAllList")
+	//下载标签列表 2020/04/21 
+	@TaskAnnotation("downloadAllList")
 	@Override
 	public PageLabelListVO downloadAllList(SessionFactory factory, QueryLabelDTO queryLabelDTO) {
 		LabelMapper labelMapper = factory.getMapper(LabelMapper.class);

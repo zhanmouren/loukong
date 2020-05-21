@@ -263,7 +263,7 @@ public class SystemManagerLabelController {
 			queryLabelDTO.setPage(1);
 			queryLabelDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageLabelListVO pageBean = ADOConnection.runTask(labelService, "downloadAllList", PageLabelListVO.class,queryLabelDTO);
+			PageListVO<List<LabelVO>> pageBean = ADOConnection.runTask(labelService, "queryLabel", PageListVO.class,queryLabelDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
