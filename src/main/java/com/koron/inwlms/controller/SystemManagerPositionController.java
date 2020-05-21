@@ -133,9 +133,6 @@ public class SystemManagerPositionController {
 	@ApiOperation(value = "添加职位接口",notes = "添加职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String addPosition(@RequestBody PositionDTO positionDTO) {
-		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
-		}
 		MessageBean<?>  insertRes = ADOConnection.runTask(positionService, "addPosition",MessageBean.class,positionDTO);
 		return insertRes.toJson();
 	}
@@ -144,9 +141,6 @@ public class SystemManagerPositionController {
 	@ApiOperation(value = "修改职位接口",notes = "修改职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String updatePosition(@RequestBody PositionDTO positionDTO) {
-		if(positionDTO.getId() == null) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!id不能为空", Integer.class).toJson();
-		}
 		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
 		}
@@ -156,7 +150,7 @@ public class SystemManagerPositionController {
 	
   
 	@RequestMapping(value = "/downloadAllList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "下载标签列表数据", notes = "下载标签列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "下载职位列表数据", notes = "下载职位列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public HttpEntity<?> downloadAllList(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
@@ -170,7 +164,7 @@ public class SystemManagerPositionController {
 			positionDTO.setPage(1);
 			positionDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PagePositionListVO pageBean = ADOConnection.runTask(positionService, "downloadAllList", PagePositionListVO.class,positionDTO);
+			PageListVO<List<PositionVO>> pageBean = ADOConnection.runTask(positionService, "queryPosition", PageListVO.class,positionDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件

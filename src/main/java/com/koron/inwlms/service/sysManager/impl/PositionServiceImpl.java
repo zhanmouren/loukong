@@ -19,6 +19,7 @@ import com.koron.inwlms.mapper.sysManager.LabelMapper;
 import com.koron.inwlms.mapper.sysManager.PositionMapper;
 import com.koron.inwlms.service.sysManager.PositionService;
 import com.koron.inwlms.util.PageUtil;
+import com.koron.inwlms.util.RandomCodeUtil;
 import com.koron.util.Constant;
 
 @Service
@@ -67,19 +68,16 @@ public class PositionServiceImpl implements PositionService{
 	public MessageBean<String> addPosition(SessionFactory factory, PositionDTO positionDTO) {
 		MessageBean<String> msg =MessageBean.create(Constant.MESSAGE_INT_SUCCESS,Constant.MESSAGE_STRING_SUCCESS, String.class);
 		PositionMapper positionMapper = factory.getMapper(PositionMapper.class);
+		String code=new RandomCodeUtil().getUUID32();
+		positionDTO.setCode(code);
 		try {
 			PositionVO position = positionMapper.queryPositionByCode(positionDTO.getCode());
-			if (position != null) {
-				msg.setCode(Constant.MESSAGE_INT_ADDERROR);
-				msg.setDescription("添加职位失败(已存在相同code)");
-			} else {
 //				Gson jsonValue = new Gson();
 //				// 查询条件字符串转对象，查询数据结果
 //				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
 //				labelDTO.setCreateBy(userListVO.getLoginName());
 //				labelDTO.setUpdateBy(userListVO.getLoginName());
 				positionMapper.addPosition(positionDTO);
-			}
 		} catch (Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
@@ -95,14 +93,10 @@ public class PositionServiceImpl implements PositionService{
 		MessageBean<String> msg =MessageBean.create(Constant.MESSAGE_INT_SUCCESS,Constant.MESSAGE_STRING_SUCCESS, String.class);
 		PositionMapper positionMapper = factory.getMapper(PositionMapper.class);
 		try {
-			PositionVO position1 = positionMapper.queryPositionByCode(positionDTO.getCode());
-			PositionVO position2 = positionMapper.queryPositionById(positionDTO.getId());
-			if (position2 == null) {
+			PositionVO position = positionMapper.queryPositionByCode(positionDTO.getCode());
+			if (position == null) {
 				msg.setCode(Constant.MESSAGE_INT_ERROR);
 				msg.setDescription("不存在该职位");
-			} else if(position1 != null && !position1.getId().equals(position2.getId())) {
-				msg.setCode(Constant.MESSAGE_INT_ERROR);
-				msg.setDescription("职位code已存在");
 			}else{
 //				Gson jsonValue = new Gson();
 //				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);

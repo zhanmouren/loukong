@@ -50,8 +50,7 @@
     
     <update id="updatePosition" parameterType="com.koron.inwlms.bean.DTO.sysManager.PositionDTO">
 		update sm_position
-		<set>
-			<if test="code != null  and code !='' "> code = #{code}, </if>  
+		<set>  
    	  	 	<if test="status != null  and status !='' ">status = #{status} ,</if>  
    	  	 	<if test="weight != null  and weight !='' "> "weight" = #{weight} ,</if>  
    	  		<if test="name != null  and name !='' "> name = #{name} ,</if>
@@ -59,6 +58,6 @@
    	 	   	"updateBy" = #{updateBy},
    	 	   	"updateTime" = now()
 		</set>
-		where id = #{id}
+		where code = #{code}
 	</update>
 </mapper>
