@@ -3,7 +3,17 @@ package com.koron.inwlms.bean.VO.sysManager;
 import com.koron.common.web.mapper.TreeBean;
 
 public class TreeMenuVO extends TreeBean.Long{
-	    //模块Id
+	    //菜单同级顺序
+	   private java.lang.Integer sequence;
+	    public java.lang.Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(java.lang.Integer sequence) {
+		this.sequence = sequence;
+	}
+
+		//模块Id
 		private java.lang.Integer menuId;
 		//模块编号
 		private String menuCode;
@@ -135,11 +145,10 @@ public class TreeMenuVO extends TreeBean.Long{
 			return foreignkey;
 		}
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
 		@Override
 		public String toString() {
-			return "TreeMenuVO [id=" + id + ", type=" + type + ", foreignkey=" + foreignkey + "]";
+			return "TreeMenuVO [sequence=" + sequence + ", menuId=" + menuId + ", menuCode=" + menuCode + ", moduleNo="
+					+ moduleNo + ", moduleName=" + moduleName + ", linkAddress=" + linkAddress + ", op=" + op
+					+ ", ownOP=" + ownOP + ", id=" + id + ", type=" + type + ", foreignkey=" + foreignkey + ",parentMask=" + super.getParentMask() + ", mask=" + super.getMask() + ", childMask=" + super.getChildMask() + "]";
 		}
 }

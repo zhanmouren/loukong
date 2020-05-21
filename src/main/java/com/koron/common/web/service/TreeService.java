@@ -2,6 +2,8 @@ package com.koron.common.web.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,11 +132,13 @@ public class TreeService {
 				}
 			}
 		}
-	
-
-		
-		return deptList;
+	 
+	   
+		 return deptList;
 	}
+
+	
+	
 	/**
 	 * 获取节点下所有子节点(菜单)
 	 * @param factory
@@ -210,7 +214,118 @@ public class TreeService {
 		//TODO 测试使用，默认userCode
 		String userCode="c545d2c156834f1b9eea9136620726b3";
 		List<TreeMenuVO> menuList=mapper.queryChildAllMenu(node,userCode);
-		return menuList;
+		
+		 List<TreeMenuVO> finalMenuList=menuList.stream().filter(s->s.getParentMask()>0).collect(Collectors.toList());
+	     Map<Integer,List<TreeMenuVO>> treemap = new HashMap<>();	
+	     Map<Integer,List<TreeMenuVO>> treeList=treeMenuSeq(finalMenuList,treemap);
+	     
+	     //新建一个最终的List去接收
+	     List<TreeMenuVO> finalList=new ArrayList<>();
+	     for (Map.Entry<Integer, List<TreeMenuVO>> entry : treeList.entrySet()) {			
+				//System.out.println("Keyqwww = " + entry.getKey() + ", Value www= " + entry.getValue());
+				if(entry.getKey()==1) {
+					finalList.addAll(entry.getValue()); 
+				}else {
+					//位置
+					int place=0;
+					//获取当前value
+					List<TreeMenuVO> finalListCur=entry.getValue();
+					lxk:
+					for(int i=0;i<finalList.size();i++) {						
+						for(int j=0;j<finalListCur.size();j++) {
+							if(finalList.get(i).getMenuCode().equals(finalListCur.get(j).getMenuCode())) {								
+								place=i;
+								break  lxk;
+							}
+						}
+					}
+					//删除i到i+finalList.size()的位置
+						finalList.removeAll(finalListCur);
+					//添加finalList1到指定位置		
+					int fzVal=0;
+					for(int j=place;j<place+finalListCur.size();j++) {
+							  finalList.add(j,finalListCur.get(fzVal));
+							  fzVal++;
+					}
+				}
+				
+		}	    
+		 return finalList;
+	}
+	
+	public static  Map<Integer,List<TreeMenuVO>>  treeMenuSeq(List<TreeMenuVO> finalMenuList,Map<Integer,List<TreeMenuVO>> treemap) {
+	//	int firstnum=0;
+		//取第一个数
+		Integer firstParentmask=finalMenuList.get(0).getParentMask();
+		TreeMenuVO lastTreeMenuVO=new TreeMenuVO();
+		lastTreeMenuVO.setParentMask(firstParentmask);
+		
+		finalMenuList.add(lastTreeMenuVO);
+		//循环数组
+		//创建map集合
+	    Map<Integer,List<TreeMenuVO>> map = new HashMap<>();	
+	    //起始坐标
+		int indexi=0;
+		for(int q=1;q<finalMenuList.size();q++) {
+			 if(finalMenuList.get(q).getParentMask()==firstParentmask) {
+				List<TreeMenuVO> list=new ArrayList<TreeMenuVO>();
+                for(int j=0;j<q;j++) {
+                	if(j >= indexi) {                 	
+                   	 list.add(finalMenuList.get(j));
+                   	 map.put(q,list); 
+                	}                   	 
+				 }	
+                //更改起始下标
+           	    indexi=q;
+			}				
+		}
+		List<TreeMenuVO> finalSeqDeptList=new ArrayList<>();
+		//装在List里面，从小到大排序
+		List<Integer> sequenceList=new ArrayList<>();
+		//先排序
+		for (Map.Entry<Integer, List<TreeMenuVO>> entry : map.entrySet()) {
+			//  System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+			  sequenceList.add(entry.getValue().get(0).getSequence());
+		}
+		Collections.sort(sequenceList);
+		
+		 for(int z=0;z<sequenceList.size();z++) {
+			for (Map.Entry<Integer, List<TreeMenuVO>> entry : map.entrySet()) {									 
+				 if(entry.getValue().get(0).getSequence()==sequenceList.get(z)) {
+					 finalSeqDeptList.addAll(entry.getValue());
+					 break;
+				 }
+			}
+		}
+//		 System.out.println("输出结果为：");
+//		 //输出经过该层级后的排序结果
+//		for(int t=0;t<finalSeqDeptList.size();t++) {			
+//			System.out.println(finalSeqDeptList.get(t));
+//		}
+		 int key=1;
+       
+	    for (Map.Entry<Integer, List<TreeMenuVO>> entry : treemap.entrySet()) {   
+	    	key=entry.getKey()+1;			
+		}	    
+	    treemap.put(key, finalSeqDeptList);		
+		for (Map.Entry<Integer, List<TreeMenuVO>> entry : map.entrySet()) {
+			List<TreeMenuVO> finalsonDeptList=new ArrayList<>();
+			List<TreeMenuVO> menuList= entry.getValue();
+			if(menuList!=null && menuList.size()>0) {
+			  //去除第一个
+				for(int j=1;j<menuList.size();j++) {
+					finalsonDeptList.add(menuList.get(j));
+				}
+				
+			}
+			
+			if(finalsonDeptList!=null &&  finalsonDeptList.size()>0) {				
+				treeMenuSeq(finalsonDeptList,treemap);		 	   
+			}
+
+		}		
+		return treemap;
+		 				
 	}
 	
 	/**

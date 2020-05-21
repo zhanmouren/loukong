@@ -10,6 +10,15 @@ import com.koron.common.web.mapper.TreeBean;
 * @Date 2020.03.23
 */
 public class RoleMenusVO extends TreeBean.Long{
+	  //菜单同级顺序
+	   private java.lang.Integer sequence;
+	    public java.lang.Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(java.lang.Integer sequence) {
+		this.sequence = sequence;
+	}
 	//角色Id
 	private Integer roleId;
     //角色code
@@ -164,11 +173,11 @@ public class RoleMenusVO extends TreeBean.Long{
 		return foreignkey;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
-		return "RoleMenusVO [id=" + id + ", type=" + type + ", foreignkey=" + foreignkey + "]";
+		return "RoleMenusVO [sequence=" + sequence + ", roleId=" + roleId + ", roleCode=" + roleCode + ", roleName="
+				+ roleName + ", menuId=" + menuId + ", moduleCode=" + moduleCode + ", moduleNo=" + moduleNo
+				+ ", moduleName=" + moduleName + ", linkAddress=" + linkAddress + ", opList=" + opList + ", op=" + op
+				+ ", ownOP=" + ownOP + ", id=" + id + ", type=" + type + ", foreignkey=" + foreignkey + ",parentMask=" + super.getParentMask() + ", mask=" + super.getMask() + ", childMask=" + super.getChildMask() + "]";
 	}
 }

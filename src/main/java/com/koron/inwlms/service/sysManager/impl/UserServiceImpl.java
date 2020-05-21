@@ -7,8 +7,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -67,6 +70,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
@@ -937,9 +941,121 @@ public class UserServiceImpl implements UserService{
 				public List<RoleMenusVO> queryRoleMenuByRoleCode(SessionFactory factory, RoleDTO roleDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<RoleMenusVO> roleMenusList=userMapper.queryRoleMenuByRoleCode(roleDTO);									
-					return roleMenusList;
+					
+					 List<RoleMenusVO> finalMenuList=roleMenusList.stream().filter(s->s.getParentMask()>0).collect(Collectors.toList());
+				     Map<Integer,List<RoleMenusVO>> treemap = new HashMap<>();	
+				     Map<Integer,List<RoleMenusVO>> treeList=treeMenuSeq(finalMenuList,treemap);
+				     
+				     //新建一个最终的List去接收
+				     List<RoleMenusVO> finalList=new ArrayList<>();
+				     for (Map.Entry<Integer, List<RoleMenusVO>> entry : treeList.entrySet()) {			
+							//System.out.println("Keyqwww = " + entry.getKey() + ", Value www= " + entry.getValue());
+							if(entry.getKey()==1) {
+								finalList.addAll(entry.getValue()); 
+							}else {
+								//位置
+								int place=0;
+								//获取当前value
+								List<RoleMenusVO> finalListCur=entry.getValue();
+								lxk:
+								for(int i=0;i<finalList.size();i++) {						
+									for(int j=0;j<finalListCur.size();j++) {
+										if(finalList.get(i).getModuleCode().equals(finalListCur.get(j).getModuleCode())) {								
+											place=i;
+											break  lxk;
+										}
+									}
+								}
+								//删除i到i+finalList.size()的位置
+									finalList.removeAll(finalListCur);
+								//添加finalList1到指定位置		
+								int fzVal=0;
+								for(int j=place;j<place+finalListCur.size();j++) {
+										  finalList.add(j,finalListCur.get(fzVal));
+										  fzVal++;
+								}
+							}
+							
+					}	    
+					 return finalList;
 				}
+				//同级菜单排序
+				public static  Map<Integer,List<RoleMenusVO>>  treeMenuSeq(List<RoleMenusVO> finalMenuList,Map<Integer,List<RoleMenusVO>> treemap) {
+					//	int firstnum=0;
+						//取第一个数
+						Integer firstParentmask=finalMenuList.get(0).getParentMask();
+						RoleMenusVO lastRoleMenusVO=new RoleMenusVO();
+						lastRoleMenusVO.setParentMask(firstParentmask);
+						
+						finalMenuList.add(lastRoleMenusVO);
+						//循环数组
+						//创建map集合
+					    Map<Integer,List<RoleMenusVO>> map = new HashMap<>();	
+					    //起始坐标
+						int indexi=0;
+						for(int q=1;q<finalMenuList.size();q++) {
+							 if(finalMenuList.get(q).getParentMask()==firstParentmask) {
+								List<RoleMenusVO> list=new ArrayList<RoleMenusVO>();
+				                for(int j=0;j<q;j++) {
+				                	if(j >= indexi) {                 	
+				                   	 list.add(finalMenuList.get(j));
+				                   	 map.put(q,list); 
+				                	}                   	 
+								 }	
+				                //更改起始下标
+				           	    indexi=q;
+							}				
+						}
+						List<RoleMenusVO> finalSeqDeptList=new ArrayList<>();
+						//装在List里面，从小到大排序
+						List<Integer> sequenceList=new ArrayList<>();
+						//先排序
+						for (Map.Entry<Integer, List<RoleMenusVO>> entry : map.entrySet()) {
+							//  System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+							  sequenceList.add(entry.getValue().get(0).getSequence());
+						}
+						Collections.sort(sequenceList);
+						
+						 for(int z=0;z<sequenceList.size();z++) {
+							for (Map.Entry<Integer, List<RoleMenusVO>> entry : map.entrySet()) {									 
+								 if(entry.getValue().get(0).getSequence()==sequenceList.get(z)) {
+									 finalSeqDeptList.addAll(entry.getValue());
+									 break;
+								 }
+							}
+						}
+//						 System.out.println("输出结果为：");
+//						 //输出经过该层级后的排序结果
+//						for(int t=0;t<finalSeqDeptList.size();t++) {			
+//							System.out.println(finalSeqDeptList.get(t));
+//						}
+						 int key=1;
+				       
+					    for (Map.Entry<Integer, List<RoleMenusVO>> entry : treemap.entrySet()) {   
+					    	key=entry.getKey()+1;			
+						}	    
+					    treemap.put(key, finalSeqDeptList);		
+						for (Map.Entry<Integer, List<RoleMenusVO>> entry : map.entrySet()) {
+							List<RoleMenusVO> finalsonDeptList=new ArrayList<>();
+							List<RoleMenusVO> menuList= entry.getValue();
+							if(menuList!=null && menuList.size()>0) {
+							  //去除第一个
+								for(int j=1;j<menuList.size();j++) {
+									finalsonDeptList.add(menuList.get(j));
+								}
+								
+							}
+							
+							if(finalsonDeptList!=null &&  finalsonDeptList.size()>0) {				
+								treeMenuSeq(finalsonDeptList,treemap);		 	   
+							}
 
+						}		
+						return treemap;
+						 				
+					}
+
+				
 				//根据角色Code修改菜单权限
 				@TaskAnnotation("updateRoleMenuByRoleCode")
 				@Override

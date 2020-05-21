@@ -12,16 +12,7 @@ import com.koron.common.web.mapper.TreeBean.AbstractLevelBean;
 * @Date 2020.04.02
 */
 public class TreeDeptVO extends TreeBean.Long{
-	private java.lang.Integer sequence;
 	
-	public java.lang.Integer getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(java.lang.Integer sequence) {
-		this.sequence = sequence;
-	}
-
 
 	private java.lang.Integer depId;
 	//部门名称
@@ -128,7 +119,7 @@ public class TreeDeptVO extends TreeBean.Long{
 
 	@Override
 	public String toString() {
-		return "TreeDeptVO [sequence=" + sequence + ", depId=" + depId + ", depName=" + depName + ", depCode=" + depCode
+		return "TreeDeptVO [depId=" + depId + ", depName=" + depName + ", depCode=" + depCode
 				+ ", depstatus=" + depstatus + ", id=" + id + ", type=" + type + ", foreignkey=" + foreignkey + ",parentMask=" + super.getParentMask() + ", mask=" + super.getMask() + ", childMask=" + super.getChildMask() + "]";
 	}
 }

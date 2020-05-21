@@ -100,7 +100,7 @@ public interface TreeMapper {
      * @param bean 节点
      * @return 节点集合
      */
-    @Select("select sm_treedet.*,sm_modulemenu.code \"menuCode\",sm_modulemenu.id \"menuId\",sm_modulemenu.\"ownOP\" \"ownOP\",sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n" + 
+    @Select("select sm_treedet.*,sm_modulemenu.sequence \"sequence\",sm_modulemenu.code \"menuCode\",sm_modulemenu.id \"menuId\",sm_modulemenu.\"ownOP\" \"ownOP\",sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n" + 
     		"		  ,case when string_agg(DISTINCT(to_char(\"rolemenu\".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char(\"rolemenu\".op,'9')),',') end as op\r\n" + 
     		"		 from sm_treedet\r\n" + 
     		"		 left join sm_modulemenu on sm_modulemenu.code=sm_treedet.foreignkey\r\n" + 
@@ -119,7 +119,7 @@ public interface TreeMapper {
      * @param bean 节点
      * @return 节点集合
      */
-    @Select("select sm_treedet.*,sm_department.sequence \"sequence\", sm_department.id \"depId\", sm_department.name \"depName\",sm_department.code \"depCode\",sm_department.status \"depstatus\" from sm_treedet  left join sm_department  on sm_treedet.foreignkey=sm_department.code where (sm_treedet.seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and sm_treedet.type = #{type} order by sm_treedet.seq")
+    @Select("select sm_treedet.*, sm_department.id \"depId\", sm_department.name \"depName\",sm_department.code \"depCode\",sm_department.status \"depstatus\" from sm_treedet  left join sm_department  on sm_treedet.foreignkey=sm_department.code where (sm_treedet.seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and sm_treedet.type = #{type} order by sm_treedet.seq")
     public List<TreeDeptVO> getDescendantName(@Param("seq") long seq, @Param("type") int type, @Param("mask") int mask, @Param("parentMask") int parentMask);
 
     /**

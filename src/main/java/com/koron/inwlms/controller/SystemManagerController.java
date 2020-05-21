@@ -2265,7 +2265,6 @@ public class SystemManagerController {
 					msg.setDescription("查询目录树成功"); 
 					msg.setData(treeBeanList);
 				  }else {
-					//查询失败
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("没有查询到相关目录树"); 
 			 }		  

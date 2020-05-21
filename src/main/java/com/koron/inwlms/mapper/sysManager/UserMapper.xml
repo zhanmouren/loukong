@@ -580,7 +580,7 @@
      
      <!--加载角色权限菜单-->
      <select id="queryRoleMenuByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
-         select sm_treedet.*,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+         select sm_treedet.*,"menu".sequence as sequence,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP",
 		case when string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') end as op
 		from sm_modulemenu as "menu"
@@ -588,7 +588,7 @@
 		left join sm_rolemenus as "rolemenu" on "rolemenu"."moduleCode"="menu".code and "rolemenu"."roleCode"=
 		#{roleCode}
 		left join sm_userrole as "role" on "role"."code"="rolemenu"."roleCode" and "role".code=#{roleCode}
-		GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo",
+		GROUP BY "menu".sequence,"menu".id ,"menu".code ,"menu"."moduleNo",
 		"menu"."moduleName" ,"menu"."linkAddress",	"menu"."ownOP",	
 		sm_treedet.seq,sm_treedet.childmask,sm_treedet.foreignkey,sm_treedet.mask,
 		sm_treedet.parentmask,sm_treedet.id
