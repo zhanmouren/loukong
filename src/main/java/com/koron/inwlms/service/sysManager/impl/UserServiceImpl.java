@@ -898,7 +898,8 @@ public class UserServiceImpl implements UserService{
 					String menuCode=randomCodeUtil.getUUID32();
 					menuDTO.setMenuCode(menuCode);
 					menuDTO.setModuleName(menuTreeDTO.getModuleName());
-					menuDTO.setModuleNo(menuTreeDTO.getModuleNo());					
+					menuDTO.setModuleNo(menuTreeDTO.getModuleNo());	
+					menuDTO.setSequence(menuTreeDTO.getSequence());
 					menuDTO.setCreateBy("小詹");
 					menuDTO.setUpdateBy("小詹");
 					//先生成菜单

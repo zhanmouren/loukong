@@ -574,8 +574,8 @@
       
      <!--添加菜单-->
      <insert id="addMenu" parameterType="com.koron.inwlms.bean.DTO.sysManager.MenuDTO">  
-        insert into sm_modulemenu(code,"moduleNo","moduleName","linkAddress","createBy","createTime","updateBy","updateTime")
-        values(#{menuCode},#{moduleNo},#{moduleName},#{linkAddress},#{createBy},Now(),#{updateBy},Now())      
+        insert into sm_modulemenu(code,"moduleNo","moduleName","linkAddress","sequence","createBy","createTime","updateBy","updateTime")
+        values(#{menuCode},#{moduleNo},#{moduleName},#{linkAddress},#{sequence},#{createBy},Now(),#{updateBy},Now())      
      </insert>
      
      <!--加载角色权限菜单-->

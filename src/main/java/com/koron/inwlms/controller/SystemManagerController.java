@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -2210,6 +2212,16 @@ public class SystemManagerController {
 		if(menuTreeDTO.getLinkAddress()==null || "".equals(menuTreeDTO.getLinkAddress())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "链接地址不能为空", Integer.class).toJson();
 		}
+		if(menuTreeDTO.getSequence()==null || "".equals(menuTreeDTO.getSequence())) {
+		    return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块菜单顺序不能为空", Integer.class).toJson();
+		}
+		String fields =menuTreeDTO.getSequence().toString();
+		//菜单顺序只能数字
+		Pattern pattern = Pattern.compile("[0-9]*");
+		Matcher number = pattern.matcher(fields);
+		if (!number.matches()) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块菜单顺序只能填入数字", Integer.class).toJson();
+		 }
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
 			  Integer addRes=ADOConnection.runTask(userService, "addMenu", Integer.class,menuTreeDTO);	

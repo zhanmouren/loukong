@@ -27,6 +27,15 @@ public class MenuDTO {
 	private String updateBy;
 	//修改时间
 	private Timestamp updateTime;
+	//模块的同级顺序
+	private Integer sequence;
+	
+	public Integer getSequence() {
+		return sequence;
+	}
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 	public String getModuleNo() {
 		return moduleNo;
 	}

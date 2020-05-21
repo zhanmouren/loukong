@@ -20,6 +20,15 @@ public class MenuTreeDTO {
 	   private String moduleCode;
 	   //模块编号
 	   private String linkAddress;
+	   //模块菜单同级顺序
+	   private Integer sequence;
+	   
+	public Integer getSequence() {
+		return sequence;
+	}
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 	public String getModuleCode() {
 		return moduleCode;
 	}
