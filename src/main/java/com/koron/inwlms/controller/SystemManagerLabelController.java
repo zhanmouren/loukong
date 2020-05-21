@@ -261,7 +261,7 @@ public class SystemManagerLabelController {
 				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			queryLabelDTO.setPage(1);
-			queryLabelDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			queryLabelDTO.setPageCount(3000);
 			// 查询到导出数据结果
 			PageListVO<List<LabelVO>> pageBean = ADOConnection.runTask(labelService, "queryLabel", PageListVO.class,queryLabelDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
