@@ -18,4 +18,7 @@ public interface LeakageMessageMapper {
 	public List<AlarmProcessVO> queryLeakageProcessing(String loginName);
 	
 	public List<AlarmProcessVO> queryMonitorProcessing(String loginName);
+	
+	public Integer getMessageNumber(String loginName);
+
 }

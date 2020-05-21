@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 public class PositionVO {
 	
 	//职位id
-	private int id;
+	private Integer id;
 	//职位code
 	private String code;
 	//职位状态
@@ -16,10 +16,10 @@ public class PositionVO {
 	private String name;
 	//职位等级
 	private int level;
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	public String getCode() {

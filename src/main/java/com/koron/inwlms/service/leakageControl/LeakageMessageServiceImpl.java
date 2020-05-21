@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.LeakageMessageListVO;
 import com.koron.inwlms.mapper.leakageControl.LeakageMessageMapper;
 
 /**
@@ -19,50 +20,20 @@ import com.koron.inwlms.mapper.leakageControl.LeakageMessageMapper;
 @Service
 public class LeakageMessageServiceImpl implements LeakageMessageService{
 
-	//查询预警信息
-	@TaskAnnotation("queryAlarmMessage")
+	//消息中心
+	@TaskAnnotation("queryMessage")
 	@Override
-	public PageListVO<List<AlarmMessageVO>> queryAlarmMessage(SessionFactory factory, String loginName) {
+	public LeakageMessageListVO<List<AlarmProcessVO>> queryMessage(SessionFactory factory, String loginName) {
 		LeakageMessageMapper  leakageMessageMapper = factory.getMapper(LeakageMessageMapper.class);
 		List<AlarmMessageVO> leakageMessageList = leakageMessageMapper.queryAlarmMessage(loginName);
-		PageListVO<List<AlarmMessageVO>> result = new PageListVO<>();
-		result.setDataList(leakageMessageList);
-		result.setTotalPage(1);
-		result.setRowNumber(5);
-		result.setPage(1);
-		result.setPageCount(5);
-		return result;
-	}
-	
-	//查询漏损待办/已办
-	@TaskAnnotation("queryLeakageProcessing")
-	@Override
-	public PageListVO<List<AlarmProcessVO>> queryLeakageProcessing(SessionFactory factory, String loginName) {
-		LeakageMessageMapper leakageMessageMapper = factory.getMapper(LeakageMessageMapper.class);
 		List<AlarmProcessVO> leakageProcessList = leakageMessageMapper.queryLeakageProcessing(loginName);
-		
-		PageListVO<List<AlarmProcessVO>> result = new PageListVO<>();
-		result.setDataList(leakageProcessList);
-		result.setTotalPage(1);
-		result.setRowNumber(5);
-		result.setPage(1);
-		result.setPageCount(5);
-		return result;
-	}
-
-	//查询监测待办/已办
-	@TaskAnnotation("queryMonitorProcessing")
-	@Override
-	public PageListVO<List<AlarmProcessVO>> queryMonitorProcessing(SessionFactory factory, String loginName) {
-		LeakageMessageMapper leakageMessageMapper = factory.getMapper(LeakageMessageMapper.class);
-		List<AlarmProcessVO> leakageProcessList = leakageMessageMapper.queryMonitorProcessing(loginName);
-		
-		PageListVO<List<AlarmProcessVO>> result = new PageListVO<>();
-		result.setDataList(leakageProcessList);
-		result.setTotalPage(1);
-		result.setRowNumber(5);
-		result.setPage(1);
-		result.setPageCount(5);
+		List<AlarmProcessVO> monitorProcessList = leakageMessageMapper.queryMonitorProcessing(loginName);
+		Integer messageNumber = leakageMessageMapper.getMessageNumber(loginName);
+		LeakageMessageListVO<List<AlarmProcessVO>> result = new LeakageMessageListVO<>();
+		result.setAlarmMessageList(leakageMessageList);
+		result.setLeakageProcessingList(leakageProcessList);
+		result.setMonitorProcessingList(monitorProcessList);
+		result.setNumber(messageNumber);
 		return result;
 	}
 

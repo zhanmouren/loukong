@@ -13,7 +13,6 @@ import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.LabelNameListVO;
 import com.koron.inwlms.bean.VO.sysManager.LabelNameVO;
 import com.koron.inwlms.bean.VO.sysManager.LabelVO;
-import com.koron.inwlms.bean.VO.sysManager.PageLabelListVO;
 
 /**
  * @author lzy
@@ -31,8 +30,6 @@ public interface LabelService {
   	Integer deleteBatchLabel(SessionFactory factory, LabelDTO labelDTO);
   	//修改标签
   	MessageBean<String> updateLabel(SessionFactory factory,LabelDTO labelDTO);
-  	//下载标签列表
-  	PageLabelListVO downloadAllList(SessionFactory factory,QueryLabelDTO queryLabelDTO);
   	//根据id，获取附件基本信息
 	UploadFileDTO getAttachmentInfoById(SessionFactory factory,Integer fileId);
 	//excel批量导入标签

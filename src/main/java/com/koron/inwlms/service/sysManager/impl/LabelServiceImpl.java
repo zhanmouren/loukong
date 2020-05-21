@@ -142,24 +142,6 @@ public class LabelServiceImpl implements LabelService{
 		return mapper.getAttachmentInfoById(fileId);
 	}
 	
-	//下载标签列表 2020/04/21 
-	@TaskAnnotation("downloadAllList")
-	@Override
-	public PageLabelListVO downloadAllList(SessionFactory factory, QueryLabelDTO queryLabelDTO) {
-		LabelMapper labelMapper = factory.getMapper(LabelMapper.class);
-		List<LabelVO> labelList=labelMapper.queryLabel(queryLabelDTO);
-		// 返回数据结果
-		PageLabelListVO result = new PageLabelListVO();
-		result.setDataList(labelList);
-		// 插入分页信息
-		PageVO pageVO = PageUtil.getPageBean(queryLabelDTO.getPage(), queryLabelDTO.getPageCount(), labelList.size());
-		result.setTotalPage(pageVO.getTotalPage());
-		result.setRowNumber(pageVO.getRowNumber());
-		result.setPageCount(pageVO.getPageCount());
-		result.setPage(pageVO.getPage());
-		return result;
-	}
-	
 	//批量导入标签 2020/04/21 
 	@TaskAnnotation("uploadBatchLabel")
 	@Override

@@ -7,7 +7,7 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 public class PositionDTO extends BaseDTO{
 
 	//职位id
-	private int id;
+	private Integer id;
 	//职位code
 	private String code;
 	//职位状态
@@ -27,11 +27,11 @@ public class PositionDTO extends BaseDTO{
 	//修改时间
 	private Timestamp updateTime;
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

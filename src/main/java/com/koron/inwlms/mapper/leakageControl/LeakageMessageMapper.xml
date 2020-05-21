@@ -48,7 +48,7 @@
 			)
 		)
 	) 
-	ORDER BY "warningProcessing".state DESC, "warningProcessing"."expectFinishTime" ASC
+	ORDER BY "warningProcessing".state ASC, "warningProcessing"."expectFinishTime" ASC
     </select>
     
     <select id="queryMonitorProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
@@ -75,7 +75,32 @@
 			)
 		)
 	) 
-	ORDER BY "warningProcessing".state DESC, "warningProcessing"."expectFinishTime" ASC
+	ORDER BY "warningProcessing".state ASC, "warningProcessing"."expectFinishTime" ASC
     </select>
-   
+    
+    <select id="getMessageNumber" parameterType="String" resultType="java.lang.Integer">
+    select count(*)
+	from app_warningProcessing as "warningProcessing"
+	where state != '已完成' and "warningCode" in
+	(
+		select "warningInf".code
+		from app_warningInf as "warningInf"
+		where "warningInf"."schemeCode" in
+		(
+			select "Scheme"."schemeCode"
+			from app_alertNoticeScheme as "Scheme"
+			where "Scheme"."roleCode"  in
+			(
+				select "relation"."roleCode"
+				from sm_userRoleRelation as "relation"
+				where "relation"."userCode" in
+				(
+					select "user".code
+					from sm_user as "user"
+					where "user"."loginName" = #{loginName}
+				)
+			)
+		)
+	)
+	</select> 
 </mapper>
