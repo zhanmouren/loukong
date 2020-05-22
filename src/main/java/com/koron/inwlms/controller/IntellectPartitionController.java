@@ -18,6 +18,7 @@ import com.koron.inwlms.bean.DTO.intellectPartition.AutomaticPartitionDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.GisZoneData;
 import com.koron.inwlms.bean.DTO.intellectPartition.GisZonePipeData;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
+import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
 import com.koron.inwlms.service.intellectPartition.PartitionSchemeDetService;
@@ -46,7 +47,7 @@ public class IntellectPartitionController {
     @ApiOperation(value = "智能自动分区接口", notes = "智能自动分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String automaticPartition(@RequestBody AutomaticPartitionDTO automaticPartitionDTO) {
-		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		MessageBean<ModelReturn> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ModelReturn.class);
 		
 		
 		//接收到信号，开始存储方案总表信息
@@ -59,7 +60,8 @@ public class IntellectPartitionController {
 		totalSchemeDet.setZoneType(automaticPartitionDTO.getZoneType());
 		totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
 		try {
-			String data = ADOConnection.runTask(psds, "getModelReturnData", String.class, automaticPartitionDTO, totalSchemeDet);
+			ModelReturn data = ADOConnection.runTask(psds, "test", ModelReturn.class, automaticPartitionDTO, totalSchemeDet);
+			msg.setData(data);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {

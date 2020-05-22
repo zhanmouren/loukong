@@ -759,25 +759,17 @@ public class LeakageControlController {
     @ApiOperation(value = "预警信息报警类型统计接口", notes = "预警信息报警类型统计接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryAlarmMessageByAlarmType(@RequestBody WarningInfDTO warningInfDTO) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
-		if(warningInfDTO.getFirstPartion().equals("全部")) {
-			warningInfDTO.setAreaCode(null); 
-		}
+		MessageBean<AlarmMessageByTypeVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AlarmMessageByTypeVO.class);
+		
 		
 		
 		//TODO 通过分区编码查询出所属的所有0级分区编码，将参数分区编码设置为0级分区编码
 		
 		try {
-			List<AlarmMessageVO> alarmMessageList = ADOConnection.runTask(ams, "queryAlarmMessage", List.class, warningInfDTO);
-			if(alarmMessageList != null && alarmMessageList.size() != 0) {			
-				//统计监测预警不同对象的数据
-				List<AlarmMessageByTypeVO> alarmMessageByObjectTypeList = ADOConnection.runTask(ams, "queryAlarmMessageByType",List.class, alarmMessageList);
-				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				msg.setData(alarmMessageByObjectTypeList);
-			}else {
-				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				msg.setDescription("预警信息无");
-			}
+			AlarmMessageByTypeVO alarmMessageByObjectType = ADOConnection.runTask(ams, "queryAlarmMessageByAlarmType", AlarmMessageByTypeVO.class, warningInfDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(alarmMessageByObjectType);
+			
 		}catch(Exception e){
 			//查询失败
 	     	msg.setCode(Constant.MESSAGE_INT_ERROR);

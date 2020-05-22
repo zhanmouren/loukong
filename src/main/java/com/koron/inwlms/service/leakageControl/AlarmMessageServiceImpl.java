@@ -52,39 +52,54 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 		//统计监测预警不同对象的数据
 		List<AlarmMessageByType> pointList = new ArrayList<>();
 		//获取监测类型
-		DataDicDTO pointDicDTO = new DataDicDTO();
-		pointDicDTO.setDicParent("10114");
-		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		List<DataDicVO> pointDicVOList = userMapper.queryDataDic(pointDicDTO);
-		for(DataDicVO pointDicVO : pointDicVOList) {
-			AlarmMessageByType alarmMessageByType = new AlarmMessageByType();
-			alarmMessageByType.setObjectType(pointDicVO.getDicValue());
-			int num = 0;
-			for(AlarmMessageVO alarmMessageVO : list) {
-				if(alarmMessageVO.getObjectType().equals(pointDicVO.getDicKey())) {
-					num = num + 1;
-				}
+		int pfNum = 0;
+		int zsNum = 0;
+		for(AlarmMessageVO alarmMessageVO : list) {
+			if(alarmMessageVO.getObjectType().equals(Constant.DATADICTIONARY_PFPIONT)) {
+				pfNum = pfNum + 1;
+			}else if(alarmMessageVO.getObjectType().equals(Constant.DATADICTIONARY_NOISEPIONT)) {
+				zsNum = zsNum + 1;
 			}
-			alarmMessageByType.setNumber(num);
-			pointList.add(alarmMessageByType);
 		}
+		AlarmMessageByType alarmMessageByType1 = new AlarmMessageByType();
+		alarmMessageByType1.setNumber(pfNum);
+		alarmMessageByType1.setObjectType(Constant.DATADICTIONARY_PFPIONT);
+		pointList.add(alarmMessageByType1);
+		
+		AlarmMessageByType alarmMessageByType2 = new AlarmMessageByType();
+		alarmMessageByType2.setNumber(zsNum);
+		alarmMessageByType2.setObjectType(Constant.DATADICTIONARY_NOISEPIONT);
+		pointList.add(alarmMessageByType2);
+		
 		//分区类型
 		List<AlarmMessageByType> zoneList = new ArrayList<>();
-		DataDicDTO zoneDicDTO = new DataDicDTO();
-		zoneDicDTO.setDicParent("10122");
-		List<DataDicVO> zoneDicVOList = userMapper.queryDataDic(zoneDicDTO);
-		for(DataDicVO zoneDicVO : zoneDicVOList) {
-			AlarmMessageByType alarmMessageByType = new AlarmMessageByType();
-			alarmMessageByType.setObjectType(zoneDicVO.getDicValue());
-			int num = 0;
-			for(AlarmMessageVO alarmMessageVO : list) {
-				if(alarmMessageVO.getObjectType().equals(zoneDicVO.getDicKey())) {
-					num = num + 1;
-				}
+		int firstNum = 0;
+		int secondNum = 0;
+		int dpNum = 0;
+		for(AlarmMessageVO alarmMessageVO : list) {
+			if(alarmMessageVO.getObjectType().equals(Constant.DATADICTIONARY_DPZONE)) {
+				dpNum = dpNum + 1;
+			}else if(alarmMessageVO.getObjectType().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+				firstNum = firstNum + 1;
+			}else if(alarmMessageVO.getObjectType().equals(Constant.DATADICTIONARY_SECZONE)) {
+				secondNum = secondNum + 1;
 			}
-			alarmMessageByType.setNumber(num);
-			pointList.add(alarmMessageByType);
 		}
+		AlarmMessageByType alarmMessageByType3 = new AlarmMessageByType();
+		alarmMessageByType3.setNumber(dpNum);
+		alarmMessageByType3.setObjectType(Constant.DATADICTIONARY_DPZONE);
+		zoneList.add(alarmMessageByType3);
+		
+		AlarmMessageByType alarmMessageByType4 = new AlarmMessageByType();
+		alarmMessageByType4.setNumber(firstNum);
+		alarmMessageByType4.setObjectType(Constant.DATADICTIONARY_FIRSTZONE);
+		zoneList.add(alarmMessageByType4);
+		
+		AlarmMessageByType alarmMessageByType5 = new AlarmMessageByType();
+		alarmMessageByType5.setNumber(secondNum);
+		alarmMessageByType5.setObjectType(Constant.DATADICTIONARY_SECZONE);
+		zoneList.add(alarmMessageByType5);
+		
 		 
 		alarmMessageByTypeVO.setMonitorAlarm(pointList);
 		alarmMessageByTypeVO.setZoneAlarm(zoneList);
@@ -94,7 +109,7 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 	}
 	
 	/**
-	 * 统计对象类型数据
+	 * 统计报警类型数据
 	 */
 	@TaskAnnotation("queryAlarmMessageByAlarmType")
 	@Override

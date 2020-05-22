@@ -13,7 +13,7 @@
  <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>
  ) a
  inner join 
- (select b.code as code,b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType" from "APP_warningInf" b inner join app_warningscheme c on b."schemeCode" = c.code) d
+ (select b.code as code,b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType" from app_warninginf b inner join app_warningscheme c on b."schemeCode" = c.code) d
  on a."warningCode" = d.code
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1); 
  </select>

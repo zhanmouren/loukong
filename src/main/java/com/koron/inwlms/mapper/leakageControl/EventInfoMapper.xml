@@ -47,7 +47,7 @@
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
- <select id="queryChildKeyNum" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO" resultType="java.lang.Tnteger">
+ <select id="queryChildKeyNum" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO" resultType="java.lang.Integer">
  select count(*) from sm_datadictionaryrelation where "parentKey" = #{code}
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>

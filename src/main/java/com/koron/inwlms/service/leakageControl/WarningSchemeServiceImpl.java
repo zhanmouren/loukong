@@ -111,7 +111,7 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 			num = mapper.addWarningSchemeOfNPZS(warningSchemeDTO);
 		}
 		
-		if(num != null || num.equals("")) {
+		if(num != null || !num.equals("")) {
 			for(AlarmRuleDTO alarmRuleDTO : alarmRuleDTOList) {
 				alarmRuleDTO.setSchemeCode(num);
 				mapper.addAlarmRule(alarmRuleDTO);

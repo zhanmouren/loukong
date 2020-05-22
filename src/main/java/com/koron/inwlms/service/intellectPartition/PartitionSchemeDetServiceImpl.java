@@ -1,5 +1,8 @@
 package com.koron.inwlms.service.intellectPartition;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -9,6 +12,7 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.intellectPartition.AutomaticPartitionDTO;
@@ -19,8 +23,10 @@ import com.koron.inwlms.bean.DTO.intellectPartition.PipePreZoneRelationDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.PreZoneRelationDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.ZoneSchemeData;
+import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 import com.koron.inwlms.mapper.intellectPartition.PartitionSchemeMapper;
 import com.koron.inwlms.mapper.leakageControl.EconomicIndicatorMapper;
@@ -103,15 +109,19 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	 */
 	@TaskAnnotation("getModelReturnData")
 	@Override
-	public String getModelReturnData(SessionFactory factory,AutomaticPartitionDTO automaticPartitionDTO,TotalSchemeDet totalSchemeDet) {
+	public ModelReturn getModelReturnData(SessionFactory factory,AutomaticPartitionDTO automaticPartitionDTO,TotalSchemeDet totalSchemeDet) {
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
-		String code = mapper.addTotalSchemeDet(totalSchemeDet);
+		
 		//TODO 调用gis接口，获取所选分区管线数据
 		String gisPath = "";
-		String gisJsonData = "";
+		String gisJsonData = "{}";
 		JsonObject gisResultData = InterfaceUtil.interfaceOfPostUtil(gisPath, gisJsonData);
-		Gson gson = new Gson(); 
-		List<GisZonePipeData> pipeinfo = gson.fromJson(gisResultData, new TypeToken<List<GisZonePipeData>>(){}.getType());
+		String code1 = gisResultData.get("code").getAsString();
+		JsonArray gisdata = gisResultData.getAsJsonArray("data");
+		Gson gson = new Gson();
+		//List<AlertSchemeListVO> pipeinfo1 = gson.fromJson(data, new TypeToken<List<AlertSchemeListVO>>(){}.getType());
+		List<GisZonePipeData> pipeinfo = gson.fromJson(gisdata, new TypeToken<List<GisZonePipeData>>(){}.getType());
+		String code = mapper.addTotalSchemeDet(totalSchemeDet);
 		//查询管径数据
 		 //TODO 判断分区类型（PMA或者DMA）
 		String type = "";
@@ -133,7 +143,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		if(zoneFlag) {
 			//进行分区评估
 			GisZoneData gisZoneData = new GisZoneData();
-			gisZoneData.setPipe_info(pipeinfo);
+			gisZoneData.setPip_info(pipeinfo);
 			//TODO 分区与管线关系
 			if(automaticPartitionDTO.getZoneType() == 0) {
 				
@@ -143,16 +153,49 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, gson.toJson(pipeinfo));
 		}
 		
+		
+		
+		
+		
+		
+		//Gson gson = new Gson();
+		//List<GisZonePipeData> pipeinfo = readText();
+		
+//		//分区评估
+//		GisZoneData gisZoneData = new GisZoneData();
+//		gisZoneData.setPip_info(pipeinfo);
+//		gisZoneData.setR_id(27);
+//		gisZoneData.setRegion_no(234);
+//		String data101 = gson.toJson(gisZoneData);
+//		String mlPath = "http://10.13.1.11:7500/estimate/estimateParamVerify";
+//		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
+//		String mlPath1 = "http://10.13.1.11:7500/estimate/receiveEstimateModel";
+//		JsonObject mlResultData1 = InterfaceUtil.interfaceOfPostUtil(mlPath1, data101);
 				
 		//TODO 调用模型算法接口推送数据，等待模型返回已接收信号时
 		GisZoneData gisZoneData = new GisZoneData();
-		gisZoneData.setPipe_info(pipeinfo);
+		gisZoneData.setPip_info(pipeinfo);
 		gisZoneData.setNum_up(automaticPartitionDTO.getMaxZone());
 		gisZoneData.setNum_down(automaticPartitionDTO.getMinZone());
+//		gisZoneData.setNum_up(31);
+//		gisZoneData.setNum_down(30);
 		gisZoneData.setTotal_plan_code(code);
-		String mlPath = "";
-		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, gson.toJson(pipeinfo));
+		//gisZoneData.setTotal_plan_code(17);
+		String data101 = gson.toJson(gisZoneData);
+		String mlPath = "http://10.13.1.11:7500/partition/partitionParamVerify";
+		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
 		//TODO 解析返回数据
+		String codejy = mlResultData.get("flag").getAsString();
+		if(codejy.equals("1")) {
+			String rpPath = "http://10.13.1.11:7500/partition/receivePartitionModel";
+			JsonObject rpResultData = InterfaceUtil.interfaceOfPostUtil(rpPath, gson.toJson(gisZoneData));
+			String codeml = rpResultData.get("flag").getAsString();
+			if(codeml.equals("1")) {
+				JsonObject mldata = rpResultData.get("data").getAsJsonObject();
+				ModelReturn modelreturn = gson.fromJson(mldata, new TypeToken<ModelReturn>(){}.getType());
+				return modelreturn;
+			}
+		}
 		
 		return null;
 	}
@@ -194,6 +237,69 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		}
 		
 		return kafkaReturnData.getPartition_detail().size();
+	}
+	
+	@TaskAnnotation("test")
+	@Override
+	public String test(SessionFactory factory,AutomaticPartitionDTO automaticPartitionDTO,TotalSchemeDet totalSchemeDet) {
+		Gson gson = new Gson();
+		List<GisZonePipeData> pipeinfo = readText();
+		
+		
+//		//分区评估
+//		GisZoneData gisZoneData = new GisZoneData();
+//		gisZoneData.setPip_info(pipeinfo);
+//		gisZoneData.setR_id(10001);
+//		gisZoneData.setRegion_no(234);
+//		String data101 = gson.toJson(gisZoneData);
+//		String mlPath = "http://10.13.1.11:7500/estimate/estimateParamVerify";
+//		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
+//		String mlPath1 = "http://10.13.1.11:7500/estimate/receiveEstimateModel";
+//		JsonObject mlResultData1 = InterfaceUtil.interfaceOfPostUtil(mlPath1, data101);
+				
+		//TODO 调用模型算法接口推送数据，等待模型返回已接收信号时
+		GisZoneData gisZoneData = new GisZoneData();
+		gisZoneData.setPip_info(pipeinfo);
+		gisZoneData.setNum_up(automaticPartitionDTO.getMaxZone());
+		gisZoneData.setNum_down(automaticPartitionDTO.getMinZone());
+		gisZoneData.setNum_up(20);
+		gisZoneData.setNum_down(5);
+		gisZoneData.setTotal_plan_code("888");
+		String data101 = gson.toJson(gisZoneData);
+		String mlPath = "http://10.13.1.11:7500/partition/partitionParamVerify";
+		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
+		//TODO 解析返回数据
+		String codejy = mlResultData.get("flag").getAsString();
+		if(codejy.equals("1")) {
+			String rpPath = "http://10.13.1.11:7500/partition/receivePartitionModel";
+			JsonObject rpResultData = InterfaceUtil.interfaceOfPostUtil(rpPath, gson.toJson(gisZoneData));
+			String codeml = rpResultData.get("flag").getAsString();
+			if(codeml.equals("1")) {
+				JsonObject mldata = rpResultData.get("data").getAsJsonObject();
+				ModelReturn modelreturn = gson.fromJson(mldata, new TypeToken<ModelReturn>(){}.getType());
+				return null;
+			}
+		}
+		return null;
+	}
+	
+	public List<GisZonePipeData> readText() {
+		File file = new File("D:/智能分区-10000.txt");
+		StringBuilder result = new StringBuilder();
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件
+            String s = null;
+            while((s = br.readLine())!=null){//使用readLine方法，一次读一行
+                result.append(System.lineSeparator()+s);
+            }
+            br.close();    
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        String data = result.toString();
+        Gson gsonJson = new Gson();
+        List<GisZonePipeData> modelreturn = gsonJson.fromJson(data, new TypeToken<List<GisZonePipeData>>(){}.getType());
+        return modelreturn;
 	}
 	
 	

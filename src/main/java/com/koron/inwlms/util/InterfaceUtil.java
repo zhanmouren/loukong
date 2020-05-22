@@ -99,8 +99,8 @@ public class InterfaceUtil {
              /**设置URLConnection的参数和普通的请求属性****start***/
              
              conn.setRequestProperty("accept", "*/*");
-             conn.setRequestProperty("connection", "Keep-Alive");
-             conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+             conn.setRequestProperty("connection", "keep-alive");
+             conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
              
              conn.setDoOutput(true);
              conn.setDoInput(true);

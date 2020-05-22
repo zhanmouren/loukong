@@ -9,12 +9,15 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
+import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
+import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
@@ -96,10 +99,15 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	@TaskAnnotation("queryTreatmentEffect")
 	@Override
 	public TreatmentEffectVO queryTreatmentEffect(SessionFactory factory,TreatmentEffectDTO treatmentEffectDTO) {
-		
+		IndicatorMapper indMapper = factory.getMapper(IndicatorMapper.class);
 		Date startDate = new Date();
 		Date endDate = new Date();
 		Date nowDate = new Date();
+		
+		//查询分区漏损月指标编码
+		String zonecodeM = "";
+		List<String> codes = new ArrayList<>();
+		codes.add(zonecodeM);
 		
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		try {
@@ -134,10 +142,17 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			while (dateStartL <= dateEndL) {
 				TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
 				//TODO 查询分区漏损月指标表，获取月漏损数据
+				IndicatorDTO indicatorDTO = new IndicatorDTO();
+				indicatorDTO.setCodes(codes);
+				indicatorDTO.setTimeType(3);
+				indicatorDTO.setStartTime(dateStartL);
+				indicatorDTO.setEndTime(dateEndL);
+				List<IndicatorVO> indicatorData = indMapper.queryZoneLossIndicData(indicatorDTO);
 				
 				
 				//统计数据
 				timeAndFlowData.setTimeNum(dateStartL);
+				timeAndFlowData.setFlow(indicatorData.get(0).getValue());
 				
 				lossFlowList.add(timeAndFlowData);
 				//月份+1
@@ -149,6 +164,19 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 				}
 				
 			}
+			
+			//TODO 查询分区漏损月指标表，获取月漏损数据
+			IndicatorDTO indicatorDTO = new IndicatorDTO();
+			indicatorDTO.setCodes(codes);
+			indicatorDTO.setTimeType(3);
+			indicatorDTO.setStartTime(dateStartL);
+			indicatorDTO.setEndTime(dateEndL);
+			List<IndicatorVO> indicatorData = indMapper.queryZoneLossIndicData(indicatorDTO);
+			for(IndicatorVO indicatorVO : indicatorData) {
+				TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
+			}
+			
+			
 		}
 		
 		

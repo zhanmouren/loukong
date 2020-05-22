@@ -18,7 +18,7 @@ public class GisZonePipeData {
 	/**
 	 * 
 	 */
-	private String pip_code;
+	private String pip_obj_code;
 	/**
 	 * 管长
 	 */
@@ -59,6 +59,18 @@ public class GisZonePipeData {
 	 * 管径单价
 	 */
 	private Double pip_price;
+	
+	private Integer is_border;
+	
+	
+
+	public Integer getIs_border() {
+		return is_border;
+	}
+
+	public void setIs_border(Integer is_border) {
+		this.is_border = is_border;
+	}
 
 	public String getPip_p() {
 		return pip_p;
@@ -76,12 +88,14 @@ public class GisZonePipeData {
 		this.pip_p_pre = pip_p_pre;
 	}
 
-	public String getPip_code() {
-		return pip_code;
+	
+
+	public String getPip_obj_code() {
+		return pip_obj_code;
 	}
 
-	public void setPip_code(String pip_code) {
-		this.pip_code = pip_code;
+	public void setPip_obj_code(String pip_obj_code) {
+		this.pip_obj_code = pip_obj_code;
 	}
 
 	public Double getPip_len() {

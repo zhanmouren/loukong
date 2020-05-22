@@ -23,8 +23,38 @@ public class GisZoneData {
 	/**
 	 * 管道信息
 	 */
-	private List<GisZonePipeData> pipe_info;
+	private List<GisZonePipeData> pip_info;
 	
+	private Integer r_id;
+	
+	private Integer region_no;
+	
+	
+
+	
+
+	
+
+	
+
+	public Integer getR_id() {
+		return r_id;
+	}
+
+	public void setR_id(Integer r_id) {
+		this.r_id = r_id;
+	}
+
+	
+
+	public Integer getRegion_no() {
+		return region_no;
+	}
+
+	public void setRegion_no(Integer region_no) {
+		this.region_no = region_no;
+	}
+
 	
 
 	public String getTotal_plan_code() {
@@ -51,13 +81,15 @@ public class GisZoneData {
 		this.num_down = num_down;
 	}
 
-	public List<GisZonePipeData> getPipe_info() {
-		return pipe_info;
+	public List<GisZonePipeData> getPip_info() {
+		return pip_info;
 	}
 
-	public void setPipe_info(List<GisZonePipeData> pipe_info) {
-		this.pipe_info = pipe_info;
+	public void setPip_info(List<GisZonePipeData> pip_info) {
+		this.pip_info = pip_info;
 	}
+
+
 
 
 	

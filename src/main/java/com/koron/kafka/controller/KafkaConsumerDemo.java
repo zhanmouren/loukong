@@ -2,6 +2,7 @@ package com.koron.kafka.controller;
 
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -13,16 +14,17 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 @Component
 public class KafkaConsumerDemo {
-	 private String topicUser="test";
+	 private String topicUser="model_partition_zoning_result";
 	 
 	 public void consume() {
 	        Properties props = new Properties();
 
 	        // 必须设置的属性
-	        props.put("bootstrap.servers", "10.13.11.1:2181");
+	        props.put("bootstrap.servers", "10.13.1.11:9092");
 	        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 	        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-	        props.put("group.id", "group-user");
+	        props.put("group.id", "group-1");
+	        props.put("session.timeout.ms", "30000");
 	        
 	        ConcurrentKafkaListenerContainerFactory<String, byte[]> factory = new ConcurrentKafkaListenerContainerFactory<>();
 
@@ -35,12 +37,12 @@ public class KafkaConsumerDemo {
 
 	        //消费方式配置
 	        //earliest：当各分区下有已提交的offset时，从提交的offset开始消费；无提交的offset时，从头开始消费
-	        props.put("auto.offset.reset", "earliest ");
+	        props.put("auto.offset.reset", "earliest");
 
 	        //根据上面的配置，新增消费者对象
 	        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 	        // 订阅topic-user topic
-	        consumer.subscribe(Collections.singletonList(topicUser));
+	        consumer.subscribe(Arrays.asList("model_partition_zoning_result"));
 
 	        while (true) {
 	            //  从服务器开始拉取数据

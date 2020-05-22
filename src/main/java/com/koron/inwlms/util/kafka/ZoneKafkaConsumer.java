@@ -20,13 +20,13 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 @Component
 public class ZoneKafkaConsumer {
-	 private String topicUser="firstTop";
+	 private String topicUser="model_zoning_assessment_result";
 	 
 	 public void consume() {
 	        Properties props = new Properties();
 
 	        // 必须设置的属性
-	        props.put("bootstrap.servers", "127.0.0.1:9092");
+	        props.put("bootstrap.servers", "10.13.1.11:9092");
 	        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 	        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 	        props.put("group.id", "group-user");
