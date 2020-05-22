@@ -8,7 +8,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Repository;
 
-
+import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
@@ -16,6 +16,7 @@ import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
@@ -355,5 +356,8 @@ public interface UserMapper {
 		
 		//查询头像
 		public List<UploadFileNewVO> queryHeadPortrait(UploadFileNewDTO uploadFileNewDTO);
+		
+		//修改该节点顺序值(同级而且不能重复)
+		Integer updateMenuPeersSeq(MenuSeqDTO menuSeqDTO);
 		
 }

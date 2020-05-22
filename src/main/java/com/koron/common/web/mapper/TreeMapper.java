@@ -140,6 +140,16 @@ public interface TreeMapper {
 	@Select("select * from sm_treedet " + "where (seq & ~((1::int8 << (62 - #{bean.parentMask}))-1)) = (#{bean.seq} & ~((1::int8 << (62 - #{bean.parentMask}))-1))"
 			+ " and (seq & ((1::int8 << (62 - #{bean.parentMask}+#{bean.mask}))-1)) = 0")
     public List<LongTreeBean> getSibling(@Param("bean") LongTreeBean bean);
+	
+	 /**
+     * 获取节点的兄弟节点(菜单)
+     *
+     * @param bean 节点
+     * @return 节点集合
+     */
+	@Select("select sm_treedet.*,sm_modulemenu.code \"menuCode\",sm_modulemenu.id \"menuId\",sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\" from sm_treedet left join sm_modulemenu on sm_modulemenu.code= sm_treedet.foreignkey " + "where (seq & ~((1::int8 << (62 - #{bean.parentMask}))-1)) = (#{bean.seq} & ~((1::int8 << (62 - #{bean.parentMask}))-1))"
+			+ " and (seq & ((1::int8 << (62 - #{bean.parentMask}+#{bean.mask}))-1)) = 0")
+    public List<TreeMenuVO> queryBrotherTree(@Param("bean") LongTreeBean bean);
 
     /**
      * 获取节点的路径，从最上一级到当前级

@@ -38,6 +38,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
@@ -1783,6 +1784,10 @@ public class SystemManagerController {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("添加特征日成功");
 				  }
+			  }else {
+				//添加特征日失败
+				 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+				 msg.setDescription("添加失败，请检查是否登录");  
 			  }
 	        }catch(Exception e){
 	        	//插入失败
@@ -1892,6 +1897,10 @@ public class SystemManagerController {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("删除特征日成功");
 				  }
+			  }else {
+				//删除特征日失败
+				  msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				  msg.setDescription("删除特征日失败，请检查是否登录"); 
 			  }
 	        }catch(Exception e){
 	        	//删除失败
@@ -1932,6 +1941,10 @@ public class SystemManagerController {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("修改特征日成功");
 				  }
+			  }else {
+				//修改特征日失败
+				 msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				 msg.setDescription("修改特征日失败,请检查是否登录"); 
 			  }
 	        }catch(Exception e){
 	        	//修改失败
@@ -2824,6 +2837,45 @@ public class SystemManagerController {
 		 }catch(Exception e){
 	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+   	
+    /*
+     * date:2020-05-21
+     * funtion:修改菜单的平级顺序,平级顺序不能重复，重复不让修改
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/updateMenuPeersSeq.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "更新菜单平级顺序接口", notes = "更新菜单平级顺序接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String updateMenuPeersSeq(@RequestBody MenuSeqDTO menuSeqDTO) {
+		if(menuSeqDTO.getForeignkey()==null || "".equals(menuSeqDTO.getForeignkey())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "菜单编码不能为空", Integer.class).toJson();
+		}
+		if(menuSeqDTO.getType()==null || "".equals(menuSeqDTO.getType())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树类型不能为空", Integer.class).toJson();
+		}
+		if(menuSeqDTO.getMenuSequence()==null || "".equals(menuSeqDTO.getMenuSequence())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "菜单修改后的顺序值不能为空", Integer.class).toJson();
+		}
+		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
+		 try {
+			 Integer updateRes=ADOConnection.runTask(new TreeService(), "updateMenuPeersSeq", Integer.class, menuSeqDTO);
+			 if(updateRes>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("更新该菜单平级顺序成功"); 
+			 }else if(updateRes==-2){
+				 msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+			     msg.setDescription("更新该菜单平级顺序失败，同级菜单出现顺序重复"); 
+			 }else {
+				 msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+			     msg.setDescription("更新该菜单平级顺序失败"); 
+			 }
+		 }catch(Exception e){
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("更新该菜单平级顺序失败");
 	     }
 		 return msg.toJson();
 		 

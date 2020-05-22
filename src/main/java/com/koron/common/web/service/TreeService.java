@@ -13,14 +13,20 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
+import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
+import com.koron.inwlms.bean.VO.sysManager.UserListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
+import com.koron.util.Constant;
+import com.koron.util.SessionUtil;
 
 /**<pre>
  * 树形结构：
@@ -189,10 +195,25 @@ public class TreeService {
 	@TaskAnnotation("queryChildOneMenu")
 	public static List<TreeMenuVO> queryChildOneMenu(SessionFactory factory,int type,String foreignKey){
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
-		UserMapper userMapper = factory.getMapper(UserMapper.class);	
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		Gson jsonValue = new Gson();
+		if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+			return null;
+		}
+		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+	
 		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
 		//TODO 测试使用，默认userCode
-		String userCode="c545d2c156834f1b9eea9136620726b3";
+		//String userCode="c545d2c156834f1b9eea9136620726b3";
+		String userName=userListVO.getLoginName();
+		//根据登录的用户名查询Code
+		QueryUserDTO queryUserDTO=new QueryUserDTO();
+		queryUserDTO.setLoginName(userName);
+		List<UserVO> userVOList=userMapper.queryUser(queryUserDTO);	
+		String userCode="";
+		if(userVOList!=null && userVOList.size()>0) {
+			userCode=userVOList.get(0).getCode();
+		}
 		List<TreeMenuVO> menuList=mapper.queryChildOneMenu(node,userCode);
 		return menuList;
 	}
@@ -209,13 +230,34 @@ public class TreeService {
 	@TaskAnnotation("queryChildAllMenu")
 	public static List<TreeMenuVO> queryChildAllMenu(SessionFactory factory,int type,String foreignKey){
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
-		UserMapper userMapper = factory.getMapper(UserMapper.class);	
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		Gson jsonValue = new Gson();
+		if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+			return null;
+		}
+		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+	
 		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
 		//TODO 测试使用，默认userCode
-		String userCode="c545d2c156834f1b9eea9136620726b3";
-		List<TreeMenuVO> menuList=mapper.queryChildAllMenu(node,userCode);
+		//String userCode="c545d2c156834f1b9eea9136620726b3";
+		String userName=userListVO.getLoginName();
+		//根据登录的用户名查询Code
+		QueryUserDTO queryUserDTO=new QueryUserDTO();
+		queryUserDTO.setLoginName(userName);
+		List<UserVO> userVOList=userMapper.queryUser(queryUserDTO);	
+		String userCode="";
+		if(userVOList!=null && userVOList.size()>0) {
+			userCode=userVOList.get(0).getCode();
+		}
+		 List<TreeMenuVO> menuList=mapper.queryChildAllMenu(node,userCode);	
+		 
+		 List<TreeMenuVO> finalMenuList=new ArrayList<>();
+		 if(menuList!=null && menuList.size()>0) {
+			 finalMenuList=menuList.stream().filter(s->s.getParentMask()>0).collect(Collectors.toList()); 
+		 }else {
+			 return new ArrayList<TreeMenuVO>();
+		 }	 
 		
-		 List<TreeMenuVO> finalMenuList=menuList.stream().filter(s->s.getParentMask()>0).collect(Collectors.toList());
 	     Map<Integer,List<TreeMenuVO>> treemap = new HashMap<>();	
 	     Map<Integer,List<TreeMenuVO>> treeList=treeMenuSeq(finalMenuList,treemap);
 	     
@@ -252,7 +294,12 @@ public class TreeService {
 		}	    
 		 return finalList;
 	}
-	
+	/**
+	 *    菜单平级排序
+	 * @param finalMenuList
+	 * @param treemap
+	 * @return
+	 */
 	public static  Map<Integer,List<TreeMenuVO>>  treeMenuSeq(List<TreeMenuVO> finalMenuList,Map<Integer,List<TreeMenuVO>> treemap) {
 	//	int firstnum=0;
 		//取第一个数
@@ -326,6 +373,32 @@ public class TreeService {
 		}		
 		return treemap;
 		 				
+	}
+	/***
+	 *  更新菜单平级顺序(不可重复)
+	 */
+	@TaskAnnotation("updateMenuPeersSeq")
+	public Integer updateMenuPeersSeq(SessionFactory factory,MenuSeqDTO menuSeqDTO) {
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		//查询节点信息
+		LongTreeBean node=mapper.getBeanByForeignIdType(menuSeqDTO.getType().intValue(),menuSeqDTO.getForeignkey());
+		//查询兄弟节点(目前方工提供的方法查不到数据)
+		List<TreeMenuVO> brotherList=mapper.queryBrotherTree(node);	
+		List<Integer> seqList=new ArrayList<>();
+		if(brotherList!=null && brotherList.size()>0) {
+			for(int i=0;i<brotherList.size();i++) {
+			  seqList.add(brotherList.get(i).getSequence());	
+			}
+			if(seqList.contains(menuSeqDTO.getMenuSequence())) {
+				return -2;
+			}
+			
+		}
+		//更新菜单的操作(TODO)
+		//Integer updateRes=userMapper.updateMenuPeersSeq(menuSeqDTO);
+		
+		return null;
 	}
 	
 	/**
@@ -528,4 +601,5 @@ public class TreeService {
 		}
 		return false;
 	}
+	
 }

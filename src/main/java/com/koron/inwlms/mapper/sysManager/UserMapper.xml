@@ -485,12 +485,14 @@
          where "spDate"=#{spDate}
      </delete>
      
-      <!-- 修改数据字典主的信息 根据日期-->
-       <update id="updateSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.DataDicDTO">   
+      <!-- 修改特征日 根据日期-->
+       <update id="updateSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO">   
 		update sm_specialday 
 		<set>	                                 
              <if test="spName != null" > name= #{spName},</if>            
              <if test="spRemark != null" > remark= #{spRemark},</if> 
+             <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
+             <if test="updateBy != null" > "updateTime" = Now(),</if> 
         </set>
 		where  "spDate"=#{spDate}
 	   </update>
@@ -629,7 +631,7 @@
           
        <!--通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限-->
      <select id="queryRoleMenuByRoleMenu"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
-         	select sm_treedet.*, "menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+         	select sm_treedet.*,"menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP",
 		case when string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') end as op
 		from (
@@ -1019,6 +1021,13 @@
                update sm_userdept
                 set "mainDeptFlag"=1
                 where "userCode"=#{code}  
+       </update>
+       
+        <!--修改该节点顺序值(同级而且不能重复) -->
+       <update id="updateMenuPeersSeq"  parameterType="com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO">	    	 
+              update sm_modulemenu
+              set sequence=#{sequence} 
+              where code= #{foreignkey}
        </update>
 	    
 </mapper>

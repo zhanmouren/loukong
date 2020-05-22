@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
 import com.koron.common.web.service.TreeService;
@@ -40,6 +42,7 @@ import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
@@ -72,6 +75,7 @@ import com.koron.inwlms.bean.VO.sysManager.RoleVO;
 import com.koron.inwlms.bean.VO.sysManager.TableMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO;
+import com.koron.inwlms.bean.VO.sysManager.UserListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
@@ -79,6 +83,8 @@ import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.EncryptionUtil;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.inwlms.util.RandomCodeUtil;
+import com.koron.util.Constant;
+import com.koron.util.SessionUtil;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -93,11 +99,15 @@ public class UserServiceImpl implements UserService{
 	//管理员添加职员 2020/03/18	
 	@TaskAnnotation("addUser")
 	@Override
-	public Integer addUser(SessionFactory factory,UserDTO userDTO) {
-		// TODO Auto-generated method stub	
+	public Integer addUser(SessionFactory factory,UserDTO userDTO) {	
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		userDTO.setCreateBy("小詹");
-		userDTO.setUpdateBy("小詹");
+		Gson jsonValue = new Gson();
+		if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+			return null;
+		}
+		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+		userDTO.setCreateBy(userListVO.getLoginName());
+		userDTO.setUpdateBy(userListVO.getLoginName());
 		//管理员设置默认密码yhsw123456
 		userDTO.setPassword((new  EncryptionUtil().encodeBase64("yhsw123456")));
 		//随机获取uuid,赋值给Code
@@ -126,8 +136,8 @@ public class UserServiceImpl implements UserService{
 		    DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
 		    deptAndUserDTO.setDepCode(userDTO.getDepCode());
 		    deptAndUserDTO.setUserCode(userCode);
-		    deptAndUserDTO.setCreateBy("小詹");
-		    deptAndUserDTO.setUpdateBy("小詹");
+		    deptAndUserDTO.setCreateBy(userListVO.getLoginName());
+		    deptAndUserDTO.setUpdateBy(userListVO.getLoginName());
 		    deptAndUserDTO.setMainDeptFlag(mainDeptFlag);
 		    List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
 		    deptUserDTOList.add(deptAndUserDTO);
@@ -162,7 +172,12 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Integer updateUser(SessionFactory factory, UserDTO userDTO) {
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		userDTO.setUpdateBy("小詹");
+		Gson jsonValue = new Gson();
+		if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+			return null;
+		}
+		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);	
+		userDTO.setUpdateBy(userListVO.getLoginName());
 		Integer editResult=userMapper.updateUser(userDTO);
 	    List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
 		
@@ -171,8 +186,8 @@ public class UserServiceImpl implements UserService{
 	    DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
 	    deptAndUserDTO.setDepCode(userDTO.getDepCode());
 	    deptAndUserDTO.setUserCode(userDTO.getCode());
-	    deptAndUserDTO.setCreateBy("小詹");
-	    deptAndUserDTO.setUpdateBy("小詹");
+	    deptAndUserDTO.setCreateBy(userListVO.getLoginName());
+	    deptAndUserDTO.setUpdateBy(userListVO.getLoginName());
 	    deptAndUserDTO.setMainDeptFlag(mainDeptFlag);  
 	    deptUserDTOList.add(deptAndUserDTO);
 	    //修改前先查询是否存在主部门，没有的话先插入	
@@ -207,10 +222,14 @@ public class UserServiceImpl implements UserService{
 	@TaskAnnotation("addNewRole")
 	@Override
 	public Integer addNewRole(SessionFactory factory,RoleDTO roleDTO) {
-		// TODO Auto-generated method stub
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		roleDTO.setCreateBy("xiaozhan");
-		roleDTO.setUpdateBy("xiaozhan");
+		Gson jsonValue = new Gson();
+		if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+			return null;
+		}
+		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+		roleDTO.setCreateBy(userListVO.getLoginName());
+		roleDTO.setUpdateBy(userListVO.getLoginName());
 		//随机获取uuid,赋值给Code
 		roleDTO.setRoleCode(new RandomCodeUtil().getUUID32());	
 		//添加新角色的时候，判断名称是否重复
@@ -230,9 +249,13 @@ public class UserServiceImpl implements UserService{
 	@TaskAnnotation("updateRoleAttr")
 	@Override
 	public Integer updateRoleAttr(SessionFactory factory, RoleDTO roleDTO) {
-		// TODO Auto-generated method stub
-		UserMapper userMapper = factory.getMapper(UserMapper.class);		
-		roleDTO.setUpdateBy("xiaozhan");
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		Gson jsonValue = new Gson();
+		if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+			return null;
+		}
+		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+		roleDTO.setUpdateBy(userListVO.getLoginName());
 		Integer editResult=userMapper.updateRoleAttr(roleDTO);
 		return editResult;
 	}
@@ -299,8 +322,13 @@ public class UserServiceImpl implements UserService{
 	@TaskAnnotation("addRoleUser")
 	@Override
 	public Integer addRoleUser(SessionFactory factory, RoleAndUserDTO roleUserDTO) {
-		// TODO Auto-generated method stub
-		UserMapper userMapper = factory.getMapper(UserMapper.class);		
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		Gson jsonValue = new Gson();
+		if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+			return null;
+		}
+		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+		
 		Integer addResult=null;
 		//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
 		List<RoleAndUserDTO> roleAndUserDTOList=new ArrayList<RoleAndUserDTO>();
@@ -315,8 +343,8 @@ public class UserServiceImpl implements UserService{
 			RoleAndUserDTO roleUserDTONew=new RoleAndUserDTO();
 			roleUserDTONew.setRoleCode(roleUserDTO.getRoleCode());
 			roleUserDTONew.setUserCode(roleUserDTO.getUserCodeList().get(i));		
-			roleUserDTONew.setCreateBy("小詹");
-			roleUserDTONew.setUpdateBy("小詹");
+			roleUserDTONew.setCreateBy(userListVO.getLoginName());
+			roleUserDTONew.setUpdateBy(userListVO.getLoginName());
 			roleAndUserDTOList.add(roleUserDTONew);
 			//插入之前判断职员code是否在sm_user是否存在
 			QueryUserDTO queryUserDTO=new QueryUserDTO();
@@ -395,8 +423,13 @@ public class UserServiceImpl implements UserService{
 		@TaskAnnotation("addDeptUser")
 		@Override
 		public Integer addDeptUser(SessionFactory factory, DeptAndUserDTO deptUserDTO) {
-			// TODO Auto-generated method stub
 			UserMapper userMapper = factory.getMapper(UserMapper.class);
+			Gson jsonValue = new Gson();
+			if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+				return null;
+			}
+			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+			
 			Integer addResult=null;
 			//把数据封装成List<RoleAndUserDTO>,方便遍历插入数据
 			List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();	
@@ -413,8 +446,8 @@ public class UserServiceImpl implements UserService{
 				DeptAndUserDTO deptUserDTONew=new DeptAndUserDTO();
 				deptUserDTONew.setDepCode(deptUserDTO.getDepCode());
 				deptUserDTONew.setUserCode(deptUserDTO.getUserCodeList().get(i));				
-				deptUserDTONew.setCreateBy("小詹");			
-				deptUserDTONew.setUpdateBy("小詹");
+				deptUserDTONew.setCreateBy(userListVO.getLoginName());			
+				deptUserDTONew.setUpdateBy(userListVO.getLoginName());
 				deptUserDTONew.setMainDeptFlag(secDeptFlag);
 				deptUserDTOList.add(deptUserDTONew);
 				//插入之前判断职员code是否在sm_user是否存在
@@ -451,8 +484,13 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("addDataDic")
 				@Override
 				public Integer addDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+					
 					DataDicDTO dicDTO=new DataDicDTO();
 					dicDTO.setDicParent(dataDicDTO.getDicParent());
 					//添加之前先判断dicParent是否已经存在
@@ -483,12 +521,12 @@ public class UserServiceImpl implements UserService{
 						}else {
 							dataDicDTONew.setDicSeq(dataDicDTO.getDataDicDTOList().get(i).getDicSeq());
 						}
-						dataDicDTONew.setCreateBy("小詹");					
-						dataDicDTONew.setUpdateBy("小詹");						
+						dataDicDTONew.setCreateBy(userListVO.getLoginName());					
+						dataDicDTONew.setUpdateBy(userListVO.getLoginName());						
 						dataDicDTOList.add(dataDicDTONew);
 					}
 					
-					 addResult=userMapper.addDataDic(dataDicDTOList);
+					addResult=userMapper.addDataDic(dataDicDTOList);
 					return addResult;			
 				}
 
@@ -531,9 +569,14 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("updateDic")
 				@Override
 				public Integer updateDic(SessionFactory factory, DataDicDTO dataDicDTO) {
-					// TODO Auto-generated method stub
-					UserMapper userMapper = factory.getMapper(UserMapper.class);					
-					dataDicDTO.setUpdateBy("小詹");					
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					dataDicDTO.setUpdateBy(userListVO.getLoginName());					
 					Integer updateRes=userMapper.updateDic(dataDicDTO);
 					return updateRes;
 				}
@@ -557,9 +600,14 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("updateDicDetById")
 				@Override
 				public Integer updateDicDetById(SessionFactory factory, DataDicDTO dataDicDTO) {
-					// TODO Auto-generated method stub
-					UserMapper userMapper = factory.getMapper(UserMapper.class);					
-					dataDicDTO.setUpdateBy("小詹");
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					dataDicDTO.setUpdateBy(userListVO.getLoginName());
 					//修改时候判断key是否重复
 					List<DataDicVO> keyList=userMapper.queryKey(dataDicDTO);
 					if(keyList!=null && keyList.size()>0 && dataDicDTO.getDicId()!=keyList.get(0).getDicId()) {
@@ -589,8 +637,13 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("addSpecialDate")
 				@Override
 				public Integer addSpecialDate(SessionFactory factory,SpecialDayDTO specialDayDTO) {
-					// TODO Auto-generated method stub
 				    UserMapper userMapper = factory.getMapper(UserMapper.class);
+				    Gson jsonValue = new Gson();
+				    if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
 				    Integer insertRes=null;
 				    //新建的时候判断在那个日期是否已经存在了
 				    SpecialDayDTO specialDayDTONew=new SpecialDayDTO();
@@ -600,8 +653,8 @@ public class UserServiceImpl implements UserService{
 				    	insertRes=-2;
 				    	return insertRes;
 				    }					
-					specialDayDTO.setCreateBy("小詹");				
-					specialDayDTO.setUpdateBy("小詹");				
+					specialDayDTO.setCreateBy(userListVO.getLoginName());				
+					specialDayDTO.setUpdateBy(userListVO.getLoginName());				
 				    insertRes=userMapper.addSpecialDate(specialDayDTO);
 					return insertRes;					
 				}
@@ -681,10 +734,10 @@ public class UserServiceImpl implements UserService{
 					return spList;
 				}
 				
+				//根据日期查询特征日
 				@TaskAnnotation("querySpecialDateByDay")
 				@Override
 				public List<SpecialDayDTO> querySpecialDateByDay(SessionFactory factory, SpecialDayDTO specialDayDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<SpecialDayDTO> specialDayDTOList=userMapper.querySpecialDateByDay(specialDayDTO);
 					return specialDayDTOList;
@@ -704,6 +757,13 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public Integer updateSpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+					
+					specialDayDTO.setUpdateBy(userListVO.getLoginName());
 					Integer updateRes=userMapper.updateSpecialDate(specialDayDTO);
 					return updateRes;
 				}
@@ -712,10 +772,15 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("addTreeDept")
 				@Override
 				public Integer addTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO,int type,String foreignKey) {
-					// TODO Auto-generated method stub
-					UserMapper userMapper = factory.getMapper(UserMapper.class);						
-					orgDeptDTO.setCreateBy("小詹");
-					orgDeptDTO.setUpdateBy("小詹");
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+					
+					orgDeptDTO.setCreateBy(userListVO.getLoginName());
+					orgDeptDTO.setUpdateBy(userListVO.getLoginName());
 					//部门正常使用状态0,禁用状态-1
 					Integer finalRes=null;
 					orgDeptDTO.setDepStatus(0);
@@ -730,8 +795,8 @@ public class UserServiceImpl implements UserService{
 					OrgAndDeptDTO orgDeptDTONew=new OrgAndDeptDTO();
 					orgDeptDTONew.setDepCode(deptCode);
 					orgDeptDTONew.setOrgCode(orgDeptDTO.getOrgCode());
-					orgDeptDTONew.setCreateBy("小詹");
-					orgDeptDTONew.setUpdateBy("小詹");										
+					orgDeptDTONew.setCreateBy(userListVO.getLoginName());
+					orgDeptDTONew.setUpdateBy(userListVO.getLoginName());										
 					Integer addRes=userMapper.addOrgDept(orgDeptDTONew);
 					if(addRes==-1) {
 						finalRes=-1;
@@ -762,10 +827,15 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("deptAddTreeDept")
 				@Override
 				public Integer deptAddTreeDept(SessionFactory factory, OrgAndDeptDTO orgDeptDTO,int type,String foreignKey) {
-					// TODO Auto-generated method stub
-					UserMapper userMapper = factory.getMapper(UserMapper.class);	
-					orgDeptDTO.setCreateBy("小詹");
-					orgDeptDTO.setUpdateBy("小詹");
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					orgDeptDTO.setCreateBy(userListVO.getLoginName());
+					orgDeptDTO.setUpdateBy(userListVO.getLoginName());
 					Integer finalRes=null;
 					//部门正常使用状态0,禁用状态-1
 					orgDeptDTO.setDepStatus(0);
@@ -861,9 +931,14 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("updateTreeDept")
 				@Override
 				public Integer updateTreeDept(SessionFactory factory, DeptDTO deptDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					deptDTO.setUpdateBy("小詹");				
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					deptDTO.setUpdateBy(userListVO.getLoginName());				
 					Integer updateRes=userMapper.updateTreeDept(deptDTO);
 					return updateRes;
 				}
@@ -942,8 +1017,13 @@ public class UserServiceImpl implements UserService{
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<RoleMenusVO> roleMenusList=userMapper.queryRoleMenuByRoleCode(roleDTO);									
 					
-					 List<RoleMenusVO> finalMenuList=roleMenusList.stream().filter(s->s.getParentMask()>0).collect(Collectors.toList());
-				     Map<Integer,List<RoleMenusVO>> treemap = new HashMap<>();	
+					 List<RoleMenusVO> finalMenuList=new ArrayList<>();
+					 if(roleMenusList!=null && roleMenusList.size()>0) {
+					    finalMenuList=roleMenusList.stream().filter(s->s.getParentMask()>0).collect(Collectors.toList());
+					 }else {
+						 return new ArrayList<RoleMenusVO>();
+					 }
+					 Map<Integer,List<RoleMenusVO>> treemap = new HashMap<>();	
 				     Map<Integer,List<RoleMenusVO>> treeList=treeMenuSeq(finalMenuList,treemap);
 				     
 				     //新建一个最终的List去接收
@@ -1059,9 +1139,14 @@ public class UserServiceImpl implements UserService{
 				//根据角色Code修改菜单权限
 				@TaskAnnotation("updateRoleMenuByRoleCode")
 				@Override
-				public Integer updateRoleMenuByRoleCode(SessionFactory factory, RoleMenuDTO roleMenuDTO) {
-					// TODO Auto-generated method stub
+				public Integer updateRoleMenuByRoleCode(SessionFactory factory, RoleMenuDTO roleMenuDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
 					//先执行批量删除SM_roleMenus的操作(根据roleCode)
 					  List<RoleMenuDTO> roleMenuDTOList=new ArrayList<RoleMenuDTO>();
 					for(int i=0;i<roleMenuDTO.getRoleMenuList().size();i++) {
@@ -1087,8 +1172,8 @@ public class UserServiceImpl implements UserService{
 							roleMenuNew.setModuleCode(roleMenuDTO.getRoleMenuList().get(i).getModuleCode());
 							roleMenuNew.setRoleCode(roleMenuDTO.getRoleMenuList().get(i).getRoleCode());
 							roleMenuNew.setOp(Integer.valueOf(roleMenuDTO.getRoleMenuList().get(i).getOpList().get(j)));
-							roleMenuNew.setCreateBy("小詹");
-							roleMenuNew.setUpdateBy("小詹");							
+							roleMenuNew.setCreateBy(userListVO.getLoginName());
+							roleMenuNew.setUpdateBy(userListVO.getLoginName());							
 							roleMenuList.add(roleMenuNew);
 						}
 					}
@@ -1134,8 +1219,13 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("addMainDataDic") 
 				@Override
 				public Integer addMainDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
 					DataDicDTO dicDTO=new DataDicDTO();
 					dicDTO.setDicParent(dataDicDTO.getDicParent());
 					//添加之前先判断dicParent是否已经存在
@@ -1147,8 +1237,8 @@ public class UserServiceImpl implements UserService{
 						return addResult;
 					}	
 					dataDicDTO.setDicType(1);
-					dataDicDTO.setUpdateBy("小詹");
-					dataDicDTO.setCreateBy("小詹");				
+					dataDicDTO.setUpdateBy(userListVO.getLoginName());
+					dataDicDTO.setCreateBy(userListVO.getLoginName());				
 					// 插入主表信息					
 					 addResult=userMapper.addMainDataDic(dataDicDTO);
 					return addResult;
@@ -1158,8 +1248,13 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("addDetDataDic") 
 				@Override
 				public Integer addDetDataDic(SessionFactory factory, DataDicDTO dataDicDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
 					//根据parent查询主表信息
 					List<DataDicVO>  dataList=userMapper.queryDic(dataDicDTO);
 					if(dataList!=null && dataList.size()>0) {
@@ -1178,8 +1273,8 @@ public class UserServiceImpl implements UserService{
 					Integer delRes=userMapper.deleteOneDic(dataDicDTO);
 					//插入数据字典的操作(一条)	
 					dataDicDTO.setDicType(1);
-					dataDicDTO.setUpdateBy("小詹");
-					dataDicDTO.setCreateBy("小詹");					
+					dataDicDTO.setUpdateBy(userListVO.getLoginName());
+					dataDicDTO.setCreateBy(userListVO.getLoginName());					
 					if(dataDicDTO.getDicSeq()==null) {
 						dataDicDTO.setDicSeq(1);
 					}
@@ -1226,10 +1321,15 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("addIntegration") 
 				@Override
 				public Integer addIntegration(SessionFactory factory, IntegrationConfDTO integrationConfDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					integrationConfDTO.setCreateBy("小詹");
-					integrationConfDTO.setUpdateBy("小詹");
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					integrationConfDTO.setCreateBy(userListVO.getLoginName());
+					integrationConfDTO.setUpdateBy(userListVO.getLoginName());
 					//随机获取uuid,赋值给Code
 					String code=new RandomCodeUtil().getUUID32();
 					integrationConfDTO.setInteConfCode(code);
@@ -1241,10 +1341,15 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("addTableMapper") 
 				@Override
 				public Integer addTableMapper(SessionFactory factory, TableMapperDTO tableMapperDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					tableMapperDTO.setCreateBy("小詹");
-					tableMapperDTO.setUpdateBy("小詹");
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					tableMapperDTO.setCreateBy(userListVO.getLoginName());
+					tableMapperDTO.setUpdateBy(userListVO.getLoginName());
 					String code=new RandomCodeUtil().getUUID32();
 					tableMapperDTO.setTableMapperCode(code);
 					Integer addRes=userMapper.addTableMapper(tableMapperDTO);
@@ -1255,10 +1360,15 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("addFieldMapper") 
 				@Override
 				public Integer addFieldMapper(SessionFactory factory, FieldMapperDTO fieldMapperDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					fieldMapperDTO.setCreateBy("小詹");
-					fieldMapperDTO.setUpdateBy("小詹");
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					fieldMapperDTO.setCreateBy(userListVO.getLoginName());
+					fieldMapperDTO.setUpdateBy(userListVO.getLoginName());
 					String code=new RandomCodeUtil().getUUID32();
 					fieldMapperDTO.setFieldMapperCode(code);
 					Integer addRes=userMapper.addFieldMapper(fieldMapperDTO);
@@ -1269,10 +1379,15 @@ public class UserServiceImpl implements UserService{
 				@TaskAnnotation("addEnumMapper") 
 				@Override
 				public Integer addEnumMapper(SessionFactory factory, EnumMapperDTO enumMapperDTO) {
-					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					enumMapperDTO.setCreateBy("小詹");
-					enumMapperDTO.setUpdateBy("小詹");				
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					enumMapperDTO.setCreateBy(userListVO.getLoginName());
+					enumMapperDTO.setUpdateBy(userListVO.getLoginName());				
 					Integer addRes=userMapper.addEnumMapper(enumMapperDTO);
 					return addRes;
 				}
@@ -1384,7 +1499,13 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public Integer updateTableMapper(SessionFactory factory, TableMapperDTO tableMapperDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					tableMapperDTO.setUpdateBy("小詹");
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					tableMapperDTO.setUpdateBy(userListVO.getLoginName());
 					Integer updateRes=userMapper.updateTableMapper(tableMapperDTO);
 					return updateRes;
 				}
@@ -1394,7 +1515,13 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public Integer updateEnumMapper(SessionFactory factory, EnumMapperDTO enumMapperDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					enumMapperDTO.setUpdateBy("小詹");
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					enumMapperDTO.setUpdateBy(userListVO.getLoginName());
 					Integer updateRes=userMapper.updateEnumMapper(enumMapperDTO);
 					return updateRes;
 				}
@@ -1403,7 +1530,13 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public Integer updateFieldMapper(SessionFactory factory, FieldMapperDTO fieldMapperDTO) {				    
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					fieldMapperDTO.setUpdateBy("小詹");
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					fieldMapperDTO.setUpdateBy(userListVO.getLoginName());
 					Integer updateRes=userMapper.updateFieldMapper(fieldMapperDTO);					
 					return updateRes;
 				}
@@ -1458,6 +1591,12 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public ImportUserResVO addImportUserDataExcel(SessionFactory factory,List<UserExcelDTO> userList) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
 					ImportUserResVO importUserResVO=new ImportUserResVO();
 					//String转类型
 					for(int j=0;j<userList.size();j++) {
@@ -1484,8 +1623,8 @@ public class UserServiceImpl implements UserService{
 					}
 					
 					for(int i=0;i<userList.size();i++) {
-						userList.get(i).setCreateBy("小詹");
-						userList.get(i).setUpdateBy("小詹");
+						userList.get(i).setCreateBy(userListVO.getLoginName());
+						userList.get(i).setUpdateBy(userListVO.getLoginName());
 						//管理员设置默认密码yhsw123456
 						userList.get(i).setPassword((new  EncryptionUtil().encodeBase64("yhsw123456")));
 						//随机获取uuid,赋值给Code
@@ -1534,6 +1673,12 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public Integer updateMyPassword(SessionFactory factory, UpdateWordDTO updateWordDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
 					//验证两次输入的密码是否一致
 					EncryptionUtil encryptionUtil=new EncryptionUtil();
 					if(!encryptionUtil.decodeBase64(updateWordDTO.getNewPassWord()).equals(encryptionUtil.decodeBase64(updateWordDTO.getSurePassWord()))) {						
@@ -1552,7 +1697,7 @@ public class UserServiceImpl implements UserService{
 		 
 					//验证old密码是否正确   TODO 测试先使用loginName为测试11
 					UserDTO user=new UserDTO();
-					user.setLoginName("测试11");
+					user.setLoginName(userListVO.getLoginName());
 					List<UserVO> userList=userMapper.queryPassWord(user);
 					Integer updateRes=null;
 					if(userList!=null && userList.size()>0) {						
@@ -1561,7 +1706,7 @@ public class UserServiceImpl implements UserService{
 						}
 						//执行修改密码的操作
 						user.setPassword(updateWordDTO.getNewPassWord());
-						user.setUpdateBy("小詹");
+						user.setUpdateBy(userListVO.getLoginName());
 						updateRes=userMapper.updateMyPassword(user);
 					}
 					return updateRes;
@@ -1572,9 +1717,15 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public Integer  uploadHeadPortrait(SessionFactory factory, MultipartFile file) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
 					Integer addRes=null;
-					//TODO 测试使用  获取登录的用户名为： 
-					String userName="测试11";
+					//TODO 测试使用  获取登录的用户名为： "测试11"
+					String userName=userListVO.getLoginName();
 					//根据登录的用户名查询Code
 					QueryUserDTO queryUserDTO=new QueryUserDTO();
 					queryUserDTO.setLoginName(userName);
@@ -1630,7 +1781,7 @@ public class UserServiceImpl implements UserService{
 			   		uploadFileDTO.setModuleType("HeadPortrait");
 			   		uploadFileDTO.setStoreName(storeName);
 			   		uploadFileDTO.setStorageTime(new java.util.Date());
-			   		uploadFileDTO.setCreateBy("小詹");
+			   		uploadFileDTO.setCreateBy(userListVO.getLoginName());
 			   		uploadFileDTO.setFileType(fileType);
 			   		// 上传文件记录入库
 			   		addRes=userMapper.insertFileDataNew(uploadFileDTO);
@@ -1642,8 +1793,14 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public List<UploadFileNewVO> queryHeadPortrait(SessionFactory factory) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					//TODO 测试使用  获取登录的用户名为： 
-					String userName="测试11";
+					Gson jsonValue = new Gson();
+					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+						return null;
+					}
+					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+				
+					//TODO 测试使用  获取登录的用户名为： "测试11" 
+					String userName=userListVO.getLoginName();
 					//根据登录的用户名查询Code
 					QueryUserDTO queryUserDTO=new QueryUserDTO();
 					queryUserDTO.setLoginName(userName);
@@ -1697,6 +1854,8 @@ public class UserServiceImpl implements UserService{
 		            }
 					return finalKey;
 				}
+				
+				
 		
 					
 }
