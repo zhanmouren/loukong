@@ -255,7 +255,7 @@
 	
 	 <!-- 查询任务列表 -->
     <select id="queryTaskList"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="com.koron.inwlms.bean.VO.indexData.TaskMsgVO">
-       select "pro".state as state,"info"."alarmType" as "alarmType","info".content as "content"
+       select "pro".state as state,"info"."alarmType" as "alarmType","info".content as "content",case when info.code is null then 'tt' else info.code end  as "objectName"
        from app_warningprocessing as "pro"
        left join  app_warninginf as "info" on "info".code="pro"."warningCode"
        where "pro"."createTime" &gt;  to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS') and "info"."areaCode" in
@@ -328,7 +328,7 @@
     
      <!-- 查询检测点信息列表 -->
     <select id="queryCheckWarningMsg"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="com.koron.inwlms.bean.VO.indexData.TaskMsgVO">
-     select case when "aa".code is null or "aa".code ='' then '否'  else '是' end as state,"info"."alarmType",
+     select case when "aa".code is null or "aa".code ='' then '否'  else '是' end as state,"info"."alarmType",case when info.code is null then 'tt' else info.code end  as "objectName"
        "info"."alarmType" as "alarmType","info"."content" as "content","info"."createTime" as "createTime","info"."updateTime" as "updateTime"
 		from app_warninginf "info"
 		left join (select  app_warninginf.code as code from app_warningprocessing 
