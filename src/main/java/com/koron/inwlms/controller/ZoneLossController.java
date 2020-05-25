@@ -41,6 +41,7 @@ import com.koron.inwlms.bean.DTO.zoneLoss.ZoneThematicValueDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneHstDataVO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.AnalysisIndicatorVO;
 import com.koron.inwlms.bean.VO.zoneLoss.DmaZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.LegitimateNightUseVO;
@@ -1336,8 +1337,8 @@ public class ZoneLossController {
 		return null;
 	}
 	
-	@RequestMapping(value = "/queryZoneIndicatorDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询分区指标数据字典", notes = "查询分区指标数据字典", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/queryZoneIndicatorDic.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区指标数据字典", notes = "查询分区指标数据字典", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryZoneIndicatorDic(Integer zoneType) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
@@ -1356,8 +1357,6 @@ public class ZoneLossController {
 		try{
 			List<ZoneIndicatorDicVO> lists = ADOConnection.runTask(zlas,"queryZoneIndicatorDic",List.class,zoneType);
 			msg.setData(lists);
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription(Constant.MESSAGE_STRING_NULL);	
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_DELERROR);
 			msg.setDescription(Constant.MESSAGE_STRING_DELERROR);
@@ -1719,5 +1718,33 @@ public class ZoneLossController {
 			return msg.toJson();
 	    }
 	  
+	    /**
+	     * 查询分区漏损指标集合
+	     * @return
+	     */
+	    public List<AnalysisIndicatorVO> queryZoneLossIndicators() {
+	    	
+			return null;
+	    }
 	    
+	    /**
+	     * 查询一级分区漏损专题图列表数据
+	     */
+	    public void queryFirstZoneLossList() {
+	    	
+	    }
+	    
+	    /**
+	     * 查询二级分区漏损专题图列表数据
+	     */
+	    public void querySencodZoneLossList() {
+	    	
+	    }
+	    
+	    /**
+	     * 查询dma分区漏损专题图列表数据
+	     */
+	    public void queryDmaZoneLossList() {
+	    	
+	    }
 }
