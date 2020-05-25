@@ -1718,33 +1718,4 @@ public class ZoneLossController {
 			return msg.toJson();
 	    }
 	  
-	    /**
-	     * 查询分区漏损指标集合
-	     * @return
-	     */
-	    public List<AnalysisIndicatorVO> queryZoneLossIndicators() {
-	    	
-			return null;
-	    }
-	    
-	    /**
-	     * 查询一级分区漏损专题图列表数据
-	     */
-	    public void queryFirstZoneLossList() {
-	    	
-	    }
-	    
-	    /**
-	     * 查询二级分区漏损专题图列表数据
-	     */
-	    public void querySencodZoneLossList() {
-	    	
-	    }
-	    
-	    /**
-	     * 查询dma分区漏损专题图列表数据
-	     */
-	    public void queryDmaZoneLossList() {
-	    	
-	    }
 }
