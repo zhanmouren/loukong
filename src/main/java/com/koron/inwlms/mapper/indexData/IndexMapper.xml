@@ -328,7 +328,7 @@
     
      <!-- 查询检测点信息列表 -->
     <select id="queryCheckWarningMsg"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="com.koron.inwlms.bean.VO.indexData.TaskMsgVO">
-     select case when "aa".code is null or "aa".code ='' then '否'  else '是' end as state,"info"."alarmType",case when info.code is null then 'tt' else info.code end  as "objectName"
+     select case when "aa".code is null or "aa".code ='' then '否'  else '是' end as state,"info"."alarmType",case when info.code is null then 'tt' else info.code end  as "objectName",
        "info"."alarmType" as "alarmType","info"."content" as "content","info"."createTime" as "createTime","info"."updateTime" as "updateTime"
 		from app_warninginf "info"
 		left join (select  app_warninginf.code as code from app_warningprocessing 
