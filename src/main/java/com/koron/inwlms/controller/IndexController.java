@@ -93,7 +93,7 @@ public class IndexController {
 			  IndicatorVO indicatorVOB2=new IndicatorVO();
 			  indicatorVOB2.setCode("0001");
 			  indicatorVOB2.setTimeId(2);
-			  indicatorVOB2.setType("A1");
+			  indicatorVOB2.setType("B2");
 			  indicatorVOB2.setValue(3500.00);
 			  indicatorVOB2.setZoneNo("00001");
 			  IndicatorVO indicatorVOC1=new IndicatorVO();
