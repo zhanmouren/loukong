@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.intellectPartition.AutomaticPartitionDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.GisZoneData;
 import com.koron.inwlms.bean.DTO.intellectPartition.GisZonePipeData;
+import com.koron.inwlms.bean.DTO.intellectPartition.SchemeParamDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
@@ -107,45 +108,44 @@ public class IntellectPartitionController {
 	 * 通过方案总表code查询分区方案数据
 	 * @return
 	 */
-	@RequestMapping(value = "/querySchemeDet.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询分区方案数据", notes = "查询分区方案数据", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/querySchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区方案数据", notes = "查询分区方案数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String querySchemeDet(String totalSchemeCode) {
+    public String querySchemeDet(@RequestBody TotalSchemeDetDTO totalSchemeDetDTO) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
-		if(totalSchemeCode == null || totalSchemeCode.equals("")) {
+		if(totalSchemeDetDTO.getCode() == null || totalSchemeDetDTO.getCode().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 			msg.setDescription("方案总表编码为空");
 			return msg.toJson();
 		}
 		
 		try {
-			List<SchemeDet> list = ADOConnection.runTask(psds, "querySchemeDet", List.class,totalSchemeCode);
+			List<SchemeDet> list = ADOConnection.runTask(psds, "querySchemeDet", List.class,totalSchemeDetDTO.getCode());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 			
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
-			msg.setDescription("分区方案查询失败");
+			msg.setDescription("分区方案查询失败"); 
 		}
 		
 		return msg.toJson();
 	}
 	
-	@RequestMapping(value = "/deleteSchemeDet.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "删除分区方案数据", notes = "删除分区方案数据", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/deleteSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除分区方案数据", notes = "删除分区方案数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteSchemeDet(List<Integer> ids) {
+    public String deleteSchemeDet(@RequestBody SchemeParamDTO schemeParamDto) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		try {
-			Integer num = ADOConnection.runTask(psds, "deleteSchemeDetByCode", Integer.class,ids);
+			Integer num = ADOConnection.runTask(psds, "deleteSchemeDetByCode", Integer.class,schemeParamDto.getIds());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 			msg.setDescription("分区方案删除失败");
 		}
-		
 		
 		return msg.toJson();
 	}
@@ -153,17 +153,17 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/deleteTotalSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "方案删除接口", notes = "方案删除接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteTotalSchemeDet(@RequestBody List<String> codes) {
+    public String deleteTotalSchemeDet(@RequestBody SchemeParamDTO schemeParamDto) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
-		if(codes == null || codes.size() == 0) {
+		if(schemeParamDto.getCodes() == null || schemeParamDto.getCodes().size() == 0) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 			msg.setDescription("方案总表编码为空");
 			return msg.toJson();
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(psds, "deleteTotalSchemeDet", Integer.class,  codes);
+			Integer num = ADOConnection.runTask(psds, "deleteTotalSchemeDet", Integer.class,  schemeParamDto.getCodes());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e){
@@ -176,17 +176,17 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/changeTotalSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "自动智能分区方案保存接口", notes = "自动智能分区方案保存接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String changeTotalSchemeDet(@RequestBody List<String> codes) {
+    public String changeTotalSchemeDet(@RequestBody SchemeParamDTO schemeParamDto) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
-		if(codes == null || codes.size() == 0) {
+		if(schemeParamDto.getCodes() == null || schemeParamDto.getCodes().size() == 0) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 			msg.setDescription("方案总表编码为空");
 			return msg.toJson();
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(psds, "changeSchemeDet", Integer.class,  codes);
+			Integer num = ADOConnection.runTask(psds, "changeSchemeDet", Integer.class,  schemeParamDto.getCodes());
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("方案保存成功");
