@@ -19,7 +19,7 @@
  
  <insert id="addWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO">
  insert into app_warningscheme(name, state, code, "alarmLevel", "objectType", "alarmType", "alarmIndex", "paramType", "createBy", "createTime", "updateBy", "updateTime")
- values(#{name}, #{state}, #{code}, #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, #{createTime}, #{updateBy}, #{updateTime})
+ values(#{name}, #{state}, #{code}, #{alarmLevel}, #{objectType}, #{alarmType}, #{alarmIndex}, #{paramType}, #{createBy}, #{createTime}, #{updateBy}, Now())
  </insert>
  
  <select id="addWarningSchemeOfSZCX" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.String">
@@ -101,11 +101,12 @@
  <update id="updateWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO">
  update app_warningscheme 
  <set>
- <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType}</if>
- <if test="name != null and name != '' "> name = #{name}</if>
- <if test="objectType != null and objectType != '' "> "objectType" = #{objectType}</if>
- <if test="alarmIndex != null and alarmIndex != '' "> "alarmIndex" = #{alarmIndex}</if>
- <if test="paramType != null and paramType != '' "> "paramType" = #{paramType}</if>
+ <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType},</if>
+ <if test="name != null and name != '' "> name = #{name},</if>
+ <if test="objectType != null and objectType != '' "> "objectType" = #{objectType},</if>
+ <if test="alarmIndex != null and alarmIndex != '' "> "alarmIndex" = #{alarmIndex},</if>
+ <if test="paramType != null and paramType != '' "> "paramType" = #{paramType},</if>
+ <if test="state != null and state != '' "> state = #{state}</if>
  </set>
  where code = #{code}
  </update>

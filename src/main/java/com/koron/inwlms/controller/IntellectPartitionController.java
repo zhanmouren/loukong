@@ -97,7 +97,7 @@ public class IntellectPartitionController {
 			
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
-			msg.setDescription("方案总表数据插入失败");
+			msg.setDescription("方案总表数据查询失败");
 		}
 		
 		return msg.toJson();
@@ -128,6 +128,24 @@ public class IntellectPartitionController {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 			msg.setDescription("分区方案查询失败");
 		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/deleteSchemeDet.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除分区方案数据", notes = "删除分区方案数据", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteSchemeDet(List<Integer> ids) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		
+		try {
+			Integer num = ADOConnection.runTask(psds, "deleteSchemeDetByCode", Integer.class,ids);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区方案删除失败");
+		}
+		
 		
 		return msg.toJson();
 	}

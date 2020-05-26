@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeMessage;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
+import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 
 @Service
@@ -37,5 +38,7 @@ public interface WarningSchemeService {
 	List<AlertNoticeMessage> queryNoticeSchemeByWarningCode(SessionFactory factory, String code);
 
 	List<AlertSchemeListVO> queryWarningSchemeList(SessionFactory factory, WarningSchemeDTO warningSchemeDTO);
+
+	WarningSchemeDateVO queryWarningSchemeByCode(SessionFactory factory, WarningSchemeDTO warningSchemeDTO);
 
 }

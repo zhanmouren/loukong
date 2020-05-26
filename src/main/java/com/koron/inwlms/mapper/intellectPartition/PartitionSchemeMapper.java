@@ -40,4 +40,6 @@ public interface PartitionSchemeMapper {
 	
 	Integer addPipePreZone(List<PipePreZoneRelationDTO> pipeList);
 	
+	Integer deleteSchemeDetByCode(List<Integer> ids);
+	
 }

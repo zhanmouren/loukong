@@ -3,6 +3,7 @@ package com.koron.inwlms.service.leakageControl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeMessage;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
+import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
@@ -32,6 +34,22 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 		return list;
 	}
 	
+	@TaskAnnotation("queryWarningSchemeByCode")
+	@Override
+	public WarningSchemeDateVO queryWarningSchemeByCode(SessionFactory factory,WarningSchemeDTO warningSchemeDTO) {
+		WarningSchemeDateVO warningSchemeDateVO = new WarningSchemeDateVO();
+		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
+		List<WarningSchemeVO> warningSchemeList = mapper.queryWarningScheme(warningSchemeDTO);
+		warningSchemeDateVO.setWarningScheme(warningSchemeList.get(0));
+		if(warningSchemeList != null && warningSchemeList.size() != 0) {
+			List<AlarmRuleDTO> alarmRuleDTOLst = mapper.queryAlarmRuleByAlarmCode(warningSchemeDTO.getCode());
+			warningSchemeDateVO.setAlarmRuleList(alarmRuleDTOLst);
+			List<AlertNoticeScheme> noticelist = mapper.queryAlertNoticeSchemeByWarningId(warningSchemeDTO.getCode());
+			warningSchemeDateVO.setNoticeList(noticelist);
+		}
+		return warningSchemeDateVO;
+	}
+	
 	/**
 	 * 查询预警方案列表数据
 	 */
@@ -46,9 +64,7 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 			//拼接通知方式字段
 			String noticeType = "";
 			List<AlertNoticeScheme> alertNoticeSchemeList = mapper.queryAlertNoticeSchemeByWarningId(warningScheme.getCode());
-			for(AlertNoticeScheme alertNoticeScheme : alertNoticeSchemeList) {
-				//TODO 通过通知方式的key查询其值
-				
+			for(AlertNoticeScheme alertNoticeScheme : alertNoticeSchemeList) {				
 				//拼装返回格式
 				noticeType = noticeType + alertNoticeScheme.getType() + "/";
 			}
@@ -125,7 +141,13 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 	@Override
 	public Integer updateWarningScheme(SessionFactory factory,WarningSchemeDTO warningSchemeDTO) {
 		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
-		Integer num = mapper.updateWarningScheme(warningSchemeDTO);
+		int num = 0;
+		//先删除在添加
+		int deleteNum = mapper.deleteWarningScheme(warningSchemeDTO.getCode());
+		if(deleteNum > 0) {
+			num = mapper.addWarningScheme(warningSchemeDTO);
+		}
+		
 		return num;
 	}
 	

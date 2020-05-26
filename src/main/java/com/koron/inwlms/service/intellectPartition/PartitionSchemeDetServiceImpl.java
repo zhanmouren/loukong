@@ -73,6 +73,14 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		return num;	
 	}
 	
+	@TaskAnnotation("deleteSchemeDetByCode")
+	@Override
+	public Integer deleteSchemeDetByCode(SessionFactory factory,List<Integer> ids) {
+		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
+		Integer num = mapper.deleteSchemeDetByCode(ids);
+		return num;
+	}
+	
 	/**
 	 * 添加方案总表数据
 	 */

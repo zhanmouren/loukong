@@ -99,6 +99,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	@TaskAnnotation("queryTreatmentEffect")
 	@Override
 	public TreatmentEffectVO queryTreatmentEffect(SessionFactory factory,TreatmentEffectDTO treatmentEffectDTO) {
+		TreatmentEffectVO treatmentEffectVO = new TreatmentEffectVO();
 		IndicatorMapper indMapper = factory.getMapper(IndicatorMapper.class);
 		Date startDate = new Date();
 		Date endDate = new Date();
@@ -106,10 +107,12 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		
 		//查询分区漏损月指标编码
 		String zonecodeM = "";
+		String mnfCode = "";
+		String zonecodeD = "";
 		List<String> codes = new ArrayList<>();
 		codes.add(zonecodeM);
 		
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		try {
 			startDate = format.parse(treatmentEffectDTO.getStartTime());
 			endDate = format.parse(treatmentEffectDTO.getEndTime());
@@ -119,11 +122,11 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		//获取当前月份
 		int nowY = TimeUtil.getYears(nowDate);
 		int nowM = TimeUtil.getMonth(nowDate);
-		int dateNow = nowY*10 + nowM;
+		int dateNow = nowY*100 + nowM;
 		
 		//月漏损量统计
 		//获取工单开始的月份和结束的月份
-		Date startDateL = TimeUtil.addMonth(startDate, 2);
+		Date startDateL = TimeUtil.addMonth(startDate, -2);
 		Date endDateL = TimeUtil.addMonth(endDate, 2);
 
 		int startYL = TimeUtil.getYears(startDateL);
@@ -131,54 +134,116 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		int endYL = TimeUtil.getYears(endDateL);
 		int endML = TimeUtil.getMonth(endDateL);
 		//获取分区漏损量的开始时间
-		int dateStartL = startYL*10 + startML;
+		int dateStartL = startYL*100 + startML;
 		//获取分区漏损量的结束时间
-		int dateEndL = endYL*10 + endML;
+		int dateEndL = endYL*100 + endML;
 		
 		List<TimeAndFlowData> lossFlowList = new ArrayList<>();
 		//当前月份在工单结束俩个月之后
+		
+		//查询分区漏损月指标表，获取月漏损数据
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setCodes(codes);
+		indicatorDTO.setTimeType(3);
+		indicatorDTO.setStartTime(dateStartL);
+		indicatorDTO.setEndTime(dateEndL);
+		List<IndicatorVO> indicatorData = indMapper.queryZoneLossIndicData(indicatorDTO);
+		for(IndicatorVO indicatorVO : indicatorData) {
+			TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
+			timeAndFlowData.setFlow(indicatorVO.getValue());
+			timeAndFlowData.setTimeNum(indicatorVO.getTimeId());
+			lossFlowList.add(timeAndFlowData);
+		}
+		//添加当前月数据
 		if(dateEndL <= dateNow) {
-			//月份为开始至结束连续时间，末尾添加当前月的漏损量
-			while (dateStartL <= dateEndL) {
-				TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
-				//TODO 查询分区漏损月指标表，获取月漏损数据
-				IndicatorDTO indicatorDTO = new IndicatorDTO();
-				indicatorDTO.setCodes(codes);
-				indicatorDTO.setTimeType(3);
-				indicatorDTO.setStartTime(dateStartL);
-				indicatorDTO.setEndTime(dateEndL);
-				List<IndicatorVO> indicatorData = indMapper.queryZoneLossIndicData(indicatorDTO);
-				
-				
-				//统计数据
-				timeAndFlowData.setTimeNum(dateStartL);
-				timeAndFlowData.setFlow(indicatorData.get(0).getValue());
-				
-				lossFlowList.add(timeAndFlowData);
-				//月份+1
-				startML = startML +1;
-				if(startML < 13) {
-					dateStartL = startYL*10 + startML;
-				}else {
-					dateStartL = (startYL + 1)*10 + startML - 12;
-				}
-				
-			}
-			
-			//TODO 查询分区漏损月指标表，获取月漏损数据
-			IndicatorDTO indicatorDTO = new IndicatorDTO();
-			indicatorDTO.setCodes(codes);
-			indicatorDTO.setTimeType(3);
-			indicatorDTO.setStartTime(dateStartL);
-			indicatorDTO.setEndTime(dateEndL);
-			List<IndicatorVO> indicatorData = indMapper.queryZoneLossIndicData(indicatorDTO);
-			for(IndicatorVO indicatorVO : indicatorData) {
-				TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
-			}
-			
-			
+			indicatorDTO.setStartTime(dateNow);
+			indicatorDTO.setEndTime(dateNow);
+			List<IndicatorVO> indicatorData1 = indMapper.queryZoneLossIndicData(indicatorDTO);
+			TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
+			timeAndFlowData.setFlow(indicatorData1.get(0).getValue());
+			timeAndFlowData.setTimeNum(indicatorData1.get(0).getTimeId());
+			lossFlowList.add(timeAndFlowData);
+		}
+		treatmentEffectVO.setLossFlow(lossFlowList);
+		
+		//计算处理前后的夜间流量和漏损流量
+		Date startDay7 = TimeUtil.addDay(startDate, -7);
+		int startD7 = TimeUtil.getDays(startDay7);
+		int startM7 = TimeUtil.getMonth(startDay7);
+		int startY7 = TimeUtil.getYears(startDay7);
+		int startD = TimeUtil.getDays(startDate);
+		int startM = TimeUtil.getMonth(startDate);
+		int startY = TimeUtil.getYears(startDate);
+		
+		Date endDay7 = TimeUtil.addDay(endDate, 7);
+		int endD7 = TimeUtil.getDays(endDay7);
+		int endM7 = TimeUtil.getMonth(endDay7);
+		int endY7 = TimeUtil.getYears(endDay7);
+		int endD = TimeUtil.getDays(endDate);
+		int endM = TimeUtil.getMonth(endDate);
+		int endY = TimeUtil.getYears(endDate);
+		
+		int startf7 = startY7*10000 + startM7*100 + startD7;
+		int startf = startY*10000 + startM*100 + startD;
+		
+		int endf7 = endY7*10000 + endM7*100 + endD7;
+		int endf = endY*10000 + endM*100 + endD;
+		//最小夜间流量
+		List<String> mnfCodes = new ArrayList<>();
+		mnfCodes.add(mnfCode);
+		indicatorDTO.setCodes(mnfCodes);
+		indicatorDTO.setTimeType(2);
+		indicatorDTO.setStartTime(startf7);
+		indicatorDTO.setEndTime(startf);
+		double mflowB = 0.0;
+		List<IndicatorVO> indicatorData2 = indMapper.queryZoneLossIndicData(indicatorDTO);
+		for(IndicatorVO indicatorVO : indicatorData2) {
+			mflowB = mflowB + indicatorVO.getValue();
+		}
+		if(mflowB != 0.0) {
+			double mnfFlow7 = mflowB/indicatorData2.size();
+			treatmentEffectVO.setMnfBefore(mnfFlow7);
+		}
+		indicatorDTO.setStartTime(endf);
+		indicatorDTO.setEndTime(endf7);
+		double mflowA = 0.0;
+		List<IndicatorVO> indicatorData3 = indMapper.queryZoneLossIndicData(indicatorDTO);
+		for(IndicatorVO indicatorVO : indicatorData3) {
+			mflowA = mflowA + indicatorVO.getValue();
+		}
+		if(mflowA != 0.0) {
+			double mnfFlow7 = mflowA/indicatorData3.size();
+			treatmentEffectVO.setMnfAfther(mnfFlow7);
 		}
 		
+		
+		
+		//漏损流量
+		List<String> zoneDCodes = new ArrayList<>();
+		zoneDCodes.add(zonecodeD);
+		indicatorDTO.setCodes(zoneDCodes);
+		indicatorDTO.setStartTime(startf7);
+		indicatorDTO.setEndTime(startf);
+		double lossFlowB = 0.0;
+		List<IndicatorVO> indicatorData4 = indMapper.queryZoneLossIndicData(indicatorDTO);
+		for(IndicatorVO indicatorVO : indicatorData4) {
+			lossFlowB = lossFlowB + indicatorVO.getValue();
+		}
+		if(lossFlowB != 0.0) {
+			double lossFlow7 = lossFlowB/indicatorData4.size();
+			treatmentEffectVO.setLossFlowBefore(lossFlow7);
+		}
+		indicatorDTO.setStartTime(endf);
+		indicatorDTO.setEndTime(endf7);
+		double lossFlowA = 0.0;
+		List<IndicatorVO> indicatorData5 = indMapper.queryZoneLossIndicData(indicatorDTO);
+		for(IndicatorVO indicatorVO : indicatorData5) {
+			lossFlowA = lossFlowA + indicatorVO.getValue();
+		}
+		if(lossFlowA != 0.0) {
+			double lossFlow7 = lossFlowA/indicatorData5.size();
+			treatmentEffectVO.setLossFlowAfther(lossFlow7); 
+		}
 		
 		//TODO 供水量统计
 		

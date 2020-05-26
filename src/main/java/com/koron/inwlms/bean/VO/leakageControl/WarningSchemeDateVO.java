@@ -9,6 +9,18 @@ public class WarningSchemeDateVO {
 	private WarningSchemeVO warningScheme;
 	
 	private List<AlarmRuleDTO> alarmRuleList;
+	
+	private List<AlertNoticeScheme> noticeList;
+	
+	
+
+	public List<AlertNoticeScheme> getNoticeList() {
+		return noticeList;
+	}
+
+	public void setNoticeList(List<AlertNoticeScheme> noticeList) {
+		this.noticeList = noticeList;
+	}
 
 	public WarningSchemeVO getWarningScheme() {
 		return warningScheme;

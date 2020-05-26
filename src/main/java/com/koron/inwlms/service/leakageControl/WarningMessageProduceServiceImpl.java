@@ -186,11 +186,18 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		warningSchemeDTO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
 		List<WarningSchemeVO> warningSchemeList = mapper.queryWarningScheme(warningSchemeDTO);
 		for(WarningSchemeVO warningScheme : warningSchemeList) {
+			//数据指标编码
+			String dataCode = "";
+			int alarmIndexFlag = 0;
 			//通过报警指标获取数据源数据
 			if(warningScheme.getAlarmIndex().equals(Constant.DATADICTIONARY_DAYFLOW)) {
 				zoneFlow = zoneDayData.getAllFlow();
+				dataCode = "";
+				alarmIndexFlag = 1;
 			}else if(warningScheme.getAlarmIndex().equals(Constant.DATADICTIONARY_MINNIGFLOW)) {
 				zoneFlow = zoneDayData.getMinNigFlow();
+				dataCode = "";
+				alarmIndexFlag = 2;
 			}
 			Boolean warningFlag = true;
 			//查询预警规则
@@ -204,9 +211,10 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 					//对比数据的天数
 					if(alarmRuleDTO.getLimitType() == null) {
 						//获取与历史均值天数
-						double day = alarmRuleDTO.getConstant();
+						int day = (new Double(alarmRuleDTO.getConstant())).intValue();
 						//TODO 获取数天内日总流量或者最小夜间流量的平均值
-						double oldDayFlow = 2.2;
+						IndicatorMapper indMapper = factory.getMapper(IndicatorMapper.class);
+						double oldDayFlow = getHisAvgData(dataCode,alarmIndexFlag,indMapper,day);
 						increase = (zoneFlow - oldDayFlow)/oldDayFlow;
 						increase = increase * 100;
 						
@@ -624,6 +632,24 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		return null;
 	}
 	
-	
+	public Double getHisAvgData(String code,int flag,IndicatorMapper indicMapper,int day) {
+		//计算时间
+		Date start = new Date();
+		Date end = TimeUtil.addDay(start, -day);
+		
+		
+		List<String> codes = new ArrayList<>();
+		codes.add(code);
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setCodes(codes);
+		indicatorDTO.setTimeType(2);
+		
+		if(flag == 1) {
+			List<IndicatorVO> dataList = indicMapper.queryWBBaseIndicData(indicatorDTO);
+		}
+		
+		
+		return null;
+	}
 	
 }

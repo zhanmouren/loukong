@@ -33,6 +33,8 @@ public interface PartitionSchemeDetService {
 	Integer addKafkaData(SessionFactory factory, KafkaReturnData kafkaReturnData);
 
 	String test(SessionFactory factory, AutomaticPartitionDTO automaticPartitionDTO, TotalSchemeDet totalSchemeDet);
+
+	Integer deleteSchemeDetByCode(SessionFactory factory, List<Integer> ids);
 	
 	
 

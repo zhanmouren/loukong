@@ -68,7 +68,17 @@ public class AlarmMessageVO {
 	
 	private Integer totalNumber;
 	
+	private String executorCode;
 	
+	
+
+	public String getExecutorCode() {
+		return executorCode;
+	}
+
+	public void setExecutorCode(String executorCode) {
+		this.executorCode = executorCode;
+	}
 
 	public Integer getTotalNumber() {
 		return totalNumber;

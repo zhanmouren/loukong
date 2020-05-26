@@ -244,7 +244,7 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
-	@RequestMapping(value = "/downAlarmProcess.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/downAlarmProcess.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ApiOperation(value = "下载预警信息处理任务列表数据", notes = "下载预警信息处理任务列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public HttpEntity<?> downAlarmProcess(@RequestParam String objValue,@RequestParam String titleInfos) {
@@ -383,7 +383,7 @@ public class LeakageControlController {
 	 * @param user
 	 * @return
 	 */
-	@RequestMapping(value = "/deleteAlarmProcess.htm", method = RequestMethod.POST, produces = { "text/html;charset=UTF-8" })
+	@RequestMapping(value = "/uploadAlarmProcessFile.htm", method = RequestMethod.POST, produces = { "text/html;charset=UTF-8" })
     @ResponseBody
     public String uploadAlarmProcessFile(@RequestParam("file") MultipartFile file, @RequestParam("tId") Integer tId,@RequestParam("fileModule") String fileModule, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<UploadFileVO> msg = new MessageBean<>();
@@ -559,31 +559,18 @@ public class LeakageControlController {
 			msg.setDescription("预警方案编码为空");
 			return msg.toJson();
 		}
-		WarningSchemeDateVO warningSchemeDateVO = new WarningSchemeDateVO();
 		WarningSchemeDTO warningSchemeDTO = new WarningSchemeDTO();
 		warningSchemeDTO.setCode(code);
 		try {
 			//查询预警方案信息
-			List<WarningSchemeVO> warningSchemeList = ADOConnection.runTask(wss, "queryWarningScheme", List.class,warningSchemeDTO);
-			if(warningSchemeList != null && warningSchemeList.size() != 0) {
-				List<AlarmRuleDTO> alarmRuleDTOLst = ADOConnection.runTask(wss, "queryAlarmRuleByAlarmCode", List.class,code);
-				warningSchemeDateVO.setAlarmRuleList(alarmRuleDTOLst);
-				warningSchemeDateVO.setWarningScheme(warningSchemeList.get(0));
-				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				msg.setData(warningSchemeDateVO);
-			}else {
-				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				msg.setDescription("未有预警方案信息");
-			}
-			
-			
+			WarningSchemeDateVO warningSchemeDateVO = ADOConnection.runTask(wss, "queryWarningSchemeByCode", WarningSchemeDateVO.class,warningSchemeDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(warningSchemeDateVO);	
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询预警方案失败");
 	        return msg.toJson();
 		}
-		
-		
 		return msg.toJson();
 	}
 	
