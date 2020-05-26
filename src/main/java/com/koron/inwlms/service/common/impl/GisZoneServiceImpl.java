@@ -17,6 +17,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.zoneLoss.PositionInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
+import com.koron.inwlms.mapper.common.GisMapper;
 import com.koron.inwlms.service.common.GisZoneService;
 import com.koron.util.Constant;
 
@@ -281,7 +282,12 @@ public class GisZoneServiceImpl implements GisZoneService {
 	@TaskAnnotation("queryZoneNameByNo")
 	@Override
 	public String queryZoneNameByNo(SessionFactory factory, String zoneNo) {
-		return "A001一级分区";
+		GisMapper mapper = factory.getMapper(GisMapper.class);
+		if(StringUtil.isNotEmpty(zoneNo)) {
+			String name = mapper.queryZoneNameByNo(zoneNo);
+			return name;
+		}
+		return null;
 	}
 
 	@TaskAnnotation("queryZonePositionInfo")
