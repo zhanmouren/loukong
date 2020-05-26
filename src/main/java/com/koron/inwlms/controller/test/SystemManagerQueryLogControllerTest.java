@@ -23,7 +23,9 @@ import com.koron.inwlms.service.sysManager.LogService;
 import com.koron.main.App;
 
 
-
+/*
+ * author:lzy
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class)
 public class SystemManagerQueryLogControllerTest {
@@ -35,6 +37,7 @@ public class SystemManagerQueryLogControllerTest {
 	
 	@Autowired
 	private LogService logService;
+	
 
 	//在测试方法运行之前运行，每一个方法前都会运行一遍
 	@Before

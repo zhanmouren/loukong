@@ -23,6 +23,9 @@ import com.koron.inwlms.controller.SystemManagerLogController;
 import com.koron.inwlms.service.sysManager.LogService;
 import com.koron.main.App;
 
+/*
+ * author:lzy
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class)
 public class SystemManagerDownloadLogControllerTest {

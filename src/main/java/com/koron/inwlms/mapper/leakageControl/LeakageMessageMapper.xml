@@ -5,7 +5,7 @@
    <select id="queryAlarmMessage" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
 	select *
 	from app_warningInf as "warningInf"
-	where "warningInf"."schemeCode" in
+	where "warningInf".status = 0 and "warningInf"."schemeCode" in
 	(
 		select "Scheme"."schemeCode"
 		from app_alertNoticeScheme as "Scheme"
@@ -78,10 +78,10 @@
 	ORDER BY "warningProcessing".state ASC, "warningProcessing"."expectFinishTime" ASC
     </select>
     
-    <select id="getMessageNumber" parameterType="String" resultType="java.lang.Integer">
+    <select id="getProcessingNumber" parameterType="String" resultType="java.lang.Integer">
     select count(*)
 	from app_warningProcessing as "warningProcessing"
-	where state != '已完成' and "warningCode" in
+	where state = '未完成' and "warningCode" in
 	(
 		select "warningInf".code
 		from app_warningInf as "warningInf"
@@ -103,4 +103,46 @@
 		)
 	)
 	</select> 
+	
+	<select id="getMessageNumber" parameterType="String" resultType="java.lang.Integer">
+    select count(*)
+	from app_warningInf as "warningInf"
+	where "warningInf".status = 0 and "warningInf"."schemeCode" in
+	(
+		select "Scheme"."schemeCode"
+		from app_alertNoticeScheme as "Scheme"
+		where "Scheme"."roleCode"  in
+		(
+			select "relation"."roleCode"
+			from sm_userRoleRelation as "relation"
+			where "relation"."userCode" in
+			(
+				select "user".code
+				from sm_user as "user"
+				where "user"."loginName" = #{loginName}
+			)
+		)
+	)
+	</select> 
+	
+	<update id="updateAlarmMessageStatus" parameterType="String">
+		update app_warninginf as "warningInf"
+		set status = 1 
+		where "warningInf".status = 0 and "warningInf"."schemeCode" in
+		(
+			select "Scheme"."schemeCode"
+			from app_alertNoticeScheme as "Scheme"
+			where "Scheme"."roleCode"  in
+			(
+				select "relation"."roleCode"
+				from sm_userRoleRelation as "relation"
+				where "relation"."userCode" in
+				(
+					select "user".code
+					from sm_user as "user"
+					where "user"."loginName" = #{loginName}
+				)
+			)
+		)
+	</update>
 </mapper>

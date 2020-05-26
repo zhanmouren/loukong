@@ -20,7 +20,9 @@ import com.alibaba.fastjson.JSON;
 import com.koron.inwlms.bean.DTO.sysManager.UserLoginDTO;
 import com.koron.main.App;
 
-
+/*
+ * author:lzy
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = App.class)
 public class SystemControllerTest{

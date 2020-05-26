@@ -2,6 +2,7 @@ package com.koron.inwlms.mapper.leakageControl;
 
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.sysManager.LabelDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 
@@ -21,4 +22,7 @@ public interface LeakageMessageMapper {
 	
 	public Integer getMessageNumber(String loginName);
 
+	public Integer getProcessingNumber(String loginName);
+	
+  	public Integer updateAlarmMessageStatus(String loginName);
 }

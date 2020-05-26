@@ -28,12 +28,16 @@ public class LeakageMessageServiceImpl implements LeakageMessageService{
 		List<AlarmMessageVO> leakageMessageList = leakageMessageMapper.queryAlarmMessage(loginName);
 		List<AlarmProcessVO> leakageProcessList = leakageMessageMapper.queryLeakageProcessing(loginName);
 		List<AlarmProcessVO> monitorProcessList = leakageMessageMapper.queryMonitorProcessing(loginName);
-		Integer messageNumber = leakageMessageMapper.getMessageNumber(loginName);
 		LeakageMessageListVO<List<AlarmProcessVO>> result = new LeakageMessageListVO<>();
 		result.setAlarmMessageList(leakageMessageList);
 		result.setLeakageProcessingList(leakageProcessList);
 		result.setMonitorProcessingList(monitorProcessList);
-		result.setNumber(messageNumber);
+		Integer messageNumber = leakageMessageMapper.getMessageNumber(loginName);
+		Integer processingNumber = leakageMessageMapper.getProcessingNumber(loginName);
+		result.setTotals(messageNumber + processingNumber);
+		leakageMessageMapper.updateAlarmMessageStatus(loginName);
+		messageNumber = leakageMessageMapper.getMessageNumber(loginName);
+		result.setNumber(messageNumber + processingNumber);
 		return result;
 	}
 

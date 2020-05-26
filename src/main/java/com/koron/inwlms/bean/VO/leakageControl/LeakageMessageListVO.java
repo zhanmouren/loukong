@@ -15,7 +15,9 @@ public class LeakageMessageListVO<T> {
 	private T LeakageProcessingList;
 	//监测待办/已办列表
 	private T MonitorProcessingList;
-	//消息条数
+	//所有的消息条数
+	private Integer totals;
+	//待办条数
 	private Integer number;
 	public List<AlarmMessageVO> getAlarmMessageList() {
 		return AlarmMessageList;
@@ -41,6 +43,10 @@ public class LeakageMessageListVO<T> {
 	public void setNumber(Integer number) {
 		this.number = number;
 	}
-	
-	
+	public Integer getTotals() {
+		return totals;
+	}
+	public void setTotals(Integer totals) {
+		this.totals = totals;
+	}
 }

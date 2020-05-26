@@ -12,7 +12,7 @@ public class LoginLogVO {
 	//用户名
 	private String name;
 	//职位
-	private Integer position;
+	private String position;
 	//登录结果
 	private String result;
 	//登录时间
@@ -35,10 +35,10 @@ public class LoginLogVO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Integer getPosition() {
+	public String getPosition() {
 		return position;
 	}
-	public void setPosition(Integer position) {
+	public void setPosition(String position) {
 		this.position = position;
 	}
 	public String getResult() {
