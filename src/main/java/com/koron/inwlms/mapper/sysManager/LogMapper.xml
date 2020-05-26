@@ -3,9 +3,10 @@
 <mapper namespace="com.koron.inwlms.mapper.sysManager.LogMapper">
  
     <select id="queryLoginLog" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLoginLogDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LoginLogVO">
-	select "user".name,"user".position,"loginLog".result,"loginLog"."loginTime" ,"loginLog"."errorLog"
+	select "user".name,"position".name,"loginLog".result,"loginLog"."loginTime" ,"loginLog"."errorLog"
 	from sm_loginLog as "loginLog"
 	left join sm_user as "user" on "user".code = "loginLog"."loginUserCode"
+	left join sm_position as "position" on "user".position = "position".code
 	<trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user".name like '%'||#{name}||'%'</if>  
    	    <if test="startTime != null  "> and  to_char("loginLog"."loginTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
