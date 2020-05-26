@@ -24,5 +24,5 @@ public interface LeakageMessageMapper {
 
 	public Integer getProcessingNumber(String loginName);
 	
-  	public Integer updateAlarmMessageStatus(String loginName);
+  	public Integer updateAlarmMessageStatus(List<String> codeList);
 }

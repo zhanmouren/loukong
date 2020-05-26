@@ -20,7 +20,7 @@ import com.koron.inwlms.mapper.leakageControl.LeakageMessageMapper;
 @Service
 public class LeakageMessageServiceImpl implements LeakageMessageService{
 
-	//消息中心
+	//消息中心查询
 	@TaskAnnotation("queryMessage")
 	@Override
 	public LeakageMessageListVO<List<AlarmProcessVO>> queryMessage(SessionFactory factory, String loginName) {
@@ -35,9 +35,16 @@ public class LeakageMessageServiceImpl implements LeakageMessageService{
 		Integer messageNumber = leakageMessageMapper.getMessageNumber(loginName);
 		Integer processingNumber = leakageMessageMapper.getProcessingNumber(loginName);
 		result.setTotals(messageNumber + processingNumber);
-		leakageMessageMapper.updateAlarmMessageStatus(loginName);
-		messageNumber = leakageMessageMapper.getMessageNumber(loginName);
-		result.setNumber(messageNumber + processingNumber);
+		result.setNumber(processingNumber);
+		return result;
+	}
+	
+	//修改预警信息读取状态
+	@TaskAnnotation("updateAlarmMessageStatus")
+	@Override
+	public Integer updateAlarmMessageStatus(SessionFactory factory, List<String> codeList) {
+		LeakageMessageMapper  leakageMessageMapper = factory.getMapper(LeakageMessageMapper.class);
+		Integer result = leakageMessageMapper.updateAlarmMessageStatus(codeList);
 		return result;
 	}
 

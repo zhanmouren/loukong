@@ -52,7 +52,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/systemManagerLabel")
 public class SystemManagerLabelController {
 
-	//TODO 权限
 	@Autowired
 	private LabelService labelService;
 	

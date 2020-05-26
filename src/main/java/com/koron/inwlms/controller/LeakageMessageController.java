@@ -67,4 +67,31 @@ public class LeakageMessageController {
 		}
 		return msg.toJson();
 	}
+	
+	@RequestMapping(value = "/updateAlarmMessageStatus.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@ApiOperation(value = "修改预警信息读取状态接口", notes = "修改预警信息读取状态接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateAlarmMessageStatus(@RequestBody List<String> codeList) {
+		MessageBean<LeakageMessageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LeakageMessageListVO.class);
+		try {
+//			Gson jsonValue = new Gson();
+//			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+//			loginName = userListVO.getLoginName();
+			Integer result = ADOConnection.runTask(leakageMessageService, "updateAlarmMessageStatus", Integer.class, codeList);
+			if(result != null ) {
+				if(result != 0) {
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("成功修改预警信息读取状态"); 
+				
+				}else {
+					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("无该预警信息"); 
+				}
+			}
+		}catch (Exception e) {
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("修改预警信息读取状态失败");
+		}
+		return msg.toJson();
+	}
 }
