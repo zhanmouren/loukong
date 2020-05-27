@@ -1,5 +1,7 @@
 package com.koron.inwlms.bean.DTO.leakageControl;
 
+import java.util.List;
+
 import com.koron.inwlms.bean.DTO.common.BaseDTO;
 
 /**
@@ -61,6 +63,18 @@ public class WarningInfDTO extends BaseDTO {
 	 */
 	private String code;
 	
+	private List<String> labelCodeList;
+	
+	
+	
+
+	public List<String> getLabelCodeList() {
+		return labelCodeList;
+	}
+
+	public void setLabelCodeList(List<String> labelCodeList) {
+		this.labelCodeList = labelCodeList;
+	}
 
 	public String getCode() {
 		return code;

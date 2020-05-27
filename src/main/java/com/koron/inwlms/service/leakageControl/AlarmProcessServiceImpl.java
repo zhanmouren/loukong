@@ -99,6 +99,10 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	@TaskAnnotation("queryTreatmentEffect")
 	@Override
 	public TreatmentEffectVO queryTreatmentEffect(SessionFactory factory,TreatmentEffectDTO treatmentEffectDTO) {
+		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		List<AlarmProcessVO> list = mapper.queryAlarmProcessByTaskCode(treatmentEffectDTO.getProcessCode());
+		String zoneCode = list.get(0).getWarningCode();
+		
 		TreatmentEffectVO treatmentEffectVO = new TreatmentEffectVO();
 		IndicatorMapper indMapper = factory.getMapper(IndicatorMapper.class);
 		Date startDate = new Date();

@@ -145,4 +145,9 @@ where "schemeCode" = #{schemeCode}
  select * from app_alertnoticescheme where "schemeCode" = #{code}
  </select>
  
+ <insert id="addNoticeScheme" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme">
+ insert into app_alertnoticescheme("schemeCode", type, "roleCode", flag, "createBy", "createTime", "updateBy", "updateTime")
+ values(#{schemeCode}, #{type}, #{roleCode}, #{createBy}, Now(), #{updateBy}, Now())
+ </insert>
+ 
  </mapper>

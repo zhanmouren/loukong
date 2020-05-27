@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.koron.inwlms.bean.DTO.common.BaseDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
+import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 
 /**
  * 
@@ -74,6 +75,10 @@ public class WarningSchemeDTO extends BaseDTO{
 	private String paramType;
 	
 	
+	
+
+	
+
 	public List<AlertNoticeScheme> getNoticeList() {
 		return noticeList;
 	}

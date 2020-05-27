@@ -32,6 +32,8 @@ public interface WarningSchemeMapper {
 	Integer deleteAlarmRuleByAlarmCode(String schemeCode);
 	Integer updateAlarmRule(AlarmRuleDTO alarmRuleDTO);
 	
+	Integer addNoticeScheme(AlertNoticeScheme alertNoticeScheme);
+	
 	List<AlertNoticeSchemeVO> queryNoticeSchemeByWarningCode(String code);
 	
 	@Select("select * from app_warningscheme where \"state\" = #{state}")

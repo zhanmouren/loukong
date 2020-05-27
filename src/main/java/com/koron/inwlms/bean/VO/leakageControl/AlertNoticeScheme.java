@@ -11,11 +11,13 @@ public class AlertNoticeScheme {
 
 	private Integer id;
 	
-	private String warningCode;
+	private String schemeCode;
 	
 	private String type;
 	
-	private Integer userId;
+	private Integer roleCode;
+	
+	private Integer flag;
 	
 	private String createBy;
 	
@@ -24,6 +26,16 @@ public class AlertNoticeScheme {
 	private String updateBy;
 	
 	private Date updateTime;
+	
+	
+
+	public Integer getFlag() {
+		return flag;
+	}
+
+	public void setFlag(Integer flag) {
+		this.flag = flag;
+	}
 
 	public Integer getId() {
 		return id;
@@ -33,28 +45,12 @@ public class AlertNoticeScheme {
 		this.id = id;
 	}
 
-	public String getWarningCode() {
-		return warningCode;
-	}
-
-	public void setWarningCode(String warningCode) {
-		this.warningCode = warningCode;
-	}
-
 	public String getType() {
 		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public Integer getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Integer userId) {
-		this.userId = userId;
 	}
 
 	public String getCreateBy() {
@@ -88,6 +84,23 @@ public class AlertNoticeScheme {
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
 	}
+
+	public String getSchemeCode() {
+		return schemeCode;
+	}
+
+	public void setSchemeCode(String schemeCode) {
+		this.schemeCode = schemeCode;
+	}
+
+	public Integer getRoleCode() {
+		return roleCode;
+	}
+
+	public void setRoleCode(Integer roleCode) {
+		this.roleCode = roleCode;
+	}
+	
 	
 	
 }

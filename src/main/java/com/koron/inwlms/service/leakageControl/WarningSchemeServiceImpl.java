@@ -133,6 +133,9 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 				mapper.addAlarmRule(alarmRuleDTO);
 			}
 			
+			for(AlertNoticeScheme alertNoticeScheme : warningSchemeDTO.getNoticeList()) {
+				mapper.addNoticeScheme(alertNoticeScheme);
+			}
 		}
 		return num;
 	}
