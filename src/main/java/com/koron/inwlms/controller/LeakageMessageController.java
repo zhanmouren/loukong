@@ -14,6 +14,7 @@ import org.swan.bean.MessageBean;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.LeakageMessageListVO;
@@ -42,13 +43,13 @@ public class LeakageMessageController {
 	@RequestMapping(value = "/queryMessage.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询预警信息接口", notes = "查询预警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMessage(@RequestBody String loginName) {
+    public String queryMessage(String loginName) {
 		MessageBean<LeakageMessageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LeakageMessageListVO.class);
 		try {
-//			Gson jsonValue = new Gson();
-//			// 查询条件字符串转对象，查询数据结果
-//			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-//			loginName = userListVO.getLoginName();
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+			loginName = userListVO.getLoginName();
 			LeakageMessageListVO leakageMessageList = ADOConnection.runTask(leakageMessageService, "queryMessage", LeakageMessageListVO.class, loginName);
 			if(leakageMessageList != null ) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -71,13 +72,10 @@ public class LeakageMessageController {
 	@RequestMapping(value = "/updateAlarmMessageStatus.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "修改预警信息读取状态接口", notes = "修改预警信息读取状态接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateAlarmMessageStatus(@RequestBody List<String> codeList) {
+    public String updateAlarmMessageStatus(@RequestBody WarningInfDTO warningInfDTO) {
 		MessageBean<LeakageMessageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LeakageMessageListVO.class);
 		try {
-//			Gson jsonValue = new Gson();
-//			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-//			loginName = userListVO.getLoginName();
-			Integer result = ADOConnection.runTask(leakageMessageService, "updateAlarmMessageStatus", Integer.class, codeList);
+			Integer result = ADOConnection.runTask(leakageMessageService, "updateAlarmMessageStatus", Integer.class, warningInfDTO);
 			if(result != null ) {
 				if(result != 0) {
 					msg.setCode(Constant.MESSAGE_INT_SUCCESS);

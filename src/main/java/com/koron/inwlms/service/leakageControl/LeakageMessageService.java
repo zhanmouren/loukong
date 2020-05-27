@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 
+import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.LeakageMessageListVO;
 
@@ -19,5 +20,5 @@ public interface LeakageMessageService {
 	LeakageMessageListVO<List<AlarmProcessVO>> queryMessage(SessionFactory factory, String loginName);
 	
 	//修改预警信息读取状态
-	Integer updateAlarmMessageStatus(SessionFactory factory,List<String> codeList);
+	Integer updateAlarmMessageStatus(SessionFactory factory,WarningInfDTO warningInfDTO);
 }

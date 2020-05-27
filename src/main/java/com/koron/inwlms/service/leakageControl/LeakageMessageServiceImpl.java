@@ -6,6 +6,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
@@ -42,9 +43,9 @@ public class LeakageMessageServiceImpl implements LeakageMessageService{
 	//修改预警信息读取状态
 	@TaskAnnotation("updateAlarmMessageStatus")
 	@Override
-	public Integer updateAlarmMessageStatus(SessionFactory factory, List<String> codeList) {
+	public Integer updateAlarmMessageStatus(SessionFactory factory, WarningInfDTO warningInfDTO) {
 		LeakageMessageMapper  leakageMessageMapper = factory.getMapper(LeakageMessageMapper.class);
-		Integer result = leakageMessageMapper.updateAlarmMessageStatus(codeList);
+		Integer result = leakageMessageMapper.updateAlarmMessageStatus(warningInfDTO.getLabelCodeList());
 		return result;
 	}
 

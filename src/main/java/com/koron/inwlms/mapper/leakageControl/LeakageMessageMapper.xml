@@ -127,7 +127,7 @@
 	
 	<update id="updateAlarmMessageStatus" parameterType="String">
 		update app_warninginf 
-		set status = 1 
+		set status = 1
 		where code in 
 		<foreach item="codeItem" collection="list" open="(" separator="," close=")">
             #{codeItem}

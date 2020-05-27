@@ -2,6 +2,7 @@ package com.koron.inwlms.mapper.leakageControl;
 
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
