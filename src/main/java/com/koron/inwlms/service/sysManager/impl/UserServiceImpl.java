@@ -1837,14 +1837,14 @@ public class UserServiceImpl implements UserService{
 			            	}
 		            	}
 		            	if(flag) {
-		            		if(1<=maxNum && maxNum<10) {
-		            		 finalKey="L"+dataDicDTO.getDicParent()+"000"+String.valueOf(maxNum);
-		                    }else if(10<=maxNum && maxNum<100) {
-		                     finalKey="L"+dataDicDTO.getDicParent()+"00"+String.valueOf(maxNum);
-		                    }else if(100<=maxNum && maxNum<1000){
-		                     finalKey="L"+dataDicDTO.getDicParent()+"0"+String.valueOf(maxNum);
+		            		if(1<=(maxNum+1) && (maxNum+1)<10) {
+		            		 finalKey="L"+dataDicDTO.getDicParent()+"000"+String.valueOf(maxNum+1);
+		                    }else if(10<=(maxNum+1) && (maxNum+1)<100) {
+		                     finalKey="L"+dataDicDTO.getDicParent()+"00"+String.valueOf(maxNum+1);
+		                    }else if(100<=(maxNum+1) && (maxNum+1)<1000){
+		                     finalKey="L"+dataDicDTO.getDicParent()+"0"+String.valueOf(maxNum+1);
 		                    }else {
-		                     finalKey="L"+dataDicDTO.getDicParent()+String.valueOf(maxNum);	
+		                     finalKey="L"+dataDicDTO.getDicParent()+String.valueOf(maxNum+1);	
 		                    }
 		            	}else {
 		            		finalKey="L"+dataDicDTO.getDicParent()+"0001";	
