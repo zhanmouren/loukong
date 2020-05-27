@@ -5,7 +5,7 @@
    <select id="queryAlarmMessage" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
 	select *
 	from app_warningInf as "warningInf"
-	where "warningInf".status = 0 and "warningInf"."schemeCode" in
+	where  "warningInf"."schemeCode" in
 	(
 		select "Scheme"."schemeCode"
 		from app_alertNoticeScheme as "Scheme"
@@ -21,7 +21,7 @@
 			)
 		)
 	)
-	order by "warningInf"."alarmTime" desc 
+	order by "warningInf".status asc,"warningInf"."alarmTime" desc 
     </select>
    
    <select id="queryLeakageProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
