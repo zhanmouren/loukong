@@ -117,7 +117,7 @@
      <!-- 查询该角色下有没有绑定职员 -->
      <select id="queryRoleUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleMsgVO">
        select "userRole".name as roleName
-       from  sm_userrolerelation as "userRela"
+       from  sm_userrolerelation  as "userRela"
        left join  sm_userrole as "userRole" on "userRole".code="userRela"."roleCode"
        where "userRela"."roleCode"=#{roleCode}
        order by "userRole"."createTime" desc
@@ -136,7 +136,7 @@
        select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 	  "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
        else string_agg(distinct("dept".name),';') end as "depname","user".code  as code ,"user".code as code
-       from sm_userrolerelation as "userRela"
+       from sm_userrolerelation  as "userRela"
        left join sm_user as "user" on "userRela"."userCode"="user".code
        left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
 	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
@@ -151,7 +151,7 @@
      <!--根据角色Code加载角色人员总条数 -->
      <select id="getRoleUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="java.lang.Integer">
        select count(distinct("user"."loginName")) 
-       from sm_userrolerelation as "userRela"
+       from sm_userrolerelation  as "userRela"
        left join sm_user as "user" on "userRela"."userCode"="user".code
        left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
 	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
@@ -167,7 +167,7 @@
     
     <!--遍历插入职员与角色的关系 -->
     <insert id="addRoleUser" parameterType="java.util.List">  
-        insert into sm_userrolerelation ("userCode", "roleCode","createBy","createTime","updateBy","updateTime")values
+        insert into sm_userrolerelation  ("userCode", "roleCode","createBy","createTime","updateBy","updateTime")values
 		<foreach collection="list" item="roleuser"  index="index" separator=",">
 			(#{roleuser.userCode}, #{roleuser.roleCode}, #{roleuser.createBy},Now(), #{roleuser.updateBy},Now())
 		</foreach>
@@ -183,14 +183,14 @@
      <!--先判断职员code和roleCode是否已经存在在用户角色关系表 -->
     <select id="judgeExistCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO">
          select "userCode","roleCode"
-         from sm_userrolerelation 
+         from sm_userrolerelation  
          where "userCode" =   #{userCode}
          and  "roleCode" =  #{roleCode}
     </select>
     
      <!-- 批量删除角色中员工信息 -->
     <delete id="deleteRoleUser">
-        delete from sm_userrolerelationwhere "roleCode"=#{roleCode} 
+        delete from sm_userrolerelation where "roleCode"=#{roleCode} 
         and "userCode" in
         <foreach item="userItem" collection="list" open="(" separator="," close=")">
             #{userItem}
@@ -208,7 +208,7 @@
 	   <trim prefix="where" prefixOverrides="and|or"> 
 	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
 	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%' </if> 
-	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from sm_userrolerelationas "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
+	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from sm_userrolerelation as "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>
 	    group by "user".id ,"user"."loginName","user".phone,"user"."email",
@@ -226,7 +226,7 @@
 	   <trim prefix="where" prefixOverrides="and|or"> 
 	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
 	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
-	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from sm_userrolerelationas "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
+	     <if test="roleCode != null">  and "user".code not in(select "userrela"."userCode" from sm_userrolerelation as "userrela" where "userrela"."roleCode" =#{roleCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
 	   </trim>   
      </select>
@@ -665,7 +665,7 @@
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress",case when string_agg(to_char("rolemenu".op,'9'),',') is null then '' else string_agg(to_char("rolemenu".op,'9'),',') end as op
         from sm_rolemenus as "rolemenu"
         left join sm_modulemenu as "menu" on "menu".code="rolemenu"."moduleCode"
-        left join sm_userrolerelation as "rela" on "rela"."roleCode"="rolemenu"."roleCode"
+        left join sm_userrolerelation  as "rela" on "rela"."roleCode"="rolemenu"."roleCode"
         left join sm_user as "user" on "user".code="rela"."userCode"
         where "rolemenu"."moduleCode"=#{moduleCode} and "user".code=#{userCode}
         GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo","menu"."ownOP",
