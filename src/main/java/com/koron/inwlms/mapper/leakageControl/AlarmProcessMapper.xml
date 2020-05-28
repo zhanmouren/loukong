@@ -4,14 +4,13 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper">
  <select id="queryAlarmProcess" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- select a.id as id,a.code as "taskCode", a."executorCode" as "executorCode",a.state as state,a."expectFinishTime" as "expectFinishTime",a."recommendStrategy" as "recommendStrategy",a."actualStrategy" as "actualStrategy",
- a."leadingCadre" as "leadingCadre",a."projectCost" as "projectCost",a."waterSave" as "waterSave",a."actualStrategyType" as "actualStrategyType",a."actualCost" as "actualCost",a."actualFinishTime" as "actualFinishTime",
- a.content as content,a."createBy" as "createBy",a."createTime" as "createTime",a."updateBy" as "updateBy",a."updateTime" as "updateTime",
+ select id as id,"warningCode" as "warningCode", code as "taskCode", "executorCode" as "executorCode",state as state,"expectFinishTime" as "expectFinishTime","recommendStrategy" as "recommendStrategy","actualStrategy" as "actualStrategy",
+ "leadingCadre" as "leadingCadre","projectCost" as "projectCost","waterSave" as "waterSave","actualStrategyType" as "actualStrategyType","actualCost" as "actualCost","actualFinishTime" as "actualFinishTime",
+ content as content,"createBy" as "createBy","createTime" as "createTime","updateBy" as "updateBy","updateTime" as "updateTime"
  from 
- (select * from app_warningprocessing where "createTime" between '${startTime}' and '${endTime}' and type = #{type}
+ app_warningprocessing where "createTime" between '${startTime}' and '${endTime}' and type = #{type}
  <if test="state != null and state != '' "> and state = #{processState}</if>
  <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>
- ) a
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1); 
  </select>
  
@@ -21,9 +20,9 @@
  </select>
  
  <select id="queryAlarmProcessByTaskCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- select a.id as id,a.code as "taskCode", a."executorCode" as "executorCode",a.state as state,a."expectFinishTime" as "expectFinishTime",a."recommendStrategy" as "recommendStrategy",a."actualStrategy" as "actualStrategy",
+ select a.id as id,a."warningCode" as "warningCode", a.code as "taskCode", a."executorCode" as "executorCode",a.state as state,a."expectFinishTime" as "expectFinishTime",a."recommendStrategy" as "recommendStrategy",a."actualStrategy" as "actualStrategy",
  a."leadingCadre" as "leadingCadre",a."projectCost" as "projectCost",a."waterSave" as "waterSave",a."actualStrategyType" as "actualStrategyType",a."actualCost" as "actualCost",a."actualFinishTime" as "actualFinishTime",
- a.content as content,a."createBy" as "createBy",a."createTime" as "createTime",a."updateBy" as "updateBy",a."updateTime" as "updateTime",d.content as "alarmContent",d."alarmType" as "alarmType",d."objectType" as "objectType",d."objectCode" as "objectCode"
+ a.content as content,a."createBy" as "createBy",a."createTime" as "createTime",a."updateBy" as "updateBy",a."updateTime" as "updateTime"
  from 
  (select * from app_warningprocessing where code = #{taskCode}
  ) a

@@ -270,9 +270,9 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		gisZoneData.setPip_info(pipeinfo);
 		gisZoneData.setNum_up(automaticPartitionDTO.getMaxZone());
 		gisZoneData.setNum_down(automaticPartitionDTO.getMinZone());
-		gisZoneData.setNum_up(20);
-		gisZoneData.setNum_down(5);
-		gisZoneData.setTotal_plan_code("888");
+		gisZoneData.setNum_up(67);
+		gisZoneData.setNum_down(50);
+		gisZoneData.setTotal_plan_code("123");
 		String data101 = gson.toJson(gisZoneData);
 		String mlPath = "http://10.13.1.11:7500/partition/partitionParamVerify";
 		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
@@ -283,8 +283,8 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			JsonObject rpResultData = InterfaceUtil.interfaceOfPostUtil(rpPath, gson.toJson(gisZoneData));
 			String codeml = rpResultData.get("flag").getAsString();
 			if(codeml.equals("1")) {
-				JsonObject mldata = rpResultData.get("data").getAsJsonObject();
-				ModelReturn modelreturn = gson.fromJson(mldata, new TypeToken<ModelReturn>(){}.getType());
+//				JsonObject mldata = rpResultData.get("data").getAsJsonObject();
+//				ModelReturn modelreturn = gson.fromJson(mldata, new TypeToken<ModelReturn>(){}.getType());
 				return null;
 			}
 		}
@@ -292,7 +292,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	}
 	
 	public List<GisZonePipeData> readText() {
-		File file = new File("D:/智能分区-10000.txt");
+		File file = new File("D:/智能分区-1000.txt");
 		StringBuilder result = new StringBuilder();
         try{
             BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件

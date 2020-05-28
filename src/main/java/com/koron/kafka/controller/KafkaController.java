@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.koron.inwlms.util.kafka.ZoneKafkaConsumer;
 import com.koron.kafka.Bean.User;
 
 @RestController
@@ -15,7 +16,7 @@ public class KafkaController {
 	@Autowired
     private KafkaProducer kafkaProducer;
 	@Autowired
-    private KafkaConsumerDemo kafkacus;
+    private ZoneKafkaConsumer kafkacus;
 	
 	
 	 @RequestMapping("/createMsg")

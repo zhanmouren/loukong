@@ -17,10 +17,14 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.service.intellectPartition.PartitionSchemeDetServiceImpl;
 
 import edu.emory.mathcs.backport.java.util.Collections;
-
+/**
+ * 分区评估
+ * @author 刘刚
+ *
+ */
 @Component
 public class ZoneKafkaConsumer {
-	 private String topicUser="model_zoning_assessment_result";
+	 private String topicUser="model_partition_zoning_result";
 	 
 	 public void consume() {
 	        Properties props = new Properties();

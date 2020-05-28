@@ -38,12 +38,24 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		List<AlarmProcessVO> list = mapper.queryAlarmProcess(alarmProcessDTO);
 		//查询报警信息
 		for(AlarmProcessVO alarmProcessVO : list) {
-			if(alarmProcessVO.getWarningCode() != null || !alarmProcessVO.getWarningCode().equals("")) {
+			if(alarmProcessVO.getWarningCode() != null) {
 				AlarmProcessVO alarmProcessVO1 = mapper.queryAlarmMessageByCode(alarmProcessVO.getWarningCode());
-				alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
-				alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
-				alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
-				alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
+				if(alarmProcessVO1 != null) {
+					if(alarmProcessVO1.getAlarmType() != null) {
+						alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
+					}
+					if(alarmProcessVO1.getAlarmContent() != null) {
+						alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
+					}
+					if(alarmProcessVO1.getObjectType() != null ) {
+						alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
+					}
+					if(alarmProcessVO1.getObjectCode() != null) {
+						alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
+					}
+				}
+				
+				
 			}
 		}
 		
@@ -56,12 +68,22 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		List<AlarmProcessVO> list = mapper.queryAlarmProcessByTaskCode(taskCode);
 		
 		for(AlarmProcessVO alarmProcessVO : list) {
-			if(alarmProcessVO.getWarningCode() != null || !alarmProcessVO.getWarningCode().equals("")) {
+			if(alarmProcessVO.getWarningCode() != null) {
 				AlarmProcessVO alarmProcessVO1 = mapper.queryAlarmMessageByCode(alarmProcessVO.getWarningCode());
-				alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
-				alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
-				alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
-				alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
+				if(alarmProcessVO1 != null) {
+					if(alarmProcessVO1.getAlarmType() != null) {
+						alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
+					}
+					if(alarmProcessVO1.getAlarmContent() != null) {
+						alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
+					}
+					if(alarmProcessVO1.getObjectType() != null ) {
+						alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
+					}
+					if(alarmProcessVO1.getObjectCode() != null) {
+						alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
+					}
+				}
 			}
 		}
 		return list;
