@@ -1,4 +1,4 @@
-package com.koron.inwlms.bean.DTO.property;
+package com.koron.inwlms.bean.DTO.baseInf;
 
 import com.koron.inwlms.bean.DTO.common.BaseDTO;
 
@@ -7,17 +7,17 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
  * @date:2020-04-10
  * @description:
  */
-public class FacilityDTO extends BaseDTO {
+public class PointDTO extends BaseDTO {
 
     /**
-     * 附属设施类型
+     * 监测点类别
      */
-    private int type;
+    private int tubing;
 
     /**
-     * 运行状态
+     * 监测点名称
      */
-    private String status;
+    private String name;
 
     /**
      * 一级分区
@@ -34,21 +34,20 @@ public class FacilityDTO extends BaseDTO {
      */
     private String DMA;
 
-
-    public int getType() {
-        return type;
+    public int getTubing() {
+        return tubing;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setTubing(int tubing) {
+        this.tubing = tubing;
     }
 
-    public String getStatus() {
-        return status;
+    public String getName() {
+        return name;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getFirst() {

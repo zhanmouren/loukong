@@ -1,6 +1,5 @@
-package com.koron.inwlms.bean.DTO.property;
+package com.koron.inwlms.bean.DTO.baseInf;
 
-import com.koron.common.web.mapper.TreeBean;
 import com.koron.inwlms.bean.DTO.common.BaseDTO;
 
 /**

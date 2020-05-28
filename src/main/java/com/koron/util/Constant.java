@@ -1,15 +1,9 @@
 package com.koron.util;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.util.field.EnumElement;
 import org.springframework.stereotype.Component;
 
-import com.koron.inwlms.bean.VO.common.SysConfigVO;
-import com.koron.inwlms.service.common.impl.CommonServiceImpl;
+import java.util.HashMap;
 
 @Component
 public class Constant {
@@ -226,7 +220,7 @@ public class Constant {
 	 * 在linux服务器的文件存储路径
 	 */
 	public final static String LINUX_FILE_PATH = "/usr/inms_file";
-	
+
 	/**
 	 * 导出列表的最大条数
 	 */
@@ -1040,6 +1034,100 @@ public class Constant {
 	public final static String ZONE_LOSS_INDIC_DMMLPL="DMMLPL";
 	
 		
-	
+	//**********************基础模块**************************//
+
+	/**
+	 * 入参日期格式异常
+	 */
+	public final static Integer BASE_PARAM_DATE_FORMAT_ERROR=22001;
+
+	/**
+	 * 整形入参未空
+	 */
+	public final static Integer BASE_PARAM_INT_NULL_ERROR=22002;
+
+	/**
+	 * 在模板文件存储路径
+	 */
+	//public final static String LINUX_TEMPALTE_PATH = "static/excelTemplate/";
+	//本地
+	public final static String LINUX_TEMPALTE_PATH = "src/main/resources/static/excelTemplate/";
+
+	/**
+	 * 管线导入模板文件名
+	 */
+	public final static String PIPE_IMPORT_TEMPLATE = "Template_Pipe.xlsx";
+
+	/**
+	 * 管线导入模板Btl文件名
+	 */
+	public final static String PIPE_IMPORT_TEMPLATE_BTL = "static/excelTemplate/Template_Pipe.btl";
+
+	/**
+	 * 监测点导入模板文件名
+	 */
+	public final static String POINT_IMPORT_TEMPLATE = "Template_point.xlsx";
+
+	/**
+	 * 监测点导入模板Btl文件名
+	 */
+	public final static String POINT_IMPORT_TEMPLATE_BTL = "static/excelTemplate/Template_point.btl";
+
+	/**
+	 * 附属设施导入模板文件名
+	 */
+	public final static String FACILITY_IMPORT_TEMPLATE = "Template_facility.xlsx";
+
+	/**
+	 * 附属设施导入模板Btl文件名
+	 */
+	public final static String FACILITY_IMPORT_TEMPLATE_BTL = "Template_facility.btl";
+
+	/**
+	 * 附属设施导入模板文件名
+	 */
+	public final static String WATER_IMPORT_TEMPLATE = "Template_water.xlsx";
+
+	/**
+	 * 附属设施导入模板Btl文件名
+	 */
+	public final static String WATER_IMPORT_TEMPLATE_BTL = "Template_water.btl";
+
+	/**
+	 * 分区与监测点导入模板文件名
+	 */
+	public final static String ZONEPOINT_IMPORT_TEMPLATE = "Template_zonepoint.xlsx";
+
+	/**
+	 * 分区与监测点导入模板Btl文件名
+	 */
+	public final static String ZONEPOINT_IMPORT_TEMPLATE_BTL = "Template_zonepoint.btl";
+
+    /**
+     * 监测数据导入模板文件名
+     */
+    public final static String MONITORDATA_IMPORT_TEMPLATE = "Template_monitorData.xlsx";
+
+    /**
+     * 监测数据导入模板Btl文件名
+     */
+    public final static String MONITORDATA_IMPORT_TEMPLATE_BTL = "Template_monitorData.btl";
+
+
+	/**
+	 * 抄表数据导入模板文件名
+	 */
+	public final static String METERDATA_IMPORT_TEMPLATE = "Template_meterData.xlsx";
+
+	/**
+	 * 监测数据导入模板Btl文件名
+	 */
+	public final static String METERDATA_IMPORT_TEMPLATE_BTL = "Template_meterData.btl";
+
+	/**
+	 * 分区与户表导入文件模板
+	 */
+	public final static String ZONEMETER_IMPORT_TEMPLATE = "Template_zoneMeter.xlsx";
+	//************************end****************************//
 	
 }

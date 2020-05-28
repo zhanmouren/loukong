@@ -1,0 +1,1031 @@
+package com.koron.inwlms.controller;
+
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.koron.inwlms.bean.DTO.baseInf.*;
+import com.koron.inwlms.bean.VO.baseInf.*;
+import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.service.baseData.*;
+import com.koron.inwlms.util.ExportDataUtil;
+import com.koron.inwlms.util.FileUtil;
+import com.koron.inwlms.util.ImportExcelUtil;
+import com.koron.inwlms.util.InterfaceUtil;
+import com.koron.util.Constant;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.koron.ebs.mybatis.ADOConnection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.swan.bean.MessageBean;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @auother:zhong
+ * @date:
+ * @description:
+ */
+@Controller
+@Api(value = "baseData", description = "基础数据Controller")
+@RequestMapping(value = "/baseData")
+public class BaseDataController {
+
+    @Autowired
+    private DataQualityService dqs;
+
+    //@Autowired
+    //private FacilityService fs;
+
+    //@Autowired
+    //private PipeNetworkService pns;
+
+    @Autowired
+    private PipeService pipesvr;
+
+    @Autowired
+    private PointService pointS;
+
+    @Autowired
+    private MeterDataService mds;
+
+    @Autowired
+    private ZoneConfigService zcs;
+
+    @Autowired
+    private MonitorService ms;
+
+    @RequestMapping(value = "/queryPGData.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询数据接口", notes = "查询数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPGData() {
+      MessageBean msg = new MessageBean();
+      List<DataVO> pipes = ADOConnection.runTask(pipesvr, "queryALList", List.class);
+      msg.setCode(0);
+      msg.setData(pipes);
+      return msg.toJson();
+    }
+
+
+    @RequestMapping(value = "/queryPipeList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询管线信息接口", notes = "查询管线信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPipeList(@RequestBody PipeDTO pipeDTO) {
+
+        //TODO:参数pipeDTO校验
+
+        //JSONObject json = JSONObject.fromObject(pipeDTO);
+        String path = "";
+        //TODO:调用GIS接口获取管线数据
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+
+    @RequestMapping(value = "/queryPipeDet/{pipeID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询管线详情接口", notes = "查询管线详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPipeDet(@PathVariable("pipeID") String pipeID) {
+
+        //TODO:参数pipeID校验
+
+        //TODO:调用GIS接口获取管线数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+    @RequestMapping("/importPipe.htm")
+    @ApiOperation(value = "导入管线接口", notes = "导入管线接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importPipe(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent") MultipartFile file) {
+        //TODO:操作权限校验
+
+        //TODO:Excel数据读取校验完整性，一致性，准确性
+
+        //TODO:调用GIS接口导出管线数据
+        String path= "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+    @RequestMapping("/downloadPipeTemplate.htm")
+    @ApiOperation(value = "导出管线Excel模板", notes = "导出管线Excel模板", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public void downloadPipeTemplate(HttpServletResponse response, HttpServletRequest request) {
+
+        //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
+
+        //TODO:
+        FileUtil.downloadFile(Constant.PIPE_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.PIPE_IMPORT_TEMPLATE, response, request);
+        return;
+//        try {
+//            return ExportExcel.exportFile(Constant.PIPE_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH + Constant.PIPE_IMPORT_TEMPLATE, Constant.PIPE_IMPORT_TEMPLATE_BTL, (Map) new HashMap());
+//        }catch(Exception e){
+//            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+//        }
+    }
+
+    @RequestMapping("/exportPipe.htm")
+    @ApiOperation(value = "导出管线接口", notes = "导出管线接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> exportPipe(@RequestBody PipeDTO pipeDTO,@RequestParam String titleInfos) {
+
+        //TODO:权限校验
+
+        if (pipeDTO == null) {
+            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+        }
+        Gson jsonValue = new Gson();
+        //TODO:调用GIS接口导入管线数据
+        String path= "";
+        String JsonData = "";
+        JsonObject pipeObj = InterfaceUtil.interfaceOfPostUtil(path,JsonData);
+        Gson gson = new Gson();
+        List<PipeVO> pipes = gson.fromJson(pipeObj, new TypeToken<List<PipeVO>>(){}.getType());
+        List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+        }.getType());
+        //导出list
+        return ExportDataUtil.getExcelDataFileInfoByList(pipes, jsonArray);
+    }
+
+    @RequestMapping("/deletePipes/{BatchNo}")
+    @ApiOperation(value = "删除某一批次管线数据", notes = "删除某一批次管线数据", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deletePipes(@PathVariable("BatchNo") String BatchNo) {
+
+        //TODO:调用GIS接口删除某一批次数据
+        String path = "";
+        String JsonData = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryPointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询监测点信息接口", notes = "查询监测点信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPointList(@RequestBody PointDTO pointDTO) {
+
+
+        //TODO:调用GIS接口获取管线数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryPointDet/{P_CODE}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询监测点详情接口", notes = "查询监测点详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPointDet(@PathVariable("P_CODE") String P_CODE) {
+
+        //TODO:参数P_CODE校验
+
+        //TODO:调用GIS接口获取管线数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+    @RequestMapping("/importPoint.htm")
+    @ApiOperation(value = "导入监测点接口", notes = "导入监测点接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importPoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+
+        //TODO:Excel数据读取校验完整性，一致性，准确性
+
+
+        //TODO:调用GIS接口导入管线数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+    @RequestMapping("/downloadPointTemplate.htm")
+    @ApiOperation(value = "导出监测点Excel模板", notes = "导出监测点Excel模板", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public void downloadPointTemplate(HttpServletResponse response, HttpServletRequest request) {
+
+        //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
+
+        //TODO:
+        FileUtil.downloadFile(Constant.POINT_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.POINT_IMPORT_TEMPLATE, response, request);
+        return;
+//        try {
+//            return ExportExcel.exportFile(Constant.POINT_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH + Constant.POINT_IMPORT_TEMPLATE, Constant.POINT_IMPORT_TEMPLATE_BTL, (Map) new HashMap());
+//        }catch(Exception e){
+//            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+//        }
+    }
+
+    @RequestMapping("/exportPoint.htm")
+    @ApiOperation(value = "导出监测点接口", notes = "导出监测点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> exportPipe(@RequestBody PointDTO pointDTO,@RequestParam String titleInfos) {
+
+        //TODO:权限校验
+
+        if (pointDTO == null) {
+            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+        }
+        Gson jsonValue = new Gson();
+        //TODO:调用GIS接口导入监测点数据
+        String path= "";
+        String JsonData = "";
+        JsonObject pointObj = InterfaceUtil.interfaceOfPostUtil(path,JsonData);
+        Gson gson = new Gson();
+        List<PointVO> points = gson.fromJson(pointObj, new TypeToken<List<PipeVO>>(){}.getType());
+        List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+        }.getType());
+        //导出list
+        return ExportDataUtil.getExcelDataFileInfoByList(points, jsonArray);
+    }
+
+    @RequestMapping("/deletePoints/{BatchNo}")
+    @ApiOperation(value = "删除某一批次监测点数据", notes = "删除某一批次监测点数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deletePoints(@PathVariable("BatchNo") String BatchNo) {
+
+        //TODO:调用GIS接口删除某一批次数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryFacilityList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询附属设施信息接口", notes = "查询附属设施信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPointList(@RequestBody FacilityDTO facilityDTO) {
+
+        //TODO:调用GIS接口获取附属设施数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryFacilityDet/{P_CODE}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询附属设施详情接口", notes = "查询附属设施详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryFacilityDet(@PathVariable("P_CODE") String P_CODE) {
+
+        //TODO:参数P_CODE校验
+
+        //TODO:调用GIS接口获取附属设施数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+
+    @RequestMapping("/deleteFacility/{BatchNo}")
+    @ApiOperation(value = "删除某一批次附属设施数据", notes = "删除某一批次附属设施数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteFacility(@PathVariable("BatchNo") String BatchNo) {
+
+        //TODO:调用GIS接口删除某一批次数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        return msg.toString();
+    }
+
+    @RequestMapping("/downloadFacilityTemplate.htm")
+    @ApiOperation(value = "导出附属设施Excel模板", notes = "导出附属设施Excel模板", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public void downloadFacilityTemplate(HttpServletResponse response, HttpServletRequest request) {
+
+        //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
+
+        //TODO:
+        FileUtil.downloadFile(Constant.FACILITY_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.FACILITY_IMPORT_TEMPLATE, response, request);
+        return;
+//        try {
+//            return ExportExcel.exportFile(Constant.FACILITY_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH + Constant.FACILITY_IMPORT_TEMPLATE, Constant.FACILITY_IMPORT_TEMPLATE_BTL, (Map) new HashMap());
+//        }catch(Exception e){
+//            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+//        }
+    }
+
+    @RequestMapping("/importFacility.htm")
+    @ApiOperation(value = "导入附属设施接口", notes = "导入附属设施接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importFacility(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+
+        //TODO:Excel数据读取校验完整性，一致性，准确性
+
+
+        //TODO:调用GIS接口导入管线数据
+        String path = "";
+        String jsonData = "";
+        JsonObject msg = InterfaceUtil.interfaceOfPostUtil(path,jsonData);
+
+        return msg.toString();
+    }
+
+
+    @RequestMapping(value = "/queryTabList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询水表列表接口", notes = "查询水表列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryTabList(@RequestBody WatermeterDTO watermeterDTO) {
+        //TODO:权限校验是否有查询权限
+
+        //TODO:调用GIS接口获取附属设施数据
+        String path = "";
+        String jsonData = "";
+        JsonObject msg = InterfaceUtil.interfaceOfPostUtil(path,jsonData);
+        //TODO:返回数据二次加工
+
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryTabDet/{P_CODE}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询水表详情接口", notes = "查询水表详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryTabDet(@PathVariable("P_CODE") String P_CODE) {
+
+        //TODO:参数P_CODE校验
+
+        //TODO:调用GIS接口获取附属设施数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+        //TODO:返回数据加工
+
+        return msg.toString();
+    }
+
+
+    @RequestMapping("/deleteTab/{BatchNo}")
+    @ApiOperation(value = "删除某一批次户表数据", notes = "删除某一批次户表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteTab(@PathVariable("BatchNo") String BatchNo) {
+        //TODO:校验是否有删除权限
+
+        //TODO:调用GIS接口删除某一批次数据
+        String path = "";
+        JsonObject msg = InterfaceUtil.interfaceUtil(path);
+
+        //TODO:返回数据
+
+        return msg.toString();
+    }
+
+    @RequestMapping("/downloadTableTemplate.htm")
+    @ApiOperation(value = "导出水表Excel模板", notes = "导出水表Excel模板", httpMethod = "POST", response = MessageBean.class)
+    @ResponseBody
+    public void downloadTableTemplate(HttpServletResponse response, HttpServletRequest request) {
+
+        //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
+
+        //TODO:
+        FileUtil.downloadFile(Constant.WATER_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.WATER_IMPORT_TEMPLATE, response, request);
+        return;
+//        try {
+//            return ExportExcel.exportFile(Constant.WATER_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH + Constant.WATER_IMPORT_TEMPLATE, Constant.WATER_IMPORT_TEMPLATE_BTL, (Map) new HashMap());
+//        }catch(Exception e){
+//            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+//        }
+    }
+
+    @RequestMapping("/importTable.htm")
+    @ApiOperation(value = "导入水表数据接口", notes = "导入水表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importTable(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+        //TODO:校验是否有数据添加权限
+
+        //TODO:Excel数据读取校验完整性，一致性，准确性
+
+
+        //TODO:调用GIS接口导入管线数据
+        String path = "";
+        String jsonData = "";
+        JsonObject msg = InterfaceUtil.interfaceOfPostUtil(path,jsonData);
+
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区列表接口", notes = "查询分区列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZoneList(@RequestBody ZoneDTO zoneDTO) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        //TODO:校验参数有效性
+        if(zoneDTO.getBegD()!=null && !"".equals(zoneDTO.getBegD()) && !_checkFormat("YYYY-MM-DD",zoneDTO.getBegD())){
+            msg.setCode(Constant.BASE_PARAM_DATE_FORMAT_ERROR);
+            msg.setDescription("日期格式不正确");
+            return msg.toJson();
+        }
+
+        //*****查询符合条件数据
+        PageListVO<List<ZoneVO>> zps = ADOConnection.runTask(zcs, "queryZoneList", PageListVO.class,zoneDTO);
+
+        msg.setCode(0);
+        msg.setData(zps);
+        return msg.toJson();
+    }
+
+
+    @RequestMapping(value = "/queryZonePointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区与监测点列表接口", notes = "查询分区与监测点列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZonePointList(@RequestBody ZonePointDTO zonePointDTO) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        //TODO:校验参数有效性
+
+        //*****查询符合条件数据
+        PageListVO<List<ZonePointVO>> zps = ADOConnection.runTask(zcs, "queryZonePointList", PageListVO.class,zonePointDTO);
+        msg.setCode(0);
+        msg.setData(zps);
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryZonePointHistory.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区与监测点数据导入历史接口", notes = "查询分区与监测点数据导入历史接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZonePointHistory(@RequestBody String begD,@RequestBody String endD) {
+        MessageBean msg = new MessageBean();
+        //TODO:校验参数有效性
+
+        //TODO:权限校验是否有查询权限
+
+        //*****查询符合条件数据
+        List<ZonePointHisVO> zps = ADOConnection.runTask(zcs, "queryZonePointHistory", List.class,begD,endD);
+        msg.setCode(0);
+        msg.setData(zps);
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryZonePointDet/{refID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区监测点详情接口", notes = "查询分区监测点详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZonePointDet(@PathVariable("refID") Integer refID) {
+
+        MessageBean msg = new MessageBean();
+
+        //TODO:参数refID校验
+        if(refID== null){
+            msg.setCode(Constant.BASE_PARAM_INT_NULL_ERROR);
+            msg.setDescription("参数refID不能为空");
+            return msg.toString();
+        }
+
+        //TODO:获取分区监测点详情数据
+        //*****查询符合条件数据
+        ZonePointVO zps = ADOConnection.runTask(zcs, "queryZonePointDet", ZonePointVO.class,refID);
+        msg.setCode(0);
+        msg.setData(zps);
+        return msg.toJson();
+    }
+
+
+    @RequestMapping(value = "/updateZonePointDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改分区监测点详情接口", notes = "修改分区监测点详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateZonePointDet(@RequestBody ZonePointDTO zonePointDTO) {
+
+        MessageBean msg = new MessageBean();
+
+        //TODO:参数zonePointDTO校验
+        if(zonePointDTO.getRefID()==null){
+            msg.setCode(Constant.BASE_PARAM_INT_NULL_ERROR);
+            msg.setDescription("参数refID不能为空");
+            return msg.toString();
+        }
+
+        //TODO:获取分区监测点详情数据
+        //*****查询符合条件数据
+        Integer ret = ADOConnection.runTask(zcs, "updateZonePointDet", Integer.class,zonePointDTO);
+        if(ret>=0){
+            msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+            msg.setDescription("操作成功");
+        }else{
+            msg.setCode(Constant.MESSAGE_INT_ERROR);
+            msg.setDescription("操作失败");
+        }
+
+        return msg.toJson();
+    }
+
+    @RequestMapping("/deleteZonePointByBatch/{BatchNo}")
+    @ApiOperation(value = "删除某一批次分区与监测点数据", notes = "删除某一批次分区与监测点数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteZonePointByBatch(@PathVariable("BatchNo") String BatchNo) {
+        MessageBean msg = new MessageBean();
+        //TODO:校验是否有删除权限
+
+        //TODO:
+        if(BatchNo==null || "".equals(BatchNo)){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toString();
+        }
+
+        //***删除某一批次数据
+        Integer ret = ADOConnection.runTask(zcs, "deleteZonePointByBatch", Integer.class,BatchNo);
+        msg.setCode(0);
+        msg.setDescription(Constant.MESSAGE_STRING_SUCCESS);
+        return msg.toString();
+    }
+
+    @RequestMapping("/downloadZonePointTemplate.htm")
+    @ApiOperation(value = "导出分区与监测点Excel模板", notes = "导出分区与监测点Excel模板", httpMethod = "POST", response = MessageBean.class)
+    @ResponseBody
+    public void downloadZonePointTemplate(HttpServletResponse response, HttpServletRequest request) {
+
+        //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
+
+        //TODO:
+        //return ExportExcel.exportFile(Constant.POINT_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH + Constant.POINT_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH+Constant.ZONEPOINT_IMPORT_TEMPLATE_BTL, (Map) new HashMap());
+        FileUtil.downloadFile(Constant.POINT_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.POINT_IMPORT_TEMPLATE, response, request);
+        return;
+
+    }
+
+    @RequestMapping("/importZonePoint.htm")
+    @ApiOperation(value = "导入分区与监测点数据接口", notes = "导入分区与监测点数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importZonePoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+        MessageBean msg = new MessageBean();
+
+        //TODO:校验是否有数据添加权限
+
+        //参数校验
+        if(BatchNo==null || "".equals(BatchNo)){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription("批号不能为空");
+            return msg.toString();
+        }
+
+        //TODO:Excel数据读取校验完整性，一致性，准确性
+
+        return msg.toString();
+    }
+
+
+    @RequestMapping(value = "/queryZoneMeterList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区与户表列表接口", notes = "查询分区与户表列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZoneMeterList(@RequestBody ZoneMeterDTO zoneMeterDTO) {
+        MessageBean msg = new MessageBean();
+        //TODO:权限校验是否有查询权限
+
+        //TODO:校验参数
+
+        //*****查询符合条件数据
+        //List<ZonePointVO> zps = ADOConnection.runTask(zcs, "queryZoneMeterList", List.class,zoneMeterDTO);
+        PageListVO<List<ZoneMeterVO>> zps = ADOConnection.runTask(zcs, "queryZoneMeterList", PageListVO.class,zoneMeterDTO);
+        msg.setCode(0);
+        msg.setData(zps);
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryZoneMeterDet/{r_code}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区户表详情接口", notes = "查询分区户表详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZoneMeterDet(@PathVariable("r_code") String r_code) {
+
+        MessageBean msg = new MessageBean();
+        //TODO:r_code校验
+        if(r_code==null || "".equals(r_code)){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toString();
+        }
+        //*****查询符合条件数据
+        ZoneMeterVO zp = ADOConnection.runTask(zcs, "queryZoneMeterDet", ZoneMeterVO.class,r_code);
+        //TODO:获取分区户表详情数据
+        msg.setData(zp);
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/updateZoneMeterDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改分区户表详情接口", notes = "修改分区户表详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateZoneMeterDet(@RequestBody ZoneMeterDTO zoneMeterDTO) {
+
+        MessageBean msg = new MessageBean();
+
+        //TODO:参数zoneMeterDTO校验
+        if(zoneMeterDTO.getRefID()==null ){
+            msg.setCode(Constant.BASE_PARAM_INT_NULL_ERROR);
+            msg.setDescription("关系编号不能为空");
+            return msg.toString();
+        }
+
+        //TODO:获取分区监测点详情数据
+        //*****查询符合条件数据
+        Integer ret = ADOConnection.runTask(zcs, "updateZoneMeterDet", Integer.class,zoneMeterDTO);
+        if(ret>=0){
+            msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+            msg.setDescription("操作成功");
+        }else{
+            msg.setCode(Constant.MESSAGE_INT_ERROR);
+            msg.setDescription("操作失败");
+        }
+
+        return msg.toJson();
+    }
+
+    @RequestMapping("/deleteZoneMeterRel/{refID}")
+    @ApiOperation(value = "删除分区与户表数据", notes = "删除分区与户表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteZoneMeterRel(@PathVariable("refID") String refID) {
+        MessageBean msg = new MessageBean();
+        //TODO:校验是否有删除权限
+
+
+        //TODO:返回数据
+        Integer ret = ADOConnection.runTask(zcs, "deleteZoneMeterRel", Integer.class,refID);
+        if(ret>=0){
+            msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+            msg.setDescription("操作成功");
+        }else{
+            msg.setCode(Constant.MESSAGE_INT_ERROR);
+            msg.setDescription("操作失败");
+        }
+        return msg.toJson();
+    }
+
+    @RequestMapping("/deleteZoneMeterByBatchNo/{BatchNo}")
+    @ApiOperation(value = "删除某一批次分区与户表数据", notes = "删除某一批次分区与户表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteZoneMeterByBatchNo(@PathVariable("BatchNo") String BatchNo) {
+        MessageBean msg = new MessageBean();
+        //TODO:校验是否有删除权限
+
+
+        //TODO:参数校验
+        if(BatchNo == null || "".equals(BatchNo)){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription("批次为空");
+            return msg.toJson();
+        }
+
+        Integer ret = ADOConnection.runTask(zcs, "deleteZoneMeterByBatchNo", Integer.class,BatchNo);
+        if(ret>=0){
+            msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+            msg.setDescription("操作成功");
+        }else{
+            msg.setCode(Constant.MESSAGE_INT_ERROR);
+            msg.setDescription("操作失败");
+        }
+        return msg.toJson();
+    }
+
+    @RequestMapping("/downloadZoneMeterTemplate.htm")
+    @ApiOperation(value = "导出分区与户表Excel模板", notes = "导出分区与户表Excel模板", httpMethod = "GET", response = MessageBean.class)
+    @ResponseBody
+    public void downloadZoneMeterTemplate(HttpServletResponse response, HttpServletRequest request) {
+
+        //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
+
+         FileUtil.downloadFile(Constant.ZONEMETER_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.ZONEMETER_IMPORT_TEMPLATE, response, request);
+         return;
+         //
+//        try {
+//            return ExportExcel.exportFile(Constant.WATER_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH + Constant.WATER_IMPORT_TEMPLATE, Constant.WATER_IMPORT_TEMPLATE_BTL, (Map) new HashMap());
+//        }catch(Exception e){
+//            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+//        }
+    }
+
+    @RequestMapping("/importZoneMeter.htm")
+    @ApiOperation(value = "导入分区与户表数据接口", notes = "导入分区与户表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importZoneMeter(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+        MessageBean msg = new MessageBean();
+
+        //TODO:校验是否有数据添加权限
+
+        //TODO:Excel数据读取校验完整性，一致性，准确性
+
+
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryMonitorDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询监测数据列表接口", notes = "查询监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO) {
+        MessageBean msg = new MessageBean();
+        //TODO:权限校验是否有查询权限
+
+        //TODO:校验参数
+
+        PageListVO<List<MonitorDataVO>> mds = null;
+        //List<MonitorDataVO> mds = null;
+        if("1".equals(monitorDataDTO.getType())) {
+            //*****获取压力/流量数据
+             mds = ADOConnection.runTask(ms, "queryPressureFlowList", PageListVO.class, monitorDataDTO);
+        }else{
+            //*****获取噪声数据
+             mds = ADOConnection.runTask(ms, "queryNoiseList", PageListVO.class, monitorDataDTO);
+        }
+
+        msg.setCode(0);
+        msg.setData(mds);
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryMonitorDataByBatchNo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据批次查询监测数据列表接口", notes = "根据批次查询监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryMonitorDataByBatchNo(@RequestBody MonitorDataDTO monitorDataDTO) {
+        MessageBean msg = new MessageBean();
+        //TODO:权限校验是否有查询权限
+
+        if(monitorDataDTO.getBatchNo()==null || "".equals(monitorDataDTO.getBatchNo()) ){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toString();
+        }
+
+        PageListVO<List<MonitorDataVO>>  mds = ADOConnection.runTask(ms, "queryMonitorDataByBatchNo", PageListVO.class, monitorDataDTO);
+
+        msg.setCode(0);
+        msg.setData(mds);
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryPressureFlowDet/{id}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询压力/流量详情接口", notes = "查询压力/流量详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPressureFlowDet(@PathVariable("id") Integer id) {
+
+        MessageBean msg = new MessageBean();
+        //TODO:r_code校验
+        if(id==null ){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toString();
+        }
+        //*****查询符合条件数据
+        MonitorDataVO md = ADOConnection.runTask(ms, "queryPressureFlowDet", MonitorDataVO.class,id);
+        //TODO:获取分区户表详情数据
+        msg.setData(md);
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryNoiseDet/{id}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询噪声详情接口", notes = "查询噪声详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryNoiseDet(@PathVariable("id") Integer id) {
+
+        MessageBean msg = new MessageBean();
+
+        if(id==null ){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toString();
+        }
+        //*****查询符合条件数据
+        MonitorDataVO md = ADOConnection.runTask(ms, "queryNoiseDet", MonitorDataVO.class,id);
+        msg.setData(md);
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryMonitorDataHistoryList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询监测导入历史数据列表", notes = "查询监测导入历史数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryMonitorDataHistoryList(@RequestBody MonitorDataDTO monitorDataDTO) {
+        MessageBean msg = new MessageBean();
+        //TODO:权限校验是否有查询权限
+
+        //TODO:校验参数
+        if(monitorDataDTO.getBegD()!=null && ! "".equals(monitorDataDTO.getBegD()) && !_checkFormat("YYYY-MM-DD",monitorDataDTO.getBegD())){
+            msg.setCode(Constant.BASE_PARAM_DATE_FORMAT_ERROR);
+            msg.setDescription("日期格式错误");
+            return msg.toString();
+        }
+        if(monitorDataDTO.getEndD()!=null && ! "".equals(monitorDataDTO.getEndD()) && !_checkFormat("YYYY-MM-DD",monitorDataDTO.getEndD())){
+            msg.setCode(Constant.BASE_PARAM_DATE_FORMAT_ERROR);
+            msg.setDescription("日期格式错误");
+            return msg.toString();
+        }
+
+        PageListVO<List<MonitorDataHisVO>>  mds= ADOConnection.runTask(ms, "queryMonitorDataHistoryList", PageListVO.class,monitorDataDTO);
+        msg.setCode(0);
+        msg.setData(mds);
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/updateMonitorDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改监测详情接口", notes = "修改监测详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateMonitorDet(@RequestBody MonitorDataDTO monitorDataDTO) {
+
+        MessageBean msg = new MessageBean();
+
+        //TODO:校验是否有修改权限
+
+        //TODO:参数monitorDataDTO校验
+
+        //TODO:获取分区监测点详情数据
+        //*****查询符合条件数据
+        boolean ret = ADOConnection.runTask(ms, "updateMonitorDet", boolean.class,monitorDataDTO);
+        msg.setCode(0);
+        msg.setData(ret);
+        return msg.toString();
+    }
+
+    @RequestMapping("/downloadMonitorDataTemplate.htm")
+    @ApiOperation(value = "导出监测数据Excel模板", notes = "导出监测数据Excel模板", httpMethod = "POST", response = MessageBean.class)
+    @ResponseBody
+    public void downloadMonitorDataTemplate(HttpServletResponse response, HttpServletRequest request) {
+
+        //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
+
+        //TODO:
+        FileUtil.downloadFile(Constant.MONITORDATA_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.MONITORDATA_IMPORT_TEMPLATE, response, request);
+        return;
+        //
+//        try {
+//            return ExportExcel.exportFile(Constant.MONITORDATA_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH + Constant.MONITORDATA_IMPORT_TEMPLATE, Constant.MONITORDATA_IMPORT_TEMPLATE_BTL, (Map) new HashMap());
+//        }catch(Exception e){
+//            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+//        }
+    }
+
+    @RequestMapping("/importMonitorData.htm")
+    @ApiOperation(value = "导入监测数据接口", notes = "导入监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importMonitorData(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent") MultipartFile file) {
+        MessageBean<?> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+
+        //TODO:校验是否有数据添加权限
+
+        //TODO:Excel数据读取校验完整性，一致性，准确性
+
+        List<MonitorDataExcelBean> excelBeans = ImportExcelUtil.readExcel(file, MonitorDataExcelBean.class);
+        for(MonitorDataExcelBean bean : excelBeans){
+            bean.setBatchNo(BatchNo);
+        }
+        if (excelBeans == null || excelBeans.size()==0) {
+            msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
+            msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
+        } else {
+            try {
+                Integer ret = ADOConnection.runTask(ms, "addBatchMointorData", Integer.class, excelBeans);
+            } catch (Exception e) {
+                msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
+                msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
+            }
+        }
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryReadMeterDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询抄表列表接口", notes = "查询监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryReadMeterDataList(@RequestBody MeterDataDTO meterDataDTO) {
+        MessageBean msg = new MessageBean();
+        //TODO:权限校验是否有查询权限
+
+        //TODO:校验参数格式
+
+        List<MeterDataVO> md = ADOConnection.runTask(mds, "queryReadMeterDataList", List.class, meterDataDTO);
+
+        msg.setCode(0);
+        msg.setData(md);
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryReadMeterDataByBatchNo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "根据批次查询抄表数据列表接口", notes = "根据批次查询抄表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryReadMeterDataByBatchNo(@RequestBody MeterDataDTO meterDataDTO) {
+        MessageBean msg = new MessageBean();
+        //TODO:权限校验是否有查询权限
+
+        //TODO:校验参数
+        if(meterDataDTO.getBatchNo()==null || "".equals(meterDataDTO.getBatchNo()) ){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toString();
+        }
+
+        List<MonitorDataVO>  md = ADOConnection.runTask(mds, "queryMeterDataByBatchNo", List.class, meterDataDTO);
+        msg.setCode(0);
+        msg.setData(md);
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryReadMeterDataHistoryList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询抄表导入历史数据列表", notes = "查询抄表导入历史数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryReadMeterDataHistoryList(@RequestBody MeterDataDTO meterDataDTO) {
+        MessageBean msg = new MessageBean();
+        //TODO:权限校验是否有查询权限
+
+        //TODO:校验参数
+
+        List<MeterDataHisVO>  md= ADOConnection.runTask(mds, "queryReadMeterDataHistoryList", List.class,meterDataDTO);
+        msg.setCode(0);
+        msg.setData(md);
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/updateReadMeterDataDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改抄表详情接口", notes = "修改抄表详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateReadMeterDataDet(@RequestBody MeterDataDTO meterDataDTO) {
+
+        MessageBean msg = new MessageBean();
+
+        //TODO:校验是否有修改权限
+
+        //TODO:参数meterDataDTO校验
+
+        //TODO:获取抄表详情数据
+        //*****查询符合条件数据
+        boolean ret = ADOConnection.runTask(ms, "updateReadMeterDataDet", boolean.class,meterDataDTO);
+        msg.setCode(0);
+        msg.setData(ret);
+        return msg.toString();
+    }
+
+    @RequestMapping("/downloadMeterDataTemplate.htm")
+    @ApiOperation(value = "导出抄表数据Excel模板", notes = "导出抄表数据Excel模板", httpMethod = "POST", response = MessageBean.class)
+    @ResponseBody
+    public void downloadMeterDataTemplate(HttpServletResponse response, HttpServletRequest request) {
+
+        //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
+
+        //TODO:
+        FileUtil.downloadFile(Constant.METERDATA_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.METERDATA_IMPORT_TEMPLATE, response, request);
+        return;
+        //        try {
+//            return ExportExcel.exportFile(Constant.METERDATA_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH + Constant.METERDATA_IMPORT_TEMPLATE, Constant.METERDATA_IMPORT_TEMPLATE_BTL, (Map) new HashMap());
+//        }catch(Exception e){
+//            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+//        }
+    }
+
+    @RequestMapping("/importMeterData.htm")
+    @ApiOperation(value = "导入抄表数据接口", notes = "导入抄表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importMeterData(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+        MessageBean msg = new MessageBean();
+
+        //TODO:校验是否有数据添加权限
+
+        //TODO:Excel数据读取校验完整性，一致性，准确性
+
+        return msg.toString();
+    }
+
+    @RequestMapping(value = "/queryMonRep.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询数据月报数据", notes = "查询数据月报数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryMonRep(@RequestParam String reportDate) {
+
+        MessageBean msg = new MessageBean();
+        if(reportDate == null){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription("日期为空");
+            return msg.toString();
+        }
+        List<MonRepVO> monReps = ADOConnection.runTask(dqs, "queryMonRep", List.class,reportDate);
+        msg.setCode(0);
+        msg.setData(monReps);
+        return msg.toString();
+    }
+
+    /**
+     * 校验字符串格式工具方法
+     * @param format
+     * @param str
+     * @return
+     */
+    boolean _checkFormat(String format,String str){
+        boolean _r = true;
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        try {
+            sdf.setLenient(false);
+            sdf.parse(str);
+        }catch(Exception e){
+            _r = false;
+        }
+        return _r;
+    }
+
+}

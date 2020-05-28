@@ -6,6 +6,11 @@ package com.koron.inwlms.bean.VO.baseInf;
 public class PipeVO {
 
   /**
+   *  featid
+   */
+  private String featid;
+
+  /**
    *  管段ID
    */
   private String pipeID;
@@ -69,6 +74,14 @@ public class PipeVO {
    *  竣工日期
    */
   private String completeDate;
+
+  public String getFeatid() {
+    return featid;
+  }
+
+  public void setFeatid(String featid) {
+    this.featid = featid;
+  }
 
   public String getPipeID() {
     return pipeID;
