@@ -90,7 +90,7 @@ public class FZoneLossListVO {
 	/**
 	 * 最小夜间流量所在时刻
 	 */
-	private Double mnfTime;
+	private Integer mnfTime;
 	
 	/**
 	 * 夜间最小流量与日均供水量的比率
@@ -100,7 +100,7 @@ public class FZoneLossListVO {
 	/**
 	 * 创建时间
 	 */
-	private Double createTime;
+	private String createTime;
 
 	public String getZoneNo() {
 		return zoneNo;
@@ -166,17 +166,10 @@ public class FZoneLossListVO {
 		return mnf;
 	}
 
-	public Double getMnfTime() {
-		return mnfTime;
-	}
-
 	public Double getMnfTdf() {
 		return mnfTdf;
 	}
 
-	public Double getCreateTime() {
-		return createTime;
-	}
 
 	public void setZoneNo(String zoneNo) {
 		this.zoneNo = zoneNo;
@@ -242,15 +235,24 @@ public class FZoneLossListVO {
 		this.mnf = mnf;
 	}
 
-	public void setMnfTime(Double mnfTime) {
-		this.mnfTime = mnfTime;
-	}
 
 	public void setMnfTdf(Double mnfTdf) {
 		this.mnfTdf = mnfTdf;
 	}
 
-	public void setCreateTime(Double createTime) {
+	public Integer getMnfTime() {
+		return mnfTime;
+	}
+
+	public void setMnfTime(Integer mnfTime) {
+		this.mnfTime = mnfTime;
+	}
+
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
 	}
 	

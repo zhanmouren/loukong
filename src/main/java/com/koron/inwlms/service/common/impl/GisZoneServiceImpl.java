@@ -31,106 +31,110 @@ public class GisZoneServiceImpl implements GisZoneService {
 
 	@TaskAnnotation("queryZoneNosByRank")
 	@Override
-	public List<ZoneInfo> queryZoneNosByRank(SessionFactory factory, Integer zoneRank) {
+	public List<ZoneInfo> queryZoneNosByRank(SessionFactory factory, Integer zoneRank,String zoneNo) {
+		GisMapper mapper = factory.getMapper(GisMapper.class);
 		if(zoneRank == null) return null;
 		List<ZoneInfo> list =  new ArrayList<>();
 		if(Constant.RANK_F == zoneRank) {
-			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("FL01");
-			zoneInfo.setZoneName("FL01一级分区");
-			zoneInfo.setAddress("FL01一级分区地址");
-			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("FL02");
-			zoneInfo1.setZoneName("FL02一级分区");
-			zoneInfo1.setAddress("FL02一级分区地址");
-			list.add(zoneInfo);
-			list.add(zoneInfo1);
+			list = mapper.queryZoneNosByRank(Constant.DMAZONELEVEL_ONE,zoneNo);
+//			ZoneInfo zoneInfo = new ZoneInfo();
+//			zoneInfo.setZoneNo("FL01");
+//			zoneInfo.setZoneName("FL01一级分区");
+//			zoneInfo.setAddress("FL01一级分区地址");
+//			ZoneInfo zoneInfo1 = new ZoneInfo();
+//			zoneInfo1.setZoneNo("FL02");
+//			zoneInfo1.setZoneName("FL02一级分区");
+//			zoneInfo1.setAddress("FL02一级分区地址");
+//			list.add(zoneInfo);
+//			list.add(zoneInfo1);
 		}else if (Constant.RANK_S == zoneRank) {
-			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("SL01001");
-			zoneInfo.setZoneName("SL01001二级分区");
-			zoneInfo.setpZoneNo("FL01");
-			zoneInfo.setpZoneName("FL01一级分区");
-			zoneInfo.setAddress("SL01001二级分区地址");
-			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("SL01002");
-			zoneInfo1.setZoneName("SL01002二级分区");
-			zoneInfo1.setpZoneNo("FL01");
-			zoneInfo1.setpZoneName("FL01一级分区");
-			zoneInfo1.setAddress("SL01002二级分区地址");
-			ZoneInfo zoneInfo2 = new ZoneInfo();
-			zoneInfo2.setZoneNo("SL02001");
-			zoneInfo2.setZoneName("SL02001二级分区");
-			zoneInfo2.setpZoneNo("FL02");
-			zoneInfo2.setpZoneName("FL02一级分区");
-			zoneInfo2.setAddress("SL02001二级分区地址");
-			ZoneInfo zoneInfo3 = new ZoneInfo();
-			zoneInfo3.setZoneNo("SL02002");
-			zoneInfo3.setZoneName("SL02002二级分区");
-			zoneInfo3.setpZoneNo("FL02");
-			zoneInfo3.setpZoneName("FL02一级分区");
-			zoneInfo3.setAddress("SL02002二级分区地址");
-			list.add(zoneInfo);
-			list.add(zoneInfo1);
-			list.add(zoneInfo2);
-			list.add(zoneInfo3);
+			list = mapper.queryZoneNosByRank(Constant.DMAZONELEVEL_TWO,zoneNo);
+//			ZoneInfo zoneInfo = new ZoneInfo();
+//			zoneInfo.setZoneNo("SL01001");
+//			zoneInfo.setZoneName("SL01001二级分区");
+//			zoneInfo.setpZoneNo("FL01");
+//			zoneInfo.setpZoneName("FL01一级分区");
+//			zoneInfo.setAddress("SL01001二级分区地址");
+//			ZoneInfo zoneInfo1 = new ZoneInfo();
+//			zoneInfo1.setZoneNo("SL01002");
+//			zoneInfo1.setZoneName("SL01002二级分区");
+//			zoneInfo1.setpZoneNo("FL01");
+//			zoneInfo1.setpZoneName("FL01一级分区");
+//			zoneInfo1.setAddress("SL01002二级分区地址");
+//			ZoneInfo zoneInfo2 = new ZoneInfo();
+//			zoneInfo2.setZoneNo("SL02001");
+//			zoneInfo2.setZoneName("SL02001二级分区");
+//			zoneInfo2.setpZoneNo("FL02");
+//			zoneInfo2.setpZoneName("FL02一级分区");
+//			zoneInfo2.setAddress("SL02001二级分区地址");
+//			ZoneInfo zoneInfo3 = new ZoneInfo();
+//			zoneInfo3.setZoneNo("SL02002");
+//			zoneInfo3.setZoneName("SL02002二级分区");
+//			zoneInfo3.setpZoneNo("FL02");
+//			zoneInfo3.setpZoneName("FL02一级分区");
+//			zoneInfo3.setAddress("SL02002二级分区地址");
+//			list.add(zoneInfo);
+//			list.add(zoneInfo1);
+//			list.add(zoneInfo2);
+//			list.add(zoneInfo3);
 		}else if (Constant.RANK_T == zoneRank) {
-			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("DM01001001");
-			zoneInfo.setZoneName("DM01001001DMA分区");
-			zoneInfo.setpZoneNo("SL01001");
-			zoneInfo.setpZoneName("SL01001二级分区");
-			zoneInfo.setAddress("DM01001001DMA分区地址");
-			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("DM01001002");
-			zoneInfo1.setZoneName("DM01001002DMA分区");
-			zoneInfo1.setpZoneNo("SL01001");
-			zoneInfo1.setpZoneName("SL01001二级分区");
-			zoneInfo1.setAddress("DM01001002DMA分区地址");
-			ZoneInfo zoneInfo2 = new ZoneInfo();
-			zoneInfo2.setZoneNo("DM01002001");
-			zoneInfo2.setZoneName("DM01002001DMA分区");
-			zoneInfo2.setpZoneNo("SL01002");
-			zoneInfo2.setpZoneName("SL01002二级分区");
-			zoneInfo2.setAddress("DM01002001DMA分区地址");
-			ZoneInfo zoneInfo3 = new ZoneInfo();
-			zoneInfo3.setZoneNo("DM01002002");
-			zoneInfo3.setZoneName("DM01002002DMA分区");
-			zoneInfo3.setpZoneNo("SL01002");
-			zoneInfo3.setpZoneName("SL01002二级分区");
-			zoneInfo3.setAddress("DM01002002DMA分区地址");
-			ZoneInfo zoneInfo4 = new ZoneInfo();
-			zoneInfo4.setZoneNo("DM02001001");
-			zoneInfo4.setZoneName("DM02001001DMA分区");
-			zoneInfo4.setpZoneNo("SL02001");
-			zoneInfo4.setpZoneName("SL02001二级分区");
-			zoneInfo4.setAddress("DM02001001DMA分区地址");
-			ZoneInfo zoneInfo5 = new ZoneInfo();
-			zoneInfo5.setZoneNo("DM02001002");
-			zoneInfo5.setZoneName("DM02001002DMA分区");
-			zoneInfo5.setpZoneNo("SL02001");
-			zoneInfo5.setpZoneName("SL02001二级分区");
-			zoneInfo5.setAddress("DM02001002DMA分区地址");
-			ZoneInfo zoneInfo6 = new ZoneInfo();
-			zoneInfo6.setZoneNo("DM02002001");
-			zoneInfo6.setZoneName("DM02002001DMA分区");
-			zoneInfo6.setpZoneNo("SL02002");
-			zoneInfo6.setpZoneName("SL02002二级分区");
-			zoneInfo6.setAddress("DM02002001DMA分区地址");
-			ZoneInfo zoneInfo7 = new ZoneInfo();
-			zoneInfo7.setZoneNo("DM02002002");
-			zoneInfo7.setZoneName("DM02002002DMA分区");
-			zoneInfo7.setpZoneNo("SL02002");
-			zoneInfo7.setpZoneName("SL02002二级分区");
-			zoneInfo7.setAddress("DM02002002DMA分区地址");
-			list.add(zoneInfo);
-			list.add(zoneInfo1);
-			list.add(zoneInfo2);
-			list.add(zoneInfo3);
-			list.add(zoneInfo4);
-			list.add(zoneInfo5);
-			list.add(zoneInfo6);
-			list.add(zoneInfo7);
+			list = mapper.queryZoneNosByRank(Constant.DMAZONELEVEL_THREE,zoneNo);
+//			ZoneInfo zoneInfo = new ZoneInfo();
+//			zoneInfo.setZoneNo("DM01001001");
+//			zoneInfo.setZoneName("DM01001001DMA分区");
+//			zoneInfo.setpZoneNo("SL01001");
+//			zoneInfo.setpZoneName("SL01001二级分区");
+//			zoneInfo.setAddress("DM01001001DMA分区地址");
+//			ZoneInfo zoneInfo1 = new ZoneInfo();
+//			zoneInfo1.setZoneNo("DM01001002");
+//			zoneInfo1.setZoneName("DM01001002DMA分区");
+//			zoneInfo1.setpZoneNo("SL01001");
+//			zoneInfo1.setpZoneName("SL01001二级分区");
+//			zoneInfo1.setAddress("DM01001002DMA分区地址");
+//			ZoneInfo zoneInfo2 = new ZoneInfo();
+//			zoneInfo2.setZoneNo("DM01002001");
+//			zoneInfo2.setZoneName("DM01002001DMA分区");
+//			zoneInfo2.setpZoneNo("SL01002");
+//			zoneInfo2.setpZoneName("SL01002二级分区");
+//			zoneInfo2.setAddress("DM01002001DMA分区地址");
+//			ZoneInfo zoneInfo3 = new ZoneInfo();
+//			zoneInfo3.setZoneNo("DM01002002");
+//			zoneInfo3.setZoneName("DM01002002DMA分区");
+//			zoneInfo3.setpZoneNo("SL01002");
+//			zoneInfo3.setpZoneName("SL01002二级分区");
+//			zoneInfo3.setAddress("DM01002002DMA分区地址");
+//			ZoneInfo zoneInfo4 = new ZoneInfo();
+//			zoneInfo4.setZoneNo("DM02001001");
+//			zoneInfo4.setZoneName("DM02001001DMA分区");
+//			zoneInfo4.setpZoneNo("SL02001");
+//			zoneInfo4.setpZoneName("SL02001二级分区");
+//			zoneInfo4.setAddress("DM02001001DMA分区地址");
+//			ZoneInfo zoneInfo5 = new ZoneInfo();
+//			zoneInfo5.setZoneNo("DM02001002");
+//			zoneInfo5.setZoneName("DM02001002DMA分区");
+//			zoneInfo5.setpZoneNo("SL02001");
+//			zoneInfo5.setpZoneName("SL02001二级分区");
+//			zoneInfo5.setAddress("DM02001002DMA分区地址");
+//			ZoneInfo zoneInfo6 = new ZoneInfo();
+//			zoneInfo6.setZoneNo("DM02002001");
+//			zoneInfo6.setZoneName("DM02002001DMA分区");
+//			zoneInfo6.setpZoneNo("SL02002");
+//			zoneInfo6.setpZoneName("SL02002二级分区");
+//			zoneInfo6.setAddress("DM02002001DMA分区地址");
+//			ZoneInfo zoneInfo7 = new ZoneInfo();
+//			zoneInfo7.setZoneNo("DM02002002");
+//			zoneInfo7.setZoneName("DM02002002DMA分区");
+//			zoneInfo7.setpZoneNo("SL02002");
+//			zoneInfo7.setpZoneName("SL02002二级分区");
+//			zoneInfo7.setAddress("DM02002002DMA分区地址");
+//			list.add(zoneInfo);
+//			list.add(zoneInfo1);
+//			list.add(zoneInfo2);
+//			list.add(zoneInfo3);
+//			list.add(zoneInfo4);
+//			list.add(zoneInfo5);
+//			list.add(zoneInfo6);
+//			list.add(zoneInfo7);
 		}else {
 			return null;
 		}
@@ -140,17 +144,19 @@ public class GisZoneServiceImpl implements GisZoneService {
 	@TaskAnnotation("querySubZoneNos")
 	@Override
 	public List<ZoneInfo> querySubZoneNos(SessionFactory factory, String zoneNo) {
+		GisMapper mapper = factory.getMapper(GisMapper.class);
 		List<ZoneInfo> list =  new ArrayList<>();
 		if(StringUtil.isEmpty(zoneNo)) {
-			ZoneInfo zoneInfo = new ZoneInfo();
-			zoneInfo.setZoneNo("FL01");
-			zoneInfo.setZoneName("FL01一级分区");
-			list.add(zoneInfo);
-			ZoneInfo zoneInfo1 = new ZoneInfo();
-			zoneInfo1.setZoneNo("FL02");
-			zoneInfo1.setZoneName("FL02一级分区");
-			list.add(zoneInfo);
-			list.add(zoneInfo1);	
+			list = mapper.queryZoneNosByRank(Constant.DMAZONELEVEL_ONE,"");
+//			ZoneInfo zoneInfo = new ZoneInfo();
+//			zoneInfo.setZoneNo("FL01");
+//			zoneInfo.setZoneName("FL01一级分区");
+//			list.add(zoneInfo);
+//			ZoneInfo zoneInfo1 = new ZoneInfo();
+//			zoneInfo1.setZoneNo("FL02");
+//			zoneInfo1.setZoneName("FL02一级分区");
+//			list.add(zoneInfo);
+//			list.add(zoneInfo1);	
 		}else {
 			if(("FL01").equals(zoneNo)) {
 				ZoneInfo zoneInfo = new ZoneInfo();
@@ -302,16 +308,27 @@ public class GisZoneServiceImpl implements GisZoneService {
 	@TaskAnnotation("queryZoneDetailInfo")
 	@Override
 	public ZoneDetailInfoVO queryZoneDetailInfo(SessionFactory factory, QueryZoneInfoDTO queryZoneInfoDTO) {
-		ZoneDetailInfoVO zoneDetailInfoVO = new ZoneDetailInfoVO();
-		zoneDetailInfoVO.setZoneNo("FL01");
-		zoneDetailInfoVO.setZoneName("FL01一级分区");
-		zoneDetailInfoVO.setAddress("FL01一级分区地址");
-		zoneDetailInfoVO.setArea(123454.53);
-		zoneDetailInfoVO.setPipeLength(1244.3);
-		zoneDetailInfoVO.setUserNum(1245);
-		zoneDetailInfoVO.setZoneRank(1);
-		zoneDetailInfoVO.setCreateTime("2020-03-10 10:00:00");
-		zoneDetailInfoVO.setUpdateTime("2020-03-10 10:00:00");
+		GisMapper mapper = factory.getMapper(GisMapper.class);
+		Integer zoneType = queryZoneInfoDTO.getZoneType();
+		String rank = "";
+		if(Constant.RANK_F == zoneType) {
+			rank = Constant.DMAZONELEVEL_ONE;
+		}else if(Constant.RANK_S == zoneType) {
+			rank = Constant.DMAZONELEVEL_TWO;
+		}else if(Constant.RANK_T == zoneType) {
+			rank = Constant.DMAZONELEVEL_THREE;
+		}
+		ZoneDetailInfoVO zoneDetailInfoVO = mapper.queryZoneDetailInfo(rank,queryZoneInfoDTO.getZoneNo());
+//		ZoneDetailInfoVO zoneDetailInfoVO = new ZoneDetailInfoVO();
+//		zoneDetailInfoVO.setZoneNo("FL01");
+//		zoneDetailInfoVO.setZoneName("FL01一级分区");
+//		zoneDetailInfoVO.setAddress("FL01一级分区地址");
+//		zoneDetailInfoVO.setArea(123454.53);
+//		zoneDetailInfoVO.setPipeLength(1244.3);
+//		zoneDetailInfoVO.setUserNum(1245);
+//		zoneDetailInfoVO.setZoneRank(1);
+//		zoneDetailInfoVO.setCreateTime("2020-03-10 10:00:00");
+//		zoneDetailInfoVO.setUpdateTime("2020-03-10 10:00:00");
 		return zoneDetailInfoVO;
 	}
 

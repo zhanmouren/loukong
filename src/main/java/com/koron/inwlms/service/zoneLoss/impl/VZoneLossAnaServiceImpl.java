@@ -1,6 +1,7 @@
 package com.koron.inwlms.service.zoneLoss.impl;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,8 +104,14 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 		indicatorDTO.setCodes(zoneCodes);
 		List<IndicatorVO> zoneIndics = mapper.queryZoneLossIndicData(indicatorDTO);
 		
-		List<Integer> timeList = TimeUtil.getMonthsList(indicatorDTO.getStartTime(),indicatorDTO.getEndTime());
-		int timeNum = timeList.size();
+		List<Integer> timeList;
+		int timeNum = 0;
+		try {
+			timeList = TimeUtil.getTimeList(indicatorDTO.getStartTime(),indicatorDTO.getEndTime());
+			timeNum = timeList.size();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
 		List<VSZoneListVO> dataList = new ArrayList<>();
 		for (int i = 0;i<vZoneInfos.size();i++) {
@@ -284,8 +291,14 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 		indicatorDTO.setCodes(zoneCodes);
 		List<IndicatorVO> zoneIndics = mapper.queryZoneLossIndicData(indicatorDTO);
 		
-		List<Integer> timeList = TimeUtil.getMonthsList(indicatorDTO.getStartTime(),indicatorDTO.getEndTime());
-		int timeNum = timeList.size();
+		List<Integer> timeList;
+		int timeNum = 0;
+		try {
+			timeList = TimeUtil.getTimeList(indicatorDTO.getStartTime(),indicatorDTO.getEndTime());
+			timeNum = timeList.size();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		
 		List<VCZoneListVO> dataList = new ArrayList<>();
 		for (int i = 0;i<vZoneInfos.size();i++) {

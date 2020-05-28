@@ -16,6 +16,8 @@ public class ZoneInfo {
 	private String pZoneName;
 	
 	private String address;
+	
+	private String createTime;
 
 	public String getZoneNo() {
 		return zoneNo;
@@ -57,6 +59,14 @@ public class ZoneInfo {
 
 	public void setpZoneName(String pZoneName) {
 		this.pZoneName = pZoneName;
+	}
+
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
 	}
 	
 }

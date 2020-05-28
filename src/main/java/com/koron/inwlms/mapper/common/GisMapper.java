@@ -2,7 +2,7 @@ package com.koron.inwlms.mapper.common;
 
 import java.util.List;
 
-import org.koron.ebs.mybatis.SessionFactory;
+import org.apache.ibatis.annotations.Param;
 
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
@@ -23,21 +23,21 @@ public interface GisMapper {
 	 * @param rank
 	 * @return
 	 */
-	List<ZoneInfo> queryZoneNosByRank(String rank);
+	List<ZoneInfo> queryZoneNosByRank(@Param("rank") String rank,@Param("zoneNo") String zoneNo);
 	
 	/**
 	 * 根据编号查询所有子分区
 	 * @param zoneNo
 	 * @return
 	 */
-	List<ZoneInfo> querySubZoneNos(String zoneNo);
+//	List<ZoneInfo> querySubZoneNos(String zoneNo);
 	
 	/**
 	 * 根据分区查询所有水表信息
 	 * @param zoneNo
 	 * @return
 	 */
-	List<MeterInfo> queryMeterByZoneNo(String zoneNo);
+//	List<MeterInfo> queryMeterByZoneNo(String zoneNo);
 	
 	/**
 	 * 根据分区编号查询分区名称
@@ -58,7 +58,7 @@ public interface GisMapper {
 	 * @param queryZoneInfoDTO
 	 * @return
 	 */
-	ZoneDetailInfoVO queryZoneDetailInfo(QueryZoneInfoDTO queryZoneInfoDTO);
+	ZoneDetailInfoVO queryZoneDetailInfo(@Param("rank") String rank,@Param("zoneNo") String zoneNo);
 	
 	/**
 	 * 模糊查询分区信息

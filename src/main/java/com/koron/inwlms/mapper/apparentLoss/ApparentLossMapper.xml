@@ -16,19 +16,6 @@
 		round( avg(c."nonBasicInfoMeterRate") :: NUMERIC, 4 ) as "nonBasicInfoMeterRate"
 		FROM (
 		select
-		<!-- 全网 -->
-		<if test="(zoneNo == null or zoneNo == '') and (zoneRank == null or zoneRank == '')">
-			sum(case when b.code='WNMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
-			sum(case when b.code='WNMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
-			sum(case when b.code='WNMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
-			sum(case when b.code='WNMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
-			sum(case when b.code='WNMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
-			sum(case when b.code='WNMTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
-			sum(case when b.code='WNMIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
-			sum(case when b.code='WNMOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
-			sum(case when b.code='WNMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
-			b."yearMonth" as time
-		</if>
 		<if test="zoneNo != null and zoneNo != '' and zoneRank == 3">
 			<!-- DMA/PMA -->
 			sum(case when b.code='DMMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
@@ -96,19 +83,6 @@
 		round( avg(c."nonBasicInfoMeterRate") :: NUMERIC, 4 ) as "nonBasicInfoMeterRate"
 		FROM (
 		select
-		<if test="(zoneNo == null or zoneNo == '') and (zoneRank == null or zoneRank == '')">
-			<!-- 全网 -->
-			sum(case when b.code='WNYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
-			sum(case when b.code='WNYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
-			sum(case when b.code='WNYALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
-			sum(case when b.code='WNYALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
-			sum(case when b.code='WNYNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
-			sum(case when b.code='WNYTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
-			sum(case when b.code='WNYIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
-			sum(case when b.code='WNYOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
-			sum(case when b.code='WNYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
-			b.year as time
-		</if>
 		<if test="zoneNo != null and zoneNo != '' and zoneRank == 3">
 			<!-- DMA/PMA -->
 			sum(case when b.code='DMYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
@@ -157,8 +131,73 @@
 			and "zoneNo" = #{zoneNo}
 			</if>
 		) a,lc_app_dim_indicator ind where ind.code = a.code 
-		) b
-		group by b.year
+		) b group by b.year) c
+	</select>
+	
+	<select id="queryWNMALOverviewData" parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO"
+		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO">
+		select 
+		sum(c."AL") as "AL",
+		round( avg(c."perCustomerAccAL") :: NUMERIC, 2 ) as "perCustomerAccAL",
+		round( avg(c."percentAL") :: NUMERIC, 4 ) as "percentAL",
+		round( avg(c."ALI") :: NUMERIC, 4 ) as "ALI",
+		round( avg(c."percentNonMeterRead") :: NUMERIC, 4 ) as "percentNonMeterRead",
+		round( avg(c."meterReadRate") :: NUMERIC, 4 ) as "meterReadRate",
+		round( avg(c."nonMeterReadTimeRate") :: NUMERIC, 4 ) as "nonMeterReadTimeRate",
+		round( avg(c."overdueMetersRate") :: NUMERIC, 4 ) as "overdueMetersRate",
+		round( avg(c."nonBasicInfoMeterRate") :: NUMERIC, 4 ) as "nonBasicInfoMeterRate"
+		FROM (
+		select
+		<!-- 全网 -->
+		sum(case when b.code='WNMAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='WNMALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='WNMALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='WNMALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='WNMNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='WNMTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='WNMIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='WNMOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='WNMIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b."yearMonth" as time
+		from
+		(select a.id,a."yearMonth",a.code,a.value,ind.precision as precision 
+		from ana_company_month a, lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code 
+		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{startTime} 
+		and m."yearMonth" &lt;= #{endTime}) b
+		group by b."yearMonth") c
+	</select>
+	
+	<select id="queryWNYALOverviewData" parameterType="com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO"
+		resultType="com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO">
+		select 
+		sum(c."AL") as "AL",
+		round( avg(c."perCustomerAccAL") :: NUMERIC, 2 ) as "perCustomerAccAL",
+		round( avg(c."percentAL") :: NUMERIC, 4 ) as "percentAL",
+		round( avg(c."ALI") :: NUMERIC, 4 ) as "ALI",
+		round( avg(c."percentNonMeterRead") :: NUMERIC, 4 ) as "percentNonMeterRead",
+		round( avg(c."meterReadRate") :: NUMERIC, 4 ) as "meterReadRate",
+		round( avg(c."nonMeterReadTimeRate") :: NUMERIC, 4 ) as "nonMeterReadTimeRate",
+		round( avg(c."overdueMetersRate") :: NUMERIC, 4 ) as "overdueMetersRate",
+		round( avg(c."nonBasicInfoMeterRate") :: NUMERIC, 4 ) as "nonBasicInfoMeterRate"
+		FROM (
+		select
+		sum(case when b.code='WNYAL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "AL",
+			sum(case when b.code='WNYALCA' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "perCustomerAccAL",
+			sum(case when b.code='WNYALR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentAL",
+			sum(case when b.code='WNYALI' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "ALI",
+			sum(case when b.code='WNYNMRR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "percentNonMeterRead",
+			sum(case when b.code='WNYTROMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "meterReadRate",
+			sum(case when b.code='WNYIMRTR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonMeterReadTimeRate",
+			sum(case when b.code='WNYOSMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "overdueMetersRate",
+			sum(case when b.code='WNYIBIOMR' then round( value/b.precision :: NUMERIC, 4 ) else 0 end) as "nonBasicInfoMeterRate",
+			b.year as time
+		from
+		(select a.id,a.year,a.code,a.value,ind.precision 
+		from (
+			select id,year,code,value from ana_company_year
+			where year &gt;= #{startTime} and year &lt;= #{endTime}
+		) a,lc_app_dim_indicator ind where ind.code = a.code 
+		) b group by b.year) c
 	</select>
 
 	<select id="queryMALList" resultType="com.koron.inwlms.bean.VO.apparentLoss.ALListVO">

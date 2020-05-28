@@ -38,6 +38,18 @@ public interface ApparentLossMapper {
      */
 	ALOverviewDataVO queryYALOverviewData(QueryALDTO queryALDTO);
 	
+	  /**
+     * 查询全网月表观漏损总览
+     * @return
+     */
+	ALOverviewDataVO queryWNMALOverviewData(QueryALDTO queryALDTO);
+	
+	 /**
+     * 查询全网年表观漏损总览
+     * @return
+     */
+	ALOverviewDataVO queryWNYALOverviewData(QueryALDTO queryALDTO);
+	
 	/**
      * 查询月表观漏损列表
      * @return

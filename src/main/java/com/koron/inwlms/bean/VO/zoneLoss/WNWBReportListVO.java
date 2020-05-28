@@ -27,6 +27,8 @@ public class WNWBReportListVO {
 	private String createBy;
 	
 	private String updateTime;
+	
+	private String updateBy;
 
 	public Integer getId() {
 		return id;
@@ -106,6 +108,14 @@ public class WNWBReportListVO {
 
 	public void setTemplateName(String templateName) {
 		this.templateName = templateName;
+	}
+
+	public String getUpdateBy() {
+		return updateBy;
+	}
+
+	public void setUpdateBy(String updateBy) {
+		this.updateBy = updateBy;
 	}
 	
 }
