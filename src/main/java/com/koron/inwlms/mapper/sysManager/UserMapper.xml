@@ -582,19 +582,19 @@
      
      <!--加载角色权限菜单-->
      <select id="queryRoleMenuByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
-         select sm_treedet.*,"menu".sequence as sequence,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+         select tbltree.*,"menu".sequence as sequence,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP",
 		case when string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') end as op
 		from sm_modulemenu as "menu"
-		left join sm_treedet on sm_treedet.foreignkey="menu".code
+		left join tbltree on tbltree.foreignkey="menu".code
 		left join sm_rolemenus as "rolemenu" on "rolemenu"."moduleCode"="menu".code and "rolemenu"."roleCode"=
 		#{roleCode}
 		left join sm_userrole as "role" on "role"."code"="rolemenu"."roleCode" and "role".code=#{roleCode}
 		GROUP BY "menu".sequence,"menu".id ,"menu".code ,"menu"."moduleNo",
 		"menu"."moduleName" ,"menu"."linkAddress",	"menu"."ownOP",	
-		sm_treedet.seq,sm_treedet.childmask,sm_treedet.foreignkey,sm_treedet.mask,
-		sm_treedet.parentmask,sm_treedet.id
-		order by sm_treedet.seq
+		tbltree.seq,tbltree.childmask,tbltree.foreignkey,tbltree.mask,
+		tbltree.parentmask,tbltree.id
+		order by tbltree.seq
       </select>
       
        <!-- 批量删除SM_roleMenus的操作(根据roleCode 和 moduleCode) -->
@@ -631,7 +631,7 @@
           
        <!--通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限-->
      <select id="queryRoleMenuByRoleMenu"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO" resultType="com.koron.inwlms.bean.VO.sysManager.RoleMenusVO">
-         	select sm_treedet.*,"menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+         	select tbltree.*,"menu".id as "moduleId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
 		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress","menu"."ownOP" as "ownOP",
 		case when string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char("rolemenu".op,'9')),',') end as op
 		from (
@@ -641,14 +641,14 @@
         </foreach>
         )
 		as "menu"
-		left join sm_treedet on sm_treedet.foreignkey="menu".code
+		left join tbltree on tbltree.foreignkey="menu".code
 		left join sm_rolemenus as "rolemenu" on "rolemenu"."moduleCode"="menu".code  and "rolemenu"."roleCode"=#{roleMenuDTO.roleCode}
 		left join sm_userrole as "role" on "role"."code"="rolemenu"."roleCode"  and "role"."code"=#{roleMenuDTO.roleCode}
 		GROUP BY "menu".id ,"menu".code ,"menu"."moduleNo",
 		"menu"."moduleName" ,"menu"."linkAddress","menu"."ownOP",
-		sm_treedet.seq,sm_treedet.childmask,sm_treedet.foreignkey,sm_treedet.mask,
-		sm_treedet.parentmask,sm_treedet.id
-		order by sm_treedet.seq
+		tbltree.seq,tbltree.childmask,tbltree.foreignkey,tbltree.mask,
+		tbltree.parentmask,tbltree.id
+		order by tbltree.seq
       </select>
       
       <!--根据moduleName 查询moduleCode -->
