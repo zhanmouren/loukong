@@ -24,4 +24,7 @@ public interface AlarmMessageService {
 
 	AlarmMessageByTypeVO queryAlarmMessageByAlarmType(SessionFactory factory, WarningInfDTO warningInfDTO);
 
+
+	List<AlarmMessageVO> queryWarningCodeList(SessionFactory factory, WarningInfDTO warningInfDTO);
+
 }

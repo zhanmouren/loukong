@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 
 /**
  * 
@@ -21,18 +22,22 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 public interface AlarmProcessMapper {
 	
 	List<AlarmProcessVO> queryAlarmProcess(AlarmProcessDTO alarmProcessDTO);
+	AlarmProcessVO queryAlarmMessageByCode(String code);
 	List<AlarmProcessVO> queryAlarmProcessByTaskCode(String taskCode);
 	Integer addAlarmProcess(AlarmProcessVO alarmProcessVO);
 	Integer updateAlarmProcess(AlarmProcessVO alarmProcessVO);
 	Integer deleteAlarmProcess(String code);
 	
-	Integer addAlarmProcessOfZQS(AlarmProcessVO alarmProcessVO);
-	Integer addAlarmProcessOfZCX(AlarmProcessVO alarmProcessVO);
-	Integer addAlarmProcessOfPCX(AlarmProcessVO alarmProcessVO);
-	Integer addAlarmProcessOfPLX(AlarmProcessVO alarmProcessVO);
-	Integer addAlarmProcessOfPZS(AlarmProcessVO alarmProcessVO);
+	String addAlarmProcessOfZQS(AlarmProcessVO alarmProcessVO);
+	String addAlarmProcessOfZCX(AlarmProcessVO alarmProcessVO);
+	String addAlarmProcessOfPCX(AlarmProcessVO alarmProcessVO);
+	String addAlarmProcessOfPLX(AlarmProcessVO alarmProcessVO);
+	String addAlarmProcessOfPZS(AlarmProcessVO alarmProcessVO);
 	
 	@Select(" select * from app_file where \"moduleType\" = #{type}")
 	List<UploadFileDTO> queryAlarmProcessFile(@Param("type") String type);
+	
+	@Select("select * from gis_exist_zone where p_code = #{code}")
+	GisExistZoneVO queryGisZone(@Param("code") String code);
 
 }

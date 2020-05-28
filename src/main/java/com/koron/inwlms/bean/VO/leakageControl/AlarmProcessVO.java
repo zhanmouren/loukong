@@ -111,10 +111,19 @@ public class AlarmProcessVO {
 	 */
 	private Integer type;
 	
+	private String objectCode;
 	
 	
 	
 	
+
+	public String getObjectCode() {
+		return objectCode;
+	}
+
+	public void setObjectCode(String objectCode) {
+		this.objectCode = objectCode;
+	}
 
 	public Integer getType() {
 		return type;

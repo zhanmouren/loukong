@@ -38,6 +38,14 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 		
 		return alarmMessageReturnVO;
 	}
+	
+	@TaskAnnotation("queryWarningCodeList")
+	@Override
+	public List<AlarmMessageVO> queryWarningCodeList(SessionFactory factory, WarningInfDTO warningInfDTO) {
+		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
+		List<AlarmMessageVO> list = mapper.queryWarningCodeList(warningInfDTO);
+		return list;
+	}
 
 	/**
 	 * 统计对象类型数据

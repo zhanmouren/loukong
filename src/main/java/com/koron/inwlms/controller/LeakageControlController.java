@@ -340,7 +340,7 @@ public class LeakageControlController {
     @ApiOperation(value = "添加预警信息处理任务接口", notes = "添加预警信息处理任务接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String addAlarmProcess(@RequestBody AlarmProcessVO alarmProcessVO) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		if(alarmProcessVO.getAlarmType() == null && alarmProcessVO.getAlarmType().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -357,13 +357,11 @@ public class LeakageControlController {
 		//添加预警信息处理任务
 		try {
 			
-			Integer num = ADOConnection.runTask(aps, "addAlarmProcess",Integer.class,alarmProcessVO);
-			if(num > 0) {
-				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			}else {
-				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				msg.setDescription("未添加数据");
-			}
+			String num = ADOConnection.runTask(aps, "addAlarmProcess",String.class,alarmProcessVO);
+			
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(num);
+			
 		}catch(Exception e) {
 			//添加失败
 	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -1455,6 +1453,25 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	
+	@RequestMapping(value = "/queryWarningCodeList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询报警编码列表接口", notes = "查询报警编码列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryWarningCodeList(@RequestBody WarningInfDTO warningInfDTO) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		try {
+			List<AlarmMessageVO> list = ADOConnection.runTask(ams, "queryWarningCodeList", List.class, warningInfDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
+	}
 	
 	
 }

@@ -1,5 +1,6 @@
 package com.koron.inwlms.service.leakageControl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,13 +13,17 @@ import org.springframework.stereotype.Service;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
+import com.koron.inwlms.bean.VO.leakageControl.GisZonePointVO;
 import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
+import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
 import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
 
@@ -29,7 +34,19 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	@Override
 	public List<AlarmProcessVO> queryAlarmProcess(SessionFactory factory,AlarmProcessDTO alarmProcessDTO){
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		//查询工单信息
 		List<AlarmProcessVO> list = mapper.queryAlarmProcess(alarmProcessDTO);
+		//查询报警信息
+		for(AlarmProcessVO alarmProcessVO : list) {
+			if(alarmProcessVO.getWarningCode() != null || !alarmProcessVO.getWarningCode().equals("")) {
+				AlarmProcessVO alarmProcessVO1 = mapper.queryAlarmMessageByCode(alarmProcessVO.getWarningCode());
+				alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
+				alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
+				alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
+				alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
+			}
+		}
+		
 		return list;
 	}
 	@TaskAnnotation("queryAlarmProcessByTaskCode")
@@ -37,6 +54,16 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	public List<AlarmProcessVO> queryAlarmProcessByTaskCode(SessionFactory factory,String taskCode){
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		List<AlarmProcessVO> list = mapper.queryAlarmProcessByTaskCode(taskCode);
+		
+		for(AlarmProcessVO alarmProcessVO : list) {
+			if(alarmProcessVO.getWarningCode() != null || !alarmProcessVO.getWarningCode().equals("")) {
+				AlarmProcessVO alarmProcessVO1 = mapper.queryAlarmMessageByCode(alarmProcessVO.getWarningCode());
+				alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
+				alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
+				alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
+				alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
+			}
+		}
 		return list;
 	}
 	
@@ -50,9 +77,9 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	
 	@TaskAnnotation("addAlarmProcess")
 	@Override
-	public Integer addAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO) {
+	public String addAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
-		Integer num = 0;
+		String num = "";
 		//判断报警类型
 		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_TRENDCHANGE)) {
 			num = mapper.addAlarmProcessOfZQS(alarmProcessVO);
@@ -95,13 +122,33 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	
 	/**
 	 * 漏损预警处理效果
+	 * @throws ParseException 
 	 */
 	@TaskAnnotation("queryTreatmentEffect")
 	@Override
-	public TreatmentEffectVO queryTreatmentEffect(SessionFactory factory,TreatmentEffectDTO treatmentEffectDTO) {
+	public TreatmentEffectVO queryTreatmentEffect(SessionFactory factory,TreatmentEffectDTO treatmentEffectDTO) throws ParseException {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		List<AlarmProcessVO> list = mapper.queryAlarmProcessByTaskCode(treatmentEffectDTO.getProcessCode());
-		String zoneCode = list.get(0).getWarningCode();
+		String zoneCode = list.get(0).getObjectCode();
+		
+		String zonecodeM = "";
+		String mnfCode = "";
+		String zonecodeD = "";
+		
+		//查询分区分级
+		GisExistZoneVO gisExistZoneVO = mapper.queryGisZone(zoneCode);
+		if(gisExistZoneVO.getRemark().equals(Constant.DMAZONELEVEL_ONE)) {
+			zonecodeM = "FLMWL";
+			mnfCode = "FLDMNF";
+			zonecodeD = "FLDWL";
+		}else if(gisExistZoneVO.getRemark().equals(Constant.DMAZONELEVEL_TWO)) {
+			zonecodeM = "SLMWL";
+			mnfCode = "SLDMNF";
+		}else if(gisExistZoneVO.getRemark().equals(Constant.DMAZONELEVEL_THREE)) {
+			zonecodeM = "DLMWL";
+			mnfCode = "DMDMNF";
+			zonecodeD = "DMDWL";
+		}
 		
 		TreatmentEffectVO treatmentEffectVO = new TreatmentEffectVO();
 		IndicatorMapper indMapper = factory.getMapper(IndicatorMapper.class);
@@ -110,9 +157,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		Date nowDate = new Date();
 		
 		//查询分区漏损月指标编码
-		String zonecodeM = "";
-		String mnfCode = "";
-		String zonecodeD = "";
+		
 		List<String> codes = new ArrayList<>();
 		codes.add(zonecodeM);
 		
@@ -249,9 +294,23 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			treatmentEffectVO.setLossFlowAfther(lossFlow7); 
 		}
 		
-		//TODO 供水量统计
-		
-		
+		//TODO 供水量统计 
+		//查询分区下的监测点
+		//工单发起前一日时间
+		Date beforfDay = TimeUtil.addDay(list.get(0).getCreateTime(), -1);
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
+		String beforfDayStr = sf.format(beforfDay);
+		beforfDay = sf.parse(beforfDayStr);
+		Date beforfDayEnd = TimeUtil.addDay(list.get(0).getCreateTime(), 1);
+		Date avgDay = TimeUtil.addDay(list.get(0).getCreateTime(), -1);
+		BasicDataMapper basDataMapper = factory.getMapper(BasicDataMapper.class);
+		List<GisZonePointVO> pointList = basDataMapper.queryZonePoint(zoneCode);
+		for(GisZonePointVO gisZonePointVO : pointList) {
+			BasicDataParam basicDataParam = new BasicDataParam();
+			basicDataParam.setCode("MOHFLOW");
+			basicDataParam.setStationCode(gisZonePointVO.getPointNo());
+			 
+		}
 		
 		
 		

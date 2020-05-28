@@ -633,6 +633,23 @@ public class Constant {
 	
 	public final static String EVENTSUBTYPE_TC = "事项子类型";
 	/**
+	 * DMA分级-1级
+	 */
+	public final static String DMAZONELEVEL_ONE = "W101640001";
+	/**
+	 * DMA分级-2级
+	 */
+	public final static String DMAZONELEVEL_TWO = "W101640002";
+	/**
+	 * DMA分级-3级
+	 */
+	public final static String DMAZONELEVEL_THREE = "W101640003";
+	/**
+	 * DMA分级-0级
+	 */
+	public final static String DMAZONELEVEL_ZERO = "W101640004";
+	
+	/**
 	 * 最小夜间流量指标编码
 	 */
 	public final static String MINNIGHTFLOW = "";
