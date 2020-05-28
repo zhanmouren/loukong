@@ -1,5 +1,6 @@
 package com.koron.inwlms.util;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.*;
@@ -425,16 +426,53 @@ public class TimeUtil {
      }
      
      /**
-      * 获取时间范围集合（年，月）
+      * 返回下一天的int类型时间 
+      * @param time yyyyMM
+      * @return
+     * @throws ParseException 
+      */
+     public static Integer getNextDay(Integer time) throws ParseException{
+    	 String strTime = time.toString();
+    	 if(strTime.length() != 8) {
+    		 try {
+				throw new Exception("时间格式不正常");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+    	 }
+    	 DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+    	 Date currentDate = dateFormat.parse(time+"");
+    	 Calendar cld = Calendar.getInstance();
+         cld.setTime(currentDate);
+         cld.add(Calendar.DATE, 1);
+         currentDate = cld.getTime();
+         //获得下一天日期字符串
+         String nextDay = dateFormat.format(currentDate); 
+         return Integer.parseInt(nextDay);
+     }
+     
+     /**
+      * 获取时间范围集合（年，月,天）
       * @param startTime
       * @param endTime
       * @return
+     * @throws ParseException 
       */
-     public static List<Integer> getMonthsList(Integer startTime,Integer endTime){
+     public static List<Integer> getTimeList(Integer startTime,Integer endTime) throws ParseException{
     	 String strSTime = startTime.toString();
     	 String strETime = endTime.toString();
     	 List<Integer> lists = new ArrayList<Integer>(); 
-    	 if(strSTime.length() == 6 && strETime.length() == 6) {
+    	 if(strSTime.length() == 8 && strETime.length() == 8) {
+    		//计算天时间范围
+    		 lists.add(startTime);
+    		 Integer nowTime = startTime;
+    		 while(nowTime < endTime) {
+    			 Integer nextDay = getNextDay(nowTime);
+    			 lists.add(nextDay);
+    			 nowTime = nextDay;
+    		 }
+    		 return lists;
+    	 }else if(strSTime.length() == 6 && strETime.length() == 6) {
     		 //计算月时间范围
     		 lists.add(startTime);
     		 Integer nowTime = startTime;

@@ -27,7 +27,7 @@ public interface GisZoneService {
 	 * @param zoneRank
 	 * @return
 	 */
-	List<ZoneInfo> queryZoneNosByRank(SessionFactory factory,Integer zoneRank);
+	List<ZoneInfo> queryZoneNosByRank(SessionFactory factory,Integer zoneRank,String zoneNo);
 	
 	/**
 	 * 根据编号查询所有子分区

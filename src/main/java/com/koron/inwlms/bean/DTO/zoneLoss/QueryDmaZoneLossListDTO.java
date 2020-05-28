@@ -41,6 +41,8 @@ public class QueryDmaZoneLossListDTO extends BaseDTO{
 	 * 警报状态（0：不报警，1：报警）
 	 */
 	private Integer alarmStatus;
+	
+	private Integer zoneRank;
 
 	public Double getMinNrw() {
 		return minNrw;
@@ -115,7 +117,12 @@ public class QueryDmaZoneLossListDTO extends BaseDTO{
 		this.zoneNo = zoneNo;
 	}
 
+	public Integer getZoneRank() {
+		return zoneRank;
+	}
 
-	
+	public void setZoneRank(Integer zoneRank) {
+		this.zoneRank = zoneRank;
+	}
 	
 }

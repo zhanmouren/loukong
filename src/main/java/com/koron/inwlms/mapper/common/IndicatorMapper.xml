@@ -6,7 +6,7 @@
 	<select id="queryBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
-		<if test="timeType != null and timeType == 3">
+		<if test="(timeType != null and timeType == 3) or (timeType != null and timeType == 2)">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
 			from ana_base_month a left join (
 				select id,"yearMonth" from app_dim_month
@@ -17,9 +17,8 @@
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
-			from ana_base_year a left join lc_app_dim_indicator b on a.code = b.code
-			where a.year &gt;= #{startTime} 
-			and a.year &lt;= #{endTime}
+			from (select code,value,year,"zoneNo" from ana_base_year where year &gt;= #{startTime} 
+			and year &lt;= #{endTime} ) a left join lc_app_dim_indicator b on a.code = b.code
 		</if>
 		where 1 = 1
 		<if test="codes != null and codes.size > 0">
@@ -39,6 +38,14 @@
 	<select id="queryWBBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
+		<if test="timeType != null and timeType == 2">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value, 
+			cast(to_char(a."analysisDate", 'YYYYMMDD') as integer ) as "timeId", a."zoneNo"
+			from (select code, value,"analysisDate","zoneNo" from ana_zone_balance_day
+				where cast(to_char("analysisDate", 'YYYYMMDD') as integer ) &gt;= #{startTime}
+				and cast(to_char("analysisDate", 'YYYYMMDD') as integer ) &lt;= #{endTime}
+			) a left join lc_app_dim_indicator c on a.code = c.code
+		</if>
 		<if test="timeType != null and timeType == 3">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value, 
 			b."yearMonth" as "timeId", a."zoneNo"
@@ -51,9 +58,8 @@
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
-			from ana_zone_balance_year a left join lc_app_dim_indicator b on a.code = b.code
-			where a.year &gt;= #{startTime} 
-			and a.year &lt;= #{endTime}
+			from (select code,value,year,"zoneNo" from ana_zone_balance_year where year &gt;= #{startTime} 
+			and year &lt;= #{endTime} ) a left join lc_app_dim_indicator b on a.code = b.code
 		</if>
 		where 1 = 1
 		<if test="codes != null and codes.size > 0">
@@ -74,10 +80,12 @@
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a."analysisDate" as "timeId",a."zoneNo"
-			from ana_zone_day a left join lc_app_dim_indicator b on a.code = b.code
-			where to_char(a."analysisDate",'YYYYMMDD') &gt;= #{startTime} || ''
-			and to_char(a."analysisDate",'YYYYMMDD') &lt;= #{endTime} || ''
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value, 
+			cast(to_char(a."analysisDate", 'YYYYMMDD') as integer ) as "timeId", a."zoneNo"
+			from (select code, value,"analysisDate","zoneNo" from ana_zone_day
+				where cast(to_char("analysisDate", 'YYYYMMDD') as integer ) &gt;= #{startTime}
+				and cast(to_char("analysisDate", 'YYYYMMDD') as integer ) &lt;= #{endTime}
+			) a left join lc_app_dim_indicator c on a.code = c.code
 		</if>
 		<if test="timeType != null and timeType == 3">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
@@ -91,9 +99,8 @@
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
-			from ana_zone_year a left join lc_app_dim_indicator b on a.code = b.code
-			where a.year &gt;= #{startTime} 
-			and a.year &lt;= #{endTime}
+			from (select code,value,year,"zoneNo" from ana_zone_year where year &gt;= #{startTime} 
+			and year &lt;= #{endTime} ) a  left join lc_app_dim_indicator b on a.code = b.code
 		</if>
 		where 1 = 1
 		<if test="codes != null and codes.size > 0">
@@ -131,9 +138,8 @@
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
-			from ana_zone_moni_year a left join lc_app_dim_indicator b on a.code = b.code
-			where a.year &gt;= #{startTime} 
-			and a.year &lt;= #{endTime}
+			from (select code,value,year,"zoneNo" from ana_zone_moni_year where year &gt;= #{startTime} 
+			and year &lt;= #{endTime} ) a left join lc_app_dim_indicator b on a.code = b.code
 		</if>
 		where 1 = 1
 		<if test="codes != null and codes.size > 0">
@@ -171,9 +177,8 @@
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
-			from ana_leak_year a left join lc_app_dim_indicator b on a.code = b.code
-			where a.year &gt;= #{startTime} 
-			and a.year &lt;= #{endTime}
+			from (select code,value,year,"zoneNo" from ana_leak_year where year &gt;= #{startTime} 
+			and year &lt;= #{endTime} ) a left join lc_app_dim_indicator b on a.code = b.code
 		</if>
 		where 1 = 1
 		<if test="codes != null and codes.size > 0">
@@ -211,9 +216,8 @@
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId"
-			from ana_company_year a left join lc_app_dim_indicator b on a.code = b.code
-			where a.year &gt;= #{startTime} 
-			and a.year &lt;= #{endTime}
+			from (select code,value,year,"zoneNo" from ana_company_year where year &gt;= #{startTime} 
+			and year &lt;= #{endTime} ) a left join lc_app_dim_indicator b on a.code = b.code
 		</if>
 		where 1 = 1
 		<if test="codes != null and codes.size > 0">

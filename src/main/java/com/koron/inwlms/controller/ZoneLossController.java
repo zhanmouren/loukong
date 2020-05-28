@@ -274,7 +274,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadWNWBReportList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载全网水平衡报表列表", notes = "下载全网水平衡报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadWNWBReportList(@RequestBody String objValue,@RequestBody String titleInfos) {
+	public HttpEntity<?> downloadWNWBReportList(@RequestParam String objValue,@RequestParam String titleInfos) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -650,7 +650,7 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 		}
-		if(queryFZoneLossListDTO.getTimeType() < Constant.TIME_TYPE_M || queryFZoneLossListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		if(queryFZoneLossListDTO.getTimeType() < Constant.TIME_TYPE_D || queryFZoneLossListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
@@ -670,16 +670,16 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
    	 	}
-		if(queryFZoneLossListDTO.getMinNrw() != null && queryFZoneLossListDTO.getMaxNrw() != null) {
-			if(queryFZoneLossListDTO.getMinNrw() > queryFZoneLossListDTO.getMaxNrw()) {
+		if(StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinNrw()) && StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxNrw())) {
+			if(Double.parseDouble(queryFZoneLossListDTO.getMinNrw()) > Double.parseDouble(queryFZoneLossListDTO.getMaxNrw())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("产销差范围输入错误");
 	   	 	}
 		}
 		
-		if(queryFZoneLossListDTO.getMinUfwc() != null && queryFZoneLossListDTO.getMaxUfwc() != null) {
-			if(queryFZoneLossListDTO.getMinUfwc() > queryFZoneLossListDTO.getMaxUfwc()) {
+		if(StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinUfwc()) && StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxUfwc())) {
+			if(Double.parseDouble(queryFZoneLossListDTO.getMinUfwc()) > Double.parseDouble(queryFZoneLossListDTO.getMaxUfwc())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("漏损水量范围输入错误");

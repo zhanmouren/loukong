@@ -153,7 +153,7 @@
 		resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO">
 		select 
 		a.id,a."reportName",a."dateType" as "timeType",a."reportTime",a.description,
-		a."createTime",a."createBy",a."updateTime", b.id as "templateId",b."templateName"
+		a."createTime",a."createBy",a."updateTime",a."updateBy", b.id as "templateId",b."templateName"
 		from app_company_report a left join app_company_t_report b
 		on a."templateId" = b.id
 		where a.status = 1

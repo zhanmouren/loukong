@@ -1,6 +1,7 @@
 package com.koron.inwlms.service.apparentLoss.impl;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -91,13 +92,27 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		Integer timeType = queryALDTO.getTimeType();
 		ALOverviewDataVO result = null;
-		if (Constant.TIME_TYPE_M.equals(timeType)) {
-			// 月指标查询
-			result = mapper.queryMALOverviewData(queryALDTO);
-		} else if (Constant.TIME_TYPE_Y.equals(timeType)) {
-			// 年指标查询
-			result = mapper.queryYALOverviewData(queryALDTO);
+		
+		if(StringUtil.isEmpty(queryALDTO.getZoneNo()) && queryALDTO.getZoneRank() == null) {
+			//全网
+			if (Constant.TIME_TYPE_M.equals(timeType)) {
+				// 月指标查询
+				result = mapper.queryWNMALOverviewData(queryALDTO);
+			} else if (Constant.TIME_TYPE_Y.equals(timeType)) {
+				// 年指标查询
+				result = mapper.queryWNYALOverviewData(queryALDTO);
+			}
+		}else {
+			//不是全网
+			if (Constant.TIME_TYPE_M.equals(timeType)) {
+				// 月指标查询
+				result = mapper.queryMALOverviewData(queryALDTO);
+			} else if (Constant.TIME_TYPE_Y.equals(timeType)) {
+				// 年指标查询
+				result = mapper.queryYALOverviewData(queryALDTO);
+			}
 		}
+		
 		return result;
 	}
 
@@ -117,8 +132,8 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		Integer zoneRank = queryALListDTO.getZoneRank();
 		List<ZoneInfo> lists = new ArrayList<>();
 		
-		if(StringUtil.isEmpty(zoneNo) && zoneRank != null) {
-			if(zoneRank == Constant.RANK_T) {
+		if(StringUtil.isEmpty(zoneNo)) {
+			if(zoneRank != null && zoneRank == Constant.RANK_T) {
 				ZoneInfo ZoneInfo = new ZoneInfo();
 				ZoneInfo.setZoneNo(zoneNo);
 				lists.add(ZoneInfo);
@@ -174,7 +189,12 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		List<ALOverviewDataVO> lists = new ArrayList<>();
 
 		// 计算指标曲线
-		List<Integer> timeList = TimeUtil.getMonthsList(queryALDTO.getStartTime(), queryALDTO.getEndTime());
+		List<Integer> timeList = new ArrayList<>();
+		try {
+			timeList = TimeUtil.getTimeList(queryALDTO.getStartTime(), queryALDTO.getEndTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		lists = getIndicatorCurve(mapper, queryALDTO, timeList);
 
 		// 表观图表返回值
@@ -589,7 +609,13 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		}
 
 		// 计算指标曲线
-		List<Integer> timeList = TimeUtil.getMonthsList(startTime, endTime);
+		List<Integer> timeList = new ArrayList<>();
+		try {
+			timeList = TimeUtil.getTimeList(startTime, endTime);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		List<ALOverviewDataVO> idLists = getIndicatorCurve(mapper, queryALDTO, timeList);
 		TrendAnalysisData taData = new TrendAnalysisData();
 		ALData aLData = new ALData();
@@ -657,7 +683,14 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			for (Integer month : timeList) {
 				queryALDTO.setStartTime(month);
 				queryALDTO.setEndTime(month);
-				ALOverviewDataVO result = mapper.queryMALOverviewData(queryALDTO);
+				ALOverviewDataVO result =  new ALOverviewDataVO();
+				if(StringUtil.isEmpty(queryALDTO.getZoneNo()) && queryALDTO.getZoneRank() == null) {
+					// 月指标查询
+					result = mapper.queryWNMALOverviewData(queryALDTO);
+				}else {
+					// 月指标查询
+					result = mapper.queryMALOverviewData(queryALDTO);
+				}
 				if(result != null) {
 					result.setTime(month);
 					lists.add(result);
@@ -673,7 +706,14 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			for (Integer year : timeList) {
 				queryALDTO.setStartTime(year);
 				queryALDTO.setEndTime(year);
-				ALOverviewDataVO result = mapper.queryYALOverviewData(queryALDTO);
+				ALOverviewDataVO result =  new ALOverviewDataVO();
+				if(StringUtil.isEmpty(queryALDTO.getZoneNo()) && queryALDTO.getZoneRank() == null) {
+					// 月指标查询
+					result = mapper.queryWNYALOverviewData(queryALDTO);
+				}else {
+					// 月指标查询
+					result = mapper.queryYALOverviewData(queryALDTO);
+				}
 				if(result != null) {
 					result.setTime(year);
 					lists.add(result);
@@ -986,7 +1026,12 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		int fNum = 0;  //大于5个月没数据的水表个数
 		int tfNum = 0; //2-4个月没数据的水表个数
 		//获取查询时间的月份差数
-		List<Integer> monthsList = TimeUtil.getMonthsList(startTime,endTime);
+		List<Integer> monthsList =  new ArrayList<>();
+		try {
+			monthsList = TimeUtil.getTimeList(startTime,endTime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		int monthNum = monthsList.size();
 		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMFlow(list, startTime,endTime);
 		for (String meterNo : list) {
@@ -1552,7 +1597,12 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			queryALDTO.setEndTime(TimeUtil.getMonthByYear(endTime));
 		}
 		//获取时间范围的时间集合
-		List<Integer> monthsList = TimeUtil.getMonthsList(startTime,endTime);
+		List<Integer> monthsList = new ArrayList<>();
+		try {
+			monthsList = TimeUtil.getTimeList(startTime,endTime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		List<String> noLists = new ArrayList<>();
 		List<String> bDnLists = new ArrayList<>();
 		for (MeterInfo meterInfo : lists) {
