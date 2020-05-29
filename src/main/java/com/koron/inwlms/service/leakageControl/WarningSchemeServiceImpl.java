@@ -93,7 +93,7 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 		query.setSize(warningSchemeDTO.getPageCount());
 		Integer num = mapper.queryWarningSchemeTotalNumber(warningSchemeDTO);
 		query.setTotalNumber(num);
-		
+		alertSchemeListReturnVO.setQuery(query);
 		return alertSchemeListReturnVO;
 	}
 	

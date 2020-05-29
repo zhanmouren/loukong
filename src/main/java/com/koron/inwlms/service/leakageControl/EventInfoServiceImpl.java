@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
@@ -25,12 +26,18 @@ public class EventInfoServiceImpl implements EventInfoService{
 	
 	@TaskAnnotation("queryEventInfo")
 	@Override
-	public List<EventInfo> queryEventInfo(SessionFactory factory,EventInfoDTO eventInfoDTO){
+	public EventInfoListReturnVO queryEventInfo(SessionFactory factory,EventInfoDTO eventInfoDTO){
 		EventInfoListReturnVO eventInfoListReturnVO = new EventInfoListReturnVO();
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
-		
 		List<EventInfo> list = mapper.queryEventInfo(eventInfoDTO);
-		return list;
+		eventInfoListReturnVO.setEventInfoList(list);
+		Integer num = mapper.queryEventInfoTotalNumber(eventInfoDTO);
+		PageInfo query = new PageInfo();
+		query.setTotalNumber(num);
+		query.setPage(eventInfoDTO.getPage());
+		query.setSize(eventInfoDTO.getPageCount());
+		eventInfoListReturnVO.setQuery(query);
+		return eventInfoListReturnVO;
 	}
 	
 	@TaskAnnotation("queryEventInfoByCode")

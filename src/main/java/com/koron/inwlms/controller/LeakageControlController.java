@@ -60,6 +60,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
+import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventSubtypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
@@ -989,7 +990,7 @@ public class LeakageControlController {
     @ApiOperation(value = "事项列表查询接口", notes = "事项列表查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryqueryEventInfo(@RequestBody EventInfoDTO eventInfoDTO) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<EventInfoListReturnVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventInfoListReturnVO.class);
 		
 		if(eventInfoDTO.getStartTime() == null || eventInfoDTO.getStartTime().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -1003,8 +1004,8 @@ public class LeakageControlController {
 		}
 		
 		try {
-			List<EventInfo> eventInfoList = ADOConnection.runTask(eis, "queryEventInfo",List.class,eventInfoDTO);
-			if(eventInfoList != null && eventInfoList.size() != 0) {
+			EventInfoListReturnVO eventInfoList = ADOConnection.runTask(eis, "queryEventInfo",EventInfoListReturnVO.class,eventInfoDTO);
+			if(eventInfoList != null ) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(eventInfoList);
 			}else {

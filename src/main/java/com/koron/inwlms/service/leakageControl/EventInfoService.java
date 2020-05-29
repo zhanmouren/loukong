@@ -10,12 +10,13 @@ import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
+import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
 
 @Service
 public interface EventInfoService {
 
-	List<EventInfo> queryEventInfo(SessionFactory factory, EventInfoDTO eventInfoDTO);
+	EventInfoListReturnVO queryEventInfo(SessionFactory factory, EventInfoDTO eventInfoDTO);
 
 	Integer deleteEventInfo(SessionFactory factory, String code);
 
