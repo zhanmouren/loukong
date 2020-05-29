@@ -200,7 +200,7 @@ public class SystemManagerLogController {
 			queryLoginLogDTO.setPage(1);
 			queryLoginLogDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageLoginLogListVO pageBean = ADOConnection.runTask(logService, "downloadLoginLogList", PageLoginLogListVO.class,queryLoginLogDTO);
+			PageListVO<List<LoginLogVO>> pageBean = ADOConnection.runTask(logService, "queryLoginLog", PageListVO.class,queryLoginLogDTO);
 			if(pageBean.getRowNumber() == 0) {
 				return new HttpEntity<String>("无数据可下载");
 			}
@@ -255,13 +255,11 @@ public class SystemManagerLogController {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间大于结束时间", Integer.class).toJson();
 		}
 		
-		if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType())) {
+		if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType()) || queryOperateLogDTO.getOperateType().equals("L102100001")) {
 			queryOperateLogDTO.setOperateType(null);
-		}else if(queryOperateLogDTO.getOperateType().equals("全部")) {
-			queryOperateLogDTO.setOperateType(null);
-		}else if(!queryOperateLogDTO.getOperateType().equals("增加") && !queryOperateLogDTO.getOperateType().equals("删除") && 
-				!queryOperateLogDTO.getOperateType().equals("修改") && !queryOperateLogDTO.getOperateType().equals("查询")) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“全部、增加、删除、修改或查询”", Integer.class).toJson();
+		}else if(!queryOperateLogDTO.getOperateType().equals("L102100002") && !queryOperateLogDTO.getOperateType().equals("L102100003") && 
+				!queryOperateLogDTO.getOperateType().equals("L102100004")) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“全部、新增、删除或修改”", Integer.class).toJson();
 		} 
 		
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -297,28 +295,12 @@ public class SystemManagerLogController {
 		if(operateLogDTO.getOperateModuleNo()==null || StringUtils.isBlank(operateLogDTO.getOperateModuleNo())) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作对象不能为空", Integer.class).toJson();
 		}
-		String [] moduleNo = new String [] {"M100","M200","M200100","M200100100","M200100100100","M200100100200","M200100100300","M200100100400",
-				"M200100200","M200100200100","M200100200200","M200100200300","M200200","M200200100","M200200200","M200300","M200400","M200400100",
-				"M200400200","M200400300","M200400400","M300","M300100","M300100100","M300100200","M400","M400100","M400100100","M400100200",
-				"M400200","M500","M500100","M500100100","M500100200","M500200","M500200100","M500200200","M500200300","M500300100","M500300200",
-				"M500400","M500400100","M500400200","M500400300","M500400400","M500500","M500500100","M600","M600100","M600100100","M600100200",
-				"M600100300","M600100400","M600200","M600200100","M600200200","M600300","M600300100","M600300200","M600400","M600400100","M600400200",
-				"M700","M700100","M700100100","M700100200","M700100300","M700100400","M800","M800100","M800100100","M800100200","M800100300","M800200",
-				"M800200100","M800200200","M800200300","M800300","M800300100","M800300200","M800300300","M800300400"};
-		for(int i = 0;i < moduleNo.length;i++) {
-			if(operateLogDTO.getOperateModuleNo().equals(moduleNo[i])){
-				break;
-			}else if (i == moduleNo.length-1) {
-				return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作对象编码错误", Integer.class).toJson();
-			}
-		}
-		
 		
 		if(operateLogDTO.getOperateType()==null || StringUtils.isBlank(operateLogDTO.getOperateType())) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型不能为空", Integer.class).toJson();
-		}else if(!operateLogDTO.getOperateType().equals("增加") && !operateLogDTO.getOperateType().equals("删除") && 
-				!operateLogDTO.getOperateType().equals("修改") && !operateLogDTO.getOperateType().equals("查询")) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“增加、删除、修改或查询”", Integer.class).toJson();
+		}else if(!operateLogDTO.getOperateType().equals("L102100002") && !operateLogDTO.getOperateType().equals("L102100003") && 
+				!operateLogDTO.getOperateType().equals("L102100004") && !operateLogDTO.getOperateType().equals("查询")) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“增加、删除、修改”", Integer.class).toJson();
 		} 
 		
 		

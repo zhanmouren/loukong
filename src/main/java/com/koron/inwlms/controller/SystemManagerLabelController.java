@@ -263,6 +263,9 @@ public class SystemManagerLabelController {
 			queryLabelDTO.setPageCount(3000);
 			// 查询到导出数据结果
 			PageListVO<List<LabelVO>> pageBean = ADOConnection.runTask(labelService, "queryLabel", PageListVO.class,queryLabelDTO);
+			if(pageBean.getRowNumber() == 0) {
+				return new HttpEntity<String>("无数据可下载");
+			}
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
