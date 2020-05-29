@@ -23,6 +23,8 @@ import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
 public interface WarningSchemeMapper {
 
 	List<WarningSchemeVO> queryWarningScheme(WarningSchemeDTO warningSchemeDTO);
+	Integer queryWarningSchemeTotalNumber(WarningSchemeDTO warningSchemeDTO);
+	
 	List<AlertNoticeScheme> queryAlertNoticeSchemeByWarningId(String code);
 	Integer addWarningScheme(WarningSchemeDTO warningSchemeDTO);
 	Integer deleteWarningScheme(String code);

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 
@@ -22,6 +23,8 @@ import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 public interface AlarmProcessMapper {
 	
 	List<AlarmProcessVO> queryAlarmProcess(AlarmProcessDTO alarmProcessDTO);
+	Integer queryAlarmProcessTotalNumber(AlarmProcessDTO alarmProcessDTO);
+	
 	AlarmProcessVO queryAlarmMessageByCode(String code);
 	List<AlarmProcessVO> queryAlarmProcessByTaskCode(String taskCode);
 	Integer addAlarmProcess(AlarmProcessVO alarmProcessVO);
@@ -39,5 +42,8 @@ public interface AlarmProcessMapper {
 	
 	@Select("select * from gis_exist_zone where p_code = #{code}")
 	GisExistZoneVO queryGisZone(@Param("code") String code);
+	
+	List<AlarmProcessLog> queryAlarmProcessLog(String taskCode);
+	Integer addAlarmProcessLog(AlarmProcessLog alarmProcessLog);
 
 }

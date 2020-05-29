@@ -9,11 +9,13 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeMessage;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
@@ -55,7 +57,8 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 	 */
 	@TaskAnnotation("queryWarningSchemeList")
 	@Override
-	public List<AlertSchemeListVO> queryWarningSchemeList(SessionFactory factory,WarningSchemeDTO warningSchemeDTO){
+	public AlertSchemeListReturnVO queryWarningSchemeList(SessionFactory factory,WarningSchemeDTO warningSchemeDTO){
+		AlertSchemeListReturnVO alertSchemeListReturnVO = new AlertSchemeListReturnVO();
 		List<AlertSchemeListVO> alertSchemeListVO = new ArrayList<>();
 		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
 		List<WarningSchemeVO> warningSchemeList = mapper.queryWarningScheme(warningSchemeDTO);
@@ -70,15 +73,28 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 			}
 			
 			alertSchemeVO.setNoticeType(noticeType);
-			alertSchemeVO.setAlarmType(warningScheme.getAlarmType());
+			if(warningScheme.getAlarmType() != null) {
+				alertSchemeVO.setAlarmType(warningScheme.getAlarmType());
+			}
 			alertSchemeVO.setName(warningScheme.getName());
-			alertSchemeVO.setAlarmIndex(warningScheme.getAlarmIndex());
+			if(warningScheme.getAlarmIndex() != null) {
+				alertSchemeVO.setAlarmIndex(warningScheme.getAlarmIndex());
+			}
 			alertSchemeVO.setId(warningScheme.getId());
 			alertSchemeVO.setCode(warningScheme.getCode());
-			alertSchemeVO.setObjectType(warningScheme.getObjectType());
+			if(warningScheme.getObjectType() != null) {
+				alertSchemeVO.setObjectType(warningScheme.getObjectType());
+			}
 			alertSchemeListVO.add(alertSchemeVO);
 		}
-		return alertSchemeListVO;
+		alertSchemeListReturnVO.setAlertSchemeList(alertSchemeListVO);
+		PageInfo query = new PageInfo();
+		query.setPage(warningSchemeDTO.getPage());
+		query.setSize(warningSchemeDTO.getPageCount());
+		Integer num = mapper.queryWarningSchemeTotalNumber(warningSchemeDTO);
+		query.setTotalNumber(num);
+		
+		return alertSchemeListReturnVO;
 	}
 	
 	@TaskAnnotation("addWarningScheme")

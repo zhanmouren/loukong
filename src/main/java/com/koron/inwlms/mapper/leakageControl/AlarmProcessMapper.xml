@@ -14,6 +14,12 @@
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1); 
  </select>
  
+ <select id="queryAlarmProcessTotalNumber" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO" resultType="java.lang.Integer">
+ select count(*) from app_warningprocessing where "createTime" between '${startTime}' and '${endTime}' and type = #{type}
+ <if test="state != null and state != '' "> and state = #{processState}</if>
+ <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>
+ </select>
+ 
  <select id="queryAlarmMessageByCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
  select b.code as code,b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType",b."objectCode" as "objectCode" 
  from app_warninginf b inner join app_warningscheme c on b."schemeCode" = c.code where b.code = #{code}
@@ -75,15 +81,15 @@
  update app_warningprocessing
  <set>
  <if test="leadingCadre != null and leadingCadre != '' "> "leadingCadre" = #{leadingCadre}, </if>
- <if test="expectFinishTime != null and expectFinishTime != '' "> "expectFinishTime" = #{expectFinishTime}, </if>
+ <if test="expectFinishTime != null"> "expectFinishTime" = #{expectFinishTime}, </if>
  <if test="state != null and state != '' "> state = #{state}, </if>
  <if test="recommendStrategy != null and recommendStrategy != '' "> "recommendStrategy" = #{recommendStrategy}, </if>
  <if test="actualStrategy != null and actualStrategy != '' "> "actualStrategy" = #{actualStrategy}, </if>
- <if test="projectCost != null and projectCost != '' "> "projectCost" = #{projectCost}, </if>
- <if test="waterSave != null and waterSave != '' "> "waterSave" = #{waterSave}, </if>
+ <if test="projectCost != null"> "projectCost" = #{projectCost}, </if>
+ <if test="waterSave != null"> "waterSave" = #{waterSave}, </if>
  <if test="actualStrategyType != null and actualStrategyType != '' "> "actualStrategyType" = #{actualStrategyType}, </if>
- <if test="actualCost != null and actualCost != '' "> "actualCost" = #{actualCost}, </if>
- <if test="actualFinishTime != null and actualFinishTime != '' "> "actualFinishTime" = #{actualFinishTime}, </if>
+ <if test="actualCost != null"> "actualCost" = #{actualCost}, </if>
+ <if test="actualFinishTime != null"> "actualFinishTime" = #{actualFinishTime}, </if>
  <if test="content != null and content != '' "> content = #{content}, </if>
  </set>
  where code = #{taskCode}
@@ -93,6 +99,14 @@
  delete from app_warningprocessing where code = #{code}
  </delete>
  
+ <select id="queryAlarmProcessLog" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog">
+ select * from app_warningprocessinglog where "taskCode" = #{taskCode}
+ </select>
+ 
+ <insert id="addAlarmProcessLog" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog">
+ insert into app_warningprocessinglog(content, operation, taskCode, createBy, createTime)
+ values(#{content}, #{operation}, #{taskCode}, #{createBy}, #{createTime})
+ </insert>
 
 
 </mapper>

@@ -9,17 +9,19 @@ import org.springframework.stereotype.Service;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 @Service
 public interface AlarmProcessService {
 
-	List<AlarmProcessVO> queryAlarmProcess(SessionFactory factory, AlarmProcessDTO alarmProcessDTO);
+	AlarmProcessReturnVO queryAlarmProcess(SessionFactory factory, AlarmProcessDTO alarmProcessDTO);
 
-	Integer updateAlarmProcess(SessionFactory factory, AlarmProcessVO alarmProcessVO);
+	Integer updateAlarmProcess(SessionFactory factory, AlarmProcessVO alarmProcessVO,UserVO user);
 
-	String addAlarmProcess(SessionFactory factory, AlarmProcessVO alarmProcessVO);
+	String addAlarmProcess(SessionFactory factory, AlarmProcessVO alarmProcessVO,UserVO user);
 
 	Integer deleteAlarmProcess(SessionFactory factory, String code);
 

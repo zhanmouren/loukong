@@ -282,7 +282,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 						}
 					}
 					if(zoneFlow > max || zoneFlow < min) {
-						//TODO 产生预警信息
+						//TODO 产生预警信息 
 						String warningCode = "ZCX" + new Date().getTime();
 						AlarmMessageVO alarmMessageVO = new AlarmMessageVO();
 						alarmMessageVO.setSchemeCode(warningScheme.getCode());

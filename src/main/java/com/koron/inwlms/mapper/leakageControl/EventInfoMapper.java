@@ -2,6 +2,7 @@ package com.koron.inwlms.mapper.leakageControl;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -12,6 +13,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
+import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
 
 
 /**
@@ -24,6 +26,8 @@ import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 public interface EventInfoMapper {
 
 	List<EventInfo> queryEventInfo(EventInfoDTO eventInfoDTO);
+	
+	Integer queryEventInfoTotalNumber(EventInfoDTO eventInfoDTO);
 	
 	Integer deleteEventInfo(String code);
 	
@@ -45,4 +49,12 @@ public interface EventInfoMapper {
 	EventInfo queryEventInfoByCode(@Param("code") String code);
 	
 	Integer queryChildKeyNum(EventTypeDTO eventTypeDTO);
+	
+	Integer addEventWarnRelation(EventWarnRelation eventWarnRelation);
+	
+	List<EventWarnRelation> queryEventWarnRelation(String processCode);
+	
+	@Delete("delete from app_eventwarnrelation where \"processCode\" = #{processCode} and \"eventCode\" = #{eventCode}")
+	Integer deleteEventWarnRelation(@Param("processCode") String processCode,@Param("eventCode") String eventCode);
+	
 }
