@@ -64,8 +64,10 @@
  </select>
  
  <insert id="addEventWarnRelation" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation">
- insert into app_eventwarnrelation("processCode", "eventCode", "createBy", "createTime", "updateBy", "updateTime")
- values(#{processCode}, #{eventCode}, #{createBy}, Now(), #{updateBy}, Now())
+ insert into app_eventwarnrelation("processCode", "eventCode", "createBy", "createTime", "updateBy", "updateTime") values
+ <foreach collection="list" item="invest"  index="index" separator=",">
+			(#{invest.processCode}, #{invest.eventCode}, #{invest.createBy}, Now(), #{invest.updateBy}, Now())
+	</foreach>
  </insert>
  
  <select id="queryEventWarnRelation" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation">

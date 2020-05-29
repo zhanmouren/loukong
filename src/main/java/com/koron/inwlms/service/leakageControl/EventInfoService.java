@@ -34,7 +34,7 @@ public interface EventInfoService {
 
 	EventInfo queryEventInfoByCode(SessionFactory factory, String code);
 
-	Integer addEventWarnRelation(SessionFactory factory, EventWarnRelation eventWarnRelation);
+	Integer addEventWarnRelation(SessionFactory factory, List<EventWarnRelation> eventWarnRelationList);
 
 	List<EventWarnRelation> queryEventWarnRelation(SessionFactory factory, String processCode);
 

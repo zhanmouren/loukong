@@ -35,6 +35,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.EventWarnRelationDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.PartitionInvestDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicyDTO;
@@ -1480,11 +1481,11 @@ public class LeakageControlController {
 	@RequestMapping(value = "/addEventWarnRelation.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警处理任务工单添加事项关联", notes = "预警处理任务工单添加事项关联", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String addEventWarnRelation(@RequestBody EventWarnRelation eventWarnRelation) {
+    public String addEventWarnRelation(@RequestBody EventWarnRelationDTO eventWarnRelationDTO) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		try {
-			Integer num = ADOConnection.runTask(eis, "addEventWarnRelation", Integer.class, eventWarnRelation);
+			Integer num = ADOConnection.runTask(eis, "addEventWarnRelation", Integer.class, eventWarnRelationDTO.getEventWarnRelationList());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {

@@ -50,7 +50,7 @@ public interface EventInfoMapper {
 	
 	Integer queryChildKeyNum(EventTypeDTO eventTypeDTO);
 	
-	Integer addEventWarnRelation(EventWarnRelation eventWarnRelation);
+	Integer addEventWarnRelation(List<EventWarnRelation> eventWarnRelationList);
 	
 	List<EventWarnRelation> queryEventWarnRelation(String processCode);
 	

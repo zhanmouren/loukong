@@ -143,9 +143,9 @@ public class EventInfoServiceImpl implements EventInfoService{
 	
 	@TaskAnnotation("addEventWarnRelation")
 	@Override
-	public Integer addEventWarnRelation(SessionFactory factory,EventWarnRelation eventWarnRelation) {
+	public Integer addEventWarnRelation(SessionFactory factory,List<EventWarnRelation> eventWarnRelationList) {
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
-		Integer num = mapper.addEventWarnRelation(eventWarnRelation);
+		Integer num = mapper.addEventWarnRelation(eventWarnRelationList);
 		return num;
 	}
 	
