@@ -140,13 +140,18 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			}else {
 				lists = new GisZoneServiceImpl().querySubZoneNos(factory, zoneNo);
 			}
+		}else {
+			//目前只有一级，所以只展示该分区的数据(根据需求需要展示该分区下的所有子分区数据)
+			ZoneInfo ZoneInfo = new ZoneInfo();
+			ZoneInfo.setZoneNo(zoneNo);
+			lists.add(ZoneInfo);
 		}
 		List<ALListVO> alLists = null;
 		int rowNumber = 0;
 		if (Constant.TIME_TYPE_M.equals(timeType)) {
 			// 月指标查询
 			// 查询总条数
-			rowNumber = mapper.countMALList(queryALListDTO, lists);
+			rowNumber = lists.size();
 			//及判断分页
 			if(rowNumber<(queryALListDTO.getPage()-1)*queryALListDTO.getPageCount()) return null;
 			
@@ -155,7 +160,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		} else if (Constant.TIME_TYPE_Y.equals(timeType)) {
 			// 年指标查询
 			// 查询总条数
-			rowNumber = mapper.countYALList(queryALListDTO, lists);
+			rowNumber = lists.size();
 			//及判断分页
 			if(rowNumber<(queryALListDTO.getPage()-1)*queryALListDTO.getPageCount()) return null;
 			
@@ -543,10 +548,11 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		String anaRange = "";
 		String zoneNo = "";
 		List<MeterInfo> lists = new ArrayList<MeterInfo>();
-		drTotalAnalysisDataVO.setGroupName("YZGDH公司");
-		if(StringUtil.isEmpty(queryALDTO.getZoneNo()) && queryALDTO.getZoneRank() != null) {
+		drTotalAnalysisDataVO.setGroupName("常平水司");
+		if(StringUtil.isEmpty(queryALDTO.getZoneNo()) && queryALDTO.getZoneRank() == null) {
 			anaRange = "全网";
 		}else {
+			zoneNo = queryALDTO.getZoneNo();
 			anaRange = gisZoneServiceImpl.queryZoneNameByNo(factory, zoneNo);
 		}
 		lists = gisZoneServiceImpl.queryMeterByZoneNo(factory, zoneNo);
@@ -567,8 +573,8 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 					e.printStackTrace();
 				}
 			}
-			queryALDTO.setStartTime(Integer.parseInt(startTime.toString() + "01"));
-			queryALDTO.setEndTime(TimeUtil.getMonthByYear(endTime));
+//			queryALDTO.setStartTime(Integer.parseInt(startTime.toString() + "01"));
+//			queryALDTO.setEndTime(TimeUtil.getMonthByYear(endTime));
 		}
 		Double mMeterReadFlow = mapper.queryMMeterReadFlow(queryALDTO, lists);
 		drTotalAnalysisDataVO.setmMeterReadFlow(mMeterReadFlow);

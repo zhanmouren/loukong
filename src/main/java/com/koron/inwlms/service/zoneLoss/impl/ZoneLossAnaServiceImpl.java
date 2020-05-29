@@ -82,6 +82,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			zoneCodes.add("FLDMNF"); //一级分区日MNF
 			//TODO 月指标没有MNF TIME
 			zoneCodes.add("FLYMNFTDF"); //一级分区年MNF/TDF
+			zoneCodes.add("FLDNRR"); //一级分区日产销差指标编码
 		}else if(Constant.TIME_TYPE_M.equals(queryFZoneLossListDTO.getTimeType())) {
 			baseCodes.add("FLMNOCM"); //一级分区月用户数指标编码
 			baseCodes.add("FLMFTPL"); //一级分区月管长数指标编码
@@ -94,6 +95,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			zoneCodes.add("FLMMNF"); //一级分区月MNF
 			//TODO 月指标没有MNF TIME
 			zoneCodes.add("FLMMNFTDF"); //一级分区月MNF/TDF
+			zoneCodes.add("FLMNRR"); //一级分区月产销差指标编码
 			
 		}else if(Constant.TIME_TYPE_Y.equals(queryFZoneLossListDTO.getTimeType())){
 			baseCodes.add("FLYNOCM");//一级分区年用户数指标编码
@@ -107,6 +109,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			zoneCodes.add("FLYMNF"); //一级分区年MNF
 			//TODO 月指标没有MNF TIME
 			zoneCodes.add("FLYMNFTDF"); //一级分区年MNF/TDF
+			zoneCodes.add("FLYNRR"); //一级分区日产销差指标编码
 		}
 		//查询基础指标数据
 		indicatorDTO.setCodes(baseCodes);
@@ -149,6 +152,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			double flow = 0;
 			double useFlow = 0;
 			double lossFlow = 0;
+			double nrr = 0; //产销差
 			double perUserLossFlow = 0; //一级分区月单位户数漏损量
 			double perLengthLossFlow = 0; //一级分区月单位管长漏损量
 			double lossRate = 0; //一级分区月漏损率
@@ -188,6 +192,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						mnfTdf += zoneIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLDMNFT".equals(zoneIndic.getCode())) {
 						mnfTime += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLDNRR".equals(zoneIndic.getCode())) {
+						nrr += zoneIndic.getValue();
 					}
 				}
 			}else if(Constant.TIME_TYPE_M.equals(queryFZoneLossListDTO.getTimeType())) {
@@ -206,6 +212,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						useFlow += wbBaseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "FLMWL".equals(wbBaseIndic.getCode())) {
 						lossFlow += wbBaseIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "FLMNRR".equals(wbBaseIndic.getCode())) {
+						nrr += wbBaseIndic.getValue();
 					}
 				}
 				for(IndicatorVO zoneIndic: zoneIndics) {
@@ -219,6 +227,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						mnf += zoneIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLMMNFTDF".equals(zoneIndic.getCode())) {
 						mnfTdf += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLMNRR".equals(zoneIndic.getCode())) {
+						nrr += zoneIndic.getValue();
 					}
 				}
 			}else if(Constant.TIME_TYPE_Y.equals(queryFZoneLossListDTO.getTimeType())){
@@ -237,6 +247,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						useFlow += wbBaseIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "FLYWL".equals(wbBaseIndic.getCode())) {
 						lossFlow += wbBaseIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(wbBaseIndic.getZoneNo()) && "FLYNRR".equals(wbBaseIndic.getCode())) {
+						nrr += wbBaseIndic.getValue();
 					}
 				}
 				
@@ -251,6 +263,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						mnf += zoneIndic.getValue();
 					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLYMNFTDF".equals(zoneIndic.getCode())) {
 						mnfTdf += zoneIndic.getValue();
+					}else if(zoneInfos.get(i).getZoneNo().equals(zoneIndic.getZoneNo()) && "FLYNRR".equals(zoneIndic.getCode())) {
+						nrr += zoneIndic.getValue();
 					}
 				}
 			}
@@ -259,6 +273,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			fZoneLossListVO.setFlow(flow);
 			fZoneLossListVO.setUseFlow(useFlow);
 			fZoneLossListVO.setLossFlow(lossFlow);
+			fZoneLossListVO.setNrr(Double.parseDouble(df.format(nrr)));
 			fZoneLossListVO.setPerUserLossFlow(Double.parseDouble(df.format(perUserLossFlow/timeNum)));
 			fZoneLossListVO.setPerLengthLossFlow(Double.parseDouble(df.format(perLengthLossFlow/timeNum)));
 			fZoneLossListVO.setLossRate(Double.parseDouble(df.format(lossRate/timeNum)));

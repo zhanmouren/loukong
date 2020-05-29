@@ -712,17 +712,17 @@ public class ApparentLossController {
 					}.getType());
 			// 导出excel文件
 			//导出list
-			if("1".equals(labelId)) {
+			if("0".equals(labelId)) {
 				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlBDnZeroFlowData(), jsonArray);
-			}else if("2".equals(labelId)) {
+			}else if("1".equals(labelId)) {
 				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlBDnLHFlowData(), jsonArray);
-			}else if("3".equals(labelId)) {
+			}else if("2".equals(labelId)) {
 				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlBDnErrFlowData(), jsonArray);
-			}else if("4".equals(labelId)) {
+			}else if("3".equals(labelId)) {
 				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlSusUseData(), jsonArray);
-			}else if("5".equals(labelId)) {
+			}else if("4".equals(labelId)) {
 				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlsDnZeroFlowData(), jsonArray);
-			}else if("6".equals(labelId)) {
+			}else if("5".equals(labelId)) {
 				return ExportDataUtil.getExcelDataFileInfoByList(data.getDrqlsDnLHFlowData(), jsonArray);
 			}
 			

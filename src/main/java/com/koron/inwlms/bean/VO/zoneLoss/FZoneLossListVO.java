@@ -78,6 +78,11 @@ public class FZoneLossListVO {
 	private Double perLengthLossFlow;
 	
 	/**
+	 * 产销差
+	 */
+	private Double nrr;
+	
+	/**
 	 * 漏损率
 	 */
 	private Double lossRate;
@@ -254,6 +259,14 @@ public class FZoneLossListVO {
 
 	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
+	}
+
+	public Double getNrr() {
+		return nrr;
+	}
+
+	public void setNrr(Double nrr) {
+		this.nrr = nrr;
 	}
 	
 }

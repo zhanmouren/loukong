@@ -216,7 +216,7 @@
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId"
-			from (select code,value,year,"zoneNo" from ana_company_year where year &gt;= #{startTime} 
+			from (select code,value,year from ana_company_year where year &gt;= #{startTime} 
 			and year &lt;= #{endTime} ) a left join lc_app_dim_indicator b on a.code = b.code
 		</if>
 		where 1 = 1

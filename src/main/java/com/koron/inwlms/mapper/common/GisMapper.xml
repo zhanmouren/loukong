@@ -32,4 +32,12 @@
 	</if>
 	</select>
 	
+	<select id="queryFuzzyZoneInfo" 
+	resultType="com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo">
+	select p_code as zoneNo, name as zoneName,inputdate as createTime from gis_exist_zone
+	where rank = #{rank}
+	<if test="zoneNo != null and zoneNo != ''">
+		and p_code like  '%'||#{zoneNo}||'%'
+	</if>
+	</select>
 </mapper>

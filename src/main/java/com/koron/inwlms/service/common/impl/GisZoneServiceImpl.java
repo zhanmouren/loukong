@@ -335,15 +335,26 @@ public class GisZoneServiceImpl implements GisZoneService {
 	@TaskAnnotation("queryFuzzyZoneInfo")
 	@Override
 	public List<ZoneInfo> queryFuzzyZoneInfo(SessionFactory factory, QueryZoneInfoDTO queryZoneInfoDTO) {
-		List<ZoneInfo> lists = new ArrayList<>();
-		ZoneInfo zoneInfo = new ZoneInfo();
-		zoneInfo.setZoneNo("FL01");
-		zoneInfo.setZoneName("FL01一级分区");
-		ZoneInfo zoneInfo1 = new ZoneInfo();
-		zoneInfo1.setZoneNo("FL02");
-		zoneInfo1.setZoneName("FL02一级分区");
-		lists.add(zoneInfo);
-		lists.add(zoneInfo1);	
+		GisMapper mapper = factory.getMapper(GisMapper.class);
+		String rank = "";
+		Integer zoneType = queryZoneInfoDTO.getZoneType();
+		if(Constant.RANK_F == zoneType) {
+			rank = Constant.DMAZONELEVEL_ONE;
+		}else if(Constant.RANK_S == zoneType) {
+			rank = Constant.DMAZONELEVEL_TWO;
+		}else if(Constant.RANK_T == zoneType) {
+			rank = Constant.DMAZONELEVEL_THREE;
+		}
+		List<ZoneInfo> lists = mapper.queryFuzzyZoneInfo(rank,queryZoneInfoDTO.getZoneNo());
+//		List<ZoneInfo> lists = new ArrayList<>();
+//		ZoneInfo zoneInfo = new ZoneInfo();
+//		zoneInfo.setZoneNo("FL01");
+//		zoneInfo.setZoneName("FL01一级分区");
+//		ZoneInfo zoneInfo1 = new ZoneInfo();
+//		zoneInfo1.setZoneNo("FL02");
+//		zoneInfo1.setZoneName("FL02一级分区");
+//		lists.add(zoneInfo);
+//		lists.add(zoneInfo1);	
 		return lists;
 	}
 

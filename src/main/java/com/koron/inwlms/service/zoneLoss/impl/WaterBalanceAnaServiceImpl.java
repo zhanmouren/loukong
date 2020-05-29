@@ -83,6 +83,7 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 				codes.add("WNYWLR");
 				zoneWBLossVO = mapper.queryCompanyWBYLossData(queryZoneWBLossDTO, codes);
 			}
+			if(zoneWBLossVO == null) return null;
 			avgLossRate = zoneWBLossVO.getLossRate();
 			zoneWBLossVO.setColor(1);  //灰色
 			zoneWBLossVO.setZoneName("全网");
@@ -92,7 +93,11 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 			IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
 			IndicatorDTO indicatorDTO = new IndicatorDTO();
 			List<String> codes = new ArrayList<>();
-			codes.add("WNMWLR");  //全网漏损率指标
+			if (Constant.TIME_TYPE_M.equals(timeType)) {
+				codes.add("WNMWLR");  //全网月漏损率指标
+			}else if(Constant.TIME_TYPE_Y.equals(timeType)) {
+				codes.add("WNYWLR");  //全网年漏损率指标
+			}
 			indicatorDTO.setCodes(codes );
 			indicatorDTO.setEndTime(queryZoneWBLossDTO.getEndTime());
 			indicatorDTO.setStartTime(queryZoneWBLossDTO.getStartTime());
@@ -123,8 +128,15 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 			}
 			if(zoneWBLossVOs == null || zoneWBLossVOs.size() ==0) return null;
 			zoneWBLossVO = zoneWBLossVOs.get(0);
+			
+			Double lossFlow = zoneWBLossVO.getLossFlow();
+			Double totalMeterFlow = zoneWBLossVO.getTotalMeterFlow();
+			double lossRate = 0.0;
+			if(totalMeterFlow != null) {
+				lossRate = lossFlow/totalMeterFlow;
+				zoneWBLossVO.setLossRate(Double.parseDouble(df.format(lossRate)));
+			}
 			avgLossRate = zoneWBLossVO.getLossRate();
-			Double lossRate = zoneWBLossVO.getLossRate();
 			if(lossRate >= avgLossRate*1.5) {
 				zoneWBLossVO.setColor(3);
 			}else if(lossRate >= avgLossRate && avgLossRate < avgLossRate*1.5) {
@@ -141,6 +153,7 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 		}
 		//3、查询子分区水平衡数据信息
 		List<ZoneWBLossVO> zoneWBMLossData = getZoneWBMLossData(factory,queryZoneWBLossDTO,avgLossRate,zoneNo);
+		if(zoneWBMLossData == null) zoneWBMLossData = new ArrayList<>();
 		zoneWBLossVO.setChildrens(zoneWBMLossData);
 		return zoneWBLossVO;
 	}
@@ -225,8 +238,15 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 			// 年指标查询
 			result = mapper.queryZoneWBYLossData(queryZoneWBLossDTO, lists,codes);
 		}
+		DecimalFormat df = new DecimalFormat("#.0000");
 		for (ZoneWBLossVO zwbVO : result) {
-			Double lossRate = zwbVO.getLossRate();
+			Double lossFlow = zwbVO.getLossFlow();
+			Double totalMeterFlow = zwbVO.getTotalMeterFlow();
+			double lossRate = 0.0;
+			if(totalMeterFlow != null) {
+				lossRate = lossFlow/totalMeterFlow;
+				zwbVO.setLossRate(Double.parseDouble(df.format(lossRate)));
+			}
 			if(lossRate >= avgLossRate*1.5) {
 				zwbVO.setColor(3);
 			}else if(lossRate >= avgLossRate && avgLossRate < avgLossRate*1.5) {
@@ -242,6 +262,7 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 				}
 			}
 			List<ZoneWBLossVO> childrens = getZoneWBMLossData(factory,queryZoneWBLossDTO,avgLossRate,zwbVO.getZoneNo());
+			if(childrens == null) childrens = new ArrayList<>();
 			zwbVO.setChildrens(childrens);
 		}
 		return result;
