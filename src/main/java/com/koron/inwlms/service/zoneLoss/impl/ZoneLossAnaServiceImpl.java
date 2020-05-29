@@ -759,6 +759,9 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		lists.addAll(queryWBBaseIndicData);
 		lists.addAll(queryZoneLossIndicData);
 		lists.addAll(queryLeakIndicData);
+		for (IndicatorVO indicatorVO : queryLeakIndicData) {
+			indicatorVO.setCode(indicatorVO.getCode().substring(3));
+		}
 		List<Map<Object,Object>> mapLists = new ArrayList<>();
 		List<String> zoneNoList = new ArrayList<>(); //已存储的分区编号
 		DecimalFormat df = new DecimalFormat("#.0000");
@@ -773,6 +776,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			Double values = 0.0; //统计值
 			int timeNum = 0;  //参与计算的月份数量
 			for (String code : codes) {
+				code = code.substring(3);  
 				for (IndicatorVO indicatorVO1 : lists) {
 					if(zoneNo.equals(indicatorVO1.getZoneNo()) && code.equals(indicatorVO1.getCode())) {
 						values += indicatorVO1.getValue();
@@ -780,7 +784,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				
-				if(code.contains("DCPL") || code.contains("UCRFW") || code.contains("WLR") || 
+				if(code.contains("NOCM") || code.contains("FTPL") || code.contains("DCPL") || code.contains("UCRFW") || code.contains("WLR") || 
 						code.contains("MNF") || code.contains("LCA") || code.contains("LPL")) {
 					//DMA覆盖率（管长），未计量用水量占比，漏损率，最小夜间流量,扣除大用户的最小夜间流量,单位户数漏损量,单位管长漏损量,计算平均值
 					if(timeNum == 0) {
@@ -850,8 +854,16 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			dZidVO8.setItemCode("FLDLPL");
 			dZidVO8.setItemName("单位管长漏损量");
 			dZidVO8.setTimeType(2);
-			
+			ZoneIndicatorDicVO dZidVO9 = new ZoneIndicatorDicVO();
+			dZidVO9.setItemCode("FLMNOCM");
+			dZidVO9.setItemName("用户数");
+			dZidVO9.setTimeType(2);
+			ZoneIndicatorDicVO dZidVO10 = new ZoneIndicatorDicVO();
+			dZidVO10.setItemCode("FLMFTPL");
+			dZidVO10.setItemName("管长");
+			dZidVO10.setTimeType(2);
 			//月指标
+			
 			ZoneIndicatorDicVO mZidVO = new ZoneIndicatorDicVO();
 			mZidVO.setItemCode("FLMMC");
 			mZidVO.setItemName("客户计量用水量");
@@ -904,6 +916,14 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			mZidVO12.setItemCode("FLMDCPL");
 			mZidVO12.setItemName("DMA/PMA面积覆盖率");
 			mZidVO12.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO13 = new ZoneIndicatorDicVO();
+			mZidVO13.setItemCode("FLMNOCM");
+			mZidVO13.setItemName("用户数");
+			mZidVO13.setTimeType(3);
+			ZoneIndicatorDicVO mZidVO14 = new ZoneIndicatorDicVO();
+			mZidVO14.setItemCode("FLMFTPL");
+			mZidVO14.setItemName("管长");
+			mZidVO14.setTimeType(3);
 			
 			//月指标
 			ZoneIndicatorDicVO yZidVO = new ZoneIndicatorDicVO();
@@ -958,6 +978,14 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			yZidVO12.setItemCode("FLYDCPL");
 			yZidVO12.setItemName("DMA/PMA面积覆盖率");
 			yZidVO12.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO13 = new ZoneIndicatorDicVO();
+			yZidVO13.setItemCode("FLYNOCM");
+			yZidVO13.setItemName("用户数");
+			yZidVO13.setTimeType(4);
+			ZoneIndicatorDicVO yZidVO14 = new ZoneIndicatorDicVO();
+			yZidVO14.setItemCode("FLYFTPL");
+			yZidVO14.setItemName("管长");
+			yZidVO14.setTimeType(4);
 			lists.add(dZidVO);
 			lists.add(dZidVO1);
 			lists.add(dZidVO2);
@@ -967,6 +995,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			lists.add(dZidVO6);
 			lists.add(dZidVO7);
 			lists.add(dZidVO8);
+			lists.add(dZidVO9);
+			lists.add(dZidVO10);
 			lists.add(mZidVO);
 			lists.add(mZidVO1);
 			lists.add(mZidVO2);
@@ -980,6 +1010,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			lists.add(mZidVO10);
 			lists.add(mZidVO11);
 			lists.add(mZidVO12);
+			lists.add(mZidVO13);
+			lists.add(mZidVO14);
 			lists.add(yZidVO);
 			lists.add(yZidVO1);
 			lists.add(yZidVO2);
@@ -993,6 +1025,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			lists.add(yZidVO10);
 			lists.add(yZidVO11);
 			lists.add(yZidVO12);
+			lists.add(yZidVO13);
+			lists.add(yZidVO14);
 		}else if(Constant.RANK_S.equals(zoneType)) {
 			//二级分区
 			//日指标
