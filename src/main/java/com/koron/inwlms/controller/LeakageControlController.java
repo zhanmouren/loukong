@@ -347,7 +347,7 @@ public class LeakageControlController {
     public String addAlarmProcess(@RequestBody AlarmProcessVO alarmProcessVO ,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
-		if(alarmProcessVO.getAlarmType() == null && alarmProcessVO.getAlarmType().equals("")) {
+		if(alarmProcessVO.getAlarmType() == null || alarmProcessVO.getAlarmType().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("参数错误!报警类型为空");
 	        return msg.toJson();
@@ -1248,7 +1248,7 @@ public class LeakageControlController {
     public String deletePolicy(String code) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
-		if(code != null || code.equals("")) {
+		if(code == null || code.equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("方案编码为空");
 	        return msg.toJson();
