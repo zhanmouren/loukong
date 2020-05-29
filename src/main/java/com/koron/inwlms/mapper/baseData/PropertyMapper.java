@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-@EnvSource("SEC")
+//@EnvSource("SEC")
 public interface PropertyMapper {
 
     @Select("select smid,smuserid,smarea,smperimeter,ST_AsText(smgeometry)smgeometry,featid,subtype,objtype,p_code,name,rank,shape_length,shape_area from public.\"GDH_DMA\"")

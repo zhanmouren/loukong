@@ -7,14 +7,26 @@
  <select id="queryWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO">
  select * from app_warningscheme
  <trim prefix="where" prefixOverrides="and|or">
- <if test="id != null"> id = #{id}</if>
- <if test="code != null and code !='' "> code = #{code}</if>
- <if test="state != null and state != '' "> state = #{state}</if>
- <if test="objectType != null and objectType != '' "> "objectType" = #{objectType}</if>
- <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType}</if>
+ <if test="id != null"> id = #{id},</if>
+ <if test="code != null and code !='' "> code = #{code},</if>
+ <if test="state != null and state != '' "> state = #{state},</if>
+ <if test="objectType != null and objectType != '' "> "objectType" = #{objectType},</if>
+ <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType},</if>
  <if test="dmaCode != null and dmaCode != '' "> "dmaCode" = #{dmaCode}</if>
  </trim>
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+ </select>
+ 
+ <select id="queryWarningSchemeTotalNumber" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.Integer">
+ select count(*) from app_warningscheme
+ <trim prefix="where" prefixOverrides="and|or">
+ <if test="id != null"> id = #{id},</if>
+ <if test="code != null and code !='' "> code = #{code},</if>
+ <if test="state != null and state != '' "> state = #{state},</if>
+ <if test="objectType != null and objectType != '' "> "objectType" = #{objectType},</if>
+ <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType},</if>
+ <if test="dmaCode != null and dmaCode != '' "> "dmaCode" = #{dmaCode}</if>
+ </trim>
  </select>
  
  <insert id="addWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO">

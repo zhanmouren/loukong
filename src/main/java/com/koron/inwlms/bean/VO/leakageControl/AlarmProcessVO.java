@@ -113,9 +113,21 @@ public class AlarmProcessVO {
 	
 	private String objectCode;
 	
+	private String remarks;
 	
 	
 	
+	
+	
+	
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
 
 	public String getObjectCode() {
 		return objectCode;

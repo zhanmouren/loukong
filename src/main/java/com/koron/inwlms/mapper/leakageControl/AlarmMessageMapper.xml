@@ -50,7 +50,7 @@
   </insert>
   
   <select id="queryWarningCodeList" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
-  select a.code as code, b."alarmType" as "alarmType" from app_warninginf a inner join app_warningscheme b on a."schemeCode" = b.code
+  select a.code as code, b."alarmType" as "alarmType", a."alarmTime" as "alarmTime" from app_warninginf a inner join app_warningscheme b on a."schemeCode" = b.code
   <trim prefix="where" prefixOverrides="and|or">
    <if test="objectType != null and objectType != '' "> b."objectType" = #{objectType} and</if> 
    <if test="objectCode != null and objectCode != '' "> a.objectCode = #{objectCode}</if>

@@ -10,6 +10,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
+import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
 
 @Service
 public interface EventInfoService {
@@ -31,6 +32,12 @@ public interface EventInfoService {
 	Integer deleteEventSubType(SessionFactory factory, String key);
 
 	EventInfo queryEventInfoByCode(SessionFactory factory, String code);
+
+	Integer addEventWarnRelation(SessionFactory factory, EventWarnRelation eventWarnRelation);
+
+	List<EventWarnRelation> queryEventWarnRelation(SessionFactory factory, String processCode);
+
+	Integer deleteEventWarnRelation(SessionFactory factory, String processCode, String eventCode);
 	
 	
 

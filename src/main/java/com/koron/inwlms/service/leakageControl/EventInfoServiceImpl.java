@@ -13,6 +13,8 @@ import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
+import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
+import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
 import com.koron.inwlms.mapper.leakageControl.EventInfoMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.util.Constant;
@@ -24,7 +26,9 @@ public class EventInfoServiceImpl implements EventInfoService{
 	@TaskAnnotation("queryEventInfo")
 	@Override
 	public List<EventInfo> queryEventInfo(SessionFactory factory,EventInfoDTO eventInfoDTO){
+		EventInfoListReturnVO eventInfoListReturnVO = new EventInfoListReturnVO();
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		
 		List<EventInfo> list = mapper.queryEventInfo(eventInfoDTO);
 		return list;
 	}
@@ -129,5 +133,31 @@ public class EventInfoServiceImpl implements EventInfoService{
 		Integer delRes = userMapper.deleteDetDicByKey(dataDicDTOList);
 		return delRes;
 	}
+	
+	@TaskAnnotation("addEventWarnRelation")
+	@Override
+	public Integer addEventWarnRelation(SessionFactory factory,EventWarnRelation eventWarnRelation) {
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		Integer num = mapper.addEventWarnRelation(eventWarnRelation);
+		return num;
+	}
+	
+	@TaskAnnotation("queryEventWarnRelation")
+	@Override
+	public List<EventWarnRelation> queryEventWarnRelation(SessionFactory factory, String processCode) {
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		List<EventWarnRelation> list = mapper.queryEventWarnRelation(processCode);
+		return list;
+	}
+	
+	@TaskAnnotation("deleteEventWarnRelation")
+	@Override
+	public Integer deleteEventWarnRelation(SessionFactory factory,String processCode,String eventCode) {
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		Integer num = mapper.deleteEventWarnRelation(processCode, eventCode);
+		return num;
+	}
+	
+	
 
 }

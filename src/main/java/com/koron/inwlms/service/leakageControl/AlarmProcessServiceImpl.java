@@ -14,13 +14,17 @@ import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
+import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisZonePointVO;
 import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
@@ -32,8 +36,9 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 
 	@TaskAnnotation("queryAlarmProcess")
 	@Override
-	public List<AlarmProcessVO> queryAlarmProcess(SessionFactory factory,AlarmProcessDTO alarmProcessDTO){
+	public AlarmProcessReturnVO queryAlarmProcess(SessionFactory factory,AlarmProcessDTO alarmProcessDTO){
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		AlarmProcessReturnVO alarmProcessReturnVO = new AlarmProcessReturnVO();
 		//查询工单信息
 		List<AlarmProcessVO> list = mapper.queryAlarmProcess(alarmProcessDTO);
 		//查询报警信息
@@ -58,8 +63,15 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 				
 			}
 		}
+		alarmProcessReturnVO.setAlarmProcessList(list);
+		PageInfo query = new PageInfo();
+		Integer num = mapper.queryAlarmProcessTotalNumber(alarmProcessDTO);
+		query.setTotalNumber(num);
+		query.setPage(alarmProcessDTO.getPage());
+		query.setSize(alarmProcessDTO.getPageCount());
+		alarmProcessReturnVO.setQuery(query);
 		
-		return list;
+		return alarmProcessReturnVO;
 	}
 	@TaskAnnotation("queryAlarmProcessByTaskCode")
 	@Override
@@ -91,19 +103,41 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	
 	@TaskAnnotation("updateAlarmProcess")
 	@Override
-	public Integer updateAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO) {
+	public Integer updateAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO,UserVO user) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		Integer num = mapper.updateAlarmProcess(alarmProcessVO);
+		if(alarmProcessVO.getState().equals("2")) {
+			//添加流程日志
+			AlarmProcessLog alarmProcessLog = new AlarmProcessLog();
+			alarmProcessLog.setTaskCode(alarmProcessVO.getTaskCode());
+			alarmProcessLog.setCreateTime(new Date());
+			if(alarmProcessVO.getRemarks() != null) {
+				alarmProcessLog.setContent(alarmProcessVO.getRemarks());
+			}
+			alarmProcessLog.setOperation("确认任务");
+			alarmProcessLog.setCreateBy(user.getCode());
+		}else if(alarmProcessVO.getState().equals("3")) {
+			//添加流程日志
+			AlarmProcessLog alarmProcessLog = new AlarmProcessLog();
+			alarmProcessLog.setTaskCode(alarmProcessVO.getTaskCode());
+			alarmProcessLog.setCreateTime(new Date());
+			if(alarmProcessVO.getRemarks() != null) {
+				alarmProcessLog.setContent(alarmProcessVO.getRemarks());
+			}
+			alarmProcessLog.setOperation("完成任务");
+			alarmProcessLog.setCreateBy(user.getCode());
+		}
+		
 		return num;
 	}
 	
 	@TaskAnnotation("addAlarmProcess")
 	@Override
-	public String addAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO) {
+	public String addAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO, UserVO user) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		String num = "";
 		//判断报警类型
-		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_TRENDCHANGE)) {
+		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_TRENDCHANGE)) { 
 			num = mapper.addAlarmProcessOfZQS(alarmProcessVO);
 		}
 		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OFFLINE)) {
@@ -118,6 +152,16 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN) && alarmProcessVO.getType() == 0) {
 			num = mapper.addAlarmProcessOfZCX(alarmProcessVO);
 		}
+		
+		//添加流程日志
+		AlarmProcessLog alarmProcessLog = new AlarmProcessLog();
+		alarmProcessLog.setTaskCode(num);
+		alarmProcessLog.setCreateTime(new Date());
+		if(alarmProcessVO.getRemarks() != null) {
+			alarmProcessLog.setContent(alarmProcessVO.getRemarks());
+		}
+		alarmProcessLog.setOperation("创建任务");
+		alarmProcessLog.setCreateBy(user.getCode());
 		
 		return num;
 	}

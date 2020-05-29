@@ -13,7 +13,14 @@
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
- 
+ <select id="queryEventInfoTotalNumber" parameterType="com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO" resultType="java.lang.Integer">
+ select count(*) from app_eventinfo where "createTime" between '${startTime}' and '${endTime}'
+ <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
+ <if test="type != null and type != '' "> and "type" = #{type}</if>
+ <if test="subtype != null and subtype != '' "> and "subtype" = #{subtype}</if>
+ <if test="objectCode != null and objectCode != '' "> and "objectCode" = #{objectCode}</if>
+ <if test="firstPartition != null and firstPartition != '' "> and "firstPartition" = #{firstPartition}</if>
+ </select>
  
  <delete id="deleteEventInfo" parameterType="java.lang.String">
  
@@ -56,6 +63,14 @@
  select cast(MAX(substring(key,2,9)) as integer) from sm_datadictionary where parent = #{parent}
  </select>
  
+ <insert id="addEventWarnRelation" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation">
+ insert into app_eventwarnrelation("processCode", "eventCode", "createBy", "createTime", "updateBy", "updateTime")
+ values(#{processCode}, #{eventCode}, #{createBy}, Now(), #{updateBy}, Now())
+ </insert>
+ 
+ <select id="queryEventWarnRelation" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation">
+ select * from app_eventwarnrelation where "processCode" = #{processCode}
+ </select>
 
  
 </mapper>
