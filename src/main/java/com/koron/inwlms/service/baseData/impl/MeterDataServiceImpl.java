@@ -1,11 +1,13 @@
 package com.koron.inwlms.service.baseData.impl;
 
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO;
+import com.koron.inwlms.bean.DTO.baseInf.MeterDataExcelBean;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataHisVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataVO;
 import com.koron.inwlms.mapper.baseData.IMDataMapper;
 import com.koron.inwlms.service.baseData.MeterDataService;
 import org.koron.ebs.mybatis.SessionFactory;
+import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,20 @@ import java.util.List;
  */
 @Service
 public class MeterDataServiceImpl implements MeterDataService {
+
+    /**
+     * 批量插入监测数据
+     * @param factory
+     * @param excelBeans
+     * @return
+     */
+    @TaskAnnotation("addBatchMeterData")
+    @Override
+    public Integer addBatchMeterData(SessionFactory factory,List<MeterDataExcelBean> excelBeans){
+        IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
+        Integer result = mapper.addBatchMeterData(excelBeans);
+        return result;
+    }
 
     /**
      * 查询抄表列表数据

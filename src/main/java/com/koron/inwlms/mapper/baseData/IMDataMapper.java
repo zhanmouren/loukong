@@ -1,12 +1,13 @@
 package com.koron.inwlms.mapper.baseData;
 
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO;
+import com.koron.inwlms.bean.DTO.baseInf.MeterDataExcelBean;
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataExcelBean;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataHisVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataVO;
-import com.koron.inwlms.bean.VO.baseInf.MonitorDataVO;
 import com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO;
+import com.koron.inwlms.bean.VO.baseInf.MonitorDataVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +15,8 @@ import java.util.List;
 
 @Repository
 public interface IMDataMapper {
+
+
 
     /**
      * 批量添加监测数据
@@ -72,6 +75,13 @@ public interface IMDataMapper {
      * @return
      */
     boolean updateMonitorDet(MonitorDataDTO monitorDataDTO);
+
+    /**
+     * 批量添加抄表数据
+     * @param excelBeans
+     * @return
+     */
+    Integer addBatchMeterData(@Param("excelBeans") List<MeterDataExcelBean> excelBeans);
 
     /**
      * 查询抄表数据列表数据

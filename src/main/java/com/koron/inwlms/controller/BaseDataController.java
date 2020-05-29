@@ -555,7 +555,7 @@ public class BaseDataController {
 
         //TODO:
         //return ExportExcel.exportFile(Constant.POINT_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH + Constant.POINT_IMPORT_TEMPLATE, Constant.LINUX_TEMPALTE_PATH+Constant.ZONEPOINT_IMPORT_TEMPLATE_BTL, (Map) new HashMap());
-        FileUtil.downloadFile(Constant.POINT_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.POINT_IMPORT_TEMPLATE, response, request);
+        FileUtil.downloadFile(Constant.ZONEPOINT_IMPORT_TEMPLATE,Constant.LINUX_TEMPALTE_PATH + Constant.ZONEPOINT_IMPORT_TEMPLATE, response, request);
         return;
 
     }
@@ -563,7 +563,7 @@ public class BaseDataController {
     @RequestMapping("/importZonePoint.htm")
     @ApiOperation(value = "导入分区与监测点数据接口", notes = "导入分区与监测点数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importZonePoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+    public String importZonePoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent") MultipartFile file) {
         MessageBean msg = new MessageBean();
 
         //TODO:校验是否有数据添加权限
@@ -576,8 +576,22 @@ public class BaseDataController {
         }
 
         //TODO:Excel数据读取校验完整性，一致性，准确性
-
-        return msg.toString();
+        List<ZonePointExcelBean> excelBeans = ImportExcelUtil.readExcel(file, ZonePointExcelBean.class);
+        for(ZonePointExcelBean bean : excelBeans){
+            bean.setBatchNo(BatchNo);
+        }
+        if (excelBeans == null || excelBeans.size()==0) {
+            msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
+            msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
+        } else {
+            try {
+                Integer ret = ADOConnection.runTask(zcs, "addBatchZonePoint", Integer.class, excelBeans);
+            } catch (Exception e) {
+                msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
+                msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
+            }
+        }
+        return msg.toJson();
     }
 
 
@@ -950,7 +964,6 @@ public class BaseDataController {
     public String updateReadMeterDataDet(@RequestBody MeterDataDTO meterDataDTO) {
 
         MessageBean msg = new MessageBean();
-
         //TODO:校验是否有修改权限
 
         //TODO:参数meterDataDTO校验
@@ -983,14 +996,30 @@ public class BaseDataController {
     @RequestMapping("/importMeterData.htm")
     @ApiOperation(value = "导入抄表数据接口", notes = "导入抄表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importMeterData(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
-        MessageBean msg = new MessageBean();
+    public String importMeterData(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent") MultipartFile file) {
+        MessageBean<?> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 
         //TODO:校验是否有数据添加权限
 
         //TODO:Excel数据读取校验完整性，一致性，准确性
 
-        return msg.toString();
+        List<MeterDataExcelBean> excelBeans = ImportExcelUtil.readExcel(file, MeterDataExcelBean.class);
+        for(MeterDataExcelBean bean : excelBeans){
+            bean.setBatchNo(BatchNo);
+        }
+        if (excelBeans == null || excelBeans.size()==0) {
+            msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
+            msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
+        } else {
+            try {
+                Integer ret = ADOConnection.runTask(mds, "addBatchMeterData", Integer.class, excelBeans);
+            } catch (Exception e) {
+                e.printStackTrace();
+                msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
+                msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
+            }
+        }
+        return msg.toJson();
     }
 
     @RequestMapping(value = "/queryMonRep.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })

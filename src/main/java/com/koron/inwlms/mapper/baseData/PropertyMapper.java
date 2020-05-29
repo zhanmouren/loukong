@@ -1,23 +1,26 @@
 package com.koron.inwlms.mapper.baseData;
 
-import com.koron.inwlms.bean.DTO.baseInf.PipeDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZoneDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZonePointDTO;
+import com.koron.inwlms.bean.DTO.baseInf.*;
 import com.koron.inwlms.bean.VO.baseInf.*;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.koron.ebs.mybatis.EnvSource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-@EnvSource("SEC")
+//@EnvSource("SEC")
 public interface PropertyMapper {
 
     @Select("select smid,smuserid,smarea,smperimeter,ST_AsText(smgeometry)smgeometry,featid,subtype,objtype,p_code,name,rank,shape_length,shape_area from public.\"GDH_DMA\"")
     List<DataVO> queryALList();
+
+    /**
+     * 批量添加分区监测点数据
+     * @param excelBeans
+     * @return
+     */
+    Integer addBatchZonePoint(@Param("excelBeans")List<ZonePointExcelBean> excelBeans);
 
     /**
      * 查询管线数据

@@ -1,6 +1,7 @@
 package com.koron.inwlms.service.baseData;
 
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO;
+import com.koron.inwlms.bean.DTO.baseInf.MeterDataExcelBean;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataHisVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataVO;
 import org.koron.ebs.mybatis.SessionFactory;
@@ -8,6 +9,14 @@ import org.koron.ebs.mybatis.SessionFactory;
 import java.util.List;
 
 public interface MeterDataService {
+
+    /**
+     * 批量插入抄表数据
+     * @param factory
+     * @param excelBeans
+     * @return
+     */
+    public Integer addBatchMeterData(SessionFactory factory,List<MeterDataExcelBean> excelBeans);
 
     /**
      * 查询抄表列表数据

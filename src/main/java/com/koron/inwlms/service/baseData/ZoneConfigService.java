@@ -1,8 +1,6 @@
 package com.koron.inwlms.service.baseData;
 
-import com.koron.inwlms.bean.DTO.baseInf.ZoneDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZonePointDTO;
+import com.koron.inwlms.bean.DTO.baseInf.*;
 import com.koron.inwlms.bean.VO.baseInf.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import org.koron.ebs.mybatis.SessionFactory;
@@ -11,6 +9,14 @@ import java.util.List;
 
 public interface ZoneConfigService {
 
+
+    /**
+     * 导入分区监测点数据
+     * @param factory
+     * @param excelBeans
+     * @return
+     */
+    public Integer addBatchZonePoint(SessionFactory factory,List<ZonePointExcelBean> excelBeans);
 
     /**
      * 查询分区列表数据

@@ -2,6 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.baseData.IMDataMapper">
 
+    <insert id="addBatchMeterData" >
+        insert into mi_readwaterinfo(
+        user_no,user_name,user_type,prior_period_num,prior_period_date,meter_reading_date,currend_period_num,reality_water,meter_reading_way,"BatchNo","createBy","createTime"
+        )values
+        <if test="excelBeans != null and excelBeans.size > 0">
+            <foreach collection="excelBeans" item="item" index="" separator=",">
+                (#{item.userNo},#{item.userName},#{item.userType},cast(#{item.lastReading} as numeric),#{item.lastTime},#{item.recordTime},cast(#{item.meterReading} as numeric),cast(#{item.mwo} as numeric),#{item.readType},#{item.BatchNo},#{item.createBy},#{item.createTime})
+            </foreach>
+        </if>
+    </insert>
+
     <insert id="addBatchMointorData" >
         insert into mi_monitordata(
              status,"pointID",type,"lastTime",flow,"forwardFlowRate","reverseFlowRate","flowRate","upstreamPressure","downstreamPressure","unfavorPressure",noise,threshold,"BatchNo","createBy","createTime"

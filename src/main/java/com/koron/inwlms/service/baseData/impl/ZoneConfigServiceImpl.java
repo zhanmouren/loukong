@@ -3,6 +3,7 @@ package com.koron.inwlms.service.baseData.impl;
 import com.koron.inwlms.bean.DTO.baseInf.ZoneDTO;
 import com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO;
 import com.koron.inwlms.bean.DTO.baseInf.ZonePointDTO;
+import com.koron.inwlms.bean.DTO.baseInf.ZonePointExcelBean;
 import com.koron.inwlms.bean.VO.baseInf.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
@@ -23,6 +24,17 @@ import java.util.List;
 @Service
 public class ZoneConfigServiceImpl implements ZoneConfigService {
 
+
+    /**
+     * 导入分区监测点数据
+     */
+    @TaskAnnotation("addBatchZonePoint")
+    @Override
+    public Integer addBatchZonePoint(SessionFactory factory,List<ZonePointExcelBean> excelBeans){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer result = mapper.addBatchZonePoint(excelBeans);
+        return result;
+    }
 
     /**
      * 分区列表数据

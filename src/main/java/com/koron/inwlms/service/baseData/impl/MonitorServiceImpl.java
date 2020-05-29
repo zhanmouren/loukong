@@ -102,7 +102,7 @@ public class MonitorServiceImpl implements MonitorService {
     /**
      * 查询某一批次监测数据
      * @param factory
-     * @param BatchNo
+     * @param monitorDataDTO
      * @return
      */
     @TaskAnnotation("queryMonitorDataByBatchNo")
