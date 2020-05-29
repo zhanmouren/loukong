@@ -1,26 +1,19 @@
 package com.koron.filter;
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.koron.inwlms.bean.VO.sysManager.UserListVO;
+import com.koron.util.Constant;
+import com.koron.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.swan.bean.MessageBean;
 
-import com.google.gson.Gson;
-import com.koron.inwlms.bean.VO.sysManager.UserListVO;
-import com.koron.util.Constant;
-import com.koron.util.SessionUtil;
+import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 请求过滤器
@@ -60,6 +53,7 @@ public class RequestFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+		
 		logger.info("开始进行过滤处理");
 		HttpServletRequest hsRequest = (HttpServletRequest)request;
 		HttpServletResponse hsResponse = (HttpServletResponse)response;
@@ -83,7 +77,7 @@ public class RequestFilter implements Filter {
 				} else {
 					if (servletPath.endsWith(".html")) {
 						// 如果是页面,则重定向到登录界面
-						hsResponse.sendRedirect(hsRequest.getContextPath() + "/inmsUI/dist/views/login/index.html");
+						hsResponse.sendRedirect(hsRequest.getContextPath() + "/dist/views/login/index.html");
 					} else {
 						// 如果是controller下的api,返回未登录信息,让前端处理
 						hsResponse.setContentType("application/json; charset=utf-8");
