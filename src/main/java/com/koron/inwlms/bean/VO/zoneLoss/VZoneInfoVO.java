@@ -41,6 +41,8 @@ public class VZoneInfoVO {
 	 * 地址
 	 */
 	private String address;
+	
+	private String createTime;
 
 	public String getZoneNo() {
 		return zoneNo;
@@ -96,6 +98,14 @@ public class VZoneInfoVO {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
 	}
 	
 	

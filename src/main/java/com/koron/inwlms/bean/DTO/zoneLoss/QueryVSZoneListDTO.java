@@ -9,13 +9,13 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
  */
 public class QueryVSZoneListDTO extends BaseDTO{
 
-	private Double minNrw;
+	private String minNrw;
 	
-	private Double maxNrw;
+	private String maxNrw;
 	
-	private Double minUfwc;
+	private String minWl;
 	
-	private Double maxUfwc;
+	private String maxWl;
 	
 	/**
 	 * 时间类型（0：分 ，1：时，2：日，3：月，4：年）
@@ -32,28 +32,13 @@ public class QueryVSZoneListDTO extends BaseDTO{
 	 */
 	private Integer endTime;
 	
-	private Integer virtualZoneType;
+	private String virtualZoneType;
 	
 	/**
 	 * 虚拟分区编码
 	 */
 	private String  virtualZoneNo;
 
-	public Double getMinNrw() {
-		return minNrw;
-	}
-
-	public Double getMaxNrw() {
-		return maxNrw;
-	}
-
-	public Double getMinUfwc() {
-		return minUfwc;
-	}
-
-	public Double getMaxUfwc() {
-		return maxUfwc;
-	}
 
 	public Integer getTimeType() {
 		return timeType;
@@ -68,22 +53,6 @@ public class QueryVSZoneListDTO extends BaseDTO{
 	}
 
 
-	public void setMinNrw(Double minNrw) {
-		this.minNrw = minNrw;
-	}
-
-	public void setMaxNrw(Double maxNrw) {
-		this.maxNrw = maxNrw;
-	}
-
-	public void setMinUfwc(Double minUfwc) {
-		this.minUfwc = minUfwc;
-	}
-
-	public void setMaxUfwc(Double maxUfwc) {
-		this.maxUfwc = maxUfwc;
-	}
-
 	public void setTimeType(Integer timeType) {
 		this.timeType = timeType;
 	}
@@ -96,13 +65,11 @@ public class QueryVSZoneListDTO extends BaseDTO{
 		this.endTime = endTime;
 	}
 
-
-
-	public Integer getVirtualZoneType() {
+	public String getVirtualZoneType() {
 		return virtualZoneType;
 	}
 
-	public void setVirtualZoneType(Integer virtualZoneType) {
+	public void setVirtualZoneType(String virtualZoneType) {
 		this.virtualZoneType = virtualZoneType;
 	}
 
@@ -112,6 +79,38 @@ public class QueryVSZoneListDTO extends BaseDTO{
 
 	public void setVirtualZoneNo(String virtualZoneNo) {
 		this.virtualZoneNo = virtualZoneNo;
+	}
+
+	public String getMinNrw() {
+		return minNrw;
+	}
+
+	public void setMinNrw(String minNrw) {
+		this.minNrw = minNrw;
+	}
+
+	public String getMaxNrw() {
+		return maxNrw;
+	}
+
+	public void setMaxNrw(String maxNrw) {
+		this.maxNrw = maxNrw;
+	}
+
+	public String getMinWl() {
+		return minWl;
+	}
+
+	public void setMinWl(String minWl) {
+		this.minWl = minWl;
+	}
+
+	public String getMaxWl() {
+		return maxWl;
+	}
+
+	public void setMaxWl(String maxWl) {
+		this.maxWl = maxWl;
 	}
 
 }

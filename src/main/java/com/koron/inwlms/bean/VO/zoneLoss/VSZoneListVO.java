@@ -68,6 +68,11 @@ public class VSZoneListVO {
 	private Double lossFlow;
 	
 	/**
+	 * 产销差
+	 */
+	private Double nrw;
+	
+	/**
 	 * 单位用户漏损量
 	 */
 	private Double perUserLossFlow;
@@ -90,7 +95,7 @@ public class VSZoneListVO {
 	/**
 	 * 最小夜间流量所在时刻
 	 */
-	private Double mnfTime;
+	private Integer mnfTime;
 	
 	/**
 	 * 夜间最小流量与日均供水量的比率
@@ -100,7 +105,7 @@ public class VSZoneListVO {
 	/**
 	 * 创建时间
 	 */
-	private Double createTime;
+	private String createTime;
 
 	public String getZoneNo() {
 		return zoneNo;
@@ -166,16 +171,9 @@ public class VSZoneListVO {
 		return mnf;
 	}
 
-	public Double getMnfTime() {
-		return mnfTime;
-	}
 
 	public Double getMnfTdf() {
 		return mnfTdf;
-	}
-
-	public Double getCreateTime() {
-		return createTime;
 	}
 
 	public void setZoneNo(String zoneNo) {
@@ -242,16 +240,33 @@ public class VSZoneListVO {
 		this.mnf = mnf;
 	}
 
-	public void setMnfTime(Double mnfTime) {
-		this.mnfTime = mnfTime;
-	}
-
 	public void setMnfTdf(Double mnfTdf) {
 		this.mnfTdf = mnfTdf;
 	}
 
-	public void setCreateTime(Double createTime) {
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
 	}
+
+	public Double getNrw() {
+		return nrw;
+	}
+
+	public void setNrw(Double nrw) {
+		this.nrw = nrw;
+	}
+
+	public Integer getMnfTime() {
+		return mnfTime;
+	}
+
+	public void setMnfTime(Integer mnfTime) {
+		this.mnfTime = mnfTime;
+	}
+
 	
 }

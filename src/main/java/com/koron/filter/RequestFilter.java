@@ -1,19 +1,26 @@
 package com.koron.filter;
 
-import com.google.gson.Gson;
-import com.koron.inwlms.bean.VO.sysManager.UserListVO;
-import com.koron.util.Constant;
-import com.koron.util.SessionUtil;
+import java.io.IOException;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.swan.bean.MessageBean;
 
-import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import com.google.gson.Gson;
+import com.koron.inwlms.bean.VO.sysManager.UserListVO;
+import com.koron.util.Constant;
+import com.koron.util.SessionUtil;
 
 /**
  * 请求过滤器
@@ -53,7 +60,6 @@ public class RequestFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		
 		logger.info("开始进行过滤处理");
 		HttpServletRequest hsRequest = (HttpServletRequest)request;
 		HttpServletResponse hsResponse = (HttpServletResponse)response;

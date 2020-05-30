@@ -9,13 +9,13 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
  */
 public class QueryVCZoneListDTO extends BaseDTO{
 
-	private Double minNrw;
+	private String minNrw;
 	
-	private Double maxNrw;
+	private String maxNrw;
 	
-	private Double minUfwc;
+	private String minWl;
 	
-	private Double maxUfwc;
+	private String maxWl;
 	
 	/**
 	 * 时间类型（0：分 ，1：时，2：日，3：月，4：年）
@@ -35,22 +35,22 @@ public class QueryVCZoneListDTO extends BaseDTO{
 	/**
 	 * 最小漏损率
 	 */
-	private Double minLossRate;
+	private String minLossRate;
 	
 	/**
 	 * 最大漏损率
 	 */
-	private Double maxLossRate;
+	private String maxLossRate;
 	
 	/**
 	 * 最小漏损量
 	 */
-	private Double minLossFlow;
+	private String minLossFlow;
 	
 	/**
 	 * 最大漏损量
 	 */
-	private Double maxLossFlow;
+	private String maxLossFlow;
 	
 	/**
 	 * 虚拟分区编码
@@ -62,21 +62,6 @@ public class QueryVCZoneListDTO extends BaseDTO{
 	 */
 	private String dmaNo;
 
-	public Double getMinNrw() {
-		return minNrw;
-	}
-
-	public Double getMaxNrw() {
-		return maxNrw;
-	}
-
-	public Double getMinUfwc() {
-		return minUfwc;
-	}
-
-	public Double getMaxUfwc() {
-		return maxUfwc;
-	}
 
 	public Integer getTimeType() {
 		return timeType;
@@ -91,21 +76,6 @@ public class QueryVCZoneListDTO extends BaseDTO{
 	}
 
 
-	public void setMinNrw(Double minNrw) {
-		this.minNrw = minNrw;
-	}
-
-	public void setMaxNrw(Double maxNrw) {
-		this.maxNrw = maxNrw;
-	}
-
-	public void setMinUfwc(Double minUfwc) {
-		this.minUfwc = minUfwc;
-	}
-
-	public void setMaxUfwc(Double maxUfwc) {
-		this.maxUfwc = maxUfwc;
-	}
 
 	public void setTimeType(Integer timeType) {
 		this.timeType = timeType;
@@ -129,44 +99,78 @@ public class QueryVCZoneListDTO extends BaseDTO{
 		this.virtualZoneNo = virtualZoneNo;
 	}
 
-	public Double getMinLossRate() {
-		return minLossRate;
-	}
-
-	public Double getMaxLossRate() {
-		return maxLossRate;
-	}
-
-	public Double getMinLossFlow() {
-		return minLossFlow;
-	}
-
-	public Double getMaxLossFlow() {
-		return maxLossFlow;
-	}
 
 	public String getDmaNo() {
 		return dmaNo;
 	}
 
-	public void setMinLossRate(Double minLossRate) {
-		this.minLossRate = minLossRate;
-	}
-
-	public void setMaxLossRate(Double maxLossRate) {
-		this.maxLossRate = maxLossRate;
-	}
-
-	public void setMinLossFlow(Double minLossFlow) {
-		this.minLossFlow = minLossFlow;
-	}
-
-	public void setMaxLossFlow(Double maxLossFlow) {
-		this.maxLossFlow = maxLossFlow;
-	}
 
 	public void setDmaNo(String dmaNo) {
 		this.dmaNo = dmaNo;
+	}
+
+	public String getMinNrw() {
+		return minNrw;
+	}
+
+	public void setMinNrw(String minNrw) {
+		this.minNrw = minNrw;
+	}
+
+	public String getMaxNrw() {
+		return maxNrw;
+	}
+
+	public void setMaxNrw(String maxNrw) {
+		this.maxNrw = maxNrw;
+	}
+
+	public String getMinWl() {
+		return minWl;
+	}
+
+	public void setMinWl(String minWl) {
+		this.minWl = minWl;
+	}
+
+	public String getMaxWl() {
+		return maxWl;
+	}
+
+	public void setMaxWl(String maxWl) {
+		this.maxWl = maxWl;
+	}
+
+	public String getMinLossRate() {
+		return minLossRate;
+	}
+
+	public void setMinLossRate(String minLossRate) {
+		this.minLossRate = minLossRate;
+	}
+
+	public String getMaxLossRate() {
+		return maxLossRate;
+	}
+
+	public void setMaxLossRate(String maxLossRate) {
+		this.maxLossRate = maxLossRate;
+	}
+
+	public String getMinLossFlow() {
+		return minLossFlow;
+	}
+
+	public void setMinLossFlow(String minLossFlow) {
+		this.minLossFlow = minLossFlow;
+	}
+
+	public String getMaxLossFlow() {
+		return maxLossFlow;
+	}
+
+	public void setMaxLossFlow(String maxLossFlow) {
+		this.maxLossFlow = maxLossFlow;
 	}
 
 	

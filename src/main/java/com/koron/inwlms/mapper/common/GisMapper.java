@@ -73,5 +73,12 @@ public interface GisMapper {
 	 * @return
 	 */
 	Integer getZoneRankByNo(String zoneNo);
-
+	
+	/**
+	 * 查询虚拟分区详情信息
+	 * @param queryZoneInfoDTO
+	 * @return
+	 */
+	ZoneDetailInfoVO queryVZoneDetailInfo(@Param("zoneNo") String zoneNo);
+	
 }

@@ -9,13 +9,25 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
  */
 public class QueryFZoneLossListDTO extends BaseDTO{
 
+	/**
+	 * 最小产销差
+	 */
 	private String minNrw;
 	
+	/**
+	 * 最大产销差
+	 */
 	private String maxNrw;
 	
-	private String minUfwc;
+	/**
+	 * 最小漏损量
+	 */
+	private String minWl;
 	
-	private String maxUfwc;
+	/**
+	 * 最大漏损量
+	 */
+	private String maxWl;
 	
 	/**
 	 * 时间类型（3：月，4：年）
@@ -104,20 +116,21 @@ public class QueryFZoneLossListDTO extends BaseDTO{
 		this.maxNrw = maxNrw;
 	}
 
-	public String getMinUfwc() {
-		return minUfwc;
+
+	public String getMinWl() {
+		return minWl;
 	}
 
-	public void setMinUfwc(String minUfwc) {
-		this.minUfwc = minUfwc;
+	public void setMinWl(String minWl) {
+		this.minWl = minWl;
 	}
 
-	public String getMaxUfwc() {
-		return maxUfwc;
+	public String getMaxWl() {
+		return maxWl;
 	}
 
-	public void setMaxUfwc(String maxUfwc) {
-		this.maxUfwc = maxUfwc;
+	public void setMaxWl(String maxWl) {
+		this.maxWl = maxWl;
 	}
 
 	public Integer getZoneRank() {

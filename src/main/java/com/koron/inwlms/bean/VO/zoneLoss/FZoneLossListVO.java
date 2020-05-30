@@ -80,7 +80,7 @@ public class FZoneLossListVO {
 	/**
 	 * 产销差
 	 */
-	private Double nrr;
+	private Double nrw;
 	
 	/**
 	 * 漏损率
@@ -261,12 +261,14 @@ public class FZoneLossListVO {
 		this.createTime = createTime;
 	}
 
-	public Double getNrr() {
-		return nrr;
+	public Double getNrw() {
+		return nrw;
 	}
 
-	public void setNrr(Double nrr) {
-		this.nrr = nrr;
+	public void setNrw(Double nrw) {
+		this.nrw = nrw;
 	}
+
+	
 	
 }

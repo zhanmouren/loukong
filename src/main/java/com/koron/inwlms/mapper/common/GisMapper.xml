@@ -40,4 +40,12 @@
 		and p_code like  '%'||#{zoneNo}||'%'
 	</if>
 	</select>
+	
+	<select id="queryVZoneDetailInfo"
+	resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO">
+	select "pCode" as zoneNo, name as zoneName,
+	"createTime"
+	from gis_exist_vzone
+	where "pCode" = #{zoneNo}
+	</select>
 </mapper>

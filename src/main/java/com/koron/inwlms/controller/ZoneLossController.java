@@ -678,9 +678,9 @@ public class ZoneLossController {
 	   	 	}
 		}
 		
-		if(StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinUfwc()) && StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxUfwc())) {
-			if(Double.parseDouble(queryFZoneLossListDTO.getMinUfwc()) > Double.parseDouble(queryFZoneLossListDTO.getMaxUfwc())) {
-				//产销差范围输入错误
+		if(StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinWl()) && StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxWl())) {
+			if(Double.parseDouble(queryFZoneLossListDTO.getMinWl()) > Double.parseDouble(queryFZoneLossListDTO.getMaxWl())) {
+				//漏损量范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("漏损水量范围输入错误");
 	   	 	}
@@ -1070,13 +1070,13 @@ public class ZoneLossController {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkVSZoneListParam(queryVSZoneListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
-		try{
+//		try{
 			PageListVO<List<VSZoneListVO>> data = ADOConnection.runTask(vzlas, "queryVSZoneList", PageListVO.class,queryVSZoneListDTO);
 			msg.setData(data);
-    	}catch(Exception e){
-    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
-    	}
+//    	}catch(Exception e){
+//    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+//    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+//    	}
 		return msg.toJson();
 	}
 	
@@ -1090,7 +1090,7 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 		}
-		if(queryVSZoneListDTO.getTimeType() < Constant.TIME_TYPE_M || queryVSZoneListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		if(queryVSZoneListDTO.getTimeType() < Constant.TIME_TYPE_D || queryVSZoneListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
@@ -1110,16 +1110,16 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
    	 	}
-		if(queryVSZoneListDTO.getMinNrw() != null && queryVSZoneListDTO.getMaxNrw() != null) {
-			if(queryVSZoneListDTO.getMinNrw() > queryVSZoneListDTO.getMaxNrw()) {
+		if(StringUtil.isNotEmpty(queryVSZoneListDTO.getMinNrw()) && StringUtil.isNotEmpty(queryVSZoneListDTO.getMaxNrw())) {
+			if(Double.parseDouble(queryVSZoneListDTO.getMinNrw()) > Double.parseDouble(queryVSZoneListDTO.getMaxNrw())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("产销差范围输入错误");
 	   	 	}
 		}
 		
-		if(queryVSZoneListDTO.getMinUfwc() != null && queryVSZoneListDTO.getMaxUfwc() != null) {
-			if(queryVSZoneListDTO.getMinUfwc() > queryVSZoneListDTO.getMaxUfwc()) {
+		if(StringUtil.isNotEmpty(queryVSZoneListDTO.getMinWl()) && StringUtil.isNotEmpty(queryVSZoneListDTO.getMaxWl())) {
+			if(Double.parseDouble(queryVSZoneListDTO.getMinWl()) > Double.parseDouble(queryVSZoneListDTO.getMaxWl())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("漏损水量范围输入错误");
@@ -1195,7 +1195,7 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 		}
-		if(queryVCZoneListDTO.getTimeType() < Constant.TIME_TYPE_M || queryVCZoneListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		if(queryVCZoneListDTO.getTimeType() < Constant.TIME_TYPE_D || queryVCZoneListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
@@ -1215,16 +1215,16 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
    	 	}
-		if(queryVCZoneListDTO.getMinNrw() != null && queryVCZoneListDTO.getMaxNrw() != null) {
-			if(queryVCZoneListDTO.getMinNrw() > queryVCZoneListDTO.getMaxNrw()) {
+		if(StringUtil.isNotEmpty(queryVCZoneListDTO.getMinNrw()) && StringUtil.isNotEmpty(queryVCZoneListDTO.getMaxNrw())) {
+			if(Double.parseDouble(queryVCZoneListDTO.getMinNrw()) > Double.parseDouble(queryVCZoneListDTO.getMaxNrw())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("产销差范围输入错误");
 	   	 	}
 		}
 		
-		if(queryVCZoneListDTO.getMinUfwc() != null && queryVCZoneListDTO.getMaxUfwc() != null) {
-			if(queryVCZoneListDTO.getMinUfwc() > queryVCZoneListDTO.getMaxUfwc()) {
+		if(StringUtil.isNotEmpty(queryVCZoneListDTO.getMinWl()) && StringUtil.isNotEmpty(queryVCZoneListDTO.getMaxWl())) {
+			if(Double.parseDouble(queryVCZoneListDTO.getMinWl()) > Double.parseDouble(queryVCZoneListDTO.getMaxWl())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("漏损水量范围输入错误");

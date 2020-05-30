@@ -1,8 +1,12 @@
 package com.koron.inwlms.mapper.zoneLoss;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.zoneLoss.AddVCZoneDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO;
+import com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO;
 
 /**
  * 分区漏损-虚拟分区分析mapper
@@ -31,6 +35,11 @@ public interface VZoneLossAnaMapper {
 	 */
 	void deleteVCZone(String vZoneNo);
 
+	/**
+	 * 查询虚拟分区信息
+	 * @return
+	 */
+	List<VZoneInfoVO> queryVZoneInfo(QueryVZoneInfoDTO queryVZoneInfoDTO);
 	
 	
 }

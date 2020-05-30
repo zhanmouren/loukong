@@ -317,6 +317,9 @@ public class GisZoneServiceImpl implements GisZoneService {
 			rank = Constant.DMAZONELEVEL_TWO;
 		}else if(Constant.RANK_T == zoneType) {
 			rank = Constant.DMAZONELEVEL_THREE;
+		}else if(4 == zoneType) {
+			ZoneDetailInfoVO zoneDetailInfoVO = mapper.queryVZoneDetailInfo(queryZoneInfoDTO.getZoneNo());
+			return zoneDetailInfoVO;
 		}
 		ZoneDetailInfoVO zoneDetailInfoVO = mapper.queryZoneDetailInfo(rank,queryZoneInfoDTO.getZoneNo());
 //		ZoneDetailInfoVO zoneDetailInfoVO = new ZoneDetailInfoVO();

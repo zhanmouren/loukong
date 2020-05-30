@@ -32,4 +32,13 @@
 	<update id="deleteVCZone" parameterType="java.lang.String">
 		update gis_exist_vzone set status = 0 where "pCode" = #{vZoneNo};
 	</update>
+	
+	<select id="queryVZoneInfo" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO"
+	resultType="com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO">
+	select "pCode" as zoneNo, name as zoneName,"createTime" from gis_exist_vzone
+	where "vType" = #{zoneType}
+	<if test="zoneNo != null and zoneNo != ''">
+		and "pCode" = #{zoneNo}
+	</if>
+	</select>
 </mapper>
