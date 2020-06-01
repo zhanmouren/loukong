@@ -94,11 +94,9 @@ public class SystemManagerLogController {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间大于结束时间", Integer.class).toJson();
 		}
 		
-		if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())) {
+		if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())||queryLoginLogDTO.getType().equals("L102100001")) {
 			queryLoginLogDTO.setType(null);
-		}else if(queryLoginLogDTO.getType().equals("全部")) {
-			queryLoginLogDTO.setType(null);
-		}else if(!queryLoginLogDTO.getType().equals("登入") && !queryLoginLogDTO.getType().equals("登出")) {
+		}else if(!queryLoginLogDTO.getType().equals("L102100005") && !queryLoginLogDTO.getType().equals("L102100006")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“全部、登入或登出”", Integer.class).toJson();
 		} 
 		MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -190,11 +188,9 @@ public class SystemManagerLogController {
 				return new HttpEntity<String>("参数错误!开始时间大于结束时间");
 			}
 			
-			if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())) {
+			if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())||queryLoginLogDTO.getType().equals("L102100001")) {
 				queryLoginLogDTO.setType(null);
-			}else if(queryLoginLogDTO.getType().equals("全部")) {
-				queryLoginLogDTO.setType(null);
-			}else if(!queryLoginLogDTO.getType().equals("登入") && !queryLoginLogDTO.getType().equals("登出")) {
+			}else if(!queryLoginLogDTO.getType().equals("L102100005") && !queryLoginLogDTO.getType().equals("L102100006")) {
 				return new HttpEntity<String>("参数错误!操作类型必须是“全部、登入或登出”");
 			} 
 			queryLoginLogDTO.setPage(1);
@@ -363,13 +359,11 @@ public class SystemManagerLogController {
 			if(res > 0) {
 				return new HttpEntity<String>("参数错误!开始时间大于结束时间");
 			}
-			if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType())) {
+			if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType()) || queryOperateLogDTO.getOperateType().equals("L102100001")) {
 				queryOperateLogDTO.setOperateType(null);
-			}else if(queryOperateLogDTO.getOperateType().equals("全部")) {
-				queryOperateLogDTO.setOperateType(null);
-			}else if(!queryOperateLogDTO.getOperateType().equals("增加") && !queryOperateLogDTO.getOperateType().equals("删除") && 
-					!queryOperateLogDTO.getOperateType().equals("修改") && !queryOperateLogDTO.getOperateType().equals("查询")) {
-				return new HttpEntity<String>("参数错误!操作类型必须是“全部、增加、删除、修改或查询”");
+			}else if(!queryOperateLogDTO.getOperateType().equals("L102100002") && !queryOperateLogDTO.getOperateType().equals("L102100003") && 
+					!queryOperateLogDTO.getOperateType().equals("L102100004")) {
+				return new HttpEntity<String>("参数错误!操作类型必须是“全部、增加、删除或修改”");
 			} 
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			queryOperateLogDTO.setPage(1);
@@ -430,9 +424,7 @@ public class SystemManagerLogController {
 				return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!结束时间格式不是yyyy-mm-dd", Integer.class).toJson();
 			}
 		}
-		if(queryIntegrationLogDTO.getStatus()==null || StringUtils.isBlank(queryIntegrationLogDTO.getStatus())) {
-			queryIntegrationLogDTO.setStatus(null);
-		}else if(queryIntegrationLogDTO.getStatus().equals("全部")) {
+		if(queryIntegrationLogDTO.getStatus()==null || StringUtils.isBlank(queryIntegrationLogDTO.getStatus())||queryIntegrationLogDTO.getStatus().equals("L102100001")) {
 			queryIntegrationLogDTO.setStatus(null);
 		}else if(!queryIntegrationLogDTO.getStatus().equals("进行中") && !queryIntegrationLogDTO.getStatus().equals("已结束")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!状态必须是“全部、进行中、已结束”", Integer.class).toJson();

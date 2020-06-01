@@ -83,7 +83,7 @@ public class RequestFilter implements Filter {
 				} else {
 					if (servletPath.endsWith(".html")) {
 						// 如果是页面,则重定向到登录界面
-						hsResponse.sendRedirect(hsRequest.getContextPath() + "/dist/views/login/index.html");
+						hsResponse.sendRedirect(hsRequest.getContextPath() + "/dist/views/login.html");
 					} else {
 						// 如果是controller下的api,返回未登录信息,让前端处理
 						hsResponse.setContentType("application/json; charset=utf-8");

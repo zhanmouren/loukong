@@ -77,7 +77,7 @@ public class SystemController {
 				loginLogDTO.setLoginUserCode(userListVO.getCode());
 				loginLogDTO.setCreateBy(userListVO.getLoginName());
 				loginLogDTO.setUpdateBy(userListVO.getLoginName());
-				loginLogDTO.setType("登入");
+				loginLogDTO.setType("L102100005");
 				if(userListVO.getPassword().equals(userLoginDTO.getPassword())) {
 					msg.setData(userListVO);
 					loginLogDTO.setResult("登录成功");
@@ -133,7 +133,7 @@ public class SystemController {
 			loginLogDTO.setCreateBy(userListVO.getLoginName());
 			loginLogDTO.setUpdateBy(userListVO.getLoginName());
 			loginLogDTO.setResult(Constant.MESSAGE_STRING_SUCCESS);
-			loginLogDTO.setType("登出");
+			loginLogDTO.setType("L102100006");
 			loginLogDTO.setErrorLog("————");
 			ADOConnection.runTask(logService, "addLoginLog", Integer.class, loginLogDTO);
 			SessionUtil.removeAttribute(Constant.LOGIN_USER);
