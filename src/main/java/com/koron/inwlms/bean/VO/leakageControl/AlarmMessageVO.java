@@ -52,7 +52,7 @@ public class AlarmMessageVO {
 	/**
 	 * 对象类型
 	 */
-	private String ObjectType;
+	private String objectType;
 	/**
 	 * 预警方案名称
 	 */
@@ -87,13 +87,14 @@ public class AlarmMessageVO {
 	public void setTotalNumber(Integer totalNumber) {
 		this.totalNumber = totalNumber;
 	}
+	
 
 	public String getObjectType() {
-		return ObjectType;
+		return objectType;
 	}
 
 	public void setObjectType(String objectType) {
-		ObjectType = objectType;
+		this.objectType = objectType;
 	}
 
 	public String getAlarmSchemeName() {
