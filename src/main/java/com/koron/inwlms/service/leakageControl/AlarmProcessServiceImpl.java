@@ -39,6 +39,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	public AlarmProcessReturnVO queryAlarmProcess(SessionFactory factory,AlarmProcessDTO alarmProcessDTO){
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		AlarmProcessReturnVO alarmProcessReturnVO = new AlarmProcessReturnVO();
+		List<AlarmProcessVO> reList = new ArrayList<>();
 		//查询工单信息
 		List<AlarmProcessVO> list = mapper.queryAlarmProcess(alarmProcessDTO);
 		//查询报警信息
@@ -58,12 +59,20 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 					if(alarmProcessVO1.getObjectCode() != null) {
 						alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
 					}
-				}
-				
-				
+					//若有预警类型筛选条件，则展示相应数据
+					if(alarmProcessDTO.getAlarmType() != null) {
+						if(alarmProcessVO1.getAlarmType().equals(alarmProcessDTO.getAlarmType())) {
+							reList.add(alarmProcessVO);
+						}
+					}
+				}	
+			}
+			if(alarmProcessDTO.getAlarmType() == null) {
+				reList.add(alarmProcessVO);
 			}
 		}
-		alarmProcessReturnVO.setAlarmProcessList(list);
+		
+		alarmProcessReturnVO.setAlarmProcessList(reList);
 		PageInfo query = new PageInfo();
 		Integer num = mapper.queryAlarmProcessTotalNumber(alarmProcessDTO);
 		query.setTotalNumber(num);

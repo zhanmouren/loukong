@@ -1517,12 +1517,12 @@ public class LeakageControlController {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询失败！");
 		}
-		
+		 
 		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/deleteEventWarnRelation.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "预警处理任务工单查询关联事项", notes = "预警处理任务工单查询关联事项", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "预警处理任务工单删除关联事项", notes = "预警处理任务工单删除关联事项", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String deleteEventWarnRelation(@RequestBody EventWarnRelation eventWarnRelation) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);

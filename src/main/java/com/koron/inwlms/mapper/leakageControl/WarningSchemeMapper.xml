@@ -7,12 +7,12 @@
  <select id="queryWarningScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO">
  select * from app_warningscheme
  <trim prefix="where" prefixOverrides="and|or">
- <if test="id != null"> id = #{id},</if>
- <if test="code != null and code !='' "> code = #{code},</if>
- <if test="state != null and state != '' "> state = #{state},</if>
- <if test="objectType != null and objectType != '' "> "objectType" = #{objectType},</if>
- <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType},</if>
- <if test="dmaCode != null and dmaCode != '' "> "dmaCode" = #{dmaCode}</if>
+ <if test="id != null">and id = #{id} </if>
+ <if test="code != null and code !='' ">and code = #{code}  </if>
+ <if test="state != null and state != '' ">and state = #{state} </if>
+ <if test="objectType != null and objectType != '' ">and "objectType" = #{objectType} </if>
+ <if test="alarmType != null and alarmType != '' ">and "alarmType" = #{alarmType} </if>
+ <if test="dmaCode != null and dmaCode != '' ">and "dmaCode" = #{dmaCode} </if>
  </trim>
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
@@ -20,12 +20,12 @@
  <select id="queryWarningSchemeTotalNumber" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO" resultType="java.lang.Integer">
  select count(*) from app_warningscheme
  <trim prefix="where" prefixOverrides="and|or">
- <if test="id != null"> id = #{id},</if>
- <if test="code != null and code !='' "> code = #{code},</if>
- <if test="state != null and state != '' "> state = #{state},</if>
- <if test="objectType != null and objectType != '' "> "objectType" = #{objectType},</if>
- <if test="alarmType != null and alarmType != '' "> "alarmType" = #{alarmType},</if>
- <if test="dmaCode != null and dmaCode != '' "> "dmaCode" = #{dmaCode}</if>
+ <if test="id != null">and id = #{id} </if>
+ <if test="code != null and code !='' ">and code = #{code}  </if>
+ <if test="state != null and state != '' ">and state = #{state} </if>
+ <if test="objectType != null and objectType != '' ">and "objectType" = #{objectType} </if>
+ <if test="alarmType != null and alarmType != '' ">and "alarmType" = #{alarmType} </if>
+ <if test="dmaCode != null and dmaCode != '' ">and "dmaCode" = #{dmaCode} </if>
  </trim>
  </select>
  
