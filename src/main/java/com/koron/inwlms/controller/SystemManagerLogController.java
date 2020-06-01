@@ -94,9 +94,9 @@ public class SystemManagerLogController {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间大于结束时间", Integer.class).toJson();
 		}
 		
-		if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())||queryLoginLogDTO.getType().equals("L102100001")) {
+		if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())||queryLoginLogDTO.getType().equals("L102110001")) {
 			queryLoginLogDTO.setType(null);
-		}else if(!queryLoginLogDTO.getType().equals("L102100005") && !queryLoginLogDTO.getType().equals("L102100006")) {
+		}else if(!queryLoginLogDTO.getType().equals("L102110002") && !queryLoginLogDTO.getType().equals("L102110003")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“全部、登入或登出”", Integer.class).toJson();
 		} 
 		MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
@@ -188,9 +188,9 @@ public class SystemManagerLogController {
 				return new HttpEntity<String>("参数错误!开始时间大于结束时间");
 			}
 			
-			if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())||queryLoginLogDTO.getType().equals("L102100001")) {
+			if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())||queryLoginLogDTO.getType().equals("L102110001")) {
 				queryLoginLogDTO.setType(null);
-			}else if(!queryLoginLogDTO.getType().equals("L102100005") && !queryLoginLogDTO.getType().equals("L102100006")) {
+			}else if(!queryLoginLogDTO.getType().equals("L102110002") && !queryLoginLogDTO.getType().equals("L102110003")) {
 				return new HttpEntity<String>("参数错误!操作类型必须是“全部、登入或登出”");
 			} 
 			queryLoginLogDTO.setPage(1);
