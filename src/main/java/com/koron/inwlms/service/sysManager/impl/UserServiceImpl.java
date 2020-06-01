@@ -1159,7 +1159,7 @@ public class UserServiceImpl implements UserService{
 					if(roleMenuDTOList.size()>0) {
 						delRes=userMapper.deleteManyOP(roleMenuDTOList);
 					}
-					Integer updateRes=null;
+					Integer updateRes=1;
 					if(delRes==-1) {
 						updateRes=-1;
 						return updateRes;
@@ -1177,7 +1177,10 @@ public class UserServiceImpl implements UserService{
 							roleMenuList.add(roleMenuNew);
 						}
 					}
-				    updateRes=userMapper.addManyRoleMenu(roleMenuList);					
+					if(roleMenuList.size()>0){
+						updateRes=userMapper.addManyRoleMenu(roleMenuList);	
+					}
+				    					
 					return updateRes;
 				}
 
