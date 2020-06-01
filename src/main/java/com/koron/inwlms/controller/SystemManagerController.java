@@ -27,6 +27,7 @@ import org.swan.bean.MessageBean;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.koron.authority.ValidatePermission;
 import com.koron.common.StaffAttribute;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
@@ -68,6 +69,7 @@ import com.koron.inwlms.service.common.impl.FileServiceImpl;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.ImportExcelUtil;
+import com.koron.permission.authority.PermissionAOP;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -2174,6 +2176,7 @@ public class SystemManagerController {
      * funtion:根据部门Code查询部门职员 分页
      * author:xiaozhan
      */
+	@PermissionAOP("dddddddd")
 	@RequestMapping(value = "/queryDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据部门Code查询职员接口", notes = "根据部门Code查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -2449,6 +2452,7 @@ public class SystemManagerController {
      * author:xiaozhan
      */	
 	//@ValidatePermission("首页下的-query")
+	
 	@RequestMapping(value = "/queryDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
