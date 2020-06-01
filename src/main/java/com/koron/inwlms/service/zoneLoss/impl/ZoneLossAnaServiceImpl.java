@@ -1414,12 +1414,13 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 
 	@TaskAnnotation("queryZoneThematicValue")
 	@Override
-	public List<Map<Object, Object>> queryZoneThematicValue(SessionFactory factory,
+	public List<Map<String, Map<Object, Object>>> queryZoneThematicValue(SessionFactory factory,
 			ZoneThematicValueDTO zoneThematicValueDTO) {
 		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
 		List<String> codes = new ArrayList<>();
 		List<String> zoneNos = new ArrayList<>();
-		List<Map<Object,Object>> lists = new ArrayList<>();
+		List<Map<String, Map<Object, Object>>> lists = new ArrayList<>();
+//		List<Map<Object,Object>> lists = new ArrayList<>();
 		DecimalFormat df = new DecimalFormat("#.0000");
 		//根据分区类型获取所有分区编号
 		GisZoneServiceImpl gisZoneServiceImpl = new GisZoneServiceImpl();
@@ -1444,6 +1445,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 				String zoneNo = zoneNos.get(i);
 				if(zoneNoList.contains(zoneNo)) continue;
 				zoneNoList.add(zoneNo);
+				Map<String, Map<Object, Object>> zoneLossMap = new HashMap<>();
 				Double values = 0.0; //统计值
 				int timeNum = 0;  //参与计算的月份数量
 				for (IndicatorVO indicatorVO1 : queryBaseIndicData) {
@@ -1453,7 +1455,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				Map<Object,Object> map = new HashMap<Object, Object>();
-				map.put("zoneNo", zoneNo);
+//				map.put("zoneNo", zoneNo);
 				if(itemCode.contains("MRR") || itemCode.contains("DCPL") || itemCode.contains("DCCA")) {
 					//管道更新率指标，DMA覆盖率（管长），DMA覆盖率（户数），计算平均值
 					if(timeNum == 0) {
@@ -1465,7 +1467,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 				}else {
 					map.put(itemCode, values);
 				}
-				lists.add(map);
+				zoneLossMap.put(zoneNo, map);
+				lists.add(zoneLossMap);
 			}
 		}else if(Constant.MONI_INDIC.contains(itemCode)) {
 			//监测点指标
@@ -1478,6 +1481,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 				String zoneNo = zoneNos.get(i);
 				if(zoneNoList.contains(zoneNo)) continue;
 				zoneNoList.add(zoneNo);
+				Map<String, Map<Object, Object>> zoneLossMap = new HashMap<>();
 				Double values = 0.0; //统计值
 				for (IndicatorVO indicatorVO1 : queryWBBaseIndicData) {
 					if(indicatorVO1.getZoneNo().equals(zoneNo)) {
@@ -1485,9 +1489,10 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				Map<Object,Object> map = new HashMap<Object, Object>();
-				map.put("zoneNo", zoneNo);
+//				map.put("zoneNo", zoneNo);
 				map.put(itemCode, values);
-				lists.add(map);
+				zoneLossMap.put(zoneNo, map);
+				lists.add(zoneLossMap);
 			}
 		}else if(Constant.ZONE_LOSS_INDIC.contains(itemCode)) {
 			//分区漏损指标
@@ -1496,6 +1501,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 				String zoneNo = zoneNos.get(i);
 				if(zoneNoList.contains(zoneNo)) continue;
 				zoneNoList.add(zoneNo);
+				Map<String, Map<Object, Object>> zoneLossMap = new HashMap<>();
 				Double values = 0.0; //统计值
 				int timeNum = 0;  //参与计算的月份数量
 				for (IndicatorVO indicatorVO1 : queryZoneLossIndicData) {
@@ -1505,13 +1511,14 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				Map<Object,Object> map = new HashMap<Object, Object>();
-				map.put("zoneNo", zoneNo);
+//				map.put("zoneNo", zoneNo);
 				if(timeNum == 0) {
 					map.put(itemCode, null);
 				} else{
 					map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
 				}
-				lists.add(map);
+				zoneLossMap.put(zoneNo, map);
+				lists.add(zoneLossMap);
 			}
 		}else if(Constant.APPARENT_INDIC.contains(itemCode)) {
 			//表观漏损指标
@@ -1522,6 +1529,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 				String zoneNo = zoneNos.get(i);
 				if(zoneNoList.contains(zoneNo)) continue;
 				zoneNoList.add(zoneNo);
+				Map<String, Map<Object, Object>> zoneLossMap = new HashMap<>();
 				Double values = 0.0; //统计值
 				int timeNum = 0;
 				for (IndicatorVO indicatorVO1 : queryLeakIndicData) {
@@ -1531,7 +1539,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				Map<Object,Object> map = new HashMap<Object, Object>();
-				map.put("zoneNo", zoneNo);
+//				map.put("zoneNo", zoneNo);
 				if(itemCode.contains("MRR") || itemCode.contains("DCPL") || itemCode.contains("DCCA")) {
 					//管道更新率指标，DMA覆盖率（管长），DMA覆盖率（户数），计算平均值
 					if(timeNum == 0) {
@@ -1542,9 +1550,11 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 				}else {
 					map.put(itemCode, values);
 				}
-				lists.add(map);
+				zoneLossMap.put(zoneNo, map);
+				lists.add(zoneLossMap);
 			}
 		}
+//		return null;
 		return lists;
 	}
 	

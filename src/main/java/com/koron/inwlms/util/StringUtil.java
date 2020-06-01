@@ -494,4 +494,16 @@ public final class StringUtil {
     public static boolean leftEquals(String str1, String str2, int length) {
         return left(str1, length).equals(left(str2, length));
     }
+    
+    /**
+     * 判断字符串是否是数字
+     * @param s
+     * @return
+     */
+    public final static boolean isNumeric(String s) {
+        if (s != null && !"".equals(s.trim()))
+            return s.matches("^[0-9]*$");
+        else
+            return false;
+    } 
 }

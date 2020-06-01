@@ -71,32 +71,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -123,44 +118,37 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALListDTO.getTimeType() < Constant.TIME_TYPE_M || queryALListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALListDTO.getTimeType() < Constant.TIME_TYPE_M || queryALListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALListDTO.getStartTime() == null) {
+		}else if(queryALListDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALListDTO.getEndTime() == null) {
+		}else if(queryALListDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALListDTO.getStartTime() > queryALListDTO.getEndTime()) {
+		}else if(queryALListDTO.getStartTime() > queryALListDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
 			return msg.toJson();
-		}
-		if(queryALListDTO.getPage() == null) {
+		}else if(queryALListDTO.getPage() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("页数为空");
 			return msg.toJson();
-		}
-		if(queryALListDTO.getPageCount() == null) {
+		}else if(queryALListDTO.getPageCount() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("每页记录数为空");
@@ -186,32 +174,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -265,32 +248,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -316,32 +294,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -394,32 +367,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -445,32 +413,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -496,32 +459,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -547,32 +505,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -598,32 +551,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -649,32 +597,27 @@ public class ApparentLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() == null) {
+		}else if(queryALDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getEndTime() == null) {
+		}else if(queryALDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");

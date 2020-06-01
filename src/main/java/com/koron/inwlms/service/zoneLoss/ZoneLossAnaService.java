@@ -81,6 +81,6 @@ public interface ZoneLossAnaService {
 	 * @param queryZoneIndicatorListDTO
 	 * @return
 	 */
-	List<Map<Object,Object>> queryZoneThematicValue(SessionFactory factory,ZoneThematicValueDTO zoneThematicValueDTO);
+	List<Map<String, Map<Object, Object>>> queryZoneThematicValue(SessionFactory factory,ZoneThematicValueDTO zoneThematicValueDTO);
 	
 }

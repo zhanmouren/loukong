@@ -91,6 +91,8 @@ public class ZoneLossController {
 	
 	@Autowired
     private LeakageParamSetService lpss;
+
+	private QueryDmaZoneLossListDTO queryFZoneLossListDTO;
 	
 	@RequestMapping(value = "/queryZoneWBLossData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区水平衡漏损数据", notes = "查询分区水平衡漏损数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -102,32 +104,27 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryZoneWBLossDTO.getTimeType() < Constant.TIME_TYPE_M || queryZoneWBLossDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryZoneWBLossDTO.getTimeType() < Constant.TIME_TYPE_M || queryZoneWBLossDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryZoneWBLossDTO.getStartTime() == null) {
+		}else if(queryZoneWBLossDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryZoneWBLossDTO.getEndTime() == null) {
+		}else if(queryZoneWBLossDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryZoneWBLossDTO.getStartTime() > queryZoneWBLossDTO.getEndTime()) {
+		}else if(queryZoneWBLossDTO.getStartTime() > queryZoneWBLossDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(queryZoneWBLossDTO.getZoneRank() != null && (queryZoneWBLossDTO.getZoneRank() < Constant.RANK_F || queryZoneWBLossDTO.getZoneRank() > Constant.RANK_T)) {
+   	 	}else if(queryZoneWBLossDTO.getZoneRank() != null && (queryZoneWBLossDTO.getZoneRank() < Constant.RANK_F || queryZoneWBLossDTO.getZoneRank() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -171,33 +168,27 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
-		}
-		if(queryWNWBReportListDTO.getTimeType() < Constant.TIME_TYPE_M || queryWNWBReportListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryWNWBReportListDTO.getTimeType() < Constant.TIME_TYPE_M || queryWNWBReportListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
-		}
-		if(queryWNWBReportListDTO.getStartTime() == null) {
+		}else if(queryWNWBReportListDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
-		}
-		if(queryWNWBReportListDTO.getEndTime() == null) {
+		}else if(queryWNWBReportListDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
-		}
-		if(queryWNWBReportListDTO.getStartTime() > queryWNWBReportListDTO.getEndTime()) {
+		}else if(queryWNWBReportListDTO.getStartTime() > queryWNWBReportListDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
-   	 	}
-		if(queryWNWBReportListDTO.getPage() == null) {
+   	 	}else if(queryWNWBReportListDTO.getPage() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("页数为空");
-		}
-		if(queryWNWBReportListDTO.getPageCount() == null) {
+		}else if(queryWNWBReportListDTO.getPageCount() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("每页记录数为空");
@@ -311,23 +302,19 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("报表名称为空");
-		}
-		if(addWNWBReportDTO.getIndicators() == null) {
+		}else if(addWNWBReportDTO.getIndicators() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("报表指标为空");
-		}
-		if(addWNWBReportDTO.getReportTime() == null) {
+		}else if(addWNWBReportDTO.getReportTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("报表时间为空");
-		}
-		if(addWNWBReportDTO.getTimeType() == null) {
+		}else if(addWNWBReportDTO.getTimeType() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间类型为空");
-		}
-		if(addWNWBReportDTO.getTemplateId() == null) {
+		}else if(addWNWBReportDTO.getTemplateId() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("模板报表id为空");
@@ -351,28 +338,23 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("报表id为空");
-		}
-		if(editWNWBReportDTO.getReportName() == null) {
+		}else if(editWNWBReportDTO.getReportName() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("报表名称为空");
-		}
-		if(editWNWBReportDTO.getIndicators() == null) {
+		}else if(editWNWBReportDTO.getIndicators() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("报表指标为空");
-		}
-		if(editWNWBReportDTO.getReportTime() == null) {
+		}else if(editWNWBReportDTO.getReportTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("报表时间为空");
-		}
-		if(editWNWBReportDTO.getTimeType() == null) {
+		}else if(editWNWBReportDTO.getTimeType() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间类型为空");
-		}
-		if(editWNWBReportDTO.getTemplateId() == null) {
+		}else if(editWNWBReportDTO.getTemplateId() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("模板报表id为空");
@@ -484,8 +466,7 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("页数为空");
-		}
-		if(queryWNWBTReportListDTO.getPageCount() == null) {
+		}else if(queryWNWBTReportListDTO.getPageCount() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("每页记录数为空");
@@ -557,8 +538,7 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("模板报表名称为空");
-		}
-		if(addWNWBTReportDTO.getIndicators() == null) {
+		}else if(addWNWBTReportDTO.getIndicators() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("模板报表指标为空");
@@ -582,13 +562,11 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("模板报表id为空");
-		}
-		if(editWNWBTReportDTO.getReportName() == null) {
+		}else if(editWNWBTReportDTO.getReportName() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("模板报表名称为空");
-		}
-		if(editWNWBTReportDTO.getIndicators() == null) {
+		}else if(editWNWBTReportDTO.getIndicators() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("模板报表指标为空");
@@ -649,49 +627,46 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
-		}
-		if(queryFZoneLossListDTO.getTimeType() < Constant.TIME_TYPE_D || queryFZoneLossListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryFZoneLossListDTO.getTimeType() < Constant.TIME_TYPE_D || queryFZoneLossListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
-		}
-		if(queryFZoneLossListDTO.getStartTime() == null) {
+		}else if(queryFZoneLossListDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
-		}
-		if(queryFZoneLossListDTO.getEndTime() == null) {
+		}else if(queryFZoneLossListDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
-		}
-		if(queryFZoneLossListDTO.getStartTime() > queryFZoneLossListDTO.getEndTime()) {
+		}else if(queryFZoneLossListDTO.getStartTime() > queryFZoneLossListDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
-   	 	}
-		if(StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinNrw()) && StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxNrw())) {
+   	 	}else if((StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryFZoneLossListDTO.getMinNrw())) 
+   	 			|| (StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryFZoneLossListDTO.getMaxNrw()))
+   	 		|| (StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryFZoneLossListDTO.getMinWl())) 
+	 			|| (StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryFZoneLossListDTO.getMaxWl()))) {
+			//产销差范围输入错误
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("请输入数字类型的数据");
+		}else if(StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinNrw()) && StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxNrw())) {
 			if(Double.parseDouble(queryFZoneLossListDTO.getMinNrw()) > Double.parseDouble(queryFZoneLossListDTO.getMaxNrw())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("产销差范围输入错误");
 	   	 	}
-		}
-		
-		if(StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinWl()) && StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxWl())) {
+		}else if(StringUtil.isNotEmpty(queryFZoneLossListDTO.getMinWl()) && StringUtil.isNotEmpty(queryFZoneLossListDTO.getMaxWl())) {
 			if(Double.parseDouble(queryFZoneLossListDTO.getMinWl()) > Double.parseDouble(queryFZoneLossListDTO.getMaxWl())) {
 				//漏损量范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("漏损水量范围输入错误");
 	   	 	}
-		}
-		
-		if(queryFZoneLossListDTO.getPage() == null) {
+		}else if(queryFZoneLossListDTO.getPage() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("页数为空");
-		}
-		if(queryFZoneLossListDTO.getPageCount() == null) {
+		}else if(queryFZoneLossListDTO.getPageCount() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("每页记录数为空");
@@ -756,48 +731,46 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
-		}
-		if(querySZoneLossListDTO.getTimeType() < Constant.TIME_TYPE_M || querySZoneLossListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(querySZoneLossListDTO.getTimeType() < Constant.TIME_TYPE_D || querySZoneLossListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
-		}
-		if(querySZoneLossListDTO.getStartTime() == null) {
+		}else if(querySZoneLossListDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
-		}
-		if(querySZoneLossListDTO.getEndTime() == null) {
+		}else if(querySZoneLossListDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
-		}
-		if(querySZoneLossListDTO.getStartTime() > querySZoneLossListDTO.getEndTime()) {
+		}else if(querySZoneLossListDTO.getStartTime() > querySZoneLossListDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
-   	 	}
-		if(querySZoneLossListDTO.getMinNrw() != null && querySZoneLossListDTO.getMaxNrw() != null) {
-			if(querySZoneLossListDTO.getMinNrw() > querySZoneLossListDTO.getMaxNrw()) {
+   	 	}else if((StringUtil.isNotEmpty(querySZoneLossListDTO.getMinNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(querySZoneLossListDTO.getMinNrw())) 
+   	 			|| (StringUtil.isNotEmpty(querySZoneLossListDTO.getMaxNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(querySZoneLossListDTO.getMaxNrw()))
+   	 		|| (StringUtil.isNotEmpty(querySZoneLossListDTO.getMinWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(querySZoneLossListDTO.getMinWl())) 
+	 			|| (StringUtil.isNotEmpty(querySZoneLossListDTO.getMaxWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(querySZoneLossListDTO.getMaxWl()))) {
+			//产销差范围输入错误
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("请输入数字类型的数据");
+		}else if(StringUtil.isNotEmpty(querySZoneLossListDTO.getMinNrw()) && StringUtil.isNotEmpty(querySZoneLossListDTO.getMaxNrw())) {
+			if(Double.parseDouble(querySZoneLossListDTO.getMinNrw()) > Double.parseDouble(querySZoneLossListDTO.getMaxNrw())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("产销差范围输入错误");
 	   	 	}
-		}
-		
-		if(querySZoneLossListDTO.getMinUfwc() != null && querySZoneLossListDTO.getMaxUfwc() != null) {
-			if(querySZoneLossListDTO.getMinUfwc() > querySZoneLossListDTO.getMaxUfwc()) {
-				//产销差范围输入错误
+		}else if(StringUtil.isNotEmpty(querySZoneLossListDTO.getMinWl()) && StringUtil.isNotEmpty(querySZoneLossListDTO.getMaxWl())) {
+			if(Double.parseDouble(querySZoneLossListDTO.getMinWl()) > Double.parseDouble(querySZoneLossListDTO.getMaxWl())) {
+				//漏损量范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("漏损水量范围输入错误");
 	   	 	}
-		}
-		if(querySZoneLossListDTO.getPage() == null) {
+		}else if(querySZoneLossListDTO.getPage() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("页数为空");
-		}
-		if(querySZoneLossListDTO.getPageCount() == null) {
+		}else if(querySZoneLossListDTO.getPageCount() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("每页记录数为空");
@@ -861,48 +834,46 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
-		}
-		if(QueryDmaZoneLossListDTO.getTimeType() < Constant.TIME_TYPE_M || QueryDmaZoneLossListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(QueryDmaZoneLossListDTO.getTimeType() < Constant.TIME_TYPE_M || QueryDmaZoneLossListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
-		}
-		if(QueryDmaZoneLossListDTO.getStartTime() == null) {
+		}else if(QueryDmaZoneLossListDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
-		}
-		if(QueryDmaZoneLossListDTO.getEndTime() == null) {
+		}else if(QueryDmaZoneLossListDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
-		}
-		if(QueryDmaZoneLossListDTO.getStartTime() > QueryDmaZoneLossListDTO.getEndTime()) {
+		}else if(QueryDmaZoneLossListDTO.getStartTime() > QueryDmaZoneLossListDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
-   	 	}
-		if(QueryDmaZoneLossListDTO.getMinNrw() != null && QueryDmaZoneLossListDTO.getMaxNrw() != null) {
-			if(QueryDmaZoneLossListDTO.getMinNrw() > QueryDmaZoneLossListDTO.getMaxNrw()) {
+   	 	}else if((StringUtil.isNotEmpty(QueryDmaZoneLossListDTO.getMinNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(QueryDmaZoneLossListDTO.getMinNrw())) 
+   	 			|| (StringUtil.isNotEmpty(QueryDmaZoneLossListDTO.getMaxNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(QueryDmaZoneLossListDTO.getMaxNrw()))
+   	 		|| (StringUtil.isNotEmpty(QueryDmaZoneLossListDTO.getMinWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(QueryDmaZoneLossListDTO.getMinWl())) 
+	 			|| (StringUtil.isNotEmpty(QueryDmaZoneLossListDTO.getMaxWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(QueryDmaZoneLossListDTO.getMaxWl()))) {
+			//产销差范围输入错误
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("请输入数字类型的数据");
+		}else if(StringUtil.isNotEmpty(QueryDmaZoneLossListDTO.getMinNrw()) && StringUtil.isNotEmpty(QueryDmaZoneLossListDTO.getMaxNrw())) {
+			if(Double.parseDouble(QueryDmaZoneLossListDTO.getMinNrw()) > Double.parseDouble(QueryDmaZoneLossListDTO.getMaxNrw())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("产销差范围输入错误");
 	   	 	}
-		}
-		
-		if(QueryDmaZoneLossListDTO.getMinUfwc() != null && QueryDmaZoneLossListDTO.getMaxUfwc() != null) {
-			if(QueryDmaZoneLossListDTO.getMinUfwc() > QueryDmaZoneLossListDTO.getMaxUfwc()) {
-				//产销差范围输入错误
+		}else if(StringUtil.isNotEmpty(QueryDmaZoneLossListDTO.getMinWl()) && StringUtil.isNotEmpty(QueryDmaZoneLossListDTO.getMaxWl())) {
+			if(Double.parseDouble(QueryDmaZoneLossListDTO.getMinWl()) > Double.parseDouble(QueryDmaZoneLossListDTO.getMaxWl())) {
+				//漏损量范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("漏损水量范围输入错误");
 	   	 	}
-		}
-		if(QueryDmaZoneLossListDTO.getPage() == null) {
+		}else if(QueryDmaZoneLossListDTO.getPage() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("页数为空");
-		}
-		if(QueryDmaZoneLossListDTO.getPageCount() == null) {
+		}else if(QueryDmaZoneLossListDTO.getPageCount() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("每页记录数为空");
@@ -950,14 +921,12 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("分区编号为空");
 			return msg.toJson();
-		}
-		if(queryZoneInfoDTO.getZoneType() == null) {
+		}else if(queryZoneInfoDTO.getZoneType() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("分区类型为空");
 			return msg.toJson();
-		}
-		if(queryZoneInfoDTO.getZoneType() != null && (queryZoneInfoDTO.getZoneType() < 1 || queryZoneInfoDTO.getZoneType() > 4)) {
+		}else if(queryZoneInfoDTO.getZoneType() != null && (queryZoneInfoDTO.getZoneType() < 1 || queryZoneInfoDTO.getZoneType() > 4)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区类型数值错误");
@@ -983,14 +952,12 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("分区编号为空");
 			return msg.toJson();
-		}
-		if(queryZoneInfoDTO.getZoneType() == null) {
+		}else if(queryZoneInfoDTO.getZoneType() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("分区类型为空");
 			return msg.toJson();
-		}
-		if(queryZoneInfoDTO.getZoneType() != null && (queryZoneInfoDTO.getZoneType() < 1 || queryZoneInfoDTO.getZoneType() > 4)) {
+		}else if(queryZoneInfoDTO.getZoneType() != null && (queryZoneInfoDTO.getZoneType() < 1 || queryZoneInfoDTO.getZoneType() > 4)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区类型数值错误");
@@ -1016,38 +983,32 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(queryZoneHstDataDTO.getTimeType() < Constant.TIME_TYPE_M || queryZoneHstDataDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryZoneHstDataDTO.getTimeType() < Constant.TIME_TYPE_M || queryZoneHstDataDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(queryZoneHstDataDTO.getStartTime() == null) {
+		}else if(queryZoneHstDataDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(queryZoneHstDataDTO.getEndTime() == null) {
+		}else if(queryZoneHstDataDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(queryZoneHstDataDTO.getZoneNo() == null) {
+		}else if(queryZoneHstDataDTO.getZoneNo() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("分区编号为空");
 			return msg.toJson();
-		}
-		if(queryZoneHstDataDTO.getCodes() == null) {
+		}else if(queryZoneHstDataDTO.getCodes() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("指标编码为空");
 			return msg.toJson();
-		}
-		if(queryZoneHstDataDTO.getStartTime() > queryZoneHstDataDTO.getEndTime()) {
+		}else if(queryZoneHstDataDTO.getStartTime() > queryZoneHstDataDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
@@ -1089,48 +1050,46 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
-		}
-		if(queryVSZoneListDTO.getTimeType() < Constant.TIME_TYPE_D || queryVSZoneListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryVSZoneListDTO.getTimeType() < Constant.TIME_TYPE_D || queryVSZoneListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
-		}
-		if(queryVSZoneListDTO.getStartTime() == null) {
+		}else if(queryVSZoneListDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
-		}
-		if(queryVSZoneListDTO.getEndTime() == null) {
+		}else if(queryVSZoneListDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
-		}
-		if(queryVSZoneListDTO.getStartTime() > queryVSZoneListDTO.getEndTime()) {
+		}else if(queryVSZoneListDTO.getStartTime() > queryVSZoneListDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
-   	 	}
-		if(StringUtil.isNotEmpty(queryVSZoneListDTO.getMinNrw()) && StringUtil.isNotEmpty(queryVSZoneListDTO.getMaxNrw())) {
+   	 	}else if((StringUtil.isNotEmpty(queryVSZoneListDTO.getMinNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryVSZoneListDTO.getMinNrw())) 
+   	 			|| (StringUtil.isNotEmpty(queryVSZoneListDTO.getMaxNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryVSZoneListDTO.getMaxNrw()))
+   	 		|| (StringUtil.isNotEmpty(queryVSZoneListDTO.getMinWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryVSZoneListDTO.getMinWl())) 
+	 			|| (StringUtil.isNotEmpty(queryVSZoneListDTO.getMaxWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryVSZoneListDTO.getMaxWl()))) {
+			//产销差范围输入错误
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("请输入数字类型的数据");
+		}else if(StringUtil.isNotEmpty(queryVSZoneListDTO.getMinNrw()) && StringUtil.isNotEmpty(queryVSZoneListDTO.getMaxNrw())) {
 			if(Double.parseDouble(queryVSZoneListDTO.getMinNrw()) > Double.parseDouble(queryVSZoneListDTO.getMaxNrw())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("产销差范围输入错误");
 	   	 	}
-		}
-		
-		if(StringUtil.isNotEmpty(queryVSZoneListDTO.getMinWl()) && StringUtil.isNotEmpty(queryVSZoneListDTO.getMaxWl())) {
+		}else if(StringUtil.isNotEmpty(queryVSZoneListDTO.getMinWl()) && StringUtil.isNotEmpty(queryVSZoneListDTO.getMaxWl())) {
 			if(Double.parseDouble(queryVSZoneListDTO.getMinWl()) > Double.parseDouble(queryVSZoneListDTO.getMaxWl())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("漏损水量范围输入错误");
 	   	 	}
-		}
-		if(queryVSZoneListDTO.getPage() == null) {
+		}else if(queryVSZoneListDTO.getPage() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("页数为空");
-		}
-		if(queryVSZoneListDTO.getPageCount() == null) {
+		}else if(queryVSZoneListDTO.getPageCount() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("每页记录数为空");
@@ -1194,48 +1153,46 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
-		}
-		if(queryVCZoneListDTO.getTimeType() < Constant.TIME_TYPE_D || queryVCZoneListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryVCZoneListDTO.getTimeType() < Constant.TIME_TYPE_D || queryVCZoneListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
-		}
-		if(queryVCZoneListDTO.getStartTime() == null) {
+		}else if(queryVCZoneListDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
-		}
-		if(queryVCZoneListDTO.getEndTime() == null) {
+		}else if(queryVCZoneListDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
-		}
-		if(queryVCZoneListDTO.getStartTime() > queryVCZoneListDTO.getEndTime()) {
+		}else if(queryVCZoneListDTO.getStartTime() > queryVCZoneListDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
-   	 	}
-		if(StringUtil.isNotEmpty(queryVCZoneListDTO.getMinNrw()) && StringUtil.isNotEmpty(queryVCZoneListDTO.getMaxNrw())) {
+   	 	}else if((StringUtil.isNotEmpty(queryVCZoneListDTO.getMinNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryVCZoneListDTO.getMinNrw())) 
+   	 			|| (StringUtil.isNotEmpty(queryVCZoneListDTO.getMaxNrw()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryVCZoneListDTO.getMaxNrw()))
+   	 		|| (StringUtil.isNotEmpty(queryVCZoneListDTO.getMinWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryVCZoneListDTO.getMinWl())) 
+	 			|| (StringUtil.isNotEmpty(queryVCZoneListDTO.getMaxWl()) && !com.koron.inwlms.util.StringUtil.isNumeric(queryVCZoneListDTO.getMaxWl()))) {
+			//产销差范围输入错误
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("请输入数字类型的数据");
+		}else if(StringUtil.isNotEmpty(queryVCZoneListDTO.getMinNrw()) && StringUtil.isNotEmpty(queryVCZoneListDTO.getMaxNrw())) {
 			if(Double.parseDouble(queryVCZoneListDTO.getMinNrw()) > Double.parseDouble(queryVCZoneListDTO.getMaxNrw())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("产销差范围输入错误");
 	   	 	}
-		}
-		
-		if(StringUtil.isNotEmpty(queryVCZoneListDTO.getMinWl()) && StringUtil.isNotEmpty(queryVCZoneListDTO.getMaxWl())) {
+		}else if(StringUtil.isNotEmpty(queryVCZoneListDTO.getMinWl()) && StringUtil.isNotEmpty(queryVCZoneListDTO.getMaxWl())) {
 			if(Double.parseDouble(queryVCZoneListDTO.getMinWl()) > Double.parseDouble(queryVCZoneListDTO.getMaxWl())) {
 				//产销差范围输入错误
 				msg.setCode(Constant.MESSAGE_INT_PARAMS);
 				msg.setDescription("漏损水量范围输入错误");
 	   	 	}
-		}
-		if(queryVCZoneListDTO.getPage() == null) {
+		}else if(queryVCZoneListDTO.getPage() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("页数为空");
-		}
-		if(queryVCZoneListDTO.getPageCount() == null) {
+		}else if(queryVCZoneListDTO.getPageCount() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("每页记录数为空");
@@ -1347,8 +1304,7 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("分区类型为空");
 			return msg.toJson();
-		}
-		if(zoneType < 1 || zoneType > 3) {
+		}else if(zoneType < 1 || zoneType > 3) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区类型数值错误");
@@ -1375,38 +1331,32 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("指标编码为空");
 			return msg.toJson();
-		}
-		if(zoneThematicValueDTO.getTimeType() == null) {
+		}else if(zoneThematicValueDTO.getTimeType() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(zoneThematicValueDTO.getTimeType() < Constant.TIME_TYPE_M || zoneThematicValueDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(zoneThematicValueDTO.getTimeType() < Constant.TIME_TYPE_M || zoneThematicValueDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(zoneThematicValueDTO.getStartTime() == null) {
+		}else if(zoneThematicValueDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(zoneThematicValueDTO.getEndTime() == null) {
+		}else if(zoneThematicValueDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(zoneThematicValueDTO.getStartTime() > zoneThematicValueDTO.getEndTime()) {
+		}else if(zoneThematicValueDTO.getStartTime() > zoneThematicValueDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
-   	 	}
-		if(zoneThematicValueDTO.getZoneType() != null && (zoneThematicValueDTO.getZoneType() < Constant.RANK_F || zoneThematicValueDTO.getZoneType() > Constant.RANK_T)) {
+   	 	}else if(zoneThematicValueDTO.getZoneType() != null && (zoneThematicValueDTO.getZoneType() < Constant.RANK_F || zoneThematicValueDTO.getZoneType() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
@@ -1450,43 +1400,35 @@ public class ZoneLossController {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("分区类型为空");
-		}
-		if(queryZoneIndicatorListDTO.getTimeType() == null) {
+		}else if(queryZoneIndicatorListDTO.getTimeType() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
-		}
-		if(queryZoneIndicatorListDTO.getTimeType() < Constant.TIME_TYPE_M || queryZoneIndicatorListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(queryZoneIndicatorListDTO.getTimeType() < Constant.TIME_TYPE_M || queryZoneIndicatorListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
-		}
-		if(queryZoneIndicatorListDTO.getStartTime() == null) {
+		}else if(queryZoneIndicatorListDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
-		}
-		if(queryZoneIndicatorListDTO.getEndTime() == null) {
+		}else if(queryZoneIndicatorListDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
-		}
-		if(queryZoneIndicatorListDTO.getStartTime() > queryZoneIndicatorListDTO.getEndTime()) {
+		}else if(queryZoneIndicatorListDTO.getStartTime() > queryZoneIndicatorListDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
-   	 	}
-		if(queryZoneIndicatorListDTO.getZoneType() != null && (queryZoneIndicatorListDTO.getZoneType() < Constant.RANK_F || queryZoneIndicatorListDTO.getZoneType() > Constant.RANK_T)) {
+   	 	}else if(queryZoneIndicatorListDTO.getZoneType() != null && (queryZoneIndicatorListDTO.getZoneType() < Constant.RANK_F || queryZoneIndicatorListDTO.getZoneType() > Constant.RANK_T)) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("分区等级数值错误");
-		}
-		if(queryZoneIndicatorListDTO.getPage() == null) {
+		}else if(queryZoneIndicatorListDTO.getPage() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("页数为空");
-		}
-		if(queryZoneIndicatorListDTO.getPageCount() == null) {
+		}else if(queryZoneIndicatorListDTO.getPageCount() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("每页记录数为空");
@@ -1534,26 +1476,22 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		}
-		if(indicatorDTO.getTimeType() < Constant.TIME_TYPE_M || indicatorDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		}else if(indicatorDTO.getTimeType() < Constant.TIME_TYPE_M || indicatorDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
 			return msg.toJson();
-		}
-		if(indicatorDTO.getStartTime() == null) {
+		}else if(indicatorDTO.getStartTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("开始时间为空");
 			return msg.toJson();
-		}
-		if(indicatorDTO.getEndTime() == null) {
+		}else if(indicatorDTO.getEndTime() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("结束时间为空");
 			return msg.toJson();
-		}
-		if(indicatorDTO.getStartTime() > indicatorDTO.getEndTime()) {
+		}else if(indicatorDTO.getStartTime() > indicatorDTO.getEndTime()) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
@@ -1635,8 +1573,7 @@ public class ZoneLossController {
 				//参数不正确
 				msg.setCode(Constant.MESSAGE_INT_NULL);
 				msg.setDescription("页数为空");
-			}
-			if(lnuDTO.getPageCount() == null) {
+			}else if(lnuDTO.getPageCount() == null) {
 				//参数不正确
 				msg.setCode(Constant.MESSAGE_INT_NULL);
 				msg.setDescription("每页记录数为空");
@@ -1696,14 +1633,12 @@ public class ZoneLossController {
 				msg.setCode(Constant.MESSAGE_INT_NULL);
 				msg.setDescription("id为空");
 				return msg.toJson();
-			}
-			if(legitimateNightUseEditDTO.getCode() == null) {
+			}else if(legitimateNightUseEditDTO.getCode() == null) {
 				//参数不正确
 				msg.setCode(Constant.MESSAGE_INT_NULL);
 				msg.setDescription("类别编码为空");
 				return msg.toJson();
-			}
-			if(legitimateNightUseEditDTO.getCode() == null) {
+			}else if(legitimateNightUseEditDTO.getCode() == null) {
 				//参数不正确
 				msg.setCode(Constant.MESSAGE_INT_NULL);
 				msg.setDescription("夜间合理流量为空");
