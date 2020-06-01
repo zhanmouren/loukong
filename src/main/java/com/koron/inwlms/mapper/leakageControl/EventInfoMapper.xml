@@ -10,6 +10,7 @@
  <if test="subtype != null and subtype != '' "> and "subtype" = #{subtype}</if>
  <if test="objectCode != null and objectCode != '' "> and "objectCode" = #{objectCode}</if>
  <if test="firstPartition != null and firstPartition != '' "> and "firstPartition" = #{firstPartition}</if>
+ <if test="secondPartition != null and secondPartition != '' "> and "secondPartition" = #{secondPartition}</if>
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  

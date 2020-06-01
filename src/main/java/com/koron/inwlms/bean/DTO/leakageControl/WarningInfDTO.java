@@ -20,7 +20,7 @@ public class WarningInfDTO extends BaseDTO {
 	/**
 	 * 预警对象ID
 	 */
-	private int objectCode;
+	private String objectCode;
 	
 	/**
 	 * 对象类型
@@ -100,11 +100,11 @@ public class WarningInfDTO extends BaseDTO {
 		this.alarmType = alarmType;
 	}
 
-	public int getObjectCode() {
+	public String getObjectCode() {
 		return objectCode;
 	}
 
-	public void setObjectCode(int objectCode) {
+	public void setObjectCode(String objectCode) {
 		this.objectCode = objectCode;
 	}
 

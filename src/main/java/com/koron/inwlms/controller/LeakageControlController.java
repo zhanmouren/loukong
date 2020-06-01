@@ -1004,7 +1004,7 @@ public class LeakageControlController {
 	        return msg.toJson();
 		}
 		
-		try {
+		try { 
 			EventInfoListReturnVO eventInfoList = ADOConnection.runTask(eis, "queryEventInfo",EventInfoListReturnVO.class,eventInfoDTO);
 			if(eventInfoList != null ) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
