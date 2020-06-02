@@ -30,6 +30,7 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
+import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
@@ -49,6 +50,7 @@ import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
+import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
@@ -539,12 +541,12 @@ public class LeakageControlController {
 			warningSchemeDTO.setPage(1);
 			warningSchemeDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
 			// 查询到导出数据结果
-			List<AlertSchemeListVO> alertSchemeListVO = ADOConnection.runTask(wss, "queryWarningSchemeList", List.class,warningSchemeDTO);
+			AlertSchemeListReturnVO alertSchemeListReturnVO = ADOConnection.runTask(wss, "queryWarningSchemeList", AlertSchemeListReturnVO.class,warningSchemeDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
 			//导出list
-			return ExportDataUtil.getExcelDataFileInfoByList(alertSchemeListVO, jsonArray);
+			return ExportDataUtil.getExcelDataFileInfoByList(alertSchemeListReturnVO.getAlertSchemeList(), jsonArray);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -987,10 +989,10 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
-	@RequestMapping(value = "/queryqueryEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/queryEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项列表查询接口", notes = "事项列表查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryqueryEventInfo(@RequestBody EventInfoDTO eventInfoDTO) {
+    public String queryEventInfo(@RequestBody EventInfoDTO eventInfoDTO) {
 		MessageBean<EventInfoListReturnVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventInfoListReturnVO.class);
 		
 		if(eventInfoDTO.getStartTime() == null || eventInfoDTO.getStartTime().equals("")) {
@@ -1022,10 +1024,38 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
-	@RequestMapping(value = "/queryqueryEventInfoByCode.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+	@RequestMapping(value = "/downEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载事项列表数据", notes = "下载事项列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			EventInfoDTO eventInfoDTO = jsonValue.fromJson(objValue, EventInfoDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (eventInfoDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			eventInfoDTO.setPage(1);
+			eventInfoDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
+			// 查询到导出数据结果
+			EventInfoListReturnVO eventInfoList = ADOConnection.runTask(eis, "queryEventInfo",EventInfoListReturnVO.class,eventInfoDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(eventInfoList.getEventInfoList(), jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@RequestMapping(value = "/queryEventInfoByCode.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项信息查询接口", notes = "事项信息查询接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryqueryEventInfoByCode(String code) {
+    public String queryEventInfoByCode(String code) {
 		MessageBean<EventInfo> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventInfo.class);
 		
 		if(code == null || code.equals("")) {
@@ -1514,7 +1544,7 @@ public class LeakageControlController {
 			msg.setData(list);
 			
 		}catch(Exception e) {
-			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setCode(Constant.MESSAGE_INT_ERROR); 
 	        msg.setDescription("查询失败！");
 		}
 		 

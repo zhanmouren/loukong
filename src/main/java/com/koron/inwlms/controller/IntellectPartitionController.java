@@ -1,13 +1,16 @@
 package com.koron.inwlms.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.swan.bean.MessageBean;
 
@@ -19,10 +22,13 @@ import com.koron.inwlms.bean.DTO.intellectPartition.GisZoneData;
 import com.koron.inwlms.bean.DTO.intellectPartition.GisZonePipeData;
 import com.koron.inwlms.bean.DTO.intellectPartition.SchemeParamDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.service.intellectPartition.PartitionSchemeDetService;
+import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.InterfaceUtil;
 import com.koron.util.Constant;
 
@@ -104,6 +110,34 @@ public class IntellectPartitionController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downTotalSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载分区总方案列表数据", notes = "下载分区总方案列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downTotalSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			TotalSchemeDetDTO totalSchemeDetDTO = jsonValue.fromJson(objValue, TotalSchemeDetDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (totalSchemeDetDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			totalSchemeDetDTO.setPage(1);
+			totalSchemeDetDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
+			// 查询到导出数据结果
+			List<TotalSchemeDet> list = ADOConnection.runTask(psds, "queryTotalSchemeDet", List.class,totalSchemeDetDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/**
 	 * 通过方案总表code查询分区方案数据
 	 * @return
@@ -131,6 +165,34 @@ public class IntellectPartitionController {
 		}
 		
 		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/downSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载分区总方案列表数据", notes = "下载分区总方案列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			TotalSchemeDetDTO totalSchemeDetDTO = jsonValue.fromJson(objValue, TotalSchemeDetDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (totalSchemeDetDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			totalSchemeDetDTO.setPage(1);
+			totalSchemeDetDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
+			// 查询到导出数据结果
+			List<SchemeDet> list = ADOConnection.runTask(psds, "querySchemeDet", List.class,totalSchemeDetDTO.getCode());
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@RequestMapping(value = "/deleteSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })

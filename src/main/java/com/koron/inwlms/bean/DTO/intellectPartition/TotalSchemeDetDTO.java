@@ -1,10 +1,13 @@
 package com.koron.inwlms.bean.DTO.intellectPartition;
+
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * 
  * @author 刘刚
  *
  */
-public class TotalSchemeDetDTO {
+public class TotalSchemeDetDTO extends BaseDTO{
 	/**
 	 * 方案汇总编码
 	 */
