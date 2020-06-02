@@ -50,9 +50,45 @@ public class RecommendStrategy {
 	private Double unitFlowP;
 	
 	private Double leakage;
+	/**
+	 * 表观漏损指数
+	 */
+	private Double ali;
+	/**
+	 * 其他设备投资
+	 */
+	private Double k3;
+	/**
+	 * 工程费用系数
+	 */
+	private Double k4;
 	
 	
 	
+	public Double getAli() {
+		return ali;
+	}
+
+	public void setAli(Double ali) {
+		this.ali = ali;
+	}
+
+	public Double getK3() {
+		return k3;
+	}
+
+	public void setK3(Double k3) {
+		this.k3 = k3;
+	}
+
+	public Double getK4() {
+		return k4;
+	}
+
+	public void setK4(Double k4) {
+		this.k4 = k4;
+	}
+
 	public Double getLeakage() {
 		return leakage;
 	}

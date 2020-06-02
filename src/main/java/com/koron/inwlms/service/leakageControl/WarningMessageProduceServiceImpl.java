@@ -385,7 +385,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 	}
 	
 	
-	public void getRecommendStrategy(SessionFactory factory,RecommendStrategy recommendStrategy, double mnf,double ali,double caliber) {
+	public String getRecommendStrategy(SessionFactory factory,RecommendStrategy recommendStrategy, double mnf,int flag) {
 		
 		String strategyCode = "";
 		
@@ -423,8 +423,6 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		int t4 = 0;
 		double k1 = 0.0;
 		double k2 = 0.0;
-		double k3 = 0.0;
-		double k4 = 0.0;
 		double k5 = 0.0;
 		double k6 = 0.0;
 		double k7 = 0.0;
@@ -451,7 +449,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			
 		}
 		//水表更换
-		if(ali > 1) {
+		if(recommendStrategy.getAli() > 1) {
 			//年收益计算     表观漏损量*换表户数*365/分区户数*平均水价
 			double n = (recommendStrategy.getLossFlow()*365*k8)/(pNum*recommendStrategy.getAvgFlowP());
 			double m = k7*k8;
@@ -465,7 +463,15 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			if(recommendStrategy.getAvgFlowP() > (recommendStrategy.getServiceP() + 5)) {
 				//年收益计算    (mnf - lmnf)*3.6*24*365*单位供水成本
 				double n = (mnf - lmnf)*3.6*24*365*recommendStrategy.getUnitFlowP();
-				//TODO 计算投资    不同口径减压阀组投资k3*(1+工程费用系数k4)
+				//计算投资    不同口径减压阀组投资k3*(1+工程费用系数k4)
+				double m = 0.0;
+				//分区为DMA
+				if(flag == 0) {
+					 m = recommendStrategy.getK3()*(recommendStrategy.getK4() + 1);
+				}
+				if((recommendStrategy.getPress() > (recommendStrategy.getServiceP() + 5)) || (m/n <= t1)) {
+					stra1 = 1;
+				}
 				
 			}
 			//改造策略
@@ -537,8 +543,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		default :
 			break;
 		}
-		
-		//查询控漏损策略数据字典信息
+		return strategyCode;
 		
 	}
 	

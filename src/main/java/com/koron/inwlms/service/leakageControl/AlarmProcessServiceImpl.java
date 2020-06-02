@@ -15,6 +15,7 @@ import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
+import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
@@ -22,12 +23,15 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisZonePointVO;
+import com.koron.inwlms.bean.VO.leakageControl.Policy;
+import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
+import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
 import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
 
@@ -44,10 +48,10 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		List<AlarmProcessVO> list = mapper.queryAlarmProcess(alarmProcessDTO);
 		//查询报警信息
 		for(AlarmProcessVO alarmProcessVO : list) {
-			if(alarmProcessVO.getWarningCode() != null) {
+			if(alarmProcessVO.getWarningCode() != null && !alarmProcessVO.getWarningCode().equals("")) {
 				AlarmProcessVO alarmProcessVO1 = mapper.queryAlarmMessageByCode(alarmProcessVO.getWarningCode());
 				if(alarmProcessVO1 != null) {
-					if(alarmProcessVO1.getAlarmType() != null) {
+					if(alarmProcessVO1.getAlarmType() != null && !alarmProcessVO1.getAlarmType().equals("")) {
 						alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
 					}
 					if(alarmProcessVO1.getAlarmContent() != null) {
@@ -67,7 +71,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 					}
 				}	
 			}
-			if(alarmProcessDTO.getAlarmType() == null) {
+			if(alarmProcessDTO.getAlarmType() == null || alarmProcessDTO.getAlarmType().equals("")) {
 				reList.add(alarmProcessVO);
 			}
 		}
@@ -182,6 +186,30 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		Integer num = mapper.deleteAlarmProcess(code);
 		return num;
+	}
+	
+	/**
+	 * 根据策略返回预计完成时间
+	 */
+	@TaskAnnotation("getEstimatedTime")
+	@Override
+	public String getEstimatedTime(SessionFactory factory,String code) {
+		Date date = new Date();
+		int num = 0;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		PolicySchemeDTO policySchemeDTO = new PolicySchemeDTO();
+		policySchemeDTO.setState("0");
+		PolicyMapper mapper = factory.getMapper(PolicyMapper.class);
+		List<PolicySchemeVO> policySchemeList = mapper.queryPolicyScheme(policySchemeDTO);
+		List<Policy> policyList = mapper.queryPolicySetting(policySchemeList.get(0).getCode());
+		for(Policy policy : policyList) {
+			if(policy.getType().equals(code)) {
+				num = policy.getDay();
+			}
+		}
+		Date newdate = TimeUtil.addDay(date, num);
+		String dateStr = format.format(newdate);
+		return dateStr;
 	}
 	
 	/**

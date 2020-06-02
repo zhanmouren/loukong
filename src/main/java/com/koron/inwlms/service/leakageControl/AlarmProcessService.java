@@ -31,5 +31,7 @@ public interface AlarmProcessService {
 
 	List<UploadFileDTO> queryAlarmProcessFile(SessionFactory factory, String type);
 
+	String getEstimatedTime(SessionFactory factory, String code);
+
 
 }

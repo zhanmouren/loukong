@@ -167,7 +167,7 @@ public class LeakageControlController {
 			// 查询到导出数据结果
 			AlarmMessageReturnVO alarmMessageReturnVO = ADOConnection.runTask(ams, "queryAlarmMessage", AlarmMessageReturnVO.class, warningInfDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
-					}.getType());
+					}.getType()); 
 			// 导出excel文件
 			//导出list
 			return ExportDataUtil.getExcelDataFileInfoByList(alarmMessageReturnVO.getAlarmMessageList(), jsonArray);
@@ -217,7 +217,7 @@ public class LeakageControlController {
 		if(alarmProcessDTO.getStartTime() == null || alarmProcessDTO.getStartTime().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("参数错误!开始时间为空");
-	        return msg.toJson();
+	        return msg.toJson(); 
 		}
 		if(alarmProcessDTO.getEndTime() == null || alarmProcessDTO.getEndTime().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -1548,6 +1548,33 @@ public class LeakageControlController {
 		
 		return msg.toJson();
 	}
+	
+	@RequestMapping(value = "/queryRecommendStrategy.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "获取推荐策略信息", notes = "获取推荐策略信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryRecommendStrategy(@RequestBody AlarmProcessDTO alarmProcessDTO) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		
+		if(alarmProcessDTO.getRecommendStrategy() == null || alarmProcessDTO.getRecommendStrategy().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("策略编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			String num = ADOConnection.runTask(eis, "getEstimatedTime", String.class, alarmProcessDTO.getRecommendStrategy());
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(num);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+			
+		return msg.toJson();
+	}
+	
+	
 	
 	
 }

@@ -20,6 +20,8 @@
  select count(*) from app_warningprocessing where "createTime" between '${startTime}' and '${endTime}' and type = #{type}
  <if test="state != null and state != '' "> and state = #{processState}</if>
  <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>
+ <if test="areaCode != null and areaCode != '' ">and "areaCode" = #{areaCode}</if>
+ <if test="dmaCode != null and dmaCode != '' "> and "dmaCode" = #{dmaCode}</if>
  </select>
  
  <select id="queryAlarmMessageByCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
