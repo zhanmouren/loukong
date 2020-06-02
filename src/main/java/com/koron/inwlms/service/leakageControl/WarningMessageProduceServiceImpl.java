@@ -412,7 +412,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		
 		//查询策略信息
 		PolicySchemeDTO policySchemeDTO = new PolicySchemeDTO();
-		policySchemeDTO.setState("0");
+		policySchemeDTO.setState("1");
 		PolicyMapper mapper = factory.getMapper(PolicyMapper.class);
 		List<PolicySchemeVO> policySchemeList = mapper.queryPolicyScheme(policySchemeDTO);
 		List<Policy> policyList = mapper.queryPolicySetting(policySchemeList.get(0).getCode());

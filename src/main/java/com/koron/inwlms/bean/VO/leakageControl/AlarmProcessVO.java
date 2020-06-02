@@ -17,7 +17,7 @@ public class AlarmProcessVO {
 	private String executorCode;
 	
 	/**
-	 * 处理状态
+	 * 处理状态(1未处理；2处理中；3已处理)
 	 */
 	private String state;
 	

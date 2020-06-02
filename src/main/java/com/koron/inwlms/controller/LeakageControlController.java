@@ -264,12 +264,12 @@ public class LeakageControlController {
 			alarmProcessDTO.setPage(1);
 			alarmProcessDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			List<AlarmProcessVO> alarmProcessList = ADOConnection.runTask(aps,"queryAlarmProcess",List.class,alarmProcessDTO);
+			AlarmProcessReturnVO alarmProcessReturnVO = ADOConnection.runTask(aps,"queryAlarmProcess",AlarmProcessReturnVO.class,alarmProcessDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
 			//导出list
-			return ExportDataUtil.getExcelDataFileInfoByList(alarmProcessList, jsonArray);
+			return ExportDataUtil.getExcelDataFileInfoByList(alarmProcessReturnVO.getAlarmProcessList(), jsonArray);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1346,7 +1346,7 @@ public class LeakageControlController {
 		try {
 			//通过值域查询出所有事项类型
 			DataDicDTO dataDicDTO = new DataDicDTO();
-			dataDicDTO.setDicParent("10120"); 
+			dataDicDTO.setDicParent("10207"); 
 			List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
 			if(dataDicVoList != null && dataDicVoList.size() != 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);

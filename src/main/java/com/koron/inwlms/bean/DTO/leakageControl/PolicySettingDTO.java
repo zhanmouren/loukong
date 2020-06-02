@@ -30,7 +30,7 @@ public class PolicySettingDTO {
 	 */
 	private String type;
 	/**
-	 * 分区类型
+	 * 分区类型 DMA/PMA：DP； 一二级分区：FS
 	 */
 	private String areaType;
 	/**

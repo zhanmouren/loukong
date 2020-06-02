@@ -197,15 +197,64 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		Date date = new Date();
 		int num = 0;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		List<String> codes = new ArrayList<>();
+		//判断策略为哪几个基础策略组成
+		if(code.equals(Constant.DATADICTIONARY_PCANDPNLDANDFC)) {
+			String code1 = Constant.DATADICTIONARY_PCSTRA;
+			String code2 = Constant.DATADICTIONARY_PNLDETECTION;
+			String code3 = Constant.DATADICTIONARY_FLOWCHANGE;
+			codes.add(code1);
+			codes.add(code2);
+			codes.add(code3);
+		}else if(code.equals(Constant.DATADICTIONARY_PCANDPNANDFC)) {
+			String code1 = Constant.DATADICTIONARY_PCSTRA;
+			String code2 = Constant.DATADICTIONARY_PNCHANGE;
+			String code3 = Constant.DATADICTIONARY_FLOWCHANGE;
+			codes.add(code1);
+			codes.add(code2);
+			codes.add(code3);
+		}else if(code.equals(Constant.DATADICTIONARY_FLOWCANDPNLD)) {
+			String code2 = Constant.DATADICTIONARY_PNLDETECTION;
+			String code3 = Constant.DATADICTIONARY_FLOWCHANGE;
+			codes.add(code2);
+			codes.add(code3);
+		}else if(code.equals(Constant.DATADICTIONARY_PNANDFLOWC)) {
+			String code2 = Constant.DATADICTIONARY_PNCHANGE;
+			String code3 = Constant.DATADICTIONARY_FLOWCHANGE;
+			codes.add(code2);
+			codes.add(code3);
+		}else if(code.equals(Constant.DATADICTIONARY_PCANDFLOWC)) {
+			String code2 = Constant.DATADICTIONARY_PCSTRA;
+			String code3 = Constant.DATADICTIONARY_FLOWCHANGE;
+			codes.add(code2);
+			codes.add(code3);
+		}else if(code.equals(Constant.DATADICTIONARY_PCANDPN)) {
+			String code2 = Constant.DATADICTIONARY_PCSTRA;
+			String code3 = Constant.DATADICTIONARY_PNCHANGE;
+			codes.add(code2);
+			codes.add(code3);
+		}else if(code.equals(Constant.DATADICTIONARY_PCANDPNLD)) {
+			String code2 = Constant.DATADICTIONARY_PCSTRA;
+			String code3 = Constant.DATADICTIONARY_PNLDETECTION;
+			codes.add(code2);
+			codes.add(code3);
+		}else {
+			codes.add(code);
+		}
 		PolicySchemeDTO policySchemeDTO = new PolicySchemeDTO();
-		policySchemeDTO.setState("0");
+		policySchemeDTO.setState("1");
 		PolicyMapper mapper = factory.getMapper(PolicyMapper.class);
 		List<PolicySchemeVO> policySchemeList = mapper.queryPolicyScheme(policySchemeDTO);
 		List<Policy> policyList = mapper.queryPolicySetting(policySchemeList.get(0).getCode());
 		for(Policy policy : policyList) {
-			if(policy.getType().equals(code)) {
-				num = policy.getDay();
-			}
+			for(String typCode : codes) {
+				if(policy.getType().equals(typCode)) {
+					int day = policy.getDay();
+					if(day > num) {
+						num = day;
+					}
+				}
+			}	
 		}
 		Date newdate = TimeUtil.addDay(date, num);
 		String dateStr = format.format(newdate);

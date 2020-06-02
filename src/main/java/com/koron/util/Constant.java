@@ -429,141 +429,141 @@ public class Constant {
 	 */
 	public final static String WARNINGINDEX_OLDCONTRAST = "oldContrast";
 	/**
-	 * 对象类型数据字典编码
+	 * 对象类型数据字典编码-压力流量
 	 */
 	public final static String DATADICTIONARY_OBJECTTYPE = "L101170001";
 	/**
 	 * 任务状态未处理-数据字典
 	 */
-	public final static String DATADICTIONARY_TASKSTATUSUN = "L101110001";
+	public final static String DATADICTIONARY_TASKSTATUSUN = "1";
 	/**
 	 * 任务状态处理中-数据字典
 	 */
-	public final static String DATADICTIONARY_TASKSTATUSON = "L101110002";
+	public final static String DATADICTIONARY_TASKSTATUSON = "2";
 	/**
 	 * 任务状态处理结束-数据字典
 	 */
-	public final static String DATADICTIONARY_TASKSTATUSOVER = "L101110003";
+	public final static String DATADICTIONARY_TASKSTATUSOVER = "3";
 	/**
 	 * 超限报警数据字典编码
 	 */
-	public final static String DATADICTIONARY_OVERRUN = "L101130002";
+	public final static String DATADICTIONARY_OVERRUN = "L102010002";
 	/**
 	 * 固定限值数据字典编码
 	 */
-	public final static String DATADICTIONARY_FIXLIMIT = "L101180001";
+	public final static String DATADICTIONARY_FIXLIMIT = "L102050001";
 	/**
 	 * 离线报警数据字典编码
 	 */
-	public final static String DATADICTIONARY_OFFLINE = "L101130004";
+	public final static String DATADICTIONARY_OFFLINE = "L102010004";
 	/**
 	 * 噪声报警数据字典编码
 	 */
-	public final static String DATADICTIONARY_NOISE = "L101130005";
+	public final static String DATADICTIONARY_NOISE = "L102010005";
 	/**
 	 * AI报警数据字典编码
 	 */
-	public final static String DATADICTIONARY_AI = "L101130003";
+	public final static String DATADICTIONARY_AI = "L102010003";
 	/**
 	 * 趋势变化报警数据字典编码
 	 */
-	public final static String DATADICTIONARY_TRENDCHANGE = "L101130001";
+	public final static String DATADICTIONARY_TRENDCHANGE = "L102010001";
 	/**
 	 * 压力/流量监测点 数据字典编码
 	 */
-	public final static String DATADICTIONARY_PFPIONT = "L101170001";
+	public final static String DATADICTIONARY_PFPIONT = "L101940001";
 	/**
 	 * 噪声监测点 数据字典编码
 	 */
-	public final static String DATADICTIONARY_NOISEPIONT = "L101170002";
+	public final static String DATADICTIONARY_NOISEPIONT = "L101940002";
 	/**
 	 * DMA/PMA分区 数据字典编码
 	 */
-	public final static String DATADICTIONARY_DPZONE = "L101170003";
+	public final static String DATADICTIONARY_DPZONE = "L101940003";
 	/**
 	 * 一级分区 数据字典编码
 	 */
-	public final static String DATADICTIONARY_FIRSTZONE = "L101170004";
+	public final static String DATADICTIONARY_FIRSTZONE = "L101940004";
 	/**
 	 * 二级分区 数据字典编码
 	 */
-	public final static String DATADICTIONARY_SECZONE = "L101170005";
+	public final static String DATADICTIONARY_SECZONE = "L101940005";
 	/**
 	 * 正向瞬时流速-数据字典
 	 */
-	public final static String DATADICTIONARY_FORWARDSPEED = "L101190001";
+	public final static String DATADICTIONARY_FORWARDSPEED = "L102060001";
 	/**
 	 * 反向瞬时流速-数据字典
 	 */
-	public final static String DATADICTIONARY_REVERSESPEED = "L101190002";
+	public final static String DATADICTIONARY_REVERSESPEED = "L102060002";
 	/**
 	 * 压力1-数据字典
 	 */
-	public final static String DATADICTIONARY_PRESSONE = "L101190003";
+	public final static String DATADICTIONARY_PRESSONE = "L102060003";
 	/**
 	 * 压力2-数据字典
 	 */
-	public final static String DATADICTIONARY_PRESSTWO = "L101190004";
+	public final static String DATADICTIONARY_PRESSTWO = "L102060004";
 	/**
 	 * 最不利点压力-数据字典
 	 */
-	public final static String DATADICTIONARY_PRESSBAD = "L101190005";
+	public final static String DATADICTIONARY_PRESSBAD = "L102060005";
 	/**
 	 * 状态-数据字典
 	 */
-	public final static String DATADICTIONARY_STATUS = "L101190007";
+	public final static String DATADICTIONARY_STATUS = "L102060007";
 	/**
 	 * 日总流量-数据字典
 	 */
-	public final static String DATADICTIONARY_DAYFLOW = "L101190008";
+	public final static String DATADICTIONARY_DAYFLOW = "L102060008";
 	/**
 	 * 夜间最小流量-数据字典
 	 */
-	public final static String DATADICTIONARY_MINNIGFLOW = "L101190009";
+	public final static String DATADICTIONARY_MINNIGFLOW = "L102060009";
 	/**
 	 * 压力控制-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_PCSTRA = "L101120001";
+	public final static String DATADICTIONARY_PCSTRA = "L102000001";
 	/**
 	 * 管网捡漏-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_PNLDETECTION = "L101120002";
+	public final static String DATADICTIONARY_PNLDETECTION = "L102000002";
 	/**
 	 * 水表更换-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_FLOWCHANGE = "L101120003";
+	public final static String DATADICTIONARY_FLOWCHANGE = "L102000003";
 	/**
 	 * 管网改造-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_PNCHANGE = "L101120004";
+	public final static String DATADICTIONARY_PNCHANGE = "L102000004";
 	/**
 	 * 压力控制和管网改造-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_PCANDPN = "L101120005";
+	public final static String DATADICTIONARY_PCANDPN = "L102000005";
 	/**
 	 * 压力控制和管网捡漏-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_PCANDPNLD = "L101120006";
+	public final static String DATADICTIONARY_PCANDPNLD = "L102000006";
 	/**
 	 * 压力控制和水表更换-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_PCANDFLOWC = "L101120007";
+	public final static String DATADICTIONARY_PCANDFLOWC = "L102000007";
 	/**
 	 * 管网改造和水表更换-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_PNANDFLOWC = "L101120008";
+	public final static String DATADICTIONARY_PNANDFLOWC = "L102000008";
 	/**
 	 * 水表更换和管网捡漏-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_FLOWCANDPNLD = "L101120009";
+	public final static String DATADICTIONARY_FLOWCANDPNLD = "L102000009";
 	/**
 	 * 压力控制和管网改造和水表更换-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_PCANDPNANDFC = "L101120010";
+	public final static String DATADICTIONARY_PCANDPNANDFC = "L102000011";
 	/**
 	 * 压力控制和管网捡漏和水表更换-策略类型-数据字典
 	 */
-	public final static String DATADICTIONARY_PCANDPNLDANDFC = "L101120011";
+	public final static String DATADICTIONARY_PCANDPNLDANDFC = "L102000010";
 	
 	/**
 	 * 正向瞬时流速-指标编码
