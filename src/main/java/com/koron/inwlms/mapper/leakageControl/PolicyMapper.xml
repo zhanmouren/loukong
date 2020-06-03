@@ -7,8 +7,8 @@
   <select id="queryPolicyScheme" parameterType="com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO">
   select * from app_policyscheme 
   <trim prefix="where" prefixOverrides="and|or">
-   <if test="code != null and code != '' "> code = #{code} and</if>
-   <if test="state != null and state != '' "> state = #{state}</if>
+   <if test="code != null and code != '' ">and code = #{code} </if>
+   <if test="state != null and state != '' ">and state = #{state}</if>
   </trim>
   </select>
   

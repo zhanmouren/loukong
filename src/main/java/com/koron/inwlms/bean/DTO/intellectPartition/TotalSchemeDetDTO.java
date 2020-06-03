@@ -19,7 +19,7 @@ public class TotalSchemeDetDTO extends BaseDTO{
 	 */
 	private String zoneCode;
 	
-	private String StartTime;
+	private String startTime;
 	
 	private String endTime;
 	/**
@@ -56,11 +56,11 @@ public class TotalSchemeDetDTO extends BaseDTO{
 	}
 
 	public String getStartTime() {
-		return StartTime;
+		return startTime;
 	}
 
 	public void setStartTime(String startTime) {
-		StartTime = startTime;
+		this.startTime = startTime;
 	}
 
 	public String getEndTime() {
