@@ -28,7 +28,7 @@ public class MeterInfo {
 	private String meterType;
 	
 	/**
-	 * 用水类型
+	 * 用水类别
 	 */
 	private String useType;
 	

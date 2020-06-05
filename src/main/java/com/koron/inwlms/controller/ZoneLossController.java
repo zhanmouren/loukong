@@ -164,23 +164,17 @@ public class ZoneLossController {
 	 * @return
 	 */
 	public MessageBean checkWNWBReportListParam(QueryWNWBReportListDTO queryWNWBReportListDTO,MessageBean<PageListVO> msg){
-		if(queryWNWBReportListDTO.getTimeType() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("时间粒度为空");
-		}else if(queryWNWBReportListDTO.getTimeType() < Constant.TIME_TYPE_M || queryWNWBReportListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		if(queryWNWBReportListDTO.getStartTime() != null || queryWNWBReportListDTO.getEndTime() != null ) {
+			if(queryWNWBReportListDTO.getTimeType() == null) {
+				//参数不正确
+				msg.setCode(Constant.MESSAGE_INT_NULL);
+				msg.setDescription("时间粒度为空");
+			}
+		}else if(queryWNWBReportListDTO.getTimeType() != null && (queryWNWBReportListDTO.getTimeType() < Constant.TIME_TYPE_M || queryWNWBReportListDTO.getTimeType() > Constant.TIME_TYPE_Y)) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
-		}else if(queryWNWBReportListDTO.getStartTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("开始时间为空");
-		}else if(queryWNWBReportListDTO.getEndTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("结束时间为空");
-		}else if(queryWNWBReportListDTO.getStartTime() > queryWNWBReportListDTO.getEndTime()) {
+		}else if((queryWNWBReportListDTO.getStartTime() != null && queryWNWBReportListDTO.getEndTime() != null) && (queryWNWBReportListDTO.getStartTime() > queryWNWBReportListDTO.getEndTime())) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
@@ -1325,7 +1319,7 @@ public class ZoneLossController {
     @ApiOperation(value = "查询分区专题图指标数据", notes = "查询分区专题图指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryZoneThematicValue(@RequestBody ZoneThematicValueDTO zoneThematicValueDTO) {
-		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<Map> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, Map.class);
 		if(zoneThematicValueDTO.getItemCode() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
@@ -1363,7 +1357,7 @@ public class ZoneLossController {
 			return msg.toJson();
 		}
 		try{
-			List<Map<Object, Object>> data = ADOConnection.runTask(zlas, "queryZoneThematicValue", List.class,zoneThematicValueDTO);
+			Map<String,Map<Object, Object>> data = ADOConnection.runTask(zlas, "queryZoneThematicValue", Map.class,zoneThematicValueDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -1653,4 +1647,30 @@ public class ZoneLossController {
 			return msg.toJson();
 	    }
 	  
+	    @RequestMapping(value = "/queryZoneHstIndicatorDic.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+	    @ApiOperation(value = "分区历史指标数据字典", notes = "分区历史指标数据字典", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	    @ResponseBody
+		public String queryZoneHstIndicatorDic(Integer zoneType) {
+			MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+			if(zoneType == null) {
+				//参数不正确
+				msg.setCode(Constant.MESSAGE_INT_NULL);
+				msg.setDescription("分区类型为空");
+				return msg.toJson();
+			}else if(zoneType < 1 || zoneType > 4) {
+				//传参数值不正确
+				msg.setCode(Constant.MESSAGE_INT_PARAMS);
+				msg.setDescription("分区类型数值错误");
+				return msg.toJson();
+			}
+			try{
+				List<ZoneIndicatorDicVO> lists = ADOConnection.runTask(zlas,"queryZoneHstIndicatorDic",List.class,zoneType);
+				msg.setData(lists);
+			}catch(Exception e){
+				msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				msg.setDescription(Constant.MESSAGE_STRING_DELERROR);
+			}
+			return msg.toJson();
+			
+		}
 }

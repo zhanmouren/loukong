@@ -1130,4 +1130,9 @@ public class Constant {
 	public final static String ZONEMETER_IMPORT_TEMPLATE = "Template_zoneMeter.xlsx";
 	//************************end****************************//
 	
+	/**
+	 * 分区等级4（虚拟分区）
+	 */
+	public final static Integer RANK_VZ = 4;
+	
 }
