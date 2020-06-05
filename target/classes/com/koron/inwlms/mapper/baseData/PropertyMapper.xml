@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.baseData.PropertyMapper">
+
+    <insert id="addBatchMeterData" >
+        insert into gis_zone_point(
+        "zoneNo","pointNo",type,"BatchNo","createBy","createTime"
+        )values
+        <if test="excelBeans != null and excelBeans.size > 0">
+            <foreach collection="excelBeans" item="item" index="" separator=",">
+                (#{item.zoneNo},#{item.pointNo},#{item.type},#{item.BatchNo},#{item.createBy},#{item.createTime})
+            </foreach>
+        </if>
+    </insert>
+
+    <select id="queryPipes" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.PipeLineVO">
+        select smid,smtopoerror,smlength,featid,asset_status,p_code,pipe_level,diameter,material,pipe_style,c_value,
+        n_value,buriedtype,jointype,is_special,special_type,nominalpressure,length,assetslength,start_id,end_id,star_ele,
+        end_ele,star_bur,end_bur,cen_bur,star_top_h,end_top_h,star_bottom_h,end_bottom_h,star_center_h,end_center_h,district,
+        magunit,address,location,locationtype,usestatus,n_external,w_external,cov_type,manufacturer,maint_division,admin_division,
+        projectname,recid,prjid,arcid,archive_id,planunit,constructioncompany,installcompany,ownder,datasource,to_char(completdate,'YYYY-MM-DD HH:MM:SS')completdate,remark
+        from gis_pipe
+        <if test="pageCount != null and pageCount != null">
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        </if>
+    </select>
+
+    <select id="queryZoneList"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneVO">
+       select * from(
+        select 0 as row, zoneNo,name,rank,position,status from gis_zone
+        where 1=1
+        <choose>
+            <when test="DMA != null and DMA != ''">
+                and zoneNo = #{DMA}
+            </when>
+            <when test="second != null and second != ''">
+                and zoneNo = #{second}
+            </when>
+            <when test="first != null and first != ''">
+                and zoneNo = #{first}
+            </when>
+        </choose>
+        <if test="begD != null and begD != ''">
+            and to_char("createTime",'YYYY-MM-DD') &gt;= #{begD}
+        </if>
+        <if test="endD != null and endD != ''">
+            and to_char("createTime",'YYYY-MM-DD') &lt;= #{endD}
+        </if>
+        <if test="rank != null and rank != ''">
+            and rank= #{rank}
+        </if>
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        )t
+        union all
+        select count(*) as row, '' as  zoneNo,'' as name,'' as rank,'' as position,'' as status from gis_zone
+        where 1=1
+        <choose>
+            <when test="DMA != null and DMA != ''">
+                and zoneNo = #{DMA}
+            </when>
+            <when test="second != null and second != ''">
+                and zoneNo = #{second}
+            </when>
+            <when test="first != null and first != ''">
+                and zoneNo = #{first}
+            </when>
+        </choose>
+        <if test="begD != null and begD != ''">
+            and to_char("createTime",'YYYY-MM-DD') &gt;= #{begD}
+        </if>
+        <if test="endD != null and endD != ''">
+            and to_char("createTime",'YYYY-MM-DD') &lt;= #{endD}
+        </if>
+        <if test="rank != null and rank != ''">
+            and rank= #{rank}
+        </if>
+    </select>
+
+    <select id="queryZonePointList"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZonePointDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZonePointVO">
+        select * from(
+            select 0 as rows, id as "refID","zoneNo","pointNo","createBy",to_char( "createTime",'YYYY-MM-dd HH:MM:SS') as "createTime" from
+            gis_zone_point
+            where 1=1
+            <if test="zoneNo != null and zoneNo != ''">
+                and zoneNo=#{zoneNo}
+            </if>
+            <if test="pointNo != null and pointNo != ''">
+                and pointNo=#{pointNo}
+            </if>
+            <if test="type != null and type != ''">
+                and type=#{type}
+            </if>
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        )t
+        union all
+        select count(*) as rows, 0 as "refID", '' as zoneNo , '' as pointNo, '' as createBy,'' as createTime from gis_zone_point
+        where 1=1
+        <if test="zoneNo != null and zoneNo != ''">
+            and zoneNo=#{zoneNo}
+        </if>
+        <if test="pointNo != null and pointNo != ''">
+            and pointNo=#{pointNo}
+        </if>
+        <if test="type != null and type != ''">
+            and type=#{type}
+        </if>
+    </select>
+
+    <select id="queryZonePointHistory"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZonePointDTO">
+        select * from "GIS_zonePointHistory"
+        where 1=1
+        <if test="begD != null and begD != ''">
+            and to_char( "createTime",'YYYY-MM-dd') &gt;= #{begD}
+        </if>
+        <if test="endD != null and endD != ''">
+            and to_char( "createTime",'YYYY-MM-dd') &lt;= #{endD}
+        </if>
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+
+    <select id="queryZonePointDet"  resultType="com.koron.inwlms.bean.VO.baseInf.ZonePointVO">
+        select * from gis_zone_point
+        where 1=1 and id=#{refID}
+    </select>
+
+    <update id="updateZonePointDet" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZonePointDTO">
+    update gis_zone_point
+    <set>
+        <if test="zoneNo != null">
+            "zoneNo" = #{zoneNo},
+        </if>
+        <if test="pointNo != null">
+            "pointNo" = #{pointNo},
+        </if>
+
+         <if test="updateBy != null">
+            "updateBy" = #{updateBy},
+        </if>
+        "updateTime"=now()
+    </set>
+    where id = #{refID}
+    </update>
+
+    <delete id="deleteZoneMeterRel">
+           delete from gis_zone_meter where id = #{refID}
+     </delete>
+
+    <delete id="deleteZonePointByBatch">
+           delete from "GIS_zonePointHistory" where "BatchNo" = #{BatchNo}
+           delete from "GIS_zonePointRelation" where "BatchNo" = #{BatchNo}
+     </delete>
+
+    <select id="queryZoneMeterList"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneMeterVO">
+        select * from(
+        select 0 as rows,id as refID,"zoneNo","meterNo",type,"BatchNo" from gis_zone_meter
+        where 1=1
+            <if test="zoneNo != null and zoneNo != ''">
+                and zoneNo=#{zoneNo}
+            </if>
+            <if test="meterNo != null and meterNo != ''">
+                and meterNo=#{meterNo}
+            </if>
+            <if test="type != null and type != ''">
+                and type=#{type}
+            </if>
+          limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        )t
+        union all
+        select count(*),0 as refID, '' as zoneNo, '' as meterNo,'' as type,'' as BatchNo from gis_zone_meter
+        where 1=1
+            <if test="zoneNo != null and zoneNo != ''">
+                and zoneNo=#{zoneNo}
+            </if>
+            <if test="meterNo != null and meterNo != ''">
+                and meterNo=#{meterNo}
+            </if>
+            <if test="type != null and type != ''">
+                and type=#{type}
+            </if>
+    </select>
+
+    <select id="queryZoneMeterHistory"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO">
+        select * from gis_zonemeterhistory
+        where 1=1
+        <if test="begD != null and begD != ''">
+            and to_char( "createTime",'YYYY-MM-dd') &gt;= #{begD}
+        </if>
+        <if test="endD != null and endD != ''">
+            and to_char( "createTime",'YYYY-MM-dd') &lt;= #{endD}
+        </if>
+    </select>
+
+    <select id="queryZoneMeterDet"  parameterType="com.koron.inwlms.bean.VO.baseInf.ZoneMeterVO">
+        select * from gis_zone_meter
+        where 1=1 and id=#{refID}
+    </select>
+
+    <update id="updateZoneMeterDet" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO">
+        update gis_zone_meter
+        <set>
+            <if test="zoneNo != null">
+                "zoneNo" = #{zoneNo},
+            </if>
+            <if test="meterNo != null">
+                "meterNo" = #{meterNo},
+            </if>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="updateBy != null">
+                "updateBy" = #{updateBy},
+            </if>
+            "updateTime"=current_timestamp
+        </set>
+        where id = #{refID}
+    </update>
+
+    <delete id="deleteZoneMeterByBatchNo">
+           delete from gis_zonemeterhistory where "BatchNo" = #{BatchNo}
+           delete from gis_zone_meter where "BatchNo" = #{BatchNo}
+     </delete>
+
+</mapper>

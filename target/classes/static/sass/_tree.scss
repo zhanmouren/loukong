@@ -1,0 +1,70 @@
+@import "common";
+
+@mixin tree(){
+	&>li,&>li>ul>li{
+	display: block;
+	width: 100%;
+	float: left;
+	text-decoration: none;
+	color: #929292;
+	font-size: 0.7em;
+	font-family: "微软雅黑";
+	white-space: nowrap;
+	position: relative;
+	overflow: hidden;
+	border-top: #ebebeb 0.5px solid;
+	border-collapse: collapse;
+	}
+	&>li>span, &>li>ul>li>span {
+		display: block;
+		line-height: 2;
+		height: 100%;
+		padding-left: 0.8em;
+		border-left: solid 4px #3f98e4;
+	}
+	& li>span{
+		display:none;
+		&.focus {
+		background-color: white;
+		color:#3f98e4;
+		}
+		&:hover {
+		background-color: white;
+		color: #3f98e4; 
+		@include borwse-prefix(transition,"color .5s linear, background .5s linear");
+		}
+	}
+	&>li>ul>li ul {
+		@include borwse-prefix(transition,"height .5s linear");
+		height: 0;
+		overflow: hidden;
+		&>li>span {
+		display: block;
+		height: 42px;
+		line-height: 2;
+		height: 100%;
+		font-size: 0.7em;
+		}
+		&.open {
+			height: auto;
+			overflow: hidden;
+		}
+		& span.levelopen:before {
+			@include borwse-prefix(transofrm,rotate(90deg))
+		}
+	}
+	& span.branch:before {
+		content: '\e804';
+		font-family: "fontello";
+		font-size: 0.6em;
+		padding-right: 0.5em;
+		display:inline-block;
+		transform-origin:25% 50%;
+		@include borwse-prefix(transition,"transform .5s linear")
+	}
+	@each $item in 3 4 5 6{
+	  span.level#{$item} {
+		padding-left: #{$item - 1}em;
+	}
+	}
+}

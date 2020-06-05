@@ -1,0 +1,81 @@
+@import "variable";
+
+/* table-stripe */
+.table-stripe {
+  tbody tr:nth-child(2n) {
+    background-color: lighten($color_lightgray,16%);
+  }
+}
+
+/* table-border */
+.table-border {
+  td, th {
+    border-right: 1px solid lighten($color_lightgray,10%);
+  }
+}
+
+/* table */
+.table-list {
+  width: 100%;
+  background: #fff;
+  border: 1px solid $color_lightgray;
+  table-layout: fixed;
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 1em;
+
+  tr {
+    line-height: 2.5em;
+  }
+
+  thead td {
+    background: lighten($color_lightgray,15%);
+    min-width: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0 .8333em;
+    border-bottom: 1px solid lighten($color_lightgray,10%);
+    position: relative;
+  }
+
+  td {
+    min-width: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0 .8333em;
+    border-bottom: 1px solid lighten($color_lightgray,10%);
+    position: relative;
+  }
+
+  th.occupy, td.occupy {
+    padding: 0;
+    text-align: center;
+  }
+
+  tr > {
+    td:last-child, th:last-child {
+      border-right: 0;
+    }
+  }
+
+  tbody tr:hover {
+    background-color: rgba($color_style_main,0.5);
+  }
+
+  .table-body {
+    overflow: auto;
+  }
+
+  tfoot td {
+    border-bottom: 0;
+  }
+
+  td button {
+    vertical-align: baseline;
+  }
+}

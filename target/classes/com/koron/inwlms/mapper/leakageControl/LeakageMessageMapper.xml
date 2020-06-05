@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.leakageControl.LeakageMessageMapper">
+ 
+   <select id="queryAlarmMessage" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
+	select *
+	from app_warningInf as "warningInf"
+	where  "warningInf"."schemeCode" in
+	(
+		select "Scheme"."schemeCode"
+		from app_alertNoticeScheme as "Scheme"
+		where "Scheme"."roleCode"  in
+		(
+			select "relation"."roleCode"
+			from sm_userRoleRelation as "relation"
+			where "relation"."userCode" in
+			(
+				select "user".code
+				from sm_user as "user"
+				where "user"."loginName" = #{loginName}
+			)
+		)
+	)
+	order by "warningInf".status asc,"warningInf"."alarmTime" desc 
+    </select>
+   
+   <select id="queryLeakageProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
+	select * 
+	from app_warningProcessing as "warningProcessing"
+	where type = 0 and state = 'L101990001' and "warningCode" in
+	(
+		select "warningInf".code
+		from app_warningInf as "warningInf"
+		where "warningInf"."schemeCode" in
+		(
+			select "Scheme"."schemeCode"
+			from app_alertNoticeScheme as "Scheme"
+			where "Scheme"."roleCode"  in
+			(
+				select "relation"."roleCode"
+				from sm_userRoleRelation as "relation"
+				where "relation"."userCode" in
+				(
+					select "user".code
+					from sm_user as "user"
+					where "user"."loginName" = #{loginName}
+				)
+			)
+		)
+	) 
+	ORDER BY "warningProcessing".state ASC, "warningProcessing"."expectFinishTime" ASC
+    </select>
+    
+    <select id="queryMonitorProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
+	select * 
+	from app_warningProcessing as "warningProcessing"
+	where type = 1 and state = 'L101990001' and "warningCode" in
+	(
+		select "warningInf".code
+		from app_warningInf as "warningInf"
+		where "warningInf"."schemeCode" in
+		(
+			select "Scheme"."schemeCode"
+			from app_alertNoticeScheme as "Scheme"
+			where "Scheme"."roleCode"  in
+			(
+				select "relation"."roleCode"
+				from sm_userRoleRelation as "relation"
+				where "relation"."userCode" in
+				(
+					select "user".code
+					from sm_user as "user"
+					where "user"."loginName" = #{loginName}
+				)
+			)
+		)
+	) 
+	ORDER BY "warningProcessing".state ASC, "warningProcessing"."expectFinishTime" ASC
+    </select>
+    
+    <select id="getLeakageProcessingNumber" parameterType="String" resultType="java.lang.Integer">
+    select count(*)
+	from app_warningProcessing as "warningProcessing"
+	where type = 0 and state = 'L101990001' and "warningCode" in
+	(
+		select "warningInf".code
+		from app_warningInf as "warningInf"
+		where "warningInf"."schemeCode" in
+		(
+			select "Scheme"."schemeCode"
+			from app_alertNoticeScheme as "Scheme"
+			where "Scheme"."roleCode"  in
+			(
+				select "relation"."roleCode"
+				from sm_userRoleRelation as "relation"
+				where "relation"."userCode" in
+				(
+					select "user".code
+					from sm_user as "user"
+					where "user"."loginName" = #{loginName}
+				)
+			)
+		)
+	)
+	</select> 
+	
+	<select id="getMonitorProcessingNumber" parameterType="String" resultType="java.lang.Integer">
+    select count(*)
+	from app_warningProcessing as "warningProcessing"
+	where type = 1 and state = 'L101990001' and "warningCode" in
+	(
+		select "warningInf".code
+		from app_warningInf as "warningInf"
+		where "warningInf"."schemeCode" in
+		(
+			select "Scheme"."schemeCode"
+			from app_alertNoticeScheme as "Scheme"
+			where "Scheme"."roleCode"  in
+			(
+				select "relation"."roleCode"
+				from sm_userRoleRelation as "relation"
+				where "relation"."userCode" in
+				(
+					select "user".code
+					from sm_user as "user"
+					where "user"."loginName" = #{loginName}
+				)
+			)
+		)
+	)
+	</select> 
+	
+	<select id="getMessageNumber" parameterType="String" resultType="java.lang.Integer">
+    select count(*)
+	from app_warningInf as "warningInf"
+	where "warningInf".status = 0 and "warningInf"."schemeCode" in
+	(
+		select "Scheme"."schemeCode"
+		from app_alertNoticeScheme as "Scheme"
+		where "Scheme"."roleCode"  in
+		(
+			select "relation"."roleCode"
+			from sm_userRoleRelation as "relation"
+			where "relation"."userCode" in
+			(
+				select "user".code
+				from sm_user as "user"
+				where "user"."loginName" = #{loginName}
+			)
+		)
+	)
+	</select> 
+	
+	<update id="updateAlarmMessageStatus" parameterType="String">
+		update app_warninginf 
+		set status = 1
+		where code in 
+		<foreach item="codeItem" collection="list" open="(" separator="," close=")">
+            #{codeItem}
+        </foreach>
+	</update>
+</mapper>

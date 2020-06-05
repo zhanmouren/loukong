@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.permission.mapper.PermissionMapper">
+      
+    <!--根据登录的用户名查询权限 -->
+    <select id="getUserOPList"  parameterType="com.koron.permission.bean.DTO.TblRoleDTO"  resultType="com.koron.permission.bean.VO.userOperationVO">
+       select roleuser.user as usercode,op.code as opCode,op.status as opStatus,op.weight as opWeight,
+       op.flag as opFlag,tree.seq as seq,tree.parentmask as parentmask,tree.mask as mask,tree.childmask as childmask,tree.type as type
+       from tblrole_op as roleop  
+       left join tbloperation as op on  roleop.operation=op.code
+       left join tblrole as role on role.code=roleop.role
+       left join tblrole_user as roleuser on roleuser.role=role.code
+       left join tbltree as tree on tree.foreignkey=op.code
+       where userCode=#{userCode}
+       order by tree.seq
+    </select>
+</mapper>

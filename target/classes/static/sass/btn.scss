@@ -1,0 +1,63 @@
+@import "button";
+@import "variable";
+button{
+@include button-base();
+}
+//按钮颜色
+@each $header,$color in $color_array {
+	@include button_no_base($header,$color);
+}
+
+/** 按键大小*/
+$style:(tiny:2em,small:2.5em,medium:4em,large:5em,giant:6em);
+@each $type,$size in $style{
+	.#{$type} {
+	    font-size: $size / 2;
+	}
+}
+__circle{
+	width: 2em;
+}
+/* 圆角类型 */
+$radiu:(__circle:100%,__pill:1em,__box:.5em,__rounded:.3em,__square:0);
+@each $type,$size in $radiu{
+	.#{$type} {
+		border-radius:$size;
+	}
+}
+
+.__circle,__.box,__.square{padding:0 !important;width:2em;}
+
+/* 按钮风格 */
+$modality:(plain,threed,raised,blur);
+/* 按钮组合样式 */
+.button-group button{
+	margin:0;
+}  
+.button-group button:first-child, .button-group .button-dropdown:first-child {
+    	border-top-right-radius: 0;
+    	border-bottom-right-radius: 0;
+}
+.button-group button:not(:first-child):not(:last-child), .button-group .button-dropdown:not(:first-child):not(:last-child) {
+    	border-radius: 0;
+}
+.button-group button:last-child, .button-group .button-dropdown:last-child {
+   	border-top-left-radius: 0;
+    	border-bottom-left-radius: 0;
+    	border-right:0;
+}
+/* 按钮凸起渐变 */
+.raised {
+    border-color: #e1e1e1;
+    border-style: solid;
+    border-width: 1px;
+    line-height: 2.714rem;
+    background: -webkit-gradient(linear, left top, left bottom, from(#f6f6f6), to(#e1e1e1));
+    background: linear-gradient(#f6f6f6, #e1e1e1);
+    -webkit-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+
+
+

@@ -1,0 +1,29 @@
+$color_style_main:#DBECF6;
+
+$color_primary:#3C8DBC;
+$color_warning:#F39C12;
+$color_success:#00A65A;
+$color_danger:#DD4B39;
+$color_info:#00C0EF;
+$color_royal:#9c95ef;
+
+$color_array:
+(main-style:$color_style_main,primary:$color_primary,success:$color_success,warning:$color_warning,
+	danger:$color_danger,info:$color_info,royal:$color_royal);
+
+$color_darkgray:#333333;
+$color_blackgray:#666666;
+$color_gray:gray; 
+$color_whitegray:#9C9C9C;
+$color_lightgray:lightgray;
+
+$white:#FFFFFF;
+$black:#000000;
+
+$all_array:
+(main-style:$color_style_main,primary:$color_primary,success:$color_success,warning:$color_warning,
+	danger:$color_danger,info:$color_info,royal:$color_royal,drakgray:$color_darkgray,blackgray:$color_blackgray,
+	gray:$color_gray,whitegray:$color_whitegray,lightgray:$color_lightgray,white:#FFFFFF,black:#000000);
+
+$browser-type: -o- -moz- -webkit- -ms-
+

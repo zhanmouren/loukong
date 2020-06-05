@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.indexData.IndexMapper">
+   <select id="queryBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			from ana_base_month a left join (
+				select id,"yearMonth" from app_dim_month
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id
+			left join lc_app_dim_indicator c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from ana_base_year a left join lc_app_dim_indicator b on a.code = b.code
+		</if>
+		where 1 = 1
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="startTime != null and endTime !=null and timeType != null and timeType == 4">
+			and a.year &gt;= #{startTime} 
+			and a.year &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 3">
+		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+		</if>
+	</select>
+	
+	<select id="queryWBBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value, 
+			b."yearMonth" as "timeId", a."zoneNo"
+			from ana_zone_balance_month a left join(
+				select id,"yearMonth" from app_dim_month
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from ana_zone_balance_year a left join lc_app_dim_indicator b on a.code = b.code
+		</if>
+		where 1 = 1
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="startTime != null and endTime !=null and timeType != null and timeType == 4">
+			and a.year &gt;= #{startTime} 
+			and a.year &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 3">
+		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+		</if>
+	</select>
+	
+	<select id="queryZoneLossIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 2">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a."analysisDate" as "timeId",a."zoneNo"
+			from ana_zone_day a left join lc_app_dim_indicator b on a.code = b.code
+			where to_char(a."analysisDate",'YYYYMMDD') &gt;= #{startTime} || ''
+			and to_char(a."analysisDate",'YYYYMMDD') &lt;= #{endTime} || ''
+		</if>
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
+			b."yearMonth" as "timeId",a."zoneNo"
+			from ana_zone_month a left join(
+				select id,"yearMonth" from app_dim_month
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from ana_zone_year a left join lc_app_dim_indicator b on a.code = b.code
+		</if>
+		where 1 = 1
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="startTime != null and endTime !=null and timeType != null and timeType == 4">
+			and a.year &gt;= #{startTime} 
+			and a.year &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 3">
+		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+		</if>
+	</select>
+	
+	<select id="queryZoneMoniIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 2">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a."analysisDate" as "timeId",a."zoneNo"
+			from ana_zone_moni_day a left join lc_app_dim_indicator b on a.code = b.code
+			where to_char(a."analysisDate",'YYYYMMDD') &gt;= #{startTime} || ''
+			and to_char(a."analysisDate",'YYYYMMDD') &lt;= #{endTime} || ''
+		</if>
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
+			b."yearMonth" as "timeId",a."zoneNo"
+			from ana_zone_moni_month  a left join(
+				select id,"yearMonth" from app_dim_month
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from ana_zone_moni_year a left join lc_app_dim_indicator b on a.code = b.code			
+		</if>
+		where 1 = 1
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="startTime != null and endTime !=null and timeType != null and timeType == 4">
+			and a.year &gt;= #{startTime} 
+			and a.year &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 3">
+		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+		</if>
+	</select>
+	
+	<select id="queryLeakIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 2">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a."analysisDate" as "timeId",a."zoneNo"
+			from ana_leak_day a left join lc_app_dim_indicator b on a.code = b.code
+			where to_char(a."analysisDate",'YYYYMMDD') &gt;= #{startTime} || ''
+			and to_char(a."analysisDate",'YYYYMMDD') &lt;= #{endTime} || ''
+		</if>
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
+			b."yearMonth" as "timeId",a."zoneNo"
+			from ana_leak_month a left join(
+				select id,"yearMonth" from app_dim_month
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from ana_leak_year a left join lc_app_dim_indicator b on a.code = b.code
+		</if>
+		where 1 = 1
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="startTime != null and endTime !=null and timeType != null and timeType == 4">
+			and a.year &gt;= #{startTime} 
+			and a.year &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 3">
+		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+		</if>
+	</select>
+	
+	<select id="queryCompanyIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 2">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a."analysisDate" as "timeId"
+			from ana_company_day a left join lc_app_dim_indicator b on a.code = b.code
+			where to_char(a."analysisDate",'YYYYMMDD') &gt;= #{startTime} || ''
+			and to_char(a."analysisDate",'YYYYMMDD') &lt;= #{endTime} || ''
+		</if>
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
+			b."yearMonth" as "timeId"
+			from ana_company_month a left join(
+				select id,"yearMonth" from app_dim_month
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId"
+			from ana_company_year a left join lc_app_dim_indicator b on a.code = b.code
+		</if>
+		where 1 = 1
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="startTime != null and endTime !=null and timeType != null and timeType == 4">
+			and a.year &gt;= #{startTime} 
+			and a.year &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 3">
+		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+		</if>
+	</select>
+	
+	
+	 <!-- 查询任务列表 -->
+    <select id="queryTaskList"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="com.koron.inwlms.bean.VO.indexData.TaskMsgVO">
+       select "pro".state as state,"info"."alarmType" as "alarmType","info".content as "content",case when info.code is null then 'tt' else info.code end  as "objectName"
+       from app_warningprocessing as "pro"
+       left join  app_warninginf as "info" on "info".code="pro"."warningCode"
+       where "pro"."createTime" &gt;  to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS') and "info"."areaCode" in
+       <foreach item="item" collection="areaZoneList" separator="," open="(" close=")" index="">    
+			#{item}    
+		</foreach> 
+	   order by "pro"."createTime" desc
+	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+    
+    <!-- 查询任务列表条数 -->
+    <select id="queryTaskListNum"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="java.lang.Integer">
+       select count(*)
+       from app_warningprocessing as "pro"
+       left join  app_warninginf as "info" on "info".code="pro"."warningCode"
+       where "pro"."createTime" &gt; to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS')  and "info"."areaCode" in
+       <foreach item="item" collection="areaZoneList" separator="," open="(" close=")" index="">    
+			#{item}    
+		</foreach> 
+    </select>
+    
+     <!-- 查询任务完成数量 -->
+    <select id="queryComRateNum"   parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"   resultType="com.koron.inwlms.bean.VO.indexData.InfoCompleteRateVO">
+        select count(*) as "compleNum"
+        from app_warningprocessing as "pro"
+        where "pro"."createTime" &gt; to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS') 
+        and "pro".state=#{state}
+    </select>
+    
+    <!-- 查询预计完成时间大于实际完成时间的条数-->
+    <select id="queryActualTaskListNum"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="java.lang.Integer">
+       select count(*)
+       from app_warningprocessing as "pro"
+       left join  app_warninginf as "info" on "info".code="pro"."warningCode"
+       where "pro"."createTime" &gt; to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS')  
+       and "pro"."expectFinishTime" &gt;= "pro"."actualFinishTime"
+       and "info"."areaCode" in
+       <foreach item="item" collection="areaZoneList" separator="," open="(" close=")" index="">    
+			#{item}    
+		</foreach> 
+    </select>
+    
+    
+    
+     <!-- 根据分区日期查询有多少个监测点报警的信息 -->
+    <select id="queryCheckWarningNum"   parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"   resultType="java.lang.Integer">
+        select count(*)
+        from app_warninginf as "info"
+        where "info"."createTime" &gt;= to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS') 
+        and "info"."objectCode" is not null and "info"."objectCode" !=''
+         and "info"."areaCode" in
+       <foreach item="item" collection="areaZoneList" separator="," open="(" close=")" index="">    
+			#{item}    
+		</foreach>
+    </select>
+    
+    <!-- 查询噪声报警的个数,超限报警个数 ,超限报警个数 -->
+    <select id="queryTypeWarningNum"   parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"   resultType="java.lang.Integer">
+        select count(*)
+        from app_warninginf as "info"
+        where "info"."createTime" &gt;= to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS') 
+        and "info"."objectCode" is not null and "info"."objectCode" !=''
+        and  "info"."alarmType"= #{alarmType}
+         and "info"."areaCode" in
+       <foreach item="item" collection="areaZoneList" separator="," open="(" close=")" index="">    
+			#{item}    
+		</foreach>
+    </select>
+    
+    
+     <!-- 查询检测点信息列表 -->
+    <select id="queryCheckWarningMsg"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="com.koron.inwlms.bean.VO.indexData.TaskMsgVO">
+     select case when "aa".code is null or "aa".code ='' then '否'  else '是' end as state,"info"."alarmType",case when info.code is null then 'tt' else info.code end  as "objectName",
+       "info"."alarmType" as "alarmType","info"."content" as "content","info"."createTime" as "createTime","info"."updateTime" as "updateTime"
+		from app_warninginf "info"
+		left join (select  app_warninginf.code as code from app_warningprocessing 
+		 left join  app_warninginf  on app_warningprocessing."warningCode"=app_warninginf.code
+		 group by app_warninginf.code
+		)as "aa" on "aa".code ="info".code
+       where "info"."createTime" &gt;  to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS')
+       and "info"."objectCode" is not null and "info"."objectCode" !=''
+        and "info"."areaCode" in
+       <foreach item="item" collection="areaZoneList" separator="," open="(" close=")" index="">    
+			#{item}    
+		</foreach> 
+	   order by "info"."createTime" desc
+	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+    
+    <!-- 查询预计完成时间大于实际完成时间的条数-->
+    <select id="queryProActualTaskListNum"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="java.lang.Integer">
+       select count(*)
+       from app_warningprocessing as "pro"
+       left join  app_warninginf as "info" on "info".code="pro"."warningCode"
+       where "pro"."createTime" &gt; to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS')  
+       and "pro"."expectFinishTime" &gt;= "pro"."actualFinishTime"
+       and "info"."objectCode" is not null and "info"."objectCode" !=''
+       and "info"."areaCode" in
+       <foreach item="item" collection="areaZoneList" separator="," open="(" close=")" index="">    
+			#{item}    
+		</foreach> 
+    </select>
+    
+      <!-- 计算监测点的任务总个数-->
+    <select id="queryProTaskListNum"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="java.lang.Integer">
+       select count(*)
+       from app_warningprocessing as "pro"
+       left join  app_warninginf as "info" on "info".code="pro"."warningCode"
+       where "pro"."createTime" &gt; to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS')  
+       and "info"."objectCode" is not null and "info"."objectCode" !=''
+       and "info"."areaCode" in
+       <foreach item="item" collection="areaZoneList" separator="," open="(" close=")" index="">    
+			#{item}    
+		</foreach> 
+    </select>
+    
+    
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.koron.inwlms.mapper.common.GisMapper">
+	<select id="queryZoneNosByRank" 
+	resultType="com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo">
+	select p_code as zoneNo, name as zoneName,inputdate as createTime from gis_exist_zone
+	where rank = #{rank}
+	<if test="zoneNo != null and zoneNo != ''">
+		and p_code = #{zoneNo}
+	</if>
+	</select>
+	
+	<select id="queryZoneNameByNo" parameterType="java.lang.String" 
+	resultType="java.lang.String">
+	select name from gis_exist_zone where p_code = #{zoneNo}
+	</select>
+	
+	<select id="queryZoneDetailInfo"
+	resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO">
+	select p_code as zoneNo, name as zoneName,
+	CASE WHEN rank = 'W101640001' THEN 1 
+		WHEN rank = 'W101640002' THEN 2 
+		WHEN rank = 'W101640003' THEN 3
+		END,
+	shape_length as pipeLength,shape_area as area,inputdate as createTime,modifieddate as updateTime
+	from gis_exist_zone
+	where rank = #{rank}
+	<if test="zoneNo != null and zoneNo != ''">
+		and p_code = #{zoneNo}
+	</if>
+	</select>
+	
+	<select id="queryFuzzyZoneInfo" 
+	resultType="com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo">
+	select p_code as zoneNo, name as zoneName,inputdate as createTime from gis_exist_zone
+	where rank = #{rank}
+	<if test="zoneNo != null and zoneNo != ''">
+		and p_code like  '%'||#{zoneNo}||'%'
+	</if>
+	</select>
+	
+	<select id="queryVZoneDetailInfo"
+	resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO">
+	select "pCode" as zoneNo, name as zoneName,
+	"createTime"
+	from gis_exist_vzone
+	where "pCode" = #{zoneNo}
+	</select>
+</mapper>

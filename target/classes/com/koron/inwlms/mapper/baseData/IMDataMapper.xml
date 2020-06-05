@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.baseData.IMDataMapper">
+
+    <insert id="addBatchMeterData" >
+        insert into mi_readwaterinfo(
+        user_no,user_name,user_type,prior_period_num,prior_period_date,meter_reading_date,currend_period_num,reality_water,meter_reading_way,"BatchNo","createBy","createTime"
+        )values
+        <if test="excelBeans != null and excelBeans.size > 0">
+            <foreach collection="excelBeans" item="item" index="" separator=",">
+                (#{item.userNo},#{item.userName},#{item.userType},cast(#{item.lastReading} as numeric),#{item.lastTime},#{item.recordTime},cast(#{item.meterReading} as numeric),cast(#{item.mwo} as numeric),#{item.readType},#{item.BatchNo},#{item.createBy},#{item.createTime})
+            </foreach>
+        </if>
+    </insert>
+
+    <insert id="addBatchMointorData" >
+        insert into mi_monitordata(
+             status,"pointID",type,"lastTime",flow,"forwardFlowRate","reverseFlowRate","flowRate","upstreamPressure","downstreamPressure","unfavorPressure",noise,threshold,"BatchNo","createBy","createTime"
+        )values
+        <if test="excelBeans != null and excelBeans.size > 0">
+            <foreach collection="excelBeans" item="item" index="" separator=",">
+					(#{item.status},#{item.pointID},#{item.type},#{item.lastTime},cast(#{item.flow} as numeric),cast(#{item.forwardFlowRate} as numeric),cast(#{item.reverseFlowRate} as numeric),cast(#{item.flowRate} as numeric),cast(#{item.upstreamPressure} as numeric),cast(#{item.downstreamPressure} as numeric),cast(#{item.unfavorPressure} as numeric),cast(#{item.noise} as numeric),cast(#{item.threshold} as numeric),#{item.BatchNo},#{item.createBy},#{item.createTime})
+            </foreach>
+        </if>
+
+    </insert>
+
+    <select id="queryMonitorDataHistoryList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO">
+        select * from(
+        select 0 as
+        rows,id,type,"BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy",to_char("createTime",'YYYY-MM-DD')as
+        createTime from mi_importdatahistory
+            <trim prefix="where" prefixOverrides="and|or">
+                <if test="begD != null  and begD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &gt;= #{begD}</if>
+                <if test="endD != null  and endD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &lt;= #{endD}</if>
+                <if test="type != null  and type !=''"> and type = #{type}</if>
+            </trim>
+            order by "createTime" desc
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        )t
+        union all
+            select count(*) as rows,0,'','',0,0,0.0,0.0,0.0,0.0,0.0,0,'','' from mi_importdatahistory
+            <trim prefix="where" prefixOverrides="and|or">
+                <if test="begD != null  and begD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &gt;= #{begD}</if>
+                <if test="endD != null  and endD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &lt;= #{endD}</if>
+                <if test="type != null  and type !=''"> and type = #{type}</if>
+            </trim>
+
+    </select>
+
+    <select id="queryReadMeterDataHistoryList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO">
+        select * from mi_importdatahistory
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="begD != null  and begD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &gt;= #{begD}</if>
+            <if test="endD != null  and endD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &lt;= #{endD}</if>
+        </trim>
+        type = "2"
+        order by "createTime" desc
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+
+    <select id="queryMonitorDataByBatchNo"   resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
+        select * from(
+            select 0 as rows,status,"pointID",type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char("createTime",'YYYY-MM-DD HH:MM:SS') as createTime from mi_monitordata
+            <trim prefix="where" prefixOverrides="and|or">
+                <if test="batchNo != null "> and "BatchNo" = #{batchNo}</if>
+            </trim>
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        )t
+        union all
+        select count(*) as rows,'','','','',0.0,0.0,0.0,0.0,'',''
+        from mi_monitordata
+        <trim prefix="where" prefixOverrides="and|or">
+                <if test="batchNo != null "> and "BatchNo" = #{batchNo}</if>
+         </trim>
+
+    </select>
+
+    <select id="queryMeterDataByBatchNo"   resultType="com.koron.inwlms.bean.VO.baseInf.MeterDataVO">
+        select * from mi_monitordata
+        <trim prefix="where" prefixOverrides="and|or">
+            type = "2"
+            <if test="BatchNo != null "> and  BatchNo = #{BatchNo}</if>
+        </trim>
+
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+
+    <select id="queryPressureFlowList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
+        select * from(
+        select 0 as rows,status,"pointID",type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char("createTime",'YYYY-MM-DD HH:MM:SS') as createTime from mi_monitordata
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="status != null and status != '' "> and status = #{status}</if>
+            <if test="DMAType != null and DMAType != '' "> </if>
+            <if test="use != null and use != '' "> </if>
+            <if test="pointID != null and pointID != '' "> and "pointID"=#{pointID}</if>
+            <if test="first != null and first != '' "> </if>
+            <if test="second != null and second != '' "> </if>
+            <if test="DMA != null and DMA != '' "> </if>
+            type='1'
+        </trim>
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        )t
+        union all
+        select count(*) as rows,'','','','',0.0,0.0,0.0,0.0,'',''
+        from mi_monitordata
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="status != null and status != '' "> and status = #{status}</if>
+            <if test="DMAType != null and DMAType != '' "> </if>
+            <if test="use != null and use != '' "> </if>
+            <if test="pointID != null and pointID != '' "> and "pointID"=#{pointID}</if>
+            <if test="first != null and first != '' "> </if>
+            <if test="second != null and second != '' "> </if>
+            <if test="DMA != null and DMA != '' "> </if>
+            type='1'
+        </trim>
+    </select>
+
+    <select id="queryPressureFlowDet"   resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
+        select id,"pointID","lastTime",flow,"forwardFlowRate","reverseFlowRate","flowRate","upstreamPressure","downstreamPressure","unfavorPressure",name,status from mi_monitordata
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null ">and  id = #{id}</if>
+        </trim>
+    </select>
+
+    <select id="queryNoiseList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
+       select * from(
+        select 0 as rows,status,"pointID",type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char("createTime",'YYYY-MM-DD HH:MM:SS') as createTime from mi_monitordata
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="status != null and status != '' "> and status = #{status}</if>
+            <if test="DMAType != null and DMAType != '' "> </if>
+            <if test="use != null and use != '' "> </if>
+            <if test="pointID != null and pointID != '' "> and "pointID"=#{pointID}</if>
+            <if test="first != null and first != '' "> </if>
+            <if test="second != null and second != '' "> </if>
+            <if test="DMA != null and DMA != '' "> </if>
+            type='2'
+        </trim>
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        )t
+        union all
+        select count(*) as rows,'','','','',0.0,0.0,0.0,0.0,'',''
+        from mi_monitordata
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="status != null and status != '' "> and status = #{status}</if>
+            <if test="DMAType != null and DMAType != '' "> </if>
+            <if test="use != null and use != '' "> </if>
+            <if test="pointID != null and pointID != '' "> and "pointID"=#{pointID}</if>
+            <if test="first != null and first != '' "> </if>
+            <if test="second != null and second != '' "> </if>
+            <if test="DMA != null and DMA != '' "> </if>
+            type='2'
+        </trim>
+    </select>
+
+    <select id="queryNoiseDet"   resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
+        select id,"pointID","lastTime",noise,threshold,flow,name,status from mi_monitordata
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="id != null ">and  id = #{id}</if>
+        </trim>
+    </select>
+
+
+    <update id="updateMonitorDet" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO">
+        update mi_monitordata
+        <set>
+            <if test="status != null  and status !=''" > "status" = #{status},  </if>
+            <if test="pointID != null and pointID !=''" > "pointID" = #{pointID},</if>
+            <if test="name != null and name != ''" > "name" = #{name}, </if>
+            <if test="type != null and type != ''" > "type" = #{type}, </if>
+            <if test="lastTime != null and lastTime != ''" > "lastTime" = #{lastTime}, </if>
+            <if test="noise != null " > noise = #{noise}, </if>
+            <if test="threshold != null " > threshold = #{threshold}, </if>
+            <if test="updateBy != null and updateBy!=''" >  "updateBy" = #{updateBy},</if>
+            <if test="updateBy != null" > "updateTime" = Now(),</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="queryReadMeterDataList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MeterDataVO">
+        select * from mi_readwaterinfo
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="readType != null  and readType !=''"> and meter_reading_way= #{readType}</if>
+            <if test="usrType != null  and usrType !=''"> and usrType= #{usrType}</if>
+            <if test="waterMeterNo != null  and waterMeterNo !=''"> and waterMeterNo= #{waterMeterNo}</if>
+            <if test="userNo != null  and userNo !=''"> and user_no= #{userNo}</if>
+            <if test="brand != null  and brand !=''"> and brand= #{brand}</if>
+            <if test="begD != null  and begD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &gt;= #{begD}</if>
+            <if test="endD != null  and endD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &lt;= #{endD}</if>
+        </trim>
+        order by "meter_reading_date" desc
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+
+    <select id="queryReadMeterDataDet" resultType="com.koron.inwlms.bean.VO.baseInf.MeterDataVO">
+        select * from mi_readwaterinfo
+        <if test="id != null "> and id= #{id}</if>
+    </select>
+
+    <update id="updateReadMeterDataDet" parameterType="com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO">
+        update mi_readwaterinfo
+        <set>
+            <if test="readType != null  and readType !=''" > "meter_reading_way" = #{readType},  </if>
+            <if test="serialNo != null and serialNo !=''" > "serialNo" = #{serialNo},</if>
+            <if test="waterMeterNo != null and waterMeterNo != ''" > "waterMeterNo" = #{waterMeterNo}, </if>
+            <if test="lastTime != null and lastTime != ''" > "lastTime" = #{lastTime}, </if>
+            <if test="lastReading != null " > lastReading = #{lastReading}, </if>
+            <if test="recordTime != null and recordTime != ''" > "recordTime" = #{recordTime}, </if>
+            <if test="meterReading != null " > meterReading = #{meterReading}, </if>
+            <if test="mwo != null " > mwo = #{mwo}, </if>
+            <if test="updateBy != null and updateBy!=''" >  "updateBy" = #{updateBy},</if>
+            <if test="updateTime != null" > "updateTime" = Now(),</if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+</mapper>

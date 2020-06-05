@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.sysManager.LabelMapper">
+ 
+    <select id="queryLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
+	select "label".id,"label".cn,"label".en,"label"."cnHK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
+	from sm_label as "label"
+	<trim prefix="where" prefixOverrides="and|or">
+		<if test="name != null  and name !='' "> and( "label".cn like '%'||#{name}||'%' or "label".en like '%'||#{name}||'%' or "label"."cnHK" like '%'||#{name}||'%')</if>  
+   	    <if test="code != null  and code !='' "> and "label".code like '%'||#{code}||'%' </if>  
+   	    <if test="type != null  and type !='' "> and "label".type = #{type} </if>  
+   	    <if test="startTime != null  "> and to_char( "label"."createTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
+   	    <if test="endTime != null   "> and  to_char( "label"."createTime",'YYYY-MM-dd') &lt;= #{endTime}</if>         
+	</trim>
+	order by "label"."createTime" desc
+	limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+   
+   
+   <select id="getLabelCount" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="java.lang.Integer">
+	select count(*)
+	from sm_label as "label"
+	<trim prefix="where" prefixOverrides="and|or">
+		<if test="name != null  and name !='' "> and ( "label".cn like '%'||#{name}||'%' or "label".en like '%'||#{name}||'%' or "label"."cnHK" like '%'||#{name}||'%')</if>  
+   	    <if test="code != null  and code !='' "> and "label".code like '%'||#{code}||'%' </if>  
+   	    <if test="type != null  and type !='' "> and "label".type = #{type} </if>  
+   	    <if test="startTime != null  "> and to_char( "label"."createTime",'YYYY-MM-dd') &gt;= #{startTime}</if>
+   	    <if test="endTime != null   "> and  to_char( "label"."createTime",'YYYY-MM-dd') &lt;= #{endTime}</if>         
+	</trim>
+    </select>
+   
+     <insert id="addLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelDTO">  
+        insert into sm_label(cn,en,"cnHK",code,type,remark,"createBy","createTime","updateBy","updateTime")
+ 		values(#{cn},#{en},#{cnHK},#{code},#{type},#{remark},#{createBy},now(),#{updateBy},now())
+    </insert>
+    
+    
+    <delete id="deleteLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelDTO">   
+		delete from sm_label where code = #{code}
+    </delete>
+    
+    <delete id="deleteBatchLabel" parameterType="String">
+   		delete from sm_label where code in
+        <foreach item="labelItem" collection="list" open="(" separator="," close=")">
+            #{labelItem}
+        </foreach>
+    </delete>
+
+	<select id="queryLabelByCode"  resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
+		select "label".id ,"label".cn,"label".en,"label"."cnHK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
+		from sm_label as "label"
+		where  "label".code = #{code}
+    </select>
+
+	<select id="queryLabelById"  resultType="com.koron.inwlms.bean.VO.sysManager.LabelVO">
+		select "label".id ,"label".cn,"label".en,"label"."cnHK","label".code,"label".type,"label".remark,"label"."createBy","label"."createTime","label"."updateBy","label"."updateTime"
+		from sm_label as "label"
+		where  "label".id = #{id}
+    </select>
+
+	<update id="updateLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelDTO">
+		update sm_label 
+		<set>
+			<if test="cn != null  and cn !='' "> cn = #{cn}, </if>  
+   	  	 	<if test="en != null  and en !='' ">en = #{en} ,</if>  
+   	  	 	<if test="cnHK != null  and cnHK !='' "> "cnHK" = #{cnHK} ,</if>  
+   	  		<if test="code != null  and code !='' "> code = #{code} ,</if>
+   	  		<if test="type != null  and type !='' "> type = #{type}, </if>  
+   	  	 	<if test="remark != null  and remark !='' "> remark = #{remark} ,</if>  
+   	 	   	"updateBy" = #{updateBy},
+   	 	   	"updateTime" = now()
+		</set>
+		where id = #{id}
+	</update>
+	
+	
+	 <select id="countLabelByCode" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*) total
+        from sm_label as "label"
+        where "label".code = #{code}
+    </select>
+	
+	<insert id="uploadBatchLabel" parameterType="com.koron.inwlms.bean.DTO.sysManager.LabelExcelBean">
+        insert into sm_label(cn,en,"cnHK",code,type,remark,"createBy","createTime","updateBy","updateTime")
+ 		(
+ 		<foreach collection="list" item="item" index="" separator="union all">
+            select
+            #{item.cn},
+            #{item.en},
+            #{item.cnHK},
+            #{item.code},
+            #{item.type},
+            #{item.remark},
+            #{item.createBy},
+            now(),
+            #{item.updateBy},
+            now()
+        </foreach>
+        )
+    </insert>
+    
+    
+    <select id="queryLabelCnList" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelNameVO">
+	select "label".code,"label".cn as value from sm_label as "label"
+    </select>
+    
+    <select id="queryLabelEnList" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelNameVO">
+	select "label".code,"label".en as value from sm_label as "label"
+    </select>
+    
+    <select id="queryLabelCnHKList" parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO" resultType="com.koron.inwlms.bean.VO.sysManager.LabelNameVO">
+	select "label".code,"label"."cnHK" as value from sm_label as "label"
+    </select>
+</mapper>

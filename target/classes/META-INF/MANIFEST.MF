@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: ebs_app
+Implementation-Version: 1.0.0
+Built-By: 刘刚
+Implementation-Vendor-Id: com.koron
+Build-Jdk: 1.8.0_121
+Implementation-URL: http://maven.apache.org
+Created-By: Maven Integration for Eclipse
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.zoneLoss.LeakageParamSetMapper">
+	 
+	<select id="queryLeakageExponent" resultType="java.lang.String">
+        SELECT value FROM sm_config WHERE key = 'N1'
+    </select>
+	
+	<update id="updateLeakageExponent" parameterType="java.lang.String">
+        UPDATE sm_config SET value= #{value} WHERE key = 'N1'
+    </update>
+    
+    <select id="queryLegitimateNightUseList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.LegitimateNightUseDTO"
+            resultType="com.koron.inwlms.bean.VO.zoneLoss.LegitimateNightUseVO">
+        select id,code,flow from sm_param_setting
+        where 1 = 1
+        <if test="code != null and code != ''">
+            and upper(code) like '%' || upper(#{code}) || '%'
+        </if>
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+    </select>
+    
+     <select id="countLegitimateNightUseList" parameterType="java.lang.String"
+            resultType="java.lang.Integer">
+        select count(1) from sm_param_setting
+        where 1 = 1
+        <if test="code != null and code != ''">
+            and upper(code) like '%' || upper(#{code}) || '%'
+        </if>
+    </select>
+    
+    <update id="updateLegitimateNightUse" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.LegitimateNightUseEditDTO">
+        update sm_param_setting
+        <set>
+            <if test="code != null">
+                code = #{code},
+            </if>
+            <if test="flow != null">
+                flow = #{flow}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

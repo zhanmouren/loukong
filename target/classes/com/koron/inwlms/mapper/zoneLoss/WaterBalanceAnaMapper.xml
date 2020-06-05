@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.zoneLoss.WaterBalanceAnaMapper">
+	
+	<select id="queryCompanyWBMLossData" resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO">
+		select 
+		sum(case when b.code='WNMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+		sum(case when b.code='WNMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+		sum(case when b.code='WNMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+		avg(case when b.code='WNMWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate"
+		from
+		(select a.id,m."yearMonth",a.code,a.value,ind.precision as precision
+		from (
+			select id,"yearMonth",code,value from ana_company_month
+			where 1= 1
+			<if test="codes != null and codes.size > 0">
+				and code in 
+				<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
+		) a, lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code 
+		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qzlDTO.startTime} 
+		and m."yearMonth" &lt;= #{qzlDTO.endTime}) b
+	</select>
+	
+	<select id="queryCompanyWBYLossData" resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO">
+		select 
+		sum(case when b.code='WNYFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+		sum(case when b.code='WNYBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+		sum(case when b.code='WNYWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+		avg(case when b.code='WNYWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate"
+		from
+		(select a.id,a.year,a.code,a.value,ind.precision as precision
+		from (
+			select id,year,code,value from ana_company_year
+			where year &gt;= #{qzlDTO.startTime} and year &lt;= #{qzlDTO.endTime}
+			<if test="codes != null and codes.size > 0">
+				and code in 
+				<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
+		) a,lc_app_dim_indicator ind where ind.code = a.code 
+		) b
+	</select>
+
+	<select id="queryZoneWBMLossData" resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO">
+		select 
+		<if test="qzlDTO.zoneRank == 1">
+			<!-- 一级分区 -->
+			sum(case when b.code='FLMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='FLMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='FLMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='FLMWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
+			b."zoneNo"
+		</if>
+		<if test="qzlDTO.zoneRank == 2">
+			<!-- 二级分区 -->
+			sum(case when b.code='SLMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='SLMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='SLMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='SLMWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
+			b."zoneNo"
+		</if>
+		<if test="qzlDTO.zoneRank == 3">
+			<!-- DMA/PMA -->
+			sum(case when b.code='DMMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='DMMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='DMMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='DMMWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
+			b."zoneNo"
+		</if>
+		from
+		(select a.id,m."yearMonth",a.code,a.value,ind.precision as precision,a."zoneNo"
+		from (
+			select id,"yearMonth",code,value,"zoneNo" from ana_zone_balance_month
+			where 1= 1
+			<if test="codes != null and codes.size > 0">
+				and code in 
+				<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
+			<if test="lists != null and lists.size > 0">
+				and "zoneNo" in 
+				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+					#{item.zoneNo}    
+				</foreach> 
+			</if>
+		) a, lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code 
+		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qzlDTO.startTime} 
+		and m."yearMonth" &lt;= #{qzlDTO.endTime}) b
+		group by b."zoneNo"
+		<if test="qzlDTO.orderBy != null and qzlDTO.orderBy != ''">
+			order by ${qzlDTO.orderBy}
+		</if>
+		
+	</select>
+	
+	<select id="queryZoneWBYLossData" resultType="com.koron.inwlms.bean.VO.zoneLoss.ZoneWBLossVO">
+		select 
+		<if test="qzlDTO.zoneRank == 1">
+			<!-- 一级分区 -->
+			sum(case when b.code='FLYFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='FLYBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='FLYWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='FLYWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
+			b."zoneNo"
+		</if>
+		<if test="qzlDTO.zoneRank == 2">
+			<!-- 二级分区 -->
+			sum(case when b.code='SLYFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='SLYBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='SLYWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='SLYWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
+			b."zoneNo"
+		</if>
+		<if test="qzlDTO.zoneRank == 3">
+			<!-- DMA/PMA -->
+			sum(case when b.code='DMYFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
+			sum(case when b.code='DMYBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
+			sum(case when b.code='DMYWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
+			avg(case when b.code='DMYWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate",
+			b."zoneNo"
+		</if>
+		from
+		(select a.id,a.year,a.code,a.value,ind.precision as precision,a."zoneNo"
+		from (
+			select id,year,code,value,"zoneNo" from ana_zone_balance_year
+			where year &gt;= #{qzlDTO.startTime} and year &lt;= #{qzlDTO.endTime}
+			<if test="codes != null and codes.size > 0">
+				and code in 
+				<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+					#{item}    
+				</foreach> 
+			</if>
+			<if test="lists != null and lists.size > 0">
+				and "zoneNo" in 
+				<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+					#{item.zoneNo}    
+				</foreach> 
+			</if>
+		) a,lc_app_dim_indicator ind where ind.code = a.code 
+		) b
+		group by b."zoneNo"
+		<if test="qzlDTO.orderBy != null and qzlDTO.orderBy != ''">
+			order by ${qzlDTO.orderBy} 
+		</if>
+	</select>
+	
+	<select id="queryWNWBReportList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO"
+		resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO">
+		select 
+		a.id,a."reportName",a."dateType" as "timeType",a."reportTime",a.description,
+		a."createTime",a."createBy",a."updateTime",a."updateBy", b.id as "templateId",b."templateName"
+		from app_company_report a left join app_company_t_report b
+		on a."templateId" = b.id
+		where a.status = 1
+		<if test="timeType != null and timeType != ''">
+			and a."dateType" = #{timeType}
+		</if>
+		<if test="startTime !='' and startTime !=null">
+			and a."reportTime" &gt;= #{startTime}
+		</if>
+		<if test="endTime !='' and endTime !=null">
+			and a."reportTime" &lt;= #{endTime}
+		</if>
+		<if test="reportName != null and reportName != ''">
+			and a."reportName" like '%'||#{reportName}||'%'
+		</if>
+		<if test="orderby !=null and orderby !=''">
+			ORDER BY ${orderby}
+		</if>
+		limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+	</select>
+	
+	<select id="countWNWBReportList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO" 
+	resultType="java.lang.Integer">
+		select count(1) from app_company_report
+		where status = 1
+		<if test="timeType != null and timeType != ''">
+			and "dateType" = #{timeType}
+		</if>
+		<if test="startTime !='' and startTime !=null">
+			and "reportTime" &gt;= #{startTime}
+		</if>
+		<if test="endTime !='' and endTime !=null">
+			and "reportTime" &lt;= #{endTime}
+		</if>
+		<if test="reportName != null and reportName != ''">
+			and "reportName" like '%'||#{reportName}||'%'
+		</if>
+	</select>
+	
+	 <update id="deleteWNWBReport" parameterType="java.lang.Integer" >
+      	   update app_company_report set status= 0 where id = #{id}
+      </update>
+      
+      <select id="queryWNWBTReportList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBTReportListDTO"
+		resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportListVO">
+		select 
+		id,"templateName" as "reportName",description,
+		"createTime","createBy","updateTime","updateBy"
+		from app_company_t_report
+		where status = 1
+		<if test="templateName != null and templateName != ''">
+			and "templateName" like '%'||#{templateName}||'%'
+		</if>
+		<if test="orderby !=null and orderby !=''">
+			ORDER BY ${orderby}
+		</if>
+		limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+	</select>
+	
+	<select id="countWNWBTReportList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBTReportListDTO" 
+	resultType="java.lang.Integer">
+		select count(1) from app_company_t_report
+		where status = 1
+		<if test="templateName != null and templateName != ''">
+			and "templateName" like '%'||#{templateName}||'%'
+		</if>
+	</select>
+	
+	<update id="deleteWNWBTReport" parameterType="java.lang.Integer" >
+      	 update app_company_t_report set status= 0 where id = #{tId}
+    </update>
+    
+    <insert id="addWNWBReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO
+		app_company_report
+		("templateId",
+		"reportName",
+		"dateType",
+		"reportTime",
+		description,
+		remark,
+		"createBy",
+		"createTime",
+		"updateBy",
+		"updateTime")
+		VALUES
+		(#{templateId,jdbcType=INTEGER},
+		#{reportName,jdbcType=VARCHAR},
+		#{timeType,jdbcType=INTEGER},
+		#{reportTime,jdbcType=INTEGER},
+		#{description,jdbcType=VARCHAR},
+		#{remarks,jdbcType=VARCHAR},
+		#{createBy,jdbcType=VARCHAR},
+		current_timestamp,
+		#{updateBy,jdbcType=VARCHAR},
+		current_timestamp)
+	</insert>
+	
+	 <insert id="addReportIndicator" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportIndicatorDTO"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO
+		app_company_report_indicator
+		("reportId",
+		"templateIndicId",
+		value,
+		"createBy",
+		"createTime",
+		"updateBy",
+		"updateTime")
+		VALUES
+		(#{reportId,jdbcType=INTEGER},
+		#{templateIndicatorId,jdbcType=INTEGER},
+		#{value,jdbcType=DOUBLE},
+		#{createBy,jdbcType=VARCHAR},
+		current_timestamp,
+		#{updateBy,jdbcType=VARCHAR},
+		current_timestamp)
+	</insert>
+	
+	 <insert id="addReportFile" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO
+		app_company_report_attach
+		("reportId",
+		"fileId",
+		"createBy",
+		"createTime",
+		"updateBy",
+		"updateTime")
+		VALUES
+		(#{reportId,jdbcType=INTEGER},
+		#{fileId,jdbcType=INTEGER},
+		#{createBy,jdbcType=VARCHAR},
+		current_timestamp,
+		#{updateBy,jdbcType=VARCHAR},
+		current_timestamp)
+	</insert>
+	
+	  <update id="updateWNWBReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO" >
+      	   update app_company_report
+      	   set 
+      	   "reportName"=#{reportName},
+      	   description=#{description},
+      	   remark = #{remarks}, 
+      	   "updateTime"= current_timestamp,
+      	   "updateBy"=#{updateBy} 
+      	   where id=#{id}
+      </update>
+      
+      <delete id="deleteReportIndicatorById">
+           delete from app_company_report_indicator where "reportId" = #{id}
+      </delete>
+      
+      <delete id="deleteReportFileById">
+           delete from app_company_report_attach where "fileId" = #{fileId}
+      </delete>
+      
+      <select id="queryWNWBReporFileList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBReportFileDTO"
+		resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReporFileListVO">
+		select 
+		a.id,b."fileName",b."fileSize" as size,b."fileType"
+		from app_company_report_attach a
+		left join "APP_file" b on a."fileId" = b.id
+	</select>
+	
+	<select id="queryWNWBReportById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportDetailVO">
+		select 
+		id,"reportName","dateType" as "timeType","reportTime","templateId",description,
+		"createTime","createBy","updateTime" 
+		from app_company_report
+		where status = 1 and id = #{id}
+	</select>
+	
+	<select id="queryWNWBReportFileById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportFile">
+		select 
+		a.id,b."fileName",b."fileSize" as size,b."fileType"
+		from app_company_report_attach a
+		left join app_file b on a."fileId" = b.id
+		where a."reportId" = #{id}
+	</select>
+	
+	<select id="queryWNWBReportIndicatorById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBReportIndicator">
+		select 
+		a.id,a."reportId",a."templateIndicId" as "templateIndicatorId",b.code as "indicatorCode",a.value,
+		a."createTime",a."updateTime",a."createBy",a."updateBy"
+		from app_company_report_indicator a left join app_company_t_report_indicator b
+		on a."templateIndicId" = b.id
+		where "reportId" =  #{id}
+	</select>
+	
+	 <insert id="addWNWBTReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO
+		app_company_t_report
+		("templateName",
+		description,
+		remark,
+		"createBy",
+		"createTime",
+		"updateBy",
+		"updateTime")
+		VALUES
+		(#{reportName,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{remarks,jdbcType=VARCHAR},
+		#{createBy,jdbcType=VARCHAR},
+		current_timestamp,
+		#{updateBy,jdbcType=VARCHAR},
+		current_timestamp)
+	</insert>
+	
+	 <insert id="addTReportIndicator" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.WNWBTReportIndicatorDTO"
+		useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		INSERT INTO
+		app_company_t_report_indicator
+		("templateId",
+		code,
+		description,
+		"editStatus",
+		"editAble",
+		"formulaAble",
+		"formula",
+		"createBy",
+		"createTime",
+		"updateBy",
+		"updateTime")
+		VALUES
+		(#{templateId,jdbcType=INTEGER},
+		#{indicatorCode,jdbcType=VARCHAR},
+		#{indicatorDescribe,jdbcType=VARCHAR},
+		#{editStatus,jdbcType=INTEGER},
+		#{editAble,jdbcType=INTEGER},
+		#{formulaAble,jdbcType=INTEGER},
+		#{formula,jdbcType=VARCHAR},
+		#{createBy,jdbcType=VARCHAR},
+		current_timestamp,
+		#{updateBy,jdbcType=VARCHAR},
+		current_timestamp)
+	</insert>
+	
+	 <update id="updateWNWBTReport" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBTReportDTO" >
+      	   update app_company_t_report
+      	   set 
+      	   "templateName"=#{reportName},
+      	   description=#{description},
+      	   remark = #{remarks}, 
+      	   "updateTime"= current_timestamp,
+      	   "updateBy"=#{updateBy} 
+      	   where id=#{id}
+      </update>
+      
+      <delete id="deleteTReportIndicatorById">
+           delete from app_company_t_report_indicator where "templateId" = #{id}
+      </delete>
+      
+      <select id="queryWNWBTReportById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportDetailVO">
+		select 
+		id,"templateName" as "reportName",description,
+		"createTime","createBy","updateTime","updateBy"
+		from app_company_t_report
+		where status = 1 and id = #{id}
+	</select>
+	
+	<select id="queryWNWBTReportIndicatorById" resultType="com.koron.inwlms.bean.VO.zoneLoss.WNWBTReportIndicator">
+		select 
+		id,"templateId",code as "indicatorCode",description as "indicatorDescribe","editStatus","editAble","formulaAble",
+		formula,"createTime","updateTime","createBy","updateBy"
+		from app_company_t_report_indicator
+		where "templateId" = #{id}
+	</select>
+</mapper>

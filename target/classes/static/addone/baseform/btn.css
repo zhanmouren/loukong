@@ -1,0 +1,183 @@
+@charset "UTF-8";
+button { color: #fff; font-weight: 300; font-size: 1em; text-decoration: none; text-align: center; height: 2em; line-height: 2em; padding: 0 1em; margin: 0 1em; margin: 0 4px; display: inline-block; appearance: none; cursor: pointer; border: none; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; -webkit-transition-property: all; transition-property: all; -webkit-transition-duration: .3s; transition-duration: .3s; vertical-align: middle; }
+
+.button-main-style { background: #DBECF6; color: #000000; }
+
+.button-main-style:hover { background: white; }
+
+.button-main-style.blur { animation-duration: 3s; animation-name: glowing-main-style; animation-iteration-count: infinite; }
+
+@-webkit-keyframes glowing-main-style { from { -webkit-box-shadow: 0 0 0 rgba(219, 236, 246, 0.3); }
+  50% { -webkit-box-shadow: 0 0 20px rgba(219, 236, 246, 0.8); }
+  to { -webkit-box-shadow: 0 0 0 rgba(219, 236, 246, 0.3); } }
+@keyframes glowing-main-style { from { box-shadow: 0 0 0 rgba(219, 236, 246, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(219, 236, 246, 0.8); }
+  to { box-shadow: 0 0 0 rgba(219, 236, 246, 0.3); } }
+.button-main-style.threed { -webkit-box-shadow: 0 7px 0 #b2d6ec, 0 8px 3px rgba(0, 0, 0, 0.3); box-shadow: 0 7px 0 #b2d6ec, 0 8px 3px rgba(0, 0, 0, 0.3); }
+
+.button-main-style.raised { background: -webkit-gradient(linear, left top, left bottom, from(white), to(#DBECF6)); background: linear-gradient(white, #DBECF6); border: 1px solid #DBECF6; box-shadow: inset 0px 1px 0px rgba(219, 236, 246, 0.2), 0 1px 2px rgba(219, 236, 246, 0.15); }
+
+.button-main-style.raised:hover { background: -webkit-gradient(linear, left top, left bottom, from(#DBECF6), to(white)); background: linear-gradient(#DBECF6, white); }
+
+.button-main-style.cutting-line { border-right: 1px solid white; }
+
+.button-primary { background: #3C8DBC; color: #000000; }
+
+.button-primary:hover { background: #5fa4cc; }
+
+.button-primary.blur { animation-duration: 3s; animation-name: glowing-primary; animation-iteration-count: infinite; }
+
+@-webkit-keyframes glowing-primary { from { -webkit-box-shadow: 0 0 0 rgba(60, 141, 188, 0.3); }
+  50% { -webkit-box-shadow: 0 0 20px rgba(60, 141, 188, 0.8); }
+  to { -webkit-box-shadow: 0 0 0 rgba(60, 141, 188, 0.3); } }
+@keyframes glowing-primary { from { box-shadow: 0 0 0 rgba(60, 141, 188, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(60, 141, 188, 0.8); }
+  to { box-shadow: 0 0 0 rgba(60, 141, 188, 0.3); } }
+.button-primary.threed { -webkit-box-shadow: 0 7px 0 #307095, 0 8px 3px rgba(0, 0, 0, 0.3); box-shadow: 0 7px 0 #307095, 0 8px 3px rgba(0, 0, 0, 0.3); }
+
+.button-primary.raised { background: -webkit-gradient(linear, left top, left bottom, from(#5fa4cc), to(#3C8DBC)); background: linear-gradient(#5fa4cc, #3C8DBC); border: 1px solid #3C8DBC; box-shadow: inset 0px 1px 0px rgba(60, 141, 188, 0.2), 0 1px 2px rgba(60, 141, 188, 0.15); }
+
+.button-primary.raised:hover { background: -webkit-gradient(linear, left top, left bottom, from(#3C8DBC), to(#5fa4cc)); background: linear-gradient(#3C8DBC, #5fa4cc); }
+
+.button-primary.cutting-line { border-right: 1px solid #5fa4cc; }
+
+.button-success { background: #00A65A; color: #000000; }
+
+.button-success:hover { background: #00d976; }
+
+.button-success.blur { animation-duration: 3s; animation-name: glowing-success; animation-iteration-count: infinite; }
+
+@-webkit-keyframes glowing-success { from { -webkit-box-shadow: 0 0 0 rgba(0, 166, 90, 0.3); }
+  50% { -webkit-box-shadow: 0 0 20px rgba(0, 166, 90, 0.8); }
+  to { -webkit-box-shadow: 0 0 0 rgba(0, 166, 90, 0.3); } }
+@keyframes glowing-success { from { box-shadow: 0 0 0 rgba(0, 166, 90, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(0, 166, 90, 0.8); }
+  to { box-shadow: 0 0 0 rgba(0, 166, 90, 0.3); } }
+.button-success.threed { -webkit-box-shadow: 0 7px 0 #00733e, 0 8px 3px rgba(0, 0, 0, 0.3); box-shadow: 0 7px 0 #00733e, 0 8px 3px rgba(0, 0, 0, 0.3); }
+
+.button-success.raised { background: -webkit-gradient(linear, left top, left bottom, from(#00d976), to(#00A65A)); background: linear-gradient(#00d976, #00A65A); border: 1px solid #00A65A; box-shadow: inset 0px 1px 0px rgba(0, 166, 90, 0.2), 0 1px 2px rgba(0, 166, 90, 0.15); }
+
+.button-success.raised:hover { background: -webkit-gradient(linear, left top, left bottom, from(#00A65A), to(#00d976)); background: linear-gradient(#00A65A, #00d976); }
+
+.button-success.cutting-line { border-right: 1px solid #00d976; }
+
+.button-warning { background: #F39C12; color: #000000; }
+
+.button-warning:hover { background: #f5b043; }
+
+.button-warning.blur { animation-duration: 3s; animation-name: glowing-warning; animation-iteration-count: infinite; }
+
+@-webkit-keyframes glowing-warning { from { -webkit-box-shadow: 0 0 0 rgba(243, 156, 18, 0.3); }
+  50% { -webkit-box-shadow: 0 0 20px rgba(243, 156, 18, 0.8); }
+  to { -webkit-box-shadow: 0 0 0 rgba(243, 156, 18, 0.3); } }
+@keyframes glowing-warning { from { box-shadow: 0 0 0 rgba(243, 156, 18, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(243, 156, 18, 0.8); }
+  to { box-shadow: 0 0 0 rgba(243, 156, 18, 0.3); } }
+.button-warning.threed { -webkit-box-shadow: 0 7px 0 #c87f0a, 0 8px 3px rgba(0, 0, 0, 0.3); box-shadow: 0 7px 0 #c87f0a, 0 8px 3px rgba(0, 0, 0, 0.3); }
+
+.button-warning.raised { background: -webkit-gradient(linear, left top, left bottom, from(#f5b043), to(#F39C12)); background: linear-gradient(#f5b043, #F39C12); border: 1px solid #F39C12; box-shadow: inset 0px 1px 0px rgba(243, 156, 18, 0.2), 0 1px 2px rgba(243, 156, 18, 0.15); }
+
+.button-warning.raised:hover { background: -webkit-gradient(linear, left top, left bottom, from(#F39C12), to(#f5b043)); background: linear-gradient(#F39C12, #f5b043); }
+
+.button-warning.cutting-line { border-right: 1px solid #f5b043; }
+
+.button-danger { background: #DD4B39; color: #000000; }
+
+.button-danger:hover { background: #e47365; }
+
+.button-danger.blur { animation-duration: 3s; animation-name: glowing-danger; animation-iteration-count: infinite; }
+
+@-webkit-keyframes glowing-danger { from { -webkit-box-shadow: 0 0 0 rgba(221, 75, 57, 0.3); }
+  50% { -webkit-box-shadow: 0 0 20px rgba(221, 75, 57, 0.8); }
+  to { -webkit-box-shadow: 0 0 0 rgba(221, 75, 57, 0.3); } }
+@keyframes glowing-danger { from { box-shadow: 0 0 0 rgba(221, 75, 57, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(221, 75, 57, 0.8); }
+  to { box-shadow: 0 0 0 rgba(221, 75, 57, 0.3); } }
+.button-danger.threed { -webkit-box-shadow: 0 7px 0 #c23321, 0 8px 3px rgba(0, 0, 0, 0.3); box-shadow: 0 7px 0 #c23321, 0 8px 3px rgba(0, 0, 0, 0.3); }
+
+.button-danger.raised { background: -webkit-gradient(linear, left top, left bottom, from(#e47365), to(#DD4B39)); background: linear-gradient(#e47365, #DD4B39); border: 1px solid #DD4B39; box-shadow: inset 0px 1px 0px rgba(221, 75, 57, 0.2), 0 1px 2px rgba(221, 75, 57, 0.15); }
+
+.button-danger.raised:hover { background: -webkit-gradient(linear, left top, left bottom, from(#DD4B39), to(#e47365)); background: linear-gradient(#DD4B39, #e47365); }
+
+.button-danger.cutting-line { border-right: 1px solid #e47365; }
+
+.button-info { background: #00C0EF; color: #000000; }
+
+.button-info:hover { background: #23d4ff; }
+
+.button-info.blur { animation-duration: 3s; animation-name: glowing-info; animation-iteration-count: infinite; }
+
+@-webkit-keyframes glowing-info { from { -webkit-box-shadow: 0 0 0 rgba(0, 192, 239, 0.3); }
+  50% { -webkit-box-shadow: 0 0 20px rgba(0, 192, 239, 0.8); }
+  to { -webkit-box-shadow: 0 0 0 rgba(0, 192, 239, 0.3); } }
+@keyframes glowing-info { from { box-shadow: 0 0 0 rgba(0, 192, 239, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(0, 192, 239, 0.8); }
+  to { box-shadow: 0 0 0 rgba(0, 192, 239, 0.3); } }
+.button-info.threed { -webkit-box-shadow: 0 7px 0 #0097bc, 0 8px 3px rgba(0, 0, 0, 0.3); box-shadow: 0 7px 0 #0097bc, 0 8px 3px rgba(0, 0, 0, 0.3); }
+
+.button-info.raised { background: -webkit-gradient(linear, left top, left bottom, from(#23d4ff), to(#00C0EF)); background: linear-gradient(#23d4ff, #00C0EF); border: 1px solid #00C0EF; box-shadow: inset 0px 1px 0px rgba(0, 192, 239, 0.2), 0 1px 2px rgba(0, 192, 239, 0.15); }
+
+.button-info.raised:hover { background: -webkit-gradient(linear, left top, left bottom, from(#00C0EF), to(#23d4ff)); background: linear-gradient(#00C0EF, #23d4ff); }
+
+.button-info.cutting-line { border-right: 1px solid #23d4ff; }
+
+.button-royal { background: #9c95ef; color: #000000; }
+
+.button-royal:hover { background: #c5c1f6; }
+
+.button-royal.blur { animation-duration: 3s; animation-name: glowing-royal; animation-iteration-count: infinite; }
+
+@-webkit-keyframes glowing-royal { from { -webkit-box-shadow: 0 0 0 rgba(156, 149, 239, 0.3); }
+  50% { -webkit-box-shadow: 0 0 20px rgba(156, 149, 239, 0.8); }
+  to { -webkit-box-shadow: 0 0 0 rgba(156, 149, 239, 0.3); } }
+@keyframes glowing-royal { from { box-shadow: 0 0 0 rgba(156, 149, 239, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(156, 149, 239, 0.8); }
+  to { box-shadow: 0 0 0 rgba(156, 149, 239, 0.3); } }
+.button-royal.threed { -webkit-box-shadow: 0 7px 0 #7369e8, 0 8px 3px rgba(0, 0, 0, 0.3); box-shadow: 0 7px 0 #7369e8, 0 8px 3px rgba(0, 0, 0, 0.3); }
+
+.button-royal.raised { background: -webkit-gradient(linear, left top, left bottom, from(#c5c1f6), to(#9c95ef)); background: linear-gradient(#c5c1f6, #9c95ef); border: 1px solid #9c95ef; box-shadow: inset 0px 1px 0px rgba(156, 149, 239, 0.2), 0 1px 2px rgba(156, 149, 239, 0.15); }
+
+.button-royal.raised:hover { background: -webkit-gradient(linear, left top, left bottom, from(#9c95ef), to(#c5c1f6)); background: linear-gradient(#9c95ef, #c5c1f6); }
+
+.button-royal.cutting-line { border-right: 1px solid #c5c1f6; }
+
+/** 按键大小*/
+.tiny { font-size: 1em; }
+
+.small { font-size: 1.25em; }
+
+.medium { font-size: 2em; }
+
+.large { font-size: 2.5em; }
+
+.giant { font-size: 3em; }
+
+__circle { width: 2em; }
+
+/* 圆角类型 */
+.__circle { border-radius: 100%; }
+
+.__pill { border-radius: 1em; }
+
+.__box { border-radius: 0.5em; }
+
+.__rounded { border-radius: 0.3em; }
+
+.__square { border-radius: 0; }
+
+.__circle, __.box, __.square { padding: 0 !important; width: 2em; }
+
+/* 按钮风格 */
+/* 按钮组合样式 */
+.button-group button { margin: 0; }
+
+.button-group button:first-child, .button-group .button-dropdown:first-child { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+
+.button-group button:not(:first-child):not(:last-child), .button-group .button-dropdown:not(:first-child):not(:last-child) { border-radius: 0; }
+
+.button-group button:last-child, .button-group .button-dropdown:last-child { border-top-left-radius: 0; border-bottom-left-radius: 0; border-right: 0; }
+
+/* 按钮凸起渐变 */
+.raised { border-color: #e1e1e1; border-style: solid; border-width: 1px; line-height: 2.714rem; background: -webkit-gradient(linear, left top, left bottom, from(#f6f6f6), to(#e1e1e1)); background: linear-gradient(#f6f6f6, #e1e1e1); -webkit-box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.15); box-shadow: inset 0px 1px 0px rgba(255, 255, 255, 0.3), 0 1px 2px rgba(0, 0, 0, 0.15); }
+
+/*# sourceMappingURL=btn.css.map */
