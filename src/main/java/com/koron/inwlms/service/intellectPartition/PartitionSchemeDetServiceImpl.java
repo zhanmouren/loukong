@@ -53,9 +53,9 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	 */
 	@TaskAnnotation("querySchemeDet")
 	@Override
-	public List<SchemeDet> querySchemeDet(SessionFactory factory,String totalSchemeCode) {
+	public List<SchemeDet> querySchemeDet(SessionFactory factory,TotalSchemeDetDTO totalSchemeDetDTO) {
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
-		List<SchemeDet> list = mapper.querySchemeDet(totalSchemeCode);
+		List<SchemeDet> list = mapper.querySchemeDet(totalSchemeDetDTO);
 		return list;
 	}
 

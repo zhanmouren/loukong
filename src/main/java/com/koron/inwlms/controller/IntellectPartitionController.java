@@ -155,7 +155,7 @@ public class IntellectPartitionController {
 		}
 		
 		try {
-			List<SchemeDet> list = ADOConnection.runTask(psds, "querySchemeDet", List.class,totalSchemeDetDTO.getCode());
+			List<SchemeDet> list = ADOConnection.runTask(psds, "querySchemeDet", List.class,totalSchemeDetDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 			

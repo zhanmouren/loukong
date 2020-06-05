@@ -6,7 +6,7 @@
 
  <select id="queryTotalSchemeDet" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO" resultType="com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet">
  select * from app_totalschemedet where "createTime" between '${startTime}' and '${endTime}'
- <if test="code != null and code != '' "> and code = #{code}</if>
+ <if test="code != null and code != '' "> and code like '%'||#{code}||'%'</if>
  <if test="zoneCode != null and zoneCode != '' "> and "zoneCode" = #{zoneCode}</if>
  </select>
  
@@ -22,8 +22,9 @@
  </foreach>
  </delete>
  
- <select id="querySchemeDet" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.intellectPartition.SchemeDet">
- select * from app_schemedet where "totalSchemeCode" = #{totalSchemeCode} 
+ <select id="querySchemeDet" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO" resultType="com.koron.inwlms.bean.VO.intellectPartition.SchemeDet">
+ select * from app_schemedet where "totalSchemeCode" = #{code}
+ <if test="id != null"> and id like '%'||#{id}||'%'</if>
  </select>
  
  <delete id="deleteSchemeDet" parameterType="java.lang.String">

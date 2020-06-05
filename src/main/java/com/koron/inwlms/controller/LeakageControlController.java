@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.common.PointTypeVO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
@@ -78,18 +80,20 @@ import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.ZoneSaveWaterData;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.inwlms.service.common.PointHistoryDataService;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
 import com.koron.inwlms.service.leakageControl.AlarmMessageService;
 import com.koron.inwlms.service.leakageControl.AlarmProcessService;
 import com.koron.inwlms.service.leakageControl.EconomicIndicatorServiceImpl;
 import com.koron.inwlms.service.leakageControl.EventInfoService;
+import com.koron.inwlms.service.leakageControl.EventInfoServiceImpl;
 import com.koron.inwlms.service.leakageControl.PolicyService;
 import com.koron.inwlms.service.leakageControl.StatisticalAnalysisService;
 import com.koron.inwlms.service.leakageControl.WarningSchemeService;
 import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
-import com.koron.inwlms.util.ExportDataUtil;
-import com.koron.inwlms.util.UnitUtil;
-import com.koron.util.Constant;
+import com.koron.inwlms.util.ExportDataUtil; 
+import com.koron.inwlms.util.FileUtil;
+import com.koron.util.Constant; 
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -119,6 +123,8 @@ public class LeakageControlController {
 	private PolicyService ps;
 	@Autowired
     private FileConfigInfo fileConfigInfo;
+	@Autowired
+	private PointHistoryDataService phds;
 
 	@RequestMapping(value = "/queryAlarmMessage.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息接口", notes = "查询预警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -149,6 +155,24 @@ public class LeakageControlController {
 	        msg.setDescription("查询预警信息失败");
 		}
 			
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/queryPointHistoryData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询监测点历史数据", notes = "查询监测点历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPointHistoryData(@RequestBody AlarmMessageVO alarmMessageVO) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		try {
+			List<PointTypeVO> list = ADOConnection.runTask(phds, "queryPointHistoryData", List.class, alarmMessageVO.getCode(),alarmMessageVO.getAlarmTime());
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败");
+		}
+		
 		return msg.toJson();
 	}
 	
@@ -965,6 +989,33 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downPartitionInvest.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载分区投资曲线数据", notes = "下载分区投资曲线数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downPartitionInvest(@RequestParam String objValue,@RequestParam String titleInfos) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			PartitionInvestDTO partitionInvestDTO = jsonValue.fromJson(objValue, PartitionInvestDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (partitionInvestDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+
+			// 查询到导出数据结果
+			List<PartitionInvestVO> List = ADOConnection.runTask(new EconomicIndicatorServiceImpl(), "queryPartitionInvest",List.class, partitionInvestDTO.getType());
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(List, jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@RequestMapping(value = "/updatePartitionInvest.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "分区投资曲线修改接口", notes = "分区投资曲线修改接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1160,6 +1211,54 @@ public class LeakageControlController {
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("事项信息创建失败");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/importEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项信息添加接口", notes = "事项信息添加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importEventInfo(HttpServletRequest request,@RequestParam("file") MultipartFile file) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		
+		try {
+			// 如果文件不为空，写入上传路径
+			if (!file.isEmpty()) {
+				// 上传文件路径
+				String path = request.getServletContext().getRealPath("/xlsx");	
+				System.out.println("path:" + path);
+				// 上传文件名
+				String filename = file.getOriginalFilename();
+				path = path + File.separator + filename;
+				File filepath = new File(path);
+				// 判断路径是否存在，如果不存在就创建一个
+				if (!filepath.getParentFile().exists()) {
+					filepath.getParentFile().mkdirs();
+				}
+				// 判断文件是否存在
+				if (!filepath.exists()) {
+					// 将上传文件保存到一个目标文件当中
+					try {
+						file.transferTo(filepath);
+					} catch (IllegalStateException | IOException e) {
+						
+					}
+				}
+				
+				List<EventInfo> list = EventInfoServiceImpl.readEvetInfo(filepath);
+				for(EventInfo eventInfo : list) {
+					ADOConnection.runTask(eis, "addEventInfo",Integer.class,eventInfo);
+				}
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);	
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("文件为空！");
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项信息导入失败！");
 		}
 		
 		return msg.toJson();
@@ -1415,14 +1514,16 @@ public class LeakageControlController {
 			pageInfo.setSize(eventTypeDTO.getPageCount());
 			pageInfo.setTotalNumber(dataDicRelationVoList.get(0).getTotalNum());
 			List<DataDicVO> dataEventSubtype = new ArrayList<>();
-			for(DataDicRelationVO dataDicRelationVO : dataDicRelationVoList) {
-				//查询子级key的value
-				DataDicDTO dataDicDTO = new DataDicDTO();
-				dataDicDTO.setDicKey(dataDicRelationVO.getChildKey());
-				
-				List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
-				if(dataDicVoList != null && dataDicVoList.size() != 0) {
-					dataEventSubtype.add(dataDicVoList.get(0));	
+			if(dataDicRelationVoList != null && dataDicRelationVoList.size() != 0) {
+				for(DataDicRelationVO dataDicRelationVO : dataDicRelationVoList) {
+					//查询子级key的value
+					DataDicDTO dataDicDTO = new DataDicDTO();
+					dataDicDTO.setDicKey(dataDicRelationVO.getChildKey());
+					
+					List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
+					if(dataDicVoList != null && dataDicVoList.size() != 0) {
+						dataEventSubtype.add(dataDicVoList.get(0));	
+					}
 				}
 			}
 			EventSubtypeVO eventSubtypeVO = new EventSubtypeVO();
@@ -1604,7 +1705,19 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
-	
+	/**
+	 * 下载事项模板 
+	 * @param fileId
+	 * @param response
+	 * @param request
+	 */
+	@RequestMapping(value = "/downloadFileByFileId.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
+    @ResponseBody
+    public void downloadFileByFileId(Integer fileId, HttpServletResponse response, HttpServletRequest request) {
+        UploadFileDTO data = ADOConnection.runTask(eis, "queryFileDataById", UploadFileDTO.class, fileId); 
+        //调用文件工具类下载文件
+        if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
+    }
 	
 	
 }

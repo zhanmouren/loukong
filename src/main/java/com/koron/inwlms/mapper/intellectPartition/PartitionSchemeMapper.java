@@ -21,7 +21,7 @@ public interface PartitionSchemeMapper {
 	
 	Integer deleteSchemeDet(List<String> codes);
 	
-	List<SchemeDet> querySchemeDet(@Param("totalSchemeCode") String totalSchemeCode);
+	List<SchemeDet> querySchemeDet(TotalSchemeDetDTO totalSchemeDetDTO);
 	
 	Integer deleteTotalSchemeDet(List<String> codes);
 	

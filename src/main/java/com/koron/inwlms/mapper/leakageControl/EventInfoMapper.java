@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.koron.ebs.mybatis.EnvSource;
 import org.springframework.stereotype.Repository;
 
+import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
@@ -56,5 +57,8 @@ public interface EventInfoMapper {
 	
 	@Delete("delete from app_eventwarnrelation where \"processCode\" = #{processCode} and \"eventCode\" = #{eventCode}")
 	Integer deleteEventWarnRelation(@Param("processCode") String processCode,@Param("eventCode") String eventCode);
+	
+	@Select("select * from app_file where id = #{id}")
+	UploadFileDTO queryFileById(@Param("id") Integer id);
 	
 }

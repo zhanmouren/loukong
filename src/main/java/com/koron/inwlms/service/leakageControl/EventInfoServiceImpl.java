@@ -1,12 +1,24 @@
 package com.koron.inwlms.service.leakageControl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
@@ -165,6 +177,106 @@ public class EventInfoServiceImpl implements EventInfoService{
 		return num;
 	}
 	
+	@TaskAnnotation("queryFileDataById")
+	@Override
+	public UploadFileDTO queryFileDataById(SessionFactory factory,Integer id) {
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		UploadFileDTO uploadFileDTO = mapper.queryFileById(id);
+		return uploadFileDTO;
+	}
 	
+	
+	
+	public static List<EventInfo> readEvetInfo(File file) throws IOException, ParseException {
+    	InputStream is = new FileInputStream(file);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
+        List<EventInfo> eventInfoList = new ArrayList<>();
+        // 循环工作表Sheet
+        for (int numSheet = 0; numSheet < xssfWorkbook.getNumberOfSheets(); numSheet++) {
+            XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(numSheet);
+            if (xssfSheet == null) {
+                continue;
+            }
+            // 循环行Row
+            for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+                XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+                if (xssfRow == null) {
+                    continue;
+                }
+                EventInfo eventInfo = new EventInfo();
+                // 循环列Cell
+                XSSFCell xm = xssfRow.getCell(0);
+                if (xm != null) {
+                	eventInfo.setType(getValue(xm));
+                }
+                
+                XSSFCell xssf = xssfRow.getCell(1);
+                if (xssf != null) {
+                	eventInfo.setObjectType(getValue(xssf));
+                }
+                
+
+                XSSFCell code = xssfRow.getCell(2);
+                if (code != null) {
+                	eventInfo.setSubtype(getValue(code));
+                }
+                
+                
+                XSSFCell xssff = xssfRow.getCell(3);
+                if (xssff != null) {
+                	eventInfo.setFirstPartition(getValue(xssff));
+                }
+                
+                
+                XSSFCell xssfff = xssfRow.getCell(4);
+                if (xssfff != null) {
+                	eventInfo.setSecondPartition(getValue(xssfff));
+                }
+                
+                
+                XSSFCell xssffff = xssfRow.getCell(5);
+                if (xssffff != null) {
+                	eventInfo.setDmaCode(getValue(xssffff));
+                }
+                
+                
+                XSSFCell xssfffff = xssfRow.getCell(6);
+                if (xssfffff != null) {
+                	String time = getValue(xssfffff);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
+                    Date timeDate = format.parse(time);
+                    eventInfo.setHappenTime(timeDate);
+                }
+                
+                
+                XSSFCell xssffffff = xssfRow.getCell(7);
+                if (xssffffff != null) {
+                	eventInfo.setObjectCode(getValue(xssffffff));
+                }
+                
+                XSSFCell xssfffffff = xssfRow.getCell(8);
+                if (xssfffffff != null) {
+                	eventInfo.setContent(getValue(xssfffffff));
+                }
+                eventInfoList.add(eventInfo);
+                     
+            }
+        }
+        return eventInfoList;
+    }
+	
+	//获取表格的值
+    private static String getValue(XSSFCell hssfCell) {
+        if (hssfCell.getCellType() == hssfCell.CELL_TYPE_BOOLEAN) {
+            // 返回布尔类型的值
+            return String.valueOf(hssfCell.getBooleanCellValue());
+        } else if (hssfCell.getCellType() == hssfCell.CELL_TYPE_NUMERIC) {
+            // 返回数值类型的值
+            return String.valueOf(hssfCell.getNumericCellValue());
+        } else {
+            // 返回字符串类型的值
+            return String.valueOf(hssfCell.getStringCellValue());
+        }
+    }
 
 }
