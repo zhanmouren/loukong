@@ -1436,25 +1436,24 @@ public class LeakageControlController {
 	@RequestMapping(value = "/updatePolicy.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "控漏损策略修改接口", notes = "控漏损策略修改接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updatePolicy(@RequestBody List<PolicySettingDTO> policySettingDTOList) {
+    public String updatePolicy(@RequestBody PolicyDTO policyDTO) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		try {
-			for(PolicySettingDTO policySettingDTO : policySettingDTOList) {
-				if(policySettingDTO.getPolicyCode() != null || policySettingDTO.getPolicyCode().equals("")) {
+			for(PolicySettingDTO policySettingDTO : policyDTO.getPolicySettingDTOList()) {
+				if(policySettingDTO.getPolicyCode() == null || policySettingDTO.getPolicyCode().equals("")) {
 					msg.setCode(Constant.MESSAGE_INT_ERROR);
 			        msg.setDescription("方案编码为空"); 
 			        return msg.toJson();
 				}
-				
-				Integer num = ADOConnection.runTask(ps, "updatePolicySetting",Integer.class,policySettingDTO);
-				if(num > 0) {
-					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					msg.setDescription("修改成功");
-				}else {
-					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					msg.setDescription("无数据修改");
-				}
+			}
+			Integer num = ADOConnection.runTask(ps, "updatePolicySetting",Integer.class,policyDTO.getPolicySettingDTOList());
+			if(num > 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("修改成功");
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无数据修改");
 			}
 			
 			

@@ -12,7 +12,7 @@
  <if test="state != null and state != '' "> and state = #{processState}</if>
  <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>
  <if test="areaCode != null and areaCode != '' ">and "areaCode" = #{areaCode}</if>
- <if test="dmaCode != null and dmaCode != '' "> and "dmaCode" = #{dmaCode}</if>
+ <if test="dmaCode != null and dmaCode != '' "> and "areaCode" like '%'||#{dmaCode}||'%'</if>
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1); 
  </select>
  
@@ -21,7 +21,7 @@
  <if test="state != null and state != '' "> and state = #{processState}</if>
  <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>
  <if test="areaCode != null and areaCode != '' ">and "areaCode" = #{areaCode}</if>
- <if test="dmaCode != null and dmaCode != '' "> and "dmaCode" = #{dmaCode}</if>
+ <if test="dmaCode != null and dmaCode != '' "> and "areaCode" like '%'||#{dmaCode}||'%'</if>
  </select>
  
  <select id="queryAlarmMessageByCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">

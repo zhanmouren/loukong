@@ -61,9 +61,16 @@ public  class PolicyServiceImpl implements PolicyService{
 	
 	@TaskAnnotation("updatePolicySetting")
 	@Override
-	public Integer updatePolicySetting(SessionFactory factory,PolicySettingDTO policyDTO) {
+	public Integer updatePolicySetting(SessionFactory factory,List<PolicySettingDTO> policyDTOList) {
 		PolicyMapper mapper = factory.getMapper(PolicyMapper.class);
-		Integer num = mapper.updatePolicySetting(policyDTO);
+		//先删除所有设置
+		Integer num = 0;
+		mapper.deletePolicySetting(policyDTOList.get(0).getPolicyCode());
+		for(PolicySettingDTO policySettingDTO : policyDTOList) {
+			//添加设置
+			num = mapper.addPolicySetting(policySettingDTO);	
+		}
+		
 		return num;
 	}
 	

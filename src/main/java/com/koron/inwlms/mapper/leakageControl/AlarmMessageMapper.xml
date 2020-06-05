@@ -31,7 +31,7 @@
   <if test="alarmType != null and alarmType != '' "> and "alarmType" = #{alarmType} </if>
   <if test="areaCode != null and areaCode != '' "> and "areaCode" = #{areaCode}</if>
   <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
-  <if test="objectCode != null and objectCode != '' "> and "objectCode" = #{objectCode}</if>
+  <if test="objectCode != null and objectCode != '' "> and "objectCode" like '%'||#{objectCode}||'%'</if>
   <if test="orderby != null and orderby != '' "> order by ${orderby}</if>) a inner join app_warningscheme b on a."schemeCode" = b.code) c inner join app_warningprocessing d on c.code = d."warningCode"
   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
   </select>
@@ -43,7 +43,7 @@
   <if test="alarmType != null and alarmType != '' "> and "alarmType" = #{alarmType} </if>
   <if test="areaCode != null and areaCode != '' "> and "areaCode" = #{areaCode}</if>
   <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
-  <if test="objectCode != null and objectCode != '' "> and "objectCode" = #{objectCode}</if>
+  <if test="objectCode != null and objectCode != '' "> and "objectCode" like '%'||#{objectCode}||'%'</if>
   ) a inner join app_warningscheme b on a."schemeCode" = b.code) c inner join app_warningprocessing d on c.code = d."warningCode"
   </select>
   
