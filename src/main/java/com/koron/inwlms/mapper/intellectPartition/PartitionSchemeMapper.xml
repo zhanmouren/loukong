@@ -24,7 +24,7 @@
  
  <select id="querySchemeDet" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO" resultType="com.koron.inwlms.bean.VO.intellectPartition.SchemeDet">
  select * from app_schemedet where "totalSchemeCode" = #{code}
- <if test="id != null"> and id like '%'||#{id}||'%'</if>
+ <if test="subId != null"> and cast(id as varchar(10)) like '%'||#{subId}||'%'</if>
  </select>
  
  <delete id="deleteSchemeDet" parameterType="java.lang.String">

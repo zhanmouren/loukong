@@ -1,5 +1,7 @@
 package com.koron.inwlms.bean.DTO.intellectPartition;
 
+import java.math.BigInteger;
+
 import com.koron.inwlms.bean.DTO.common.BaseDTO;
 
 /**
@@ -14,6 +16,8 @@ public class TotalSchemeDetDTO extends BaseDTO{
 	private String code;
 	
 	private Integer id;
+	
+	private String subId;
 	/**
 	 * 分区编码
 	 */
@@ -31,6 +35,15 @@ public class TotalSchemeDetDTO extends BaseDTO{
 	 */
 	private Integer zoneType;
 
+	
+	public String getSubId() {
+		return subId;
+	}
+
+	public void setSubId(String subId) {
+		this.subId = subId;
+	}
+
 	public String getCode() {
 		return code;
 	}
@@ -38,6 +51,8 @@ public class TotalSchemeDetDTO extends BaseDTO{
 	public void setCode(String code) {
 		this.code = code;
 	}
+
+	
 
 	public Integer getId() {
 		return id;
