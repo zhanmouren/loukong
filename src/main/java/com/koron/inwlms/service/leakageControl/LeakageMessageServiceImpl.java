@@ -34,9 +34,12 @@ public class LeakageMessageServiceImpl implements LeakageMessageService{
 		result.setLeakageProcessingList(leakageProcessList);
 		result.setMonitorProcessingList(monitorProcessList);
 		Integer messageNumber = leakageMessageMapper.getMessageNumber(loginName);
-		Integer processingNumber = leakageMessageMapper.getProcessingNumber(loginName);
-		result.setTotals(messageNumber + processingNumber);
-		result.setNumber(processingNumber);
+		Integer leakageProcessingNumber = leakageMessageMapper.getLeakageProcessingNumber(loginName);
+		Integer monitorProcessingNumber = leakageMessageMapper.getMonitorProcessingNumber(loginName);
+		result.setTotals(messageNumber + leakageProcessingNumber + monitorProcessingNumber);
+		result.setLeakageProcessingNumber(leakageProcessingNumber);
+		result.setMonitorProcessingNumber(monitorProcessingNumber);
+		result.setNumber(leakageProcessingNumber + monitorProcessingNumber);
 		return result;
 	}
 	

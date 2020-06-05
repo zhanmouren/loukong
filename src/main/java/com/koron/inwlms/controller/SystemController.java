@@ -139,7 +139,7 @@ public class SystemController {
 			SessionUtil.removeAttribute(Constant.LOGIN_USER);
 		} catch (Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_NOLOGIN);
-			msg.setDescription("退出失败");
+			msg.setDescription("未登录");
 		}
 		return ResponseUtil.toJson(msg);
 	}

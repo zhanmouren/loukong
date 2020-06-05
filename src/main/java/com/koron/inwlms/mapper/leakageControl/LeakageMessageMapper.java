@@ -23,7 +23,9 @@ public interface LeakageMessageMapper {
 	
 	public Integer getMessageNumber(String loginName);
 
-	public Integer getProcessingNumber(String loginName);
+	public Integer getLeakageProcessingNumber(String loginName);
+	
+	public Integer getMonitorProcessingNumber(String loginName);
 	
   	public Integer updateAlarmMessageStatus(List<String> codeList);
 }

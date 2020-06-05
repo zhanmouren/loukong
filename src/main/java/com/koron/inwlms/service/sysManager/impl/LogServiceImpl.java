@@ -113,11 +113,11 @@ public class LogServiceImpl implements LogService {
 	@Override
 	public Integer addOperateLog(SessionFactory factory,OperateLogDTO  operateLogDTO) {
 		LogMapper logMapper = factory.getMapper(LogMapper.class);
-//		Gson jsonValue = new Gson();
-//		// 查询条件字符串转对象，查询数据结果
-//		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-//		operateLogDTO.setCreateBy(userListVO.getLoginName());
-//		operateLogDTO.setUpdateBy(userListVO.getLoginName());
+		Gson jsonValue = new Gson();
+		// 查询条件字符串转对象，查询数据结果
+		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+		operateLogDTO.setCreateBy(userListVO.getLoginName());
+		operateLogDTO.setUpdateBy(userListVO.getLoginName());
 		operateLogDTO.setResult("success");
 		Integer addResult = logMapper.addOperateLog(operateLogDTO);
 		return addResult;

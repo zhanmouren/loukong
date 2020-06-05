@@ -7,6 +7,8 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 import org.swan.bean.MessageBean;
 
+import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.koron.inwlms.bean.DTO.sysManager.PositionDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -15,12 +17,14 @@ import com.koron.inwlms.bean.VO.sysManager.LabelVO;
 import com.koron.inwlms.bean.VO.sysManager.PageLabelListVO;
 import com.koron.inwlms.bean.VO.sysManager.PagePositionListVO;
 import com.koron.inwlms.bean.VO.sysManager.PositionVO;
+import com.koron.inwlms.bean.VO.sysManager.UserListVO;
 import com.koron.inwlms.mapper.sysManager.LabelMapper;
 import com.koron.inwlms.mapper.sysManager.PositionMapper;
 import com.koron.inwlms.service.sysManager.PositionService;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.inwlms.util.RandomCodeUtil;
 import com.koron.util.Constant;
+import com.koron.util.SessionUtil;
 
 @Service
 public class PositionServiceImpl implements PositionService{
@@ -72,11 +76,11 @@ public class PositionServiceImpl implements PositionService{
 		positionDTO.setCode(code);
 		try {
 			PositionVO position = positionMapper.queryPositionByCode(positionDTO.getCode());
-//				Gson jsonValue = new Gson();
-//				// 查询条件字符串转对象，查询数据结果
-//				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-//				labelDTO.setCreateBy(userListVO.getLoginName());
-//				labelDTO.setUpdateBy(userListVO.getLoginName());
+				Gson jsonValue = new Gson();
+				// 查询条件字符串转对象，查询数据结果
+				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+				positionDTO.setCreateBy(userListVO.getLoginName());
+				positionDTO.setUpdateBy(userListVO.getLoginName());
 				positionMapper.addPosition(positionDTO);
 		} catch (Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
@@ -95,12 +99,12 @@ public class PositionServiceImpl implements PositionService{
 		try {
 			PositionVO position = positionMapper.queryPositionByCode(positionDTO.getCode());
 			if (position == null) {
-				msg.setCode(Constant.MESSAGE_INT_ERROR);
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("不存在该职位");
 			}else{
-//				Gson jsonValue = new Gson();
-//				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-//				labelDTO.setUpdateBy(userListVO.getLoginName());
+				Gson jsonValue = new Gson();
+				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+				positionDTO.setUpdateBy(userListVO.getLoginName());
 				positionMapper.updatePosition(positionDTO);
 			}
 		} catch (Exception e) {
@@ -110,7 +114,7 @@ public class PositionServiceImpl implements PositionService{
 		return msg;
 	}
 	
-	//分页查询标签列表 2020/04/21 
+	//下载职位列表
 	@TaskAnnotation("downloadAllList")
 	@Override
 	public PagePositionListVO downloadAllList(SessionFactory factory, PositionDTO positionDTO) {

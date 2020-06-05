@@ -204,7 +204,7 @@ public class SystemManagerLabelController {
 	        }catch(Exception e){
 	        	//批量删除标签失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("批量删除标签失败");
+	            msg.setDescription("操作失败");
 	        }
 		
 	     return msg.toJson();

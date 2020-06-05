@@ -50,7 +50,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/systemManagerLog")
 public class SystemManagerLogController {
 
-	//TODO 权限
 	@Autowired
 	private LogService logService;
 	
@@ -251,10 +250,10 @@ public class SystemManagerLogController {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间大于结束时间", Integer.class).toJson();
 		}
 		
-		if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType()) || queryOperateLogDTO.getOperateType().equals("L102100001")) {
+		if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType()) || queryOperateLogDTO.getOperateType().equals("L102120001")) {
 			queryOperateLogDTO.setOperateType(null);
-		}else if(!queryOperateLogDTO.getOperateType().equals("L102100002") && !queryOperateLogDTO.getOperateType().equals("L102100003") && 
-				!queryOperateLogDTO.getOperateType().equals("L102100004")) {
+		}else if(!queryOperateLogDTO.getOperateType().equals("L102120002") && !queryOperateLogDTO.getOperateType().equals("L102120003") && 
+				!queryOperateLogDTO.getOperateType().equals("L102120004")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“全部、新增、删除或修改”", Integer.class).toJson();
 		} 
 		
@@ -291,15 +290,12 @@ public class SystemManagerLogController {
 		if(operateLogDTO.getOperateModuleNo()==null || StringUtils.isBlank(operateLogDTO.getOperateModuleNo())) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作对象不能为空", Integer.class).toJson();
 		}
-		
 		if(operateLogDTO.getOperateType()==null || StringUtils.isBlank(operateLogDTO.getOperateType())) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型不能为空", Integer.class).toJson();
-		}else if(!operateLogDTO.getOperateType().equals("L102100002") && !operateLogDTO.getOperateType().equals("L102100003") && 
-				!operateLogDTO.getOperateType().equals("L102100004") && !operateLogDTO.getOperateType().equals("查询")) {
+		}else if(!operateLogDTO.getOperateType().equals("L102120002") && !operateLogDTO.getOperateType().equals("L102120003") && 
+				!operateLogDTO.getOperateType().equals("L102120004") && !operateLogDTO.getOperateType().equals("查询")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“增加、删除、修改”", Integer.class).toJson();
 		} 
-		
-		
 		MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);
 		try {
 			Integer insertRes = ADOConnection.runTask(logService, "addOperateLog",Integer.class,operateLogDTO);
@@ -361,8 +357,8 @@ public class SystemManagerLogController {
 			}
 			if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType()) || queryOperateLogDTO.getOperateType().equals("L102100001")) {
 				queryOperateLogDTO.setOperateType(null);
-			}else if(!queryOperateLogDTO.getOperateType().equals("L102100002") && !queryOperateLogDTO.getOperateType().equals("L102100003") && 
-					!queryOperateLogDTO.getOperateType().equals("L102100004")) {
+			}else if(!queryOperateLogDTO.getOperateType().equals("L102120002") && !queryOperateLogDTO.getOperateType().equals("L102120003") && 
+					!queryOperateLogDTO.getOperateType().equals("L102120004")) {
 				return new HttpEntity<String>("参数错误!操作类型必须是“全部、增加、删除或修改”");
 			} 
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
