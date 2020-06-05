@@ -132,7 +132,7 @@ public class SystemController {
 			loginLogDTO.setLoginUserCode(userListVO.getCode());
 			loginLogDTO.setCreateBy(userListVO.getLoginName());
 			loginLogDTO.setUpdateBy(userListVO.getLoginName());
-			loginLogDTO.setResult(Constant.MESSAGE_STRING_SUCCESS);
+			loginLogDTO.setResult("登出成功");
 			loginLogDTO.setType("L102110003");
 			loginLogDTO.setErrorLog("————");
 			ADOConnection.runTask(logService, "addLoginLog", Integer.class, loginLogDTO);
