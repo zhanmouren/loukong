@@ -20,4 +20,9 @@ public interface CommonService {
 	
 	//查询所有数据字典说明
 	List<DataDicNewVO> queryAllDataDic(SessionFactory factory);
+	
+	/**
+	 * 添加分区树信息
+	 */
+	void addZoneTreeInfo(SessionFactory factory);
 }

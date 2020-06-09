@@ -222,7 +222,7 @@ public class CommonController {
     @ResponseBody
 	public String queryZoneNosByRank(Integer zoneRank) {
 		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
-		List<String> lists = ADOConnection.runTask(new GisZoneServiceImpl(), "queryZoneNosByRank", List.class,zoneRank);
+		List<String> lists = ADOConnection.runTask(new GisZoneServiceImpl(),"queryZoneNosByRank", List.class,zoneRank,"");
 		msg.setData(lists);
 		return msg.toJson();
 	}
@@ -307,4 +307,20 @@ public class CommonController {
 		 
 	}
 	
+	
+//	@RequestMapping(value = "/addZoneTreeInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+//    @ApiOperation(value = "添加分区树", notes = "添加分区树", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+//    @ResponseBody
+//	public String addZoneTreeInfo() {
+//		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	 
+//		 try {
+//			 ADOConnection.runTask("mz",new CommonServiceImpl(), "addZoneTreeInfo",Integer.class);
+//		 }catch(Exception e){
+//	     	//添加失败
+//	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+//	        msg.setDescription("添加失败");
+//	     }
+//		 return msg.toJson();
+//		 
+//	}
 }
