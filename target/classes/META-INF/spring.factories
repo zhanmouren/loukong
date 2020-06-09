@@ -1,2 +1,0 @@
-org.springframework.boot.SpringApplicationRunListener=com.koron.main.SwanSpringApplicationRunListener
-org.springframework.context.ApplicationListener=com.koron.main.SwanApplicationListener
