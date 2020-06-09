@@ -2,22 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.indexData.IndexMapper">
    <select id="queryBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
-	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
+	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO"> 
 		select 
 		<if test="timeType != null and timeType == 3">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
-			from ana_base_month a left join (
-				select id,"yearMonth" from app_dim_month
-				where "yearMonth" &gt;= #{startTime} 
-				and "yearMonth" &lt;= #{endTime}
-			) b on a."yearMonth" = b.id
-			left join lc_app_dim_indicator c on a.code = c.code
+			from ana_base_month as a 
+			left join app_dim_month as b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator as c on a.code = c.code
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
 			from ana_base_year a left join lc_app_dim_indicator b on a.code = b.code
 		</if>
-		where 1 = 1
+		where 1 = 1 
 		<if test="codes != null and codes.size > 0">
 			and a.code in 
 			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
@@ -35,7 +32,8 @@
 			and a.year &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 3">
-		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+			and b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
+		    order by round( a.value/c.precision :: NUMERIC, 2 ) desc
 		</if>
 	</select>
 	
@@ -43,20 +41,16 @@
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
 		<if test="timeType != null and timeType == 3">
-			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value, 
-			b."yearMonth" as "timeId", a."zoneNo"
-			from ana_zone_balance_month a left join(
-				select id,"yearMonth" from app_dim_month
-				where "yearMonth" &gt;= #{startTime} 
-				and "yearMonth" &lt;= #{endTime}
-			) b on a."yearMonth" = b.id 
-			left join lc_app_dim_indicator c on a.code = c.code
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			from ana_base_month as a 
+			left join app_dim_month as b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator as c on a.code = c.code
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
 			from ana_zone_balance_year a left join lc_app_dim_indicator b on a.code = b.code
 		</if>
-		where 1 = 1
+		where 1 = 1 
 		<if test="codes != null and codes.size > 0">
 			and a.code in 
 			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
@@ -74,7 +68,8 @@
 			and a.year &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 3">
-		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+			and b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
+		    order by round( a.value/c.precision :: NUMERIC, 2 ) desc
 		</if>
 	</select>
 	
@@ -88,14 +83,10 @@
 			and to_char(a."analysisDate",'YYYYMMDD') &lt;= #{endTime} || ''
 		</if>
 		<if test="timeType != null and timeType == 3">
-			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
-			b."yearMonth" as "timeId",a."zoneNo"
-			from ana_zone_month a left join(
-				select id,"yearMonth" from app_dim_month
-				where "yearMonth" &gt;= #{startTime} 
-				and "yearMonth" &lt;= #{endTime}
-			) b on a."yearMonth" = b.id 
-			left join lc_app_dim_indicator c on a.code = c.code
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			from ana_base_month as a 
+			left join app_dim_month as b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator as c on a.code = c.code
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
@@ -119,7 +110,8 @@
 			and a.year &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 3">
-		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+			and b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
+		    order by round( a.value/c.precision :: NUMERIC, 2 ) desc
 		</if>
 	</select>
 	

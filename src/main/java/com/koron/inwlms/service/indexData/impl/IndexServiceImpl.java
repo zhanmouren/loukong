@@ -86,7 +86,7 @@ public class IndexServiceImpl implements IndexService{
 			lastYearStartTime=Integer.valueOf(indicatorDTO.getStartTime().toString().substring(0, 4))-1;
 			lastYearEndTime=lastYearStartTime;
 			
-			int i=0;
+			int i=1;
 			//设置指标编码
 			
 				//查询基础指标的数据 (月)
