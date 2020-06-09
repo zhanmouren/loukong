@@ -33,7 +33,6 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 			}
 		}
 		
-		
 		List<AlarmMessageVO> list = mapper.queryAlarmMessage(warningInfDTO);
 		Integer totalNumber = mapper.queryAlarmMessageTotalNumber(warningInfDTO);
 		AlarmMessageReturnVO alarmMessageReturnVO = new AlarmMessageReturnVO();

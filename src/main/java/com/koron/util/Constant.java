@@ -568,11 +568,11 @@ public class Constant {
 	/**
 	 * 正向瞬时流速-指标编码
 	 */
-	public final static String INDICATOR_FORWARDSPEED = "1";
+	public final static String INDICATOR_FORWARDSPEED = "MOHV";
 	/**
 	 * 反向瞬时流速-指标编码
 	 */
-	public final static String INDICATOR_REVERSESPEED = "2";
+	public final static String INDICATOR_REVERSESPEED = "MOHV";
 	/**
 	 * 压力1-指标编码
 	 */

@@ -1712,8 +1712,8 @@ public class LeakageControlController {
 	 */
 	@RequestMapping(value = "/downloadFileByFileId.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
     @ResponseBody
-    public void downloadFileByFileId(Integer fileId, HttpServletResponse response, HttpServletRequest request) {
-        UploadFileDTO data = ADOConnection.runTask(eis, "queryFileDataById", UploadFileDTO.class, fileId); 
+    public void downloadFileByFileId(HttpServletResponse response, HttpServletRequest request) {
+        UploadFileDTO data = ADOConnection.runTask(eis, "queryFileDataById", UploadFileDTO.class, 56); 
         //调用文件工具类下载文件
         if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
     }

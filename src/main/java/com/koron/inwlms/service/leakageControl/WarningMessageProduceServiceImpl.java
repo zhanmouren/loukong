@@ -60,7 +60,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 	  * 监测点类型报警（实时）
 	  */
 	public String startPointWarning(SessionFactory factory,List<MinMonitorPoint> minMonitorPointList) {
-		//TODO 获取测点数据的精度
+		//获取测点数据的精度
 		CommonMapper commonMapper = factory.getMapper(CommonMapper.class);
 		Indicator forwardSpeed = commonMapper.queryIndicatorByCode(Constant.INDICATOR_FORWARDSPEED);
 		BigInteger precision = new BigInteger(forwardSpeed.getPrecision().toString());

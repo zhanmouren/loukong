@@ -23,6 +23,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisZonePointVO;
+import com.koron.inwlms.bean.VO.leakageControl.PointHourData;
 import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
@@ -446,28 +447,59 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			treatmentEffectVO.setLossFlowAfther(lossFlow7); 
 		}
 		
-		//TODO 供水量统计 
+		//供水量统计 
 		//查询分区下的监测点
 		//工单发起前一日时间
-		Date beforfDay = TimeUtil.addDay(list.get(0).getCreateTime(), -1);
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
-		String beforfDayStr = sf.format(beforfDay);
-		beforfDay = sf.parse(beforfDayStr);
-		Date beforfDayEnd = TimeUtil.addDay(list.get(0).getCreateTime(), 1);
-		Date avgDay = TimeUtil.addDay(list.get(0).getCreateTime(), -1);
+		Date createDate = list.get(0).getCreateTime();
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+		String createDateStr = sf.format(createDate);
+		createDate = sf.parse(createDateStr);
+		Date beforfDay = TimeUtil.addDay(createDate, -1);
 		BasicDataMapper basDataMapper = factory.getMapper(BasicDataMapper.class);
 		List<GisZonePointVO> pointList = basDataMapper.queryZonePoint(zoneCode);
-		for(GisZonePointVO gisZonePointVO : pointList) {
-			BasicDataParam basicDataParam = new BasicDataParam();
-			basicDataParam.setCode("MOHFLOW");
-			basicDataParam.setStationCode(gisZonePointVO.getPointNo());
-			 
-		}
-		
-		
-		
-		return null;
+		//工单前一日供水量
+		List<TimeAndFlowData> beforAllFlowList = getZoneHourData(pointList,beforfDay,basDataMapper);
+		treatmentEffectVO.setAllFlowBList(beforAllFlowList);
+		//工单开始至结束中间日的供水量
+		long avgLong = Math.round((list.get(0).getCreateTime().getTime() + list.get(0).getUpdateTime().getTime())/2);
+		Date avgDate = new Date(avgLong);
+		String avgDateStr = sf.format(avgDate);
+		avgDate = sf.parse(avgDateStr);
+		List<TimeAndFlowData> avgAllFlowList = getZoneHourData(pointList,avgDate,basDataMapper);
+		treatmentEffectVO.setAllFlowRList(avgAllFlowList);
+		//工单结束日的供水量
+		Date endFDate = list.get(0).getUpdateTime();
+		String endFDateStr = sf.format(endFDate);
+		endFDate = sf.parse(endFDateStr);
+		List<TimeAndFlowData> endAllFlowList = getZoneHourData(pointList,endFDate,basDataMapper);
+		treatmentEffectVO.setAllFlowAList(endAllFlowList);
+		List<TimeAndFlowData> nowAllFlowList = getZoneHourData(pointList,nowDate,basDataMapper);
+		treatmentEffectVO.setAllFlowNList(nowAllFlowList);
+		return treatmentEffectVO;
 	}
 	
+	
+	public List<TimeAndFlowData> getZoneHourData(List<GisZonePointVO> pointList,Date date,BasicDataMapper basDataMapper){
+		List<TimeAndFlowData> beforAllFlowList = new ArrayList<>();
+		for(int i = 0; i < 24; i++ ) {
+			double flow = 0.0;
+			for(GisZonePointVO gisZonePointVO : pointList) {
+				BasicDataParam basicDataParam = new BasicDataParam();
+				basicDataParam.setCode("MOHFLOW");
+				basicDataParam.setStationCode(gisZonePointVO.getPointNo()); 
+				basicDataParam.setStartTime(date);
+				PointHourData pointHourData = basDataMapper.queryPointHourData(basicDataParam);
+				if(pointHourData != null) {
+					flow = flow + pointHourData.getValue();
+				}
+			}
+			TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
+			timeAndFlowData.setTimeDate(date);
+			timeAndFlowData.setFlow(flow);
+			beforAllFlowList.add(timeAndFlowData);
+			date = TimeUtil.addHour(date, 1);
+		}
+		return beforAllFlowList;
+	}
 	
 }

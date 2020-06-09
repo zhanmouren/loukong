@@ -282,6 +282,20 @@ public class TimeUtil {
         cal.add(Calendar.DATE, n);
         return cal.getTime();
     }
+    
+    /**
+     * 在日期上增加小时数
+     *
+     * @param date 日期
+     * @param n    要增加的天数
+     * @return date
+     */
+    public static Date addHour(Date date, int n) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.HOUR, n);
+        return cal.getTime();
+    }
 
     /**
      * 将文本时间转换为时间戳

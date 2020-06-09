@@ -15,7 +15,7 @@ public class AlertNoticeScheme {
 	
 	private String type;
 	
-	private Integer roleCode;
+	private String roleCode;
 	
 	private Integer flag;
 	
@@ -93,13 +93,15 @@ public class AlertNoticeScheme {
 		this.schemeCode = schemeCode;
 	}
 
-	public Integer getRoleCode() {
+	public String getRoleCode() {
 		return roleCode;
 	}
 
-	public void setRoleCode(Integer roleCode) {
+	public void setRoleCode(String roleCode) {
 		this.roleCode = roleCode;
 	}
+
+	
 	
 	
 	

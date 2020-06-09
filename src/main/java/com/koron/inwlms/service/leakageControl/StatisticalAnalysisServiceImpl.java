@@ -35,9 +35,22 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		ProcessingStatisticsVO processingStatisticsVO = new ProcessingStatisticsVO();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		//1获取漏损变化 
-		//获取指标编码
+		//获取指标编码 
 		  //TODO 查询分区级别,判断分区级别获取对应指标编码
 		String areaCode = "";
+		if(processingStatisticsDTO.getDmaCode() != null && !processingStatisticsDTO.getDmaCode().equals("")) {
+			areaCode = processingStatisticsDTO.getDmaCode();
+		}else {
+			if(processingStatisticsDTO.getFirstPartion() != null && !processingStatisticsDTO.getFirstPartion().equals("")) {
+				if(processingStatisticsDTO.getSeconPartion() != null && !processingStatisticsDTO.getSeconPartion().equals("")) {
+					areaCode = processingStatisticsDTO.getSeconPartion();
+				}else {
+					areaCode = processingStatisticsDTO.getFirstPartion();
+				}
+			}
+		}
+		
+		
 		String minNightFlowCode = "";
 		List<String> zoneCodeList = new ArrayList<>();
 		Integer timeType = Constant.TIME_TYPE_M;
