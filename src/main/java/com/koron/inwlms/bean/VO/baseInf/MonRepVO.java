@@ -7,16 +7,20 @@ package com.koron.inwlms.bean.VO.baseInf;
  */
 public class MonRepVO {
 
+    /**
+     * 总行数
+     */
+    private Integer rows;
 
     /**
      * 月份
      */
-   private String reportDate;
+   private String reportdate;
 
     /**
      * 时间
      */
-    private String reportTime;
+    private String reporttime;
 
     /**
      * 分类
@@ -58,20 +62,28 @@ public class MonRepVO {
      */
     private Double rating;
 
-    public String getReportDate() {
-        return reportDate;
+    public Integer getRows() {
+        return rows;
     }
 
-    public void setReportDate(String reportDate) {
-        this.reportDate = reportDate;
+    public void setRows(Integer rows) {
+        this.rows = rows;
     }
 
-    public String getReportTime() {
-        return reportTime;
+    public String getReportdate() {
+        return reportdate;
     }
 
-    public void setReportTime(String reportTime) {
-        this.reportTime = reportTime;
+    public void setReportdate(String reportdate) {
+        this.reportdate = reportdate;
+    }
+
+    public String getReporttime() {
+        return reporttime;
+    }
+
+    public void setReporttime(String reporttime) {
+        this.reporttime = reporttime;
     }
 
     public String getType() {

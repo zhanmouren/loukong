@@ -461,17 +461,17 @@ public class BaseDataController {
     @RequestMapping(value = "/queryZonePointHistory.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与监测点数据导入历史接口", notes = "查询分区与监测点数据导入历史接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZonePointHistory(@RequestBody String begD,@RequestBody String endD) {
+    public String queryZonePointHistory(@RequestBody ZonePointDTO zonePointDTO) {
         MessageBean msg = new MessageBean();
         //TODO:校验参数有效性
 
         //TODO:权限校验是否有查询权限
 
         //*****查询符合条件数据
-        List<ZonePointHisVO> zps = ADOConnection.runTask(zcs, "queryZonePointHistory", List.class,begD,endD);
+        PageListVO<List<ZonePointHisVO>> zps = ADOConnection.runTask(zcs, "queryZonePointHistory", PageListVO.class,zonePointDTO);
         msg.setCode(0);
         msg.setData(zps);
-        return msg.toString();
+        return msg.toJson();
     }
 
     @RequestMapping(value = "/queryZonePointDet/{refID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
@@ -485,7 +485,7 @@ public class BaseDataController {
         if(refID== null){
             msg.setCode(Constant.BASE_PARAM_INT_NULL_ERROR);
             msg.setDescription("参数refID不能为空");
-            return msg.toString();
+            return msg.toJson();
         }
 
         //TODO:获取分区监测点详情数据
@@ -595,6 +595,22 @@ public class BaseDataController {
     }
 
 
+    @RequestMapping(value = "/queryZoneMeterHistory.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区与户表数据导入历史接口", notes = "查询分区与户表数据导入历史接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZoneMeterHistory(@RequestBody ZoneMeterDTO zoneMeterDTO) {
+        MessageBean msg = new MessageBean();
+        //TODO:校验参数有效性
+
+        //TODO:权限校验是否有查询权限
+
+        //*****查询符合条件数据
+        PageListVO<List<ZoneMeterHisVO>> zps = ADOConnection.runTask(zcs, "queryZoneMeterHistory", PageListVO.class,zoneMeterDTO);
+        msg.setCode(0);
+        msg.setData(zps);
+        return msg.toJson();
+    }
+
     @RequestMapping(value = "/queryZoneMeterList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与户表列表接口", notes = "查询分区与户表列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -612,23 +628,23 @@ public class BaseDataController {
         return msg.toJson();
     }
 
-    @RequestMapping(value = "/queryZoneMeterDet/{r_code}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询分区户表详情接口", notes = "查询分区户表详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/queryZoneMeterDet/{refID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区与户表详情接口", notes = "查询分区与户表详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZoneMeterDet(@PathVariable("r_code") String r_code) {
+    public String queryZoneMeterDet(@PathVariable("refID") Integer refID) {
 
         MessageBean msg = new MessageBean();
         //TODO:r_code校验
-        if(r_code==null || "".equals(r_code)){
+        if(refID==null){
             msg.setCode(Constant.MESSAGE_INT_NULL);
             msg.setDescription(Constant.MESSAGE_STRING_NULL);
             return msg.toString();
         }
         //*****查询符合条件数据
-        ZoneMeterVO zp = ADOConnection.runTask(zcs, "queryZoneMeterDet", ZoneMeterVO.class,r_code);
+        ZoneMeterVO zp = ADOConnection.runTask(zcs, "queryZoneMeterDet", ZoneMeterVO.class,refID);
         //TODO:获取分区户表详情数据
         msg.setData(zp);
-        return msg.toString();
+        return msg.toJson();
     }
 
     @RequestMapping(value = "/updateZoneMeterDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1025,18 +1041,31 @@ public class BaseDataController {
     @RequestMapping(value = "/queryMonRep.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询数据月报数据", notes = "查询数据月报数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMonRep(@RequestParam String reportDate) {
+    public String queryMonRep(@RequestBody DataQualityDTO dqd) {
 
         MessageBean msg = new MessageBean();
-        if(reportDate == null){
+        if(dqd.getMon() == null){
             msg.setCode(Constant.MESSAGE_INT_NULL);
             msg.setDescription("日期为空");
             return msg.toString();
         }
-        List<MonRepVO> monReps = ADOConnection.runTask(dqs, "queryMonRep", List.class,reportDate);
+        PageListVO<List<MonRepVO>> monReps = ADOConnection.runTask(dqs, "queryMonRep", PageListVO.class,dqd);
         msg.setCode(0);
         msg.setData(monReps);
-        return msg.toString();
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryDataImpact.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询数据影响分析数据", notes = "查询数据分析接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryDataImpact() {
+
+        MessageBean msg = new MessageBean();
+
+        List<DataImpactVO> dis = ADOConnection.runTask(dqs, "queryDataImpact", List.class);
+        msg.setCode(0);
+        msg.setData(dis);
+        return msg.toJson();
     }
 
     /**

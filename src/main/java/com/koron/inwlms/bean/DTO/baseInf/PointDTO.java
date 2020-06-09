@@ -10,7 +10,7 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 public class PointDTO extends BaseDTO {
 
     /**
-     * 监测点类别
+     * 类别
      */
     private int tubing;
 

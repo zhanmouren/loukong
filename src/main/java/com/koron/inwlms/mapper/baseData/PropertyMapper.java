@@ -85,10 +85,10 @@ public interface PropertyMapper {
 
     /**
      * 查询分区与户表详情数据
-     * @param r_code
+     * @param refID
      * @return
      */
-    ZoneMeterVO queryZoneMeterDet(@Param("r_code") String r_code);
+    ZoneMeterVO queryZoneMeterDet(@Param("refID") Integer refID);
 
     /**
      * 更新分区与户表详情数据

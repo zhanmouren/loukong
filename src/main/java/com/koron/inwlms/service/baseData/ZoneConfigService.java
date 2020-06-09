@@ -37,7 +37,7 @@ public interface ZoneConfigService {
      * @param zonePointDTO
      * @return
      */
-    public List<ZonePointHisVO> queryZonePointHistory(SessionFactory factory, ZonePointDTO zonePointDTO);
+    public PageListVO<List<ZonePointHisVO>> queryZonePointHistory(SessionFactory factory, ZonePointDTO zonePointDTO);
 
     /**
      * 查询分区监测点详情数据
@@ -69,7 +69,7 @@ public interface ZoneConfigService {
      * @param zoneMeterDTO
      * @return
      */
-    public List<ZoneMeterHisVO> queryZoneMeterHistory(SessionFactory factory, ZoneMeterDTO zoneMeterDTO);
+    public PageListVO<List<ZoneMeterHisVO>> queryZoneMeterHistory(SessionFactory factory, ZoneMeterDTO zoneMeterDTO);
 
     /**
      * 查询分区户表列表数据
@@ -80,12 +80,12 @@ public interface ZoneConfigService {
     public PageListVO<List<ZoneMeterVO>> queryZoneMeterList(SessionFactory factory, ZoneMeterDTO zoneMeterDTO);
 
     /**
-     * 查询分区户表详情数据
+     * 查询分区与户表详情数据
      * @param factory
-     * @param r_code
+     * @param refID
      * @return
      */
-    public ZoneMeterVO queryZoneMeterDet(SessionFactory factory, String r_code);
+    public ZoneMeterVO queryZoneMeterDet(SessionFactory factory, Integer refID);
 
     /**
      * 更新分区户表数据

@@ -2,9 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.baseData.DataQualityMapper">
 
-    <select id="queryMonRep"  resultType="com.koron.inwlms.bean.VO.baseInf.MonRepVO">
-        select * from "APP.monRep" where reportDate=#{reportDate}
+    <select id="queryMonRep" parameterType="com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MonRepVO">
+        select * from(
+        select 0 as rows,reportdate,reporttime,type,row,integrity,accuracy,available,timely,consistence,rating from
+        app_mon_report
+        where reportdate=#{mon}
+        <if test="pageCount != null and pageCount != null">
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        </if>
+        )t
+        union all
+         select count(*) as rows,'' ,'','',0,0,0,0,0,0,0 from app_mon_report
+        where reportdate=#{mon}
     </select>
 
+    <select id="queryDataImpact"  resultType="com.koron.inwlms.bean.VO.baseInf.DataImpactVO">
+
+        select sum(pipe_line) as pipe_line,sum(pipe_diameter_len)as pipe_diameter_len,sum(valve_line)as valve_line,sum(valve_pos_line) as valve_pos_line,sum(point_line) as point_line,sum(point_pos_line) as point_pos_line,sum(zone_line) as zone_line,sum(zone_rel_line) as zone_rel_line  from(
+            select count(*) as pipe_line, sum(case when DIAMETER IS NULL or ASSETSLENGTH is null then 1 else 0 end) as pipe_diameter_len ,0 as valve_line,0 as valve_pos_line ,0 as point_line,0 as point_pos_line,0 as zone_line,0 as zone_rel_line   from gis_pipe
+            union all
+            select 0,0,count(*) as valve_line,sum(case when LOCATION is null or LOCATION=''  then 1 else 0 end) as valve_pos_line,0,0,0,0  from gis_regulatevalve
+            union all
+            select 0,0,count(*) as valve_line,sum(case when LOCATION is null or LOCATION=''  then 1 else 0 end) as valve_pos_line,0,0,0,0 from gis_convalve
+            union all
+            select 0,0,0,0,count(*) as point_line,sum(case when LOCATION is null or LOCATION=''  then 1 else 0 end) as point_pos_line,0,0  from gis_scada
+            union all
+            select 0,0,0,0,0,0,count(*) as zone_line ,sum(case when gis_zone_point.is is not null or gis_zone_meter.id is not null then 1 else 0 end) as zone_rel_line from gis_exist_zone
+            left join gis_zone_point on  gis_exist_zone."P_CODE" = gis_zone_point."zoneNo"
+            left join gis_zone_meter on  gis_exist_zone."P_CODE" = gis_zone_meter."zoneNo"
+        )t
+    </select>
 
 </mapper>
