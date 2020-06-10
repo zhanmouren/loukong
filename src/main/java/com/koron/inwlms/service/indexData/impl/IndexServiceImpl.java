@@ -31,8 +31,8 @@ import com.koron.util.Constant;
 
 @Service
 public class IndexServiceImpl implements IndexService{
-	public Integer timeTypeMonth=3;
-	public Integer timeTypeYear=4;
+	public Integer timeTypeMonth=1;
+	public Integer timeTypeYear=2;
 	public Integer yearType=0;
 	public Integer monthType=1;
 	//查询首页的综合信息
@@ -116,7 +116,13 @@ public class IndexServiceImpl implements IndexService{
 				
 				indicatorDTO.setCodes(baseIndicList);
 				indicatorDTO.setTimeType(timeTypeMonth);
-			    indBaseIndicMList=indicatorMapper.queryBaseIndicData(indicatorDTO);
+				if(areaType==0) {
+					indBaseIndicMList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+				}
+				else {
+					indBaseIndicMList=indicatorMapper.queryBaseIndicData(indicatorDTO);
+				}
+			    
 			    
 			    //拿出indBaseIndicMList
 			    if(indBaseIndicMList!=null && indBaseIndicMList.size()>0) {
@@ -201,8 +207,14 @@ public class IndexServiceImpl implements IndexService{
 					
 				indicatorDTO.setCodes(balanceMList);
 				indicatorDTO.setTimeType(timeTypeMonth);
-			    indBalanceMList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+				if(areaType==0) {
+					indBalanceMList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+				}
+				else {
+					indBalanceMList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+				}
 			    
+			
 			    //取出数据
 			    if(indBalanceMList!=null && indBalanceMList.size()>0) {
 				    for(int k=0;k<indBalanceMList.size();k++) {
@@ -303,7 +315,16 @@ public class IndexServiceImpl implements IndexService{
 				//截取年
 				indicatorDTO.setStartTime(Integer.valueOf(indicatorDTO.getStartTime().toString().substring(0, 4)));
 				indicatorDTO.setEndTime(Integer.valueOf(indicatorDTO.getEndTime().toString().substring(0, 4)));
-				indBalanceYList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+				
+				if(areaType==0) {
+					indBalanceYList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+				}
+				else {
+					indBalanceYList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+				}
+			   
+			    
+				
 				
 				//取出数据
 				if(indBalanceYList!=null && indBalanceYList.size()>0) {
@@ -398,7 +419,14 @@ public class IndexServiceImpl implements IndexService{
 				}		
 				indicatorDTO.setCodes(zoneLossMList);
 				indicatorDTO.setTimeType(timeTypeMonth);
-				indZoneLossMList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);
+				
+				if(areaType==0) {
+					indZoneLossMList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+				}
+				else {
+					indZoneLossMList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);
+				}
+				
 				
 				//取出数据
 				if(indZoneLossMList!=null && indZoneLossMList.size()>0) {
@@ -499,7 +527,13 @@ public class IndexServiceImpl implements IndexService{
 				indicatorDTO.setStartTime(Integer.valueOf(indicatorDTO.getStartTime().toString().substring(0, 4)));
 				indicatorDTO.setEndTime(Integer.valueOf(indicatorDTO.getEndTime().toString().substring(0, 4)));
 				indicatorDTO.setTimeType(timeTypeYear);
-				indZoneLossYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
+				if(areaType==0) {
+					indZoneLossYList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+				}
+				else {
+					indZoneLossYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
+				}
+			   
 				
 				//取出数据
 				if(indZoneLossYList!=null && indZoneLossYList.size()>0) {
@@ -597,8 +631,13 @@ public class IndexServiceImpl implements IndexService{
 				indicatorDTO.setEndTime(lastEndTime);
 				indicatorDTO.setCodes(zoneLossLYMList);
 				indicatorDTO.setTimeType(timeTypeMonth);
-				indZoneLossLMList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
-				
+				if(areaType==0) {
+					indZoneLossLMList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+				}
+				else {
+					indZoneLossLMList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
+				}
+			   
 				//清空条件
 			//	indicatorDTO.setCodes(new ArrayList<String>());
 				
@@ -630,7 +669,14 @@ public class IndexServiceImpl implements IndexService{
 				indicatorDTO.setEndTime(lastYearEndTime);
 				indicatorDTO.setCodes(zoneLossLYList);
 				indicatorDTO.setTimeType(timeTypeYear);
-				indZoneLossLYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
+				
+				if(areaType==0) {
+					indZoneLossLYList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+				}
+				else {
+					indZoneLossLYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
+				}
+				
 				
 				//取出产销差率(当月)
 				  double WNMNRRNow=0;
@@ -706,7 +752,7 @@ public class IndexServiceImpl implements IndexService{
 					  for(int inM=0;inM<indZoneLossYList.size();inM++) {
 						 if(areaType==0) {
 						  if(Constant.ZONE_LOSS_INDIC_WNYNRR.equals(indZoneLossYList.get(inM).getCode())) {
-							  WNMNRRYNow=indZoneLossMList.get(inM).getValue();
+							  WNMNRRYNow=indZoneLossYList.get(inM).getValue();
 							  break;
 						  }
 						 }else if(areaType==1) {
@@ -924,8 +970,7 @@ public class IndexServiceImpl implements IndexService{
 					  indicatorYWNMMNFTDF.setZoneNo(indicatorDTO.getZoneCodes().get(0));
 					  indicatorYWNMMNFTDF.setTimeId(yearType);
 					  finalList.add(indicatorYWNMMNFTDF);
-				
-				    
+				   
 			finalList.addAll(indBaseIndicMList);
 			finalList.addAll(indBalanceMList);
 			finalList.addAll(indBalanceYList);
