@@ -1062,7 +1062,7 @@ public class LeakageControlController {
 		if(eventInfoDTO.getEndTime() == null || eventInfoDTO.getEndTime().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("结束时间为空");
-	        return msg.toJson();
+	        return msg.toJson(); 
 		}
 		
 		try { 
@@ -1225,7 +1225,7 @@ public class LeakageControlController {
 	}
 	
 	@RequestMapping(value = "/importEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "事项信息添加接口", notes = "事项信息添加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "事项信息导入接口", notes = "事项信息导入接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String importEventInfo(HttpServletRequest request,@RequestParam("file") MultipartFile file) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);

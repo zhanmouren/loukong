@@ -245,8 +245,8 @@ public class EventInfoServiceImpl implements EventInfoService{
                 XSSFCell xssfffff = xssfRow.getCell(6);
                 if (xssfffff != null) {
                 	String time = getValue(xssfffff);
-                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
-                    Date timeDate = format.parse(time);
+                	long timeL = Long.parseLong(time);
+                    Date timeDate = new Date(timeL);
                     eventInfo.setHappenTime(timeDate);
                 }
                 
