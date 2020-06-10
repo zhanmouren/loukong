@@ -17,14 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.swan.bean.MessageBean;
 
+import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.indexData.MultParamterIndicatorDTO;
 import com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO;
+import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.indexData.InfoPageListVO;
 import com.koron.inwlms.bean.VO.indexData.MultParamterIndicatorVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.service.indexData.IndexService;
 import com.koron.util.Constant;
 
@@ -54,18 +57,18 @@ public class IndexController {
 	@RequestMapping(value = "/queryCompreInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "显示分区或全网综合信息功能接口", notes = "显示分区或全网综合信息功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryCompreInfo(@RequestBody IndicatorDTO indicatorDTO) {
+	public String queryCompreInfo(@RequestBody IndicatorNewDTO  indicatorDTO) {
 		if(indicatorDTO.getStartTime()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间为空", Integer.class).toJson();
 		}
 		if(indicatorDTO.getEndTime()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间为空", Integer.class).toJson();
 		}
-		if(indicatorDTO.getZoneCodes()==null) {
+		if(indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码为空", Integer.class).toJson();
 		}
-		if(indicatorDTO.getZoneCodes().size()<1) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码为空", Integer.class).toJson();
+		if(indicatorDTO.getAreaType() == null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
 		}
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
@@ -203,15 +206,15 @@ public class IndexController {
 		 if(indicatorDTO.getEndTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
 		 }
-		 if(indicatorDTO.getZoneCodes()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
-		 }
-		 if(indicatorDTO.getZoneCodes().size()<1) {
+		 if(indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
 		 }
 		 if(indicatorDTO.getType()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
 		 }
+		 if(indicatorDTO.getAreaType() == null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+		}
 		 
 		 MessageBean<MultParamterIndicatorVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MultParamterIndicatorVO.class);	       
 		  try{
@@ -502,16 +505,15 @@ public class IndexController {
 		 if(indicatorDTO.getEndTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
 		 }
-		 if(indicatorDTO.getZoneCodes()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
-		 }
-		 if(indicatorDTO.getZoneCodes().size()<1) {
+		 if(indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
 		 }
 		 if(indicatorDTO.getType()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
 		 }
-		 
+		 if(indicatorDTO.getAreaType() == null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+		 }
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
 			  List<IndicatorVO>  infoPageListList=ADOConnection.runTask(indexService, "queryAreaRankInfo", List.class,indicatorDTO);		 
@@ -533,5 +535,39 @@ public class IndexController {
 	     return msg.toJson();
 	}
 	 
-	
+	/*
+     * date:2020-06-10
+     * funtion:查看分区树结构(展开所有)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryTreeZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查看分区树结构接口", notes = "查看分区树结构接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryTreeZone(@RequestBody TreeDTO treeDTO) {
+		if(treeDTO.getType()==null || "".equals(treeDTO.getType())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
+		}	
+		if(treeDTO.getForeignKey()==null || "".equals(treeDTO.getForeignKey())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<TreeDeptVO> zoneBeanList=ADOConnection.runTask(indexService, "queryAllZone", List.class,treeDTO.getType(),treeDTO.getForeignKey());	
+			  if(zoneBeanList == null) {		
+				  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			      msg.setDescription("没有查询到相关分区树结构"); 
+			  }else {
+				  msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+				  msg.setDescription("查询分区树结构成功"); 
+				  msg.setData(zoneBeanList);
+			  }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
 }

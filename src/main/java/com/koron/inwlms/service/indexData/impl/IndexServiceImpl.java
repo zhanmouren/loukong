@@ -10,20 +10,21 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
-import com.koron.inwlms.bean.DTO.indexData.MultParamterIndicatorDTO;
 import com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
-import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.indexData.InfoCompleteRateVO;
 import com.koron.inwlms.bean.VO.indexData.InfoPageListVO;
 import com.koron.inwlms.bean.VO.indexData.MultParamterIndicatorVO;
 import com.koron.inwlms.bean.VO.indexData.TaskMsgVO;
-import com.koron.inwlms.bean.VO.sysManager.UserVO;
-import com.koron.inwlms.mapper.common.IndicatorMapper;
+import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.mapper.indexData.IndexMapper;
+import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.indexData.IndexService;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.util.Constant;
@@ -37,7 +38,7 @@ public class IndexServiceImpl implements IndexService{
 	//查询首页的综合信息
 	@TaskAnnotation("queryCompreInfo")
 	@Override
-	public List<IndicatorVO> queryCompreInfo(SessionFactory factory,IndicatorDTO indicatorDTO) {
+	public List<IndicatorVO> queryCompreInfo(SessionFactory factory,IndicatorNewDTO indicatorDTO) {
 			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
 			List<IndicatorVO> finalList=new ArrayList<>();
 			//TODO 根据分区编号，查询是该分区属于哪个级别（全网，一级，二级还是DMA）
@@ -85,24 +86,23 @@ public class IndexServiceImpl implements IndexService{
 			Integer lastYearEndTime=2020;
 			lastYearStartTime=Integer.valueOf(indicatorDTO.getStartTime().toString().substring(0, 4))-1;
 			lastYearEndTime=lastYearStartTime;
-			
-			int i=1;
+			int areaType = indicatorDTO.getAreaType();
 			//设置指标编码
 			
 				//查询基础指标的数据 (月)
 				List<String> baseIndicList=new ArrayList<>();
 						
-				if(i==0) {//如果是全网
+				if(areaType==0) {//如果是全网
 				  //管长(月)
 				  baseIndicList.add(Constant.BASE_INDIC_WNMFTPL);
 				 //用户数(月)
 				  baseIndicList.add(Constant.BASE_INDIC_WNMNOCM);
-				}else if(i==1) {  //一级分区
+				}else if(areaType==1) {  //一级分区
 				  //管长(月)
 				  baseIndicList.add(Constant.BASE_INDIC_FLMFTPL);
 				//用户数(月)
 				  baseIndicList.add(Constant.BASE_INDIC_FLMNOCM);	
-				}else if(i==2) { //二级分区
+				}else if(areaType==2) { //二级分区
 				  //管长(月)
 				  baseIndicList.add(Constant.BASE_INDIC_SLMFTPL);
 				//用户数(月)
@@ -121,7 +121,7 @@ public class IndexServiceImpl implements IndexService{
 			    //拿出indBaseIndicMList
 			    if(indBaseIndicMList!=null && indBaseIndicMList.size()>0) {
 			     for(int m=0;m<indBaseIndicMList.size();m++) {
-			         	if(i==0) {//如果是全网
+			         	if(areaType==0) {//如果是全网
 						  //管长(月)
 						  if(Constant.BASE_INDIC_WNMFTPL.equals(indBaseIndicMList.get(m).getCode())) {
 							  indBaseIndicMList.get(m).setType("A1");							  
@@ -131,7 +131,7 @@ public class IndexServiceImpl implements IndexService{
 							  indBaseIndicMList.get(m).setType("A2");	 
 						  }
 						  
-						}else if(i==1) {  //一级分区						
+						}else if(areaType==1) {  //一级分区						
 						  //管长(月)
 						  if(Constant.BASE_INDIC_FLMFTPL.equals(indBaseIndicMList.get(m).getCode())) {
 							  indBaseIndicMList.get(m).setType("A1");							  
@@ -140,7 +140,7 @@ public class IndexServiceImpl implements IndexService{
 						  if(Constant.BASE_INDIC_FLMNOCM.equals(indBaseIndicMList.get(m).getCode())) {
 							  indBaseIndicMList.get(m).setType("A2");	 
 						  }
-						}else if(i==2) { //二级分区
+						}else if(areaType==2) { //二级分区
 						  //管长(月)
 						  if(Constant.BASE_INDIC_SLMFTPL.equals(indBaseIndicMList.get(m).getCode())) {
 							  indBaseIndicMList.get(m).setType("A1");							  
@@ -169,21 +169,21 @@ public class IndexServiceImpl implements IndexService{
 				// 查询水平衡基础数据 (月)
 				List<String> balanceMList=new ArrayList<>();
 				
-				if(i==0) { //全网		
+				if(areaType==0) { //全网		
 				 //供水量(月)
 				  balanceMList.add(Constant.BALANCE_INDIC_WNMFWSSITDF);
 				 //抄表量(月)
 				  balanceMList.add(Constant.BALANCE_INDIC_WNMBMC);	
 				 //产销差（月）
 				 balanceMList.add(Constant.BALANCE_INDIC_WNMNRW);
-				}else if(i==1) { //一级分区	
+				}else if(areaType==1) { //一级分区	
 				 //供水量(月)
 				 balanceMList.add(Constant.BALANCE_INDIC_FLMFWSSITDF);
 				//抄表量(月)
 				 balanceMList.add(Constant.BALANCE_INDIC_FLMBMC);	
 				//产销差（月）
 				 balanceMList.add(Constant.BALANCE_INDIC_FLMNRW);
-				}else if(i==2) { //二级分区	
+				}else if(areaType==2) { //二级分区	
 				 //供水量(月)
 			     balanceMList.add(Constant.BALANCE_INDIC_SLMFWSSITDF);
 			     //抄表量(月)
@@ -206,7 +206,7 @@ public class IndexServiceImpl implements IndexService{
 			    //取出数据
 			    if(indBalanceMList!=null && indBalanceMList.size()>0) {
 				    for(int k=0;k<indBalanceMList.size();k++) {
-				    	if(i==0) { //全网								 
+				    	if(areaType==0) { //全网								 
 							 //供水量(月)
 							 if(Constant.BALANCE_INDIC_WNMFWSSITDF.equals(indBalanceMList.get(k).getCode())) {
 								 indBalanceMList.get(k).setType("B1");							  
@@ -220,7 +220,7 @@ public class IndexServiceImpl implements IndexService{
 								 indBalanceMList.get(k).setType("D1");							  
 							 }
 							 
-							}else if(i==1) { //一级分区	
+							}else if(areaType==1) { //一级分区	
 							 //供水量(月)
 							 if(Constant.BALANCE_INDIC_FLMFWSSITDF.equals(indBalanceMList.get(k).getCode())) {
 								 indBalanceMList.get(k).setType("B1");							  
@@ -233,7 +233,7 @@ public class IndexServiceImpl implements IndexService{
 							 if(Constant.BALANCE_INDIC_FLMNRW.equals(indBalanceMList.get(k).getCode())) {
 								 indBalanceMList.get(k).setType("D1");							  
 							 }
-							}else if(i==2) { //二级分区	
+							}else if(areaType==2) { //二级分区	
 						     //供水量(月)
 							 if(Constant.BALANCE_INDIC_SLMFWSSITDF.equals(indBalanceMList.get(k).getCode())) {
 								 indBalanceMList.get(k).setType("B1");							  
@@ -268,21 +268,21 @@ public class IndexServiceImpl implements IndexService{
 				
 				// 查询水平衡基础数据 (年)
 				List<String> balanceYList=new ArrayList<>();												
-				if(i==0) {  //全网
+				if(areaType==0) {  //全网
 					//供水量(年)
 					balanceYList.add(Constant.BALANCE_INDIC_WNYFWSSITDF);
 					//抄表量(年)
 					balanceYList.add(Constant.BALANCE_INDIC_WNYBMC);
 					//产销差（年）
 					balanceYList.add(Constant.BALANCE_INDIC_WNYNRW);
-				}else if(i==1) { //一级分区
+				}else if(areaType==1) { //一级分区
 					//供水量(年)
 					balanceYList.add(Constant.BALANCE_INDIC_FLYFWSSITDF);
 					//抄表量(年)
 					balanceYList.add(Constant.BALANCE_INDIC_FLYBMC);
 					//产销差（年）
 					balanceYList.add(Constant.BALANCE_INDIC_FLYNRW);
-				}else if(i==2) {  //二级分区
+				}else if(areaType==2) {  //二级分区
 					//供水量(年)
 					balanceYList.add(Constant.BALANCE_INDIC_SLYFWSSITDF);
 					//抄表量(年)
@@ -308,7 +308,7 @@ public class IndexServiceImpl implements IndexService{
 				//取出数据
 				if(indBalanceYList!=null && indBalanceYList.size()>0) {
 					for(int u=0;u<indBalanceYList.size();u++) {											
-						if(i==0) {  //全网
+						if(areaType==0) {  //全网
 							//供水量(年)
 							if(Constant.BALANCE_INDIC_WNYFWSSITDF.equals(indBalanceYList.get(u).getCode())) {
 								indBalanceYList.get(u).setType("B2");
@@ -321,7 +321,7 @@ public class IndexServiceImpl implements IndexService{
 							if(Constant.BALANCE_INDIC_WNYNRW.equals(indBalanceYList.get(u).getCode())) {
 								indBalanceYList.get(u).setType("D2");
 							}
-						}else if(i==1) { //一级分区
+						}else if(areaType==1) { //一级分区
 							//供水量(年)
 							if(Constant.BALANCE_INDIC_FLYFWSSITDF.equals(indBalanceYList.get(u).getCode())) {
 								indBalanceYList.get(u).setType("B2");
@@ -334,7 +334,7 @@ public class IndexServiceImpl implements IndexService{
 							if(Constant.BALANCE_INDIC_FLYNRW.equals(indBalanceYList.get(u).getCode())) {
 								indBalanceYList.get(u).setType("D2");
 							}
-						}else if(i==2) {  //二级分区
+						}else if(areaType==2) {  //二级分区
 							//供水量(年)
 							if(Constant.BALANCE_INDIC_SLYFWSSITDF.equals(indBalanceYList.get(u).getCode())) {
 								indBalanceYList.get(u).setType("B2");
@@ -367,21 +367,21 @@ public class IndexServiceImpl implements IndexService{
 				
 				//分区漏损数据 (月)
 				List<String> zoneLossMList=new ArrayList<>();
-				if(i==0) {  //全网
+				if(areaType==0) {  //全网
 				//产销差率  月 			
 				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_WNMNRR);		
 				//漏损率   月
 				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_WNMMNFTDF);	
 				//漏损量 月
 				zoneLossMList.add(Constant.APPARENT_INDIC_WNMAL);
-				}else if(i==1) { //一级分区
+				}else if(areaType==1) { //一级分区
 				//产销差率  月 			
 			     zoneLossMList.add(Constant.ZONE_LOSS_INDIC_FLMNRR);		
 			     //漏损率   月
 				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_FLMMNFTDF);	
 				//漏损量 月
 				zoneLossMList.add(Constant.APPARENT_INDIC_FLMAL);
-				}else if(i==2) {  //二级分区
+				}else if(areaType==2) {  //二级分区
 				//产销差率  月 			
 				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_SLMNRR);		
 				//漏损率   月
@@ -403,7 +403,7 @@ public class IndexServiceImpl implements IndexService{
 				//取出数据
 				if(indZoneLossMList!=null && indZoneLossMList.size()>0) {
 					for(int v=0;v<indZoneLossMList.size();v++) {
-						if(i==0) {  //全网
+						if(areaType==0) {  //全网
 							//产销差率  月 		
 							 if(Constant.ZONE_LOSS_INDIC_WNMNRR.equals(indZoneLossMList.get(v).getCode())) {
 								 indZoneLossMList.get(v).setType("D3");
@@ -416,7 +416,7 @@ public class IndexServiceImpl implements IndexService{
 							 if(Constant.APPARENT_INDIC_WNMAL.equals(indZoneLossMList.get(v).getCode())) {
 								 indZoneLossMList.get(v).setType("E1");
 							 }
-							}else if(i==1) { //一级分区
+							}else if(areaType==1) { //一级分区
 							//产销差率  月 		
 							 if(Constant.ZONE_LOSS_INDIC_FLMNRR.equals(indZoneLossMList.get(v).getCode())) {
 								 indZoneLossMList.get(v).setType("D3");
@@ -429,7 +429,7 @@ public class IndexServiceImpl implements IndexService{
 							 if(Constant.APPARENT_INDIC_FLMAL.equals(indZoneLossMList.get(v).getCode())) {
 								 indZoneLossMList.get(v).setType("E1");
 							 }
-							}else if(i==2) {  //二级分区
+							}else if(areaType==2) {  //二级分区
 							//产销差率  月 		
 							 if(Constant.ZONE_LOSS_INDIC_SLMNRR.equals(indZoneLossMList.get(v).getCode())) {
 								 indZoneLossMList.get(v).setType("D3");
@@ -464,14 +464,14 @@ public class IndexServiceImpl implements IndexService{
 				
 				//分区漏损数据 (年)
 				List<String> zoneLossYList=new ArrayList<>();
-				if(i==0) {  //全网
+				if(areaType==0) {  //全网
 				//产销差率  年			
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_WNYNRR);		
 				//漏损率  年
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_WNYMNFTDF);	
 				//漏损量 年		
 				zoneLossYList.add(Constant.APPARENT_INDIC_WNYAL);
-				}else if(i==1) { //一级分区
+				}else if(areaType==1) { //一级分区
 				//产销差率  年			
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_FLYNRR);		
 				//漏损率  年
@@ -479,7 +479,7 @@ public class IndexServiceImpl implements IndexService{
 				//漏损量 年		
 				zoneLossYList.add(Constant.APPARENT_INDIC_FLYAL);
 					
-				}else if(i==2) {  //二级分区
+				}else if(areaType==2) {  //二级分区
 				//产销差率  年			
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_SLYNRR);		
 				//漏损率  年
@@ -504,7 +504,7 @@ public class IndexServiceImpl implements IndexService{
 				//取出数据
 				if(indZoneLossYList!=null && indZoneLossYList.size()>0) {
 					for(int c=0;c<indZoneLossYList.size();c++) {
-						if(i==0) {  //全网
+						if(areaType==0) {  //全网
 							//产销差率  年	
 							 if(Constant.ZONE_LOSS_INDIC_WNYNRR.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("D4");
@@ -518,7 +518,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossYList.get(c).setType("E2");
 							 }
 							 
-							}else if(i==1) { //一级分区
+							}else if(areaType==1) { //一级分区
 							//产销差率  年	
 							 if(Constant.ZONE_LOSS_INDIC_FLYNRR.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("D4");
@@ -532,7 +532,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossYList.get(c).setType("E2");
 							 }
 								
-							}else if(i==2) {  //二级分区
+							}else if(areaType==2) {  //二级分区
 							//产销差率  年	
 							 if(Constant.ZONE_LOSS_INDIC_SLYNRR.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("D4");
@@ -571,17 +571,17 @@ public class IndexServiceImpl implements IndexService{
 			//	indicatorDTO.setCodes(new ArrayList<String>());			
 				//分区漏损数据 (上个月)
 				List<String> zoneLossLYMList=new ArrayList<>();	
-				if(i==0) { //全网
+				if(areaType==0) { //全网
 				//查询上个月的月产销差率
 				zoneLossLYMList.add(Constant.ZONE_LOSS_INDIC_WNMNRR);			
 				//查询上个月的月漏损差率
 				zoneLossLYMList.add(Constant.ZONE_LOSS_INDIC_WNMMNFTDF);
-				}else if(i==1) { //一级分区		
+				}else if(areaType==1) { //一级分区		
 				//查询上个月的月产销差率
 				zoneLossLYMList.add(Constant.ZONE_LOSS_INDIC_FLMNRR);			
 				//查询上个月的月漏损差率
 				zoneLossLYMList.add(Constant.ZONE_LOSS_INDIC_FLMMNFTDF);
-				}else if(i==2) {  //二级分区
+				}else if(areaType==2) {  //二级分区
 				//查询上个月的月产销差率
 				zoneLossLYMList.add(Constant.ZONE_LOSS_INDIC_SLMNRR);			
 				//查询上个月的月漏损差率
@@ -604,17 +604,17 @@ public class IndexServiceImpl implements IndexService{
 				
 				//分区漏损数据 (上一年)
 				List<String> zoneLossLYList=new ArrayList<>();
-				if(i==0) { //全网
+				if(areaType==0) { //全网
 				//查询上一年的年产销差率			
 				zoneLossLYList.add(Constant.ZONE_LOSS_INDIC_WNYNRR);	
 				//查询上一年的年漏损差率
 				zoneLossLYList.add(Constant.ZONE_LOSS_INDIC_WNYMNFTDF);
-				}else if(i==1) { //一级分区	
+				}else if(areaType==1) { //一级分区	
 				//查询上一年的年产销差率			
 				zoneLossLYList.add(Constant.ZONE_LOSS_INDIC_FLYNRR);	
 				//查询上一年的年漏损差率
 				zoneLossLYList.add(Constant.ZONE_LOSS_INDIC_FLYMNFTDF);	
-				}else if(i==2) {  //二级分区
+				}else if(areaType==2) {  //二级分区
 				//查询上一年的年产销差率			
 				zoneLossLYList.add(Constant.ZONE_LOSS_INDIC_SLYNRR);	
 				//查询上一年的年漏损差率
@@ -636,17 +636,17 @@ public class IndexServiceImpl implements IndexService{
 				  double WNMNRRNow=0;
 				  if(indZoneLossMList!=null && indZoneLossMList.size()>0) {
 					  for(int inM=0;inM<indZoneLossMList.size();inM++) {
-						 if(i==0) {  
+						 if(areaType==0) {  
 						  if(Constant.ZONE_LOSS_INDIC_WNMNRR.equals(indZoneLossMList.get(inM).getCode())) {
 							  WNMNRRNow=indZoneLossMList.get(inM).getValue();	
 							  break;
 						  }
-						 }else if(i==1) {
+						 }else if(areaType==1) {
 						  if(Constant.ZONE_LOSS_INDIC_FLMNRR.equals(indZoneLossMList.get(inM).getCode())) {
 								  WNMNRRNow=indZoneLossMList.get(inM).getValue();	
 								  break;
 						  } 
-						 }else if(i==2) {
+						 }else if(areaType==2) {
 						  if(Constant.ZONE_LOSS_INDIC_SLMNRR.equals(indZoneLossMList.get(inM).getCode())) {
 								  WNMNRRNow=indZoneLossMList.get(inM).getValue();	
 								  break;
@@ -663,15 +663,15 @@ public class IndexServiceImpl implements IndexService{
 				  double WNMNRRLast=0;
 				  if(indZoneLossLMList!=null && indZoneLossLMList.size()>0) {
 					  for(int inLM=0;inLM<indZoneLossLMList.size();inLM++) {
-						 if(i==0) { 
+						 if(areaType==0) { 
 						  if(Constant.ZONE_LOSS_INDIC_WNMNRR.equals(indZoneLossLMList.get(inLM).getCode())) {
 							  WNMNRRLast=indZoneLossLMList.get(inLM).getValue();
 						  }
-						 }else if(i==1) {
+						 }else if(areaType==1) {
 						   if(Constant.ZONE_LOSS_INDIC_FLMNRR.equals(indZoneLossLMList.get(inLM).getCode())) {
 							 WNMNRRLast=indZoneLossLMList.get(inLM).getValue();
 						   } 
-						 }else if(i==2) {
+						 }else if(areaType==2) {
 							 if(Constant.ZONE_LOSS_INDIC_SLMNRR.equals(indZoneLossLMList.get(inLM).getCode())) {
 								 WNMNRRLast=indZoneLossLMList.get(inLM).getValue();
 							 } 
@@ -685,11 +685,11 @@ public class IndexServiceImpl implements IndexService{
 				  //返回计算结果bean
 				  double finalWNMNRR=WNMNRRNow-WNMNRRLast;
 				  IndicatorVO indicatorWNMNRR=new IndicatorVO();
-				  if(i==0) {
+				  if(areaType==0) {
 				  indicatorWNMNRR.setCode(Constant.ZONE_LOSS_INDIC_WNMNRR);
-				  }else if(i==1) {
+				  }else if(areaType==1) {
 				   indicatorWNMNRR.setCode(Constant.ZONE_LOSS_INDIC_FLMNRR);  
-				  }else if(i==2) {
+				  }else if(areaType==2) {
 				   indicatorWNMNRR.setCode(Constant.ZONE_LOSS_INDIC_SLMNRR);   
 				  }else {
 				   indicatorWNMNRR.setCode(Constant.ZONE_LOSS_INDIC_DMMNRR);   
@@ -704,17 +704,17 @@ public class IndexServiceImpl implements IndexService{
 				  double WNMNRRYNow=0;
 				  if(indZoneLossYList!=null && indZoneLossYList.size()>0) {
 					  for(int inM=0;inM<indZoneLossYList.size();inM++) {
-						 if(i==0) {
+						 if(areaType==0) {
 						  if(Constant.ZONE_LOSS_INDIC_WNYNRR.equals(indZoneLossYList.get(inM).getCode())) {
 							  WNMNRRYNow=indZoneLossMList.get(inM).getValue();
 							  break;
 						  }
-						 }else if(i==1) {
+						 }else if(areaType==1) {
 						   if(Constant.ZONE_LOSS_INDIC_FLYNRR.equals(indZoneLossYList.get(inM).getCode())) {
 							  WNMNRRYNow=indZoneLossYList.get(inM).getValue();	
 							  break;
 						   } 
-						 }else if(i==2) {
+						 }else if(areaType==2) {
 						   if(Constant.ZONE_LOSS_INDIC_SLYNRR.equals(indZoneLossYList.get(inM).getCode())) {
 								  WNMNRRYNow=indZoneLossYList.get(inM).getValue();	
 								  break;
@@ -731,17 +731,17 @@ public class IndexServiceImpl implements IndexService{
 				  double WNMNRRYLast=0;
 				  if(indZoneLossLYList!=null && indZoneLossLYList.size()>0) {
 				  for(int inLM=0;inLM<indZoneLossLYList.size();inLM++) {
-					 if(i==0) {
+					 if(areaType==0) {
 					  if(Constant.ZONE_LOSS_INDIC_WNYNRR.equals(indZoneLossLYList.get(inLM).getCode())) {
 						  WNMNRRYLast=indZoneLossLYList.get(inLM).getValue();
 						  break;
 					  }
-					 }else if(i==1) {
+					 }else if(areaType==1) {
 					  if(Constant.ZONE_LOSS_INDIC_FLYNRR.equals(indZoneLossLYList.get(inLM).getCode())) {
 						  WNMNRRYLast=indZoneLossLYList.get(inLM).getValue();
 						  break;
 						} 
-					 }else if(i==2) {
+					 }else if(areaType==2) {
 					   if(Constant.ZONE_LOSS_INDIC_SLYNRR.equals(indZoneLossLYList.get(inLM).getCode())) {
 						   WNMNRRYLast=indZoneLossLYList.get(inLM).getValue();
 						   break;
@@ -757,11 +757,11 @@ public class IndexServiceImpl implements IndexService{
 				  //返回计算结果bean
 				  double finalYWNMNRR=WNMNRRYNow-WNMNRRYLast;
 				  IndicatorVO indicatorYWNMNRR=new IndicatorVO();
-				  if(i==0) {
+				  if(areaType==0) {
 				  indicatorYWNMNRR.setCode(Constant.ZONE_LOSS_INDIC_WNYNRR);
-				  }else if(i==1) {
+				  }else if(areaType==1) {
 				   indicatorYWNMNRR.setCode(Constant.ZONE_LOSS_INDIC_FLYNRR);  
-				  }else if(i==2) {
+				  }else if(areaType==2) {
 				   indicatorYWNMNRR.setCode(Constant.ZONE_LOSS_INDIC_SLYNRR);  
 				  }else {
 					indicatorYWNMNRR.setCode(Constant.ZONE_LOSS_INDIC_DMYNRR);   
@@ -776,21 +776,21 @@ public class IndexServiceImpl implements IndexService{
 					  double WNMMNFTDFNow=0;
 					  if(indZoneLossMList!=null && indZoneLossMList.size()>0) {
 						  for(int inM=0;inM<indZoneLossMList.size();inM++) {
-							  if(i==0) {
+							  if(areaType==0) {
 								  if(Constant.ZONE_LOSS_INDIC_WNMMNFTDF.equals(indZoneLossMList.get(inM).getCode())) {
 									  WNMMNFTDFNow=indZoneLossMList.get(inM).getValue();
 									  break;
 									  
 								  }
 							  }
-							  else if(i==1) {
+							  else if(areaType==1) {
 								  if(Constant.ZONE_LOSS_INDIC_FLMMNFTDF.equals(indZoneLossMList.get(inM).getCode())) {
 									  WNMMNFTDFNow=indZoneLossMList.get(inM).getValue();
 									  break;
 									  
 								  }
 							  }
-							  else if(i==2) {
+							  else if(areaType==2) {
 								  if(Constant.ZONE_LOSS_INDIC_SLMMNFTDF.equals(indZoneLossMList.get(inM).getCode())) {
 									  WNMMNFTDFNow=indZoneLossMList.get(inM).getValue();
 									  break;
@@ -810,17 +810,17 @@ public class IndexServiceImpl implements IndexService{
 					  double WNMMNFTDFLast=0;
 					  if(indZoneLossLMList!=null && indZoneLossLMList.size()>0) {
 						  for(int inLM=0;inLM<indZoneLossLMList.size();inLM++) {
-							if(i==0) {  
+							if(areaType==0) {  
 							  if(Constant.ZONE_LOSS_INDIC_WNMMNFTDF.equals(indZoneLossLMList.get(inLM).getCode())) {
 								  WNMMNFTDFLast=indZoneLossLMList.get(inLM).getValue();
 								  break;
 							  }
-							}else if(i==1) {
+							}else if(areaType==1) {
 								if(Constant.ZONE_LOSS_INDIC_FLMMNFTDF.equals(indZoneLossLMList.get(inLM).getCode())) {
 								  WNMMNFTDFLast=indZoneLossLMList.get(inLM).getValue();
 								  break;
 								 }	
-							}else if(i==2) {
+							}else if(areaType==2) {
 								if(Constant.ZONE_LOSS_INDIC_SLMMNFTDF.equals(indZoneLossLMList.get(inLM).getCode())) {
 									 WNMMNFTDFLast=indZoneLossLMList.get(inLM).getValue();
 									 break;
@@ -836,11 +836,11 @@ public class IndexServiceImpl implements IndexService{
 					  //返回计算结果bean
 					  double finalWNMMNFTDF=WNMMNFTDFNow-WNMMNFTDFLast;
 					  IndicatorVO indicatorWNMMNFTDF=new IndicatorVO();
-					  if(i==0) {
+					  if(areaType==0) {
 					  indicatorWNMMNFTDF.setCode(Constant.ZONE_LOSS_INDIC_WNMMNFTDF);
-					  }else if(i==1) {
+					  }else if(areaType==1) {
 					    indicatorWNMMNFTDF.setCode(Constant.ZONE_LOSS_INDIC_FLMMNFTDF);  
-					  }else if(i==2) {
+					  }else if(areaType==2) {
 						indicatorWNMMNFTDF.setCode(Constant.ZONE_LOSS_INDIC_SLMMNFTDF);   
 					  }else {
 					    indicatorWNMMNFTDF.setCode(Constant.ZONE_LOSS_INDIC_DMMMNFTDF);   
@@ -856,18 +856,18 @@ public class IndexServiceImpl implements IndexService{
 					  double WNMMNFTDFYNow=0;
 					  if(indZoneLossYList!=null && indZoneLossYList.size()>0) { 
 						  for(int inM=0;inM<indZoneLossYList.size();inM++) {
-							 if(i==0) {
+							 if(areaType==0) {
 							  if(Constant.ZONE_LOSS_INDIC_WNYMNFTDF.equals(indZoneLossYList.get(inM).getCode())) {
 								  WNMMNFTDFYNow=indZoneLossYList.get(inM).getValue();
 								  break;
 							  }
 							 }
-							 else if(i==1) {
+							 else if(areaType==1) {
 							   if(Constant.ZONE_LOSS_INDIC_FLYMNFTDF.equals(indZoneLossYList.get(inM).getCode())) {
 									  WNMMNFTDFYNow=indZoneLossYList.get(inM).getValue();
 									  break;
 							  } 
-							 }else if( i==2) {
+							 }else if( areaType==2) {
 								 if(Constant.ZONE_LOSS_INDIC_FLYMNFTDF.equals(indZoneLossYList.get(inM).getCode())) {
 									  WNMMNFTDFYNow=indZoneLossYList.get(inM).getValue();	
 									  break;
@@ -884,17 +884,17 @@ public class IndexServiceImpl implements IndexService{
 					  double WNMMNFTDFYLast=0;
 					  if(indZoneLossLYList!=null && indZoneLossLYList.size()>0) {
 						  for(int inLM=0;inLM<indZoneLossLMList.size();inLM++) {
-							 if(i==0) { 
+							 if(areaType==0) { 
 							  if(Constant.ZONE_LOSS_INDIC_WNYMNFTDF.equals(indZoneLossLYList.get(inLM).getCode())) {
 								  WNMMNFTDFYLast=indZoneLossLYList.get(inLM).getValue();
 								  break;
 							  }
-							 } else if(i==1) {
+							 } else if(areaType==1) {
 							  if(Constant.ZONE_LOSS_INDIC_FLYMNFTDF.equals(indZoneLossLYList.get(inLM).getCode())) {
 								  WNMMNFTDFYLast=indZoneLossLYList.get(inLM).getValue();
 								  break;
 							  } 
-							 }else if( i==2) {
+							 }else if( areaType==2) {
 							  if(Constant.ZONE_LOSS_INDIC_SLYMNFTDF.equals(indZoneLossLYList.get(inLM).getCode())) {
 								  WNMMNFTDFYLast=indZoneLossLYList.get(inLM).getValue();
 								  break;
@@ -910,11 +910,11 @@ public class IndexServiceImpl implements IndexService{
 					  //返回计算结果bean
 					  double finalYWNMMNFTDF=WNMMNFTDFYNow-WNMMNFTDFYLast;
 					  IndicatorVO indicatorYWNMMNFTDF=new IndicatorVO();
-					  if(i==0) {
+					  if(areaType==0) {
 					  indicatorYWNMMNFTDF.setCode(Constant.ZONE_LOSS_INDIC_WNYMNFTDF);
-					  }else if(i==1) {
+					  }else if(areaType==1) {
 					  indicatorYWNMMNFTDF.setCode(Constant.ZONE_LOSS_INDIC_FLYMNFTDF);	 
-					  }else if( i==2) {
+					  }else if( areaType==2) {
 				       indicatorYWNMMNFTDF.setCode(Constant.ZONE_LOSS_INDIC_SLYMNFTDF);	
 					  }else {
 				       indicatorYWNMMNFTDF.setCode(Constant.ZONE_LOSS_INDIC_DMYMNFTDF);	 
@@ -949,7 +949,8 @@ public class IndexServiceImpl implements IndexService{
 		Integer lastStartTime=Integer.valueOf(startLastTime+startMidDate);
 		Integer midTime=Integer.valueOf(startMidTime+startMidDate);		
 		Integer nowEndTime=indicatorDTO.getEndTime();
-		int areaType=1;
+		//判断是什么类型，全网，一级分区。。。
+		int areaType=indicatorDTO.getAreaType();
 		/**
 		管网长度  用户数              ------基础指标-水司用户 BASE_INDIC
 		供水量  月 年                    -------水平衡基础数据  BALANCE_INDIC
@@ -961,7 +962,7 @@ public class IndexServiceImpl implements IndexService{
 		单位户数MNF      --------分区漏损数据  
 		单位管长                         --------分区漏损数据  
 		*/
-		IndicatorDTO indicator=new IndicatorDTO();
+		IndicatorNewDTO indicator=new IndicatorNewDTO();
 		MultParamterIndicatorVO multParamterIndicatorVO=new MultParamterIndicatorVO();
 		double avgCurrentValue=0;
 		double avgLastValue=0;
@@ -980,7 +981,7 @@ public class IndexServiceImpl implements IndexService{
 		 List<IndicatorVO> lastIndicatorList=new ArrayList<>();
 		 
           List<String> codes=new ArrayList<>();
-        //TODO 判断是什么类型，全网，一级分区。。。
+        
 	     
 		 if(areaType==0) { //全网	
 			if(indicatorDTO.getType()==1) {
@@ -1251,6 +1252,8 @@ public class IndexServiceImpl implements IndexService{
 		@Override
 		public List<IndicatorVO>  queryAreaRankInfo(SessionFactory factory, IndicatorNewDTO indicatorDTO) {
 			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
+			//判断是什么类型，一级分区还是二级分区	
+			int areaType = indicatorDTO.getAreaType();
 			/**
 			管网长度  用户数              ------基础指标-水司用户 BASE_INDIC
 			供水量  月 年                    -------水平衡基础数据  BALANCE_INDIC
@@ -1263,7 +1266,7 @@ public class IndexServiceImpl implements IndexService{
 			单位管长                         --------分区漏损数据  
 			*/
 			//TODO  查询某个分区或全网下所有下级分区			
-			IndicatorDTO indicator=new IndicatorDTO();
+			IndicatorNewDTO indicator=new IndicatorNewDTO();
 			 try {
 				BeanUtils.copyProperties(indicator,indicatorDTO);
 			} catch (IllegalAccessException e) {
@@ -1272,8 +1275,7 @@ public class IndexServiceImpl implements IndexService{
 				e.printStackTrace();
 			}
 			
-			//TODO 判断是什么类型，一级分区还是二级分区			
-			 int areaType=1;
+					
 			 List<String> codes=new ArrayList<>();
 			 if(areaType==0) { //全网	
 				if(indicatorDTO.getType()==1) {
@@ -1357,5 +1359,28 @@ public class IndexServiceImpl implements IndexService{
 			}
 			return currentIndicatorList;
 		}
-
+		
+		/**
+		 * 获取节点下所有子节点(菜单)
+		 * @param factory
+		 * @param type 类型
+		 * @param seq 顺序值
+		 * @param mask 掩码位数
+		 * @param parentMask 父级掩码位数
+		 * 
+		 * @return
+		 */
+		@TaskAnnotation("queryAllZone")
+		public List<TreeZoneVO> queryAllZone(SessionFactory factory,int type,String foreignKey){
+			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
+			TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+			LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+			if(node == null) {
+				return null;
+			}
+			else{
+				List<TreeZoneVO> zoneList=indicatorMapper.queryAllZone(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+				return zoneList;
+			}
+		}
 }
