@@ -11,21 +11,26 @@
  app_warningprocessing where "createTime" between '${startTime}' and '${endTime}' and type = #{type}
  <if test="state != null and state != '' "> and state = #{processState}</if>
  <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>
- <if test="areaCode != null and areaCode != '' ">and "areaCode" = #{areaCode}</if>
- <if test="dmaCode != null and dmaCode != '' "> and "areaCode" like '%'||#{dmaCode}||'%'</if>
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1); 
  </select>
  
  <select id="queryAlarmProcessTotalNumber" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO" resultType="java.lang.Integer">
- select count(*) from app_warningprocessing where "createTime" between '${startTime}' and '${endTime}' and type = #{type}
+ select count(*) from (select * from app_warningprocessing where "createTime" between '${startTime}' and '${endTime}' and type = #{type}
  <if test="state != null and state != '' "> and state = #{processState}</if>
- <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>
- <if test="areaCode != null and areaCode != '' ">and "areaCode" = #{areaCode}</if>
- <if test="dmaCode != null and dmaCode != '' "> and "areaCode" like '%'||#{dmaCode}||'%'</if>
+ <if test="recommendStrategy != null and recommendStrategy != '' "> and "recommendStrategy" = #{recommendStrategy}</if>) a 
+ <if test="areaCode != null and areaCode != '' and dmaCode == null">inner join app_warninginf b on a."warningCode" = b.code where b."objectCode" like '%'||#{areaCode}||'%'</if>
+ <if test="dmaCode != null and dmaCode != '' ">inner join app_warninginf b on a."warningCode" = b.code where b."objectCode" like '%'||#{dmaCode}||'%'</if>
+ </select>
+ 
+ <select id="queryAlarmMessageByP" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
+ select b.code as "warningCode",b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType",b."objectCode" as "objectCode" 
+ from app_warninginf b inner join app_warningscheme c on b."schemeCode" = c.code 
+  <if test="dmaCode != null and dmaCode != '' "> and b."objectCode" like '%'||#{dmaCode}||'%'</if>
+  <if test="areaCode != null and areaCode != '' ">and b."objectCode" = #{areaCode}</if>
  </select>
  
  <select id="queryAlarmMessageByCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
- select b.code as code,b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType",b."objectCode" as "objectCode" 
+ select b.code as "warningCode",b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType",b."objectCode" as "objectCode" 
  from app_warninginf b inner join app_warningscheme c on b."schemeCode" = c.code where b.code = #{code}
  </select>
  

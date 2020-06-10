@@ -50,30 +50,41 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		//查询报警信息
 		for(AlarmProcessVO alarmProcessVO : list) {
 			if(alarmProcessVO.getWarningCode() != null && !alarmProcessVO.getWarningCode().equals("")) {
-				AlarmProcessVO alarmProcessVO1 = mapper.queryAlarmMessageByCode(alarmProcessVO.getWarningCode());
-				if(alarmProcessVO1 != null) {
-					if(alarmProcessVO1.getAlarmType() != null && !alarmProcessVO1.getAlarmType().equals("")) {
-						alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
-					}
-					if(alarmProcessVO1.getAlarmContent() != null) {
-						alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
-					}
-					if(alarmProcessVO1.getObjectType() != null ) {
-						alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
-					}
-					if(alarmProcessVO1.getObjectCode() != null) {
-						alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
-					}
-					//若有预警类型筛选条件，则展示相应数据
-					if(alarmProcessDTO.getAlarmType() != null) {
-						if(alarmProcessVO1.getAlarmType().equals(alarmProcessDTO.getAlarmType())) {
-							reList.add(alarmProcessVO);
+				List<AlarmProcessVO> alarmProcessVO1List = mapper.queryAlarmMessageByP(alarmProcessDTO);
+				if(alarmProcessVO1List != null && alarmProcessVO1List.size() != 0) {
+					for(AlarmProcessVO alarmProcessVO1 : alarmProcessVO1List) {
+						if(alarmProcessVO1.getWarningCode().equals(alarmProcessVO.getWarningCode())) {
+							if(alarmProcessVO1 != null) {
+								if(alarmProcessVO1.getAlarmType() != null && !alarmProcessVO1.getAlarmType().equals("")) {
+									alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
+								}
+								if(alarmProcessVO1.getAlarmContent() != null) {
+									alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
+								}
+								if(alarmProcessVO1.getObjectType() != null ) {
+									alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
+								}
+								if(alarmProcessVO1.getObjectCode() != null) {
+									alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
+								}
+								//若有预警类型筛选条件，则展示相应数据
+								if(alarmProcessDTO.getAlarmType() != null) {
+									if(alarmProcessVO1.getAlarmType().equals(alarmProcessDTO.getAlarmType())) {
+										reList.add(alarmProcessVO);
+									}
+								}
+							
+							}
 						}
 					}
-				}	
+				}		
 			}
 			if(alarmProcessDTO.getAlarmType() == null || alarmProcessDTO.getAlarmType().equals("")) {
-				reList.add(alarmProcessVO);
+				if(alarmProcessDTO.getDmaCode() == null || alarmProcessDTO.getDmaCode().equals("")) {
+					if(alarmProcessDTO.getAreaCode() == null || alarmProcessDTO.getAreaCode().equals("")) {
+						reList.add(alarmProcessVO);
+					}
+				}
 			}
 		}
 		

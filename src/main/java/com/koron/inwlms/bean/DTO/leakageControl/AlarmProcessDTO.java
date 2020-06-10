@@ -55,10 +55,20 @@ public class AlarmProcessDTO extends BaseDTO{
 	 */
 	private Integer type;
 	
+	private String warningCode;
+	
 	
 
 	
 	
+	public String getWarningCode() {
+		return warningCode;
+	}
+
+	public void setWarningCode(String warningCode) {
+		this.warningCode = warningCode;
+	}
+
 	public Integer getType() {
 		return type;
 	}

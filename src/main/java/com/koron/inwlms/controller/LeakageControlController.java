@@ -256,6 +256,14 @@ public class LeakageControlController {
 	        return msg.toJson();
 		}
 		
+		if(alarmProcessDTO.getFirstPartion() != null && !alarmProcessDTO.getFirstPartion().equals("")) {
+			if(alarmProcessDTO.getSecondPartition() != null && !alarmProcessDTO.getSecondPartition().equals("")) {
+				alarmProcessDTO.setAreaCode(alarmProcessDTO.getSecondPartition());
+			}else {
+				alarmProcessDTO.setAreaCode(alarmProcessDTO.getFirstPartion());
+			}
+		}
+		
 		//查询参数设置调整
 		try {
 			AlarmProcessReturnVO alarmProcessReturnVO = ADOConnection.runTask(aps,"queryAlarmProcess",AlarmProcessReturnVO.class,alarmProcessDTO);
@@ -1511,24 +1519,33 @@ public class LeakageControlController {
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setPage(eventTypeDTO.getPage());
 			pageInfo.setSize(eventTypeDTO.getPageCount());
-			pageInfo.setTotalNumber(dataDicRelationVoList.get(0).getTotalNum());
-			List<DataDicVO> dataEventSubtype = new ArrayList<>();
 			if(dataDicRelationVoList != null && dataDicRelationVoList.size() != 0) {
-				for(DataDicRelationVO dataDicRelationVO : dataDicRelationVoList) {
-					//查询子级key的value
-					DataDicDTO dataDicDTO = new DataDicDTO();
-					dataDicDTO.setDicKey(dataDicRelationVO.getChildKey());
-					
-					List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
-					if(dataDicVoList != null && dataDicVoList.size() != 0) {
-						dataEventSubtype.add(dataDicVoList.get(0));	
+				pageInfo.setTotalNumber(dataDicRelationVoList.get(0).getTotalNum());
+				List<DataDicVO> dataEventSubtype = new ArrayList<>();
+				if(dataDicRelationVoList != null && dataDicRelationVoList.size() != 0) {
+					for(DataDicRelationVO dataDicRelationVO : dataDicRelationVoList) {
+						//查询子级key的value
+						DataDicDTO dataDicDTO = new DataDicDTO();
+						dataDicDTO.setDicKey(dataDicRelationVO.getChildKey());
+						
+						List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
+						if(dataDicVoList != null && dataDicVoList.size() != 0) {
+							dataEventSubtype.add(dataDicVoList.get(0));	
+						}
 					}
 				}
+				EventSubtypeVO eventSubtypeVO = new EventSubtypeVO();
+				eventSubtypeVO.setEventSubtypeList(dataEventSubtype);
+				eventSubtypeVO.setQuery(pageInfo);
+				msg.setData(eventSubtypeVO);
+			}else {
+				pageInfo.setTotalNumber(0);
+				EventSubtypeVO eventSubtypeVO = new EventSubtypeVO();
+				List<DataDicVO> dataEventSubtype = new ArrayList<>();
+				eventSubtypeVO.setEventSubtypeList(dataEventSubtype);
+				eventSubtypeVO.setQuery(pageInfo);
+				msg.setData(eventSubtypeVO);
 			}
-			EventSubtypeVO eventSubtypeVO = new EventSubtypeVO();
-			eventSubtypeVO.setEventSubtypeList(dataEventSubtype);
-			eventSubtypeVO.setQuery(pageInfo);
-			msg.setData(eventSubtypeVO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {

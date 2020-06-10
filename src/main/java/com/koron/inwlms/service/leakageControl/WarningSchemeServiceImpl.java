@@ -148,9 +148,10 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 				alarmRuleDTO.setSchemeCode(num);
 				mapper.addAlarmRule(alarmRuleDTO);
 			}
-			
-			for(AlertNoticeScheme alertNoticeScheme : warningSchemeDTO.getNoticeList()) {
-				mapper.addNoticeScheme(alertNoticeScheme);
+			if(warningSchemeDTO.getNoticeList() != null && warningSchemeDTO.getNoticeList().size() != 0) {
+				for(AlertNoticeScheme alertNoticeScheme : warningSchemeDTO.getNoticeList()) {
+					mapper.addNoticeScheme(alertNoticeScheme);
+				}
 			}
 		}
 		return num;

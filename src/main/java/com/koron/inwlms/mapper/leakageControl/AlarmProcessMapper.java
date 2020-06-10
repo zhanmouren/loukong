@@ -19,12 +19,11 @@ import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
  *
  */
 @Repository
-@EnvSource("_default")
 public interface AlarmProcessMapper {
 	
 	List<AlarmProcessVO> queryAlarmProcess(AlarmProcessDTO alarmProcessDTO);
 	Integer queryAlarmProcessTotalNumber(AlarmProcessDTO alarmProcessDTO);
-	
+	List<AlarmProcessVO> queryAlarmMessageByP(AlarmProcessDTO alarmProcessDTO);
 	AlarmProcessVO queryAlarmMessageByCode(String code);
 	List<AlarmProcessVO> queryAlarmProcessByTaskCode(String taskCode);
 	Integer addAlarmProcess(AlarmProcessVO alarmProcessVO);
