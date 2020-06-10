@@ -942,12 +942,14 @@ public class IndexServiceImpl implements IndexService{
 	public MultParamterIndicatorVO queryComYearInfo(SessionFactory factory, IndicatorNewDTO indicatorDTO) {
 		IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
 		//获取中间开始的年月
-		String startMidTime=Integer.valueOf(indicatorDTO.getStartTime().toString().substring(0, 4))+1+"";
+		String startLastTime=Integer.valueOf(indicatorDTO.getStartTime().toString().substring(0, 4))-2+"";
+		String startMidTime=Integer.valueOf(indicatorDTO.getStartTime().toString().substring(0, 4))-1+"";
 		String startMidDate=indicatorDTO.getStartTime().toString().substring(4, 6);
 		//组成条件
-		Integer lastStartTime=indicatorDTO.getStartTime();
+		Integer lastStartTime=Integer.valueOf(startLastTime+startMidDate);
 		Integer midTime=Integer.valueOf(startMidTime+startMidDate);		
 		Integer nowEndTime=indicatorDTO.getEndTime();
+		int areaType=1;
 		/**
 		管网长度  用户数              ------基础指标-水司用户 BASE_INDIC
 		供水量  月 年                    -------水平衡基础数据  BALANCE_INDIC
@@ -979,7 +981,7 @@ public class IndexServiceImpl implements IndexService{
 		 
           List<String> codes=new ArrayList<>();
         //TODO 判断是什么类型，全网，一级分区。。。
-	     int areaType=0;
+	     
 		 if(areaType==0) { //全网	
 			if(indicatorDTO.getType()==1) {
 			  //供水量(月)
@@ -1132,7 +1134,7 @@ public class IndexServiceImpl implements IndexService{
 		double completeNum=0.0;
 		DecimalFormat df = new DecimalFormat("0.0000%");
 		//查询完成条数
-		warningInfoDTO.setState("已完成");
+		warningInfoDTO.setState("L101990003");
 		List<InfoCompleteRateVO> completeList=indicatorMapper.queryComRateNum(warningInfoDTO);	
 		if(completeList!=null && completeList.size()>0 && rowNumber!=null && rowNumber!=0) {
 			completeNum=completeList.get(0).getCompleNum().longValue()*1.0;
@@ -1140,14 +1142,14 @@ public class IndexServiceImpl implements IndexService{
 			completeRateStr= df.format(completeRate);			
 		}
 		//查询未完成条数
-		warningInfoDTO.setState("未完成");
+		warningInfoDTO.setState("L101990001");
 		List<InfoCompleteRateVO> unCompleteList=indicatorMapper.queryComRateNum(warningInfoDTO);
         if(unCompleteList!=null && unCompleteList.size()>0 && rowNumber!=null && rowNumber!=0) {
         	unCompleteRate=unCompleteList.get(0).getCompleNum().longValue()*1.0/rowNumber.longValue();		
         	unCompleteRateStr= df.format(unCompleteRate);	
 		}
 		//进行中的条数
-		warningInfoDTO.setState("进行中");
+		warningInfoDTO.setState("L101990002");
 		List<InfoCompleteRateVO> completeingList=indicatorMapper.queryComRateNum(warningInfoDTO);
          if(completeingList!=null && completeingList.size()>0 && rowNumber!=null && rowNumber!=0) {
         	 compleingRate=completeingList.get(0).getCompleNum().longValue()*1.0/rowNumber.longValue();
@@ -1200,13 +1202,13 @@ public class IndexServiceImpl implements IndexService{
 			//根据分区日期查询有多少个监测点报警的信息(离线总数)
 			Integer checkWarningNum=indicatorMapper.queryCheckWarningNum(warningInfoDTO);
 			//查询噪声报警的个数
-			warningInfoDTO.setAlarmType("噪声报警");
+			warningInfoDTO.setAlarmType("L102010005");
 			Integer voiceWarningNum=indicatorMapper.queryTypeWarningNum(warningInfoDTO);
 			//查询超限报警个数
-			warningInfoDTO.setAlarmType("超限报警");
+			warningInfoDTO.setAlarmType("L102010002");
 			Integer overWaningNum=indicatorMapper.queryTypeWarningNum(warningInfoDTO);
 			//查询离线报警个数
-			warningInfoDTO.setAlarmType("离线报警");
+			warningInfoDTO.setAlarmType("L102010004");
 			Integer offlineWarningNum=indicatorMapper.queryTypeWarningNum(warningInfoDTO);
 			
 			//计算检测点任务完成个数
@@ -1271,7 +1273,7 @@ public class IndexServiceImpl implements IndexService{
 			}
 			
 			//TODO 判断是什么类型，一级分区还是二级分区			
-			 int areaType=0;
+			 int areaType=1;
 			 List<String> codes=new ArrayList<>();
 			 if(areaType==0) { //全网	
 				if(indicatorDTO.getType()==1) {

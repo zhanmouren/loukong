@@ -273,8 +273,12 @@
     <select id="queryComRateNum"   parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"   resultType="com.koron.inwlms.bean.VO.indexData.InfoCompleteRateVO">
         select count(*) as "compleNum"
         from app_warningprocessing as "pro"
+        left join  app_warninginf as "info" on "info".code="pro"."warningCode"
         where "pro"."createTime" &gt; to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS') 
-        and "pro".state=#{state}
+        and "pro".state=#{state} and "info"."areaCode" in
+       <foreach item="item" collection="areaZoneList" separator="," open="(" close=")" index="">    
+			#{item}    
+		</foreach> 
     </select>
     
     <!-- 查询预计完成时间大于实际完成时间的条数-->
