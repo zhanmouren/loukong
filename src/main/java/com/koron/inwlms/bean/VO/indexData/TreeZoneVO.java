@@ -8,7 +8,7 @@ public class TreeZoneVO extends TreeBean.Long{
 	//分区名
 	private String name;
 	//分区code
-	private String p_code;
+	private String code;
 	
 	private String rank;
 
@@ -28,12 +28,13 @@ public class TreeZoneVO extends TreeBean.Long{
 		this.name = name;
 	}
 
-	public String getP_code() {
-		return p_code;
+	
+	public String getCode() {
+		return code;
 	}
 
-	public void setP_code(String p_code) {
-		this.p_code = p_code;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public String getRank() {

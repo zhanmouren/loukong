@@ -115,7 +115,7 @@ public interface IndexMapper {
 	  * @param bean 节点
 	  * @return 节点集合
 	  */
-	 @Select("select tbltree.*,gis_exist_zone.p_code,gis_exist_zone.name,gis_exist_zone.rank,gis_exist_zone.smid from tbltree left join gis_exist_zone on  gis_exist_zone.p_code=tbltree.foreignkey where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and tbltree.type = #{type} order by tbltree.seq")
+	 @Select("select tbltree.*,gis_exist_zone.p_code as code,gis_exist_zone.name,gis_exist_zone.rank,gis_exist_zone.smid from tbltree left join gis_exist_zone on  gis_exist_zone.p_code=tbltree.foreignkey where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and tbltree.type = #{type} order by tbltree.seq")
 	 public List<TreeZoneVO> queryAllZone(@Param("seq") long seq, @Param("type") int type, @Param("mask") int mask, @Param("parentMask") int parentMask);
 
 
