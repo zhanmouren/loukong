@@ -18,7 +18,7 @@ public class IndicatorVO {
 	//首页专用
 	private String type;
 	
-
+	private String name;
 	public String getType() {
 		return type;
 	}
@@ -57,6 +57,14 @@ public class IndicatorVO {
 
 	public void setZoneNo(String zoneNo) {
 		this.zoneNo = zoneNo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

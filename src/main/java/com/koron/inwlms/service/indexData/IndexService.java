@@ -31,4 +31,7 @@ public interface IndexService {
 	
 	//查询所有分区（树状）
 	List<TreeZoneVO> queryAllZone(SessionFactory factory,int type,String foreignKey);
+	
+	//查询子分区排名
+	List<IndicatorVO> queryChildAreaRankInfo(SessionFactory factory, IndicatorNewDTO indicatorDTO);
 }

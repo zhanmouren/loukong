@@ -5,16 +5,18 @@
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO"> 
 		select 
 		<if test="timeType != null and timeType == 1">
-			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo",d.name as name
 			from ana_base_month as a 
 			left join app_dim_month as b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator as c on a.code = c.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_base_year as a 
 			left join lc_app_dim_indicator as b on a.code = b.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
 		<if test="codes != null and codes.size > 0">
@@ -35,16 +37,18 @@
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
 		<if test="timeType != null and timeType == 1">
-			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo",d.name as name
 			from ana_zone_balance_month as a 
 			left join app_dim_month as b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator as c on a.code = c.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_zone_balance_year as a 
 			left join lc_app_dim_indicator as b on a.code = b.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
 		<if test="codes != null and codes.size > 0">
@@ -59,8 +63,7 @@
 				#{item}    
 			</foreach> 
 		</if>
-	
-	
+		order by round( a.value/c.precision :: NUMERIC, 2 ) desc
 		<!-- select 
 		<if test="timeType != null and timeType == 1">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
@@ -99,16 +102,18 @@
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
 		<if test="timeType != null and timeType == 1">
-			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo",d.name as name
 			from ana_zone_month as a 
 			left join app_dim_month as b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator as c on a.code = c.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_zone_year as a 
 			left join lc_app_dim_indicator as b on a.code = b.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
 		<if test="codes != null and codes.size > 0">
@@ -123,10 +128,7 @@
 				#{item}    
 			</foreach> 
 		</if>
-	
-	
-	
-	
+		 order by round( a.value/c.precision :: NUMERIC, 2 ) desc
 		<!-- select 
 		<if test="timeType != null and timeType == 1">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
@@ -165,16 +167,18 @@
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
 		<if test="timeType != null and timeType == 1">
-			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo",d.name as name
 			from ana_zone_moni_month as a 
 			left join app_dim_month as b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator as c on a.code = c.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_zone_moni_year as a 
 			left join lc_app_dim_indicator as b on a.code = b.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
 		<if test="codes != null and codes.size > 0">
@@ -236,16 +240,18 @@
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
 		<if test="timeType != null and timeType == 1">
-			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo",d.name as name
 			from ana_leak_month as a 
 			left join app_dim_month as b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator as c on a.code = c.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_leak_year as a 
 			left join lc_app_dim_indicator as b on a.code = b.code
+			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
 		<if test="codes != null and codes.size > 0">

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
+import com.koron.indicator.service.ZoneLossIndicatorService;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO;
@@ -742,7 +743,6 @@ public class IndexServiceImpl implements IndexService{
 				  }
 				  indicatorWNMNRR.setType("D5");
 				  indicatorWNMNRR.setValue(finalWNMNRR);
-				  indicatorWNMNRR.setZoneNo(indicatorDTO.getZoneCodes().get(0));
 				  indicatorWNMNRR.setTimeId(monthType);
 				  finalList.add(indicatorWNMNRR);
 				  
@@ -814,7 +814,6 @@ public class IndexServiceImpl implements IndexService{
 				  }
 				  indicatorYWNMNRR.setType("D6");
 				  indicatorYWNMNRR.setValue(finalYWNMNRR);
-				  indicatorYWNMNRR.setZoneNo(indicatorDTO.getZoneCodes().get(0));	
 				  indicatorYWNMNRR.setTimeId(yearType);
 				  finalList.add(indicatorYWNMNRR);
 				  
@@ -893,7 +892,6 @@ public class IndexServiceImpl implements IndexService{
 					  }
 					  indicatorWNMMNFTDF.setType("E5");
 					  indicatorWNMMNFTDF.setValue(finalWNMMNFTDF);
-					  indicatorWNMMNFTDF.setZoneNo(indicatorDTO.getZoneCodes().get(0));
 					  indicatorWNMMNFTDF.setTimeId(monthType);
 					  finalList.add(indicatorWNMMNFTDF);
 					  
@@ -967,7 +965,6 @@ public class IndexServiceImpl implements IndexService{
 					  }
 					  indicatorYWNMMNFTDF.setType("E6");
 					  indicatorYWNMMNFTDF.setValue(finalYWNMMNFTDF);
-					  indicatorYWNMMNFTDF.setZoneNo(indicatorDTO.getZoneCodes().get(0));
 					  indicatorYWNMMNFTDF.setTimeId(yearType);
 					  finalList.add(indicatorYWNMMNFTDF);
 				   
@@ -1007,19 +1004,11 @@ public class IndexServiceImpl implements IndexService{
 		单位户数MNF      --------分区漏损数据  
 		单位管长                         --------分区漏损数据  
 		*/
-		IndicatorNewDTO indicator=new IndicatorNewDTO();
 		MultParamterIndicatorVO multParamterIndicatorVO=new MultParamterIndicatorVO();
 		double avgCurrentValue=0;
 		double avgLastValue=0;
-		 try {
-			BeanUtils.copyProperties(indicator,indicatorDTO);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
 		 //设置查询方式月还是年指标
-		 indicator.setTimeType(timeTypeMonth);
+		indicatorDTO.setTimeType(timeTypeMonth);
 		 //当年的
 		 List<IndicatorVO> currentIndicatorList=new ArrayList<>();
 		 //上年的
@@ -1099,32 +1088,35 @@ public class IndexServiceImpl implements IndexService{
 			  codes.add(Constant.ZONE_LOSS_INDIC_DMMLPL);	
 		     }
 		}	
-		   indicator.setCodes(codes);	
+		 indicatorDTO.setCodes(codes);	
 			//当年的
-			indicator.setStartTime(midTime);
-			indicator.setEndTime(nowEndTime);
-//			if(areaType==0) {
-//				indZoneLossLYList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
-//			}
-//			else {
-//				indZoneLossLYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
-//			}
-//			
-//			
-			if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
-			 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicator);	
+		   indicatorDTO.setStartTime(midTime);
+			indicatorDTO.setEndTime(nowEndTime);
+			if(areaType==0) {
+				currentIndicatorList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+			}
+			else if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3){
+				currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 			}else{
-			  currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicator);		
+				  currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
 			}
 			
+			
+			
+			
 			//上年的
-			indicator.setStartTime(lastStartTime);
-			indicator.setEndTime(midTime);
-			if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
-			 lastIndicatorList=indicatorMapper.queryWBBaseIndicData(indicator);
-			}else {
-			 lastIndicatorList=indicatorMapper.queryWBBaseIndicData(indicator);
+			indicatorDTO.setStartTime(lastStartTime);
+			indicatorDTO.setEndTime(midTime);
+			if(areaType==0) {
+				lastIndicatorList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
 			}
+			else if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3){
+				lastIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);
+			}else{
+				lastIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
+			}
+			
+			
 			
 			double currentValue=0.0;
 			double lastValue=0.0;
@@ -1306,7 +1298,7 @@ public class IndexServiceImpl implements IndexService{
 		public List<IndicatorVO>  queryAreaRankInfo(SessionFactory factory, IndicatorNewDTO indicatorDTO) {
 			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
 			//判断是什么类型，一级分区还是二级分区	
-			int areaType = indicatorDTO.getAreaType();
+			int areaType = indicatorDTO.getAreaType()+1;
 			/**
 			管网长度  用户数              ------基础指标-水司用户 BASE_INDIC
 			供水量  月 年                    -------水平衡基础数据  BALANCE_INDIC
@@ -1318,15 +1310,6 @@ public class IndexServiceImpl implements IndexService{
 			单位户数MNF      --------分区漏损数据  
 			单位管长                         --------分区漏损数据  
 			*/
-			//TODO  查询某个分区或全网下所有下级分区			
-			IndicatorNewDTO indicator=new IndicatorNewDTO();
-			 try {
-				BeanUtils.copyProperties(indicator,indicatorDTO);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
 			
 					
 			 List<String> codes=new ArrayList<>();
@@ -1401,17 +1384,165 @@ public class IndexServiceImpl implements IndexService{
 				  codes.add(Constant.ZONE_LOSS_INDIC_DMMLPL);	
 			     }
 			}	
-			 indicator.setCodes(codes);
-			 indicator.setTimeType(timeTypeMonth);
-			 //查询数据
+			 indicatorDTO.setCodes(codes);
+			 indicatorDTO.setTimeType(timeTypeMonth);
+			//查询数据
 			 List<IndicatorVO> currentIndicatorList=new ArrayList<>();
-			 if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
-				 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicator);	
-			 }else{
-				 currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicator);		
-			}
+			 if(areaType == 1) {
+				 if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
+					 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+				 }else{
+					 currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
+				}
+			 }else {
+				 int type = 2;
+				 String foreignKey = indicatorDTO.getZoneCodes().get(0);
+				 TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+				 LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+				 if(node == null) {
+					 currentIndicatorList = null;
+				 }
+				 else{
+					List<TreeZoneVO> zoneList=indicatorMapper.queryAllZone(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+					List<String> zoneNo=new ArrayList<>();
+					for(int i = 0;i < zoneList.size(); i++) {
+						zoneNo.add(zoneList.get(i).getCode());
+					}
+					indicatorDTO.setZoneCodes(zoneNo);
+					currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+				 }
+				 
+			 }
+			 
 			return currentIndicatorList;
 		}
+		
+		//查询子分区排名  2020-06-11
+		@TaskAnnotation("queryChildAreaRankInfo")
+		@Override
+		public List<IndicatorVO>  queryChildAreaRankInfo(SessionFactory factory, IndicatorNewDTO indicatorDTO) {
+			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
+			//判断是什么类型，一级分区还是二级分区	
+			int areaType = indicatorDTO.getAreaType()+2;
+			/**
+			管网长度  用户数              ------基础指标-水司用户 BASE_INDIC
+			供水量  月 年                    -------水平衡基础数据  BALANCE_INDIC
+			抄表量  月 年                    -------水平衡基础数据  BALANCE_INDIC
+			产销差  月 年                    -------水平衡基础数据  BALANCE_INDIC
+			产销差率  月 年                 -------分区漏损数据   ZONE_LOSS_INDIC
+			漏损量  年月                       -------表观漏损数据  APPARENT_INDIC
+			漏损率  （年月）             -------分区漏损数据  ZONE_LOSS_INDIC
+			单位户数MNF      --------分区漏损数据  
+			单位管长                         --------分区漏损数据  
+			*/
+			
+					
+			 List<String> codes=new ArrayList<>();
+			 if(areaType==0) { //全网	
+				if(indicatorDTO.getType()==1) {
+				  //供水量(月)
+				  codes.add(Constant.BALANCE_INDIC_WNMFWSSITDF);		    
+				}else if(indicatorDTO.getType()==2) {
+				  //抄表量
+				  codes.add(Constant.BALANCE_INDIC_WNMBMC);		
+				}else if(indicatorDTO.getType()==3) {
+				  //产销量	
+				  codes.add(Constant.BALANCE_INDIC_WNMNRW);
+				}else if(indicatorDTO.getType()==4) {
+				  //单位户数mnf	
+				  codes.add(Constant.ZONE_LOSS_INDIC_WNMLCA);
+				}else {
+				  //单位管长漏损量
+				  codes.add(Constant.ZONE_LOSS_INDIC_WNMLPL);	
+				}			
+			 }else if(areaType==1) { //一级分区
+			   if(indicatorDTO.getType()==1) {	 
+			     //供水量(月)	 
+			     codes.add(Constant.BALANCE_INDIC_FLMFWSSITDF);
+			   }else if(indicatorDTO.getType()==2) {
+				 //抄表量(月)
+				 codes.add(Constant.BALANCE_INDIC_FLMBMC);	
+			   }else if(indicatorDTO.getType()==3) {
+				 //产销量	
+				 codes.add(Constant.BALANCE_INDIC_FLMNRW); 
+			   }else if(indicatorDTO.getType()==4) {
+				 //单位户数mnf	
+				 codes.add(Constant.ZONE_LOSS_INDIC_FLMLCA);
+		    	}else {
+		         //单位管长漏损量
+				 codes.add(Constant.ZONE_LOSS_INDIC_FLMLPL);	
+		    	}	
+					
+			 }else if(areaType==2) { //二级分区	
+				if(indicatorDTO.getType()==1) {
+			    //供水量(月)
+				codes.add(Constant.BALANCE_INDIC_SLMFWSSITDF);
+				}else if(indicatorDTO.getType()==2) {
+				 //抄表量(月)
+				 codes.add(Constant.BALANCE_INDIC_SLMBMC);	
+				}else if(indicatorDTO.getType()==3) {
+				  //产销量	
+				  codes.add(Constant.BALANCE_INDIC_SLMNRW); 
+				 }else if(indicatorDTO.getType()==4) {
+				  //单位户数mnf	
+				  codes.add(Constant.ZONE_LOSS_INDIC_SLMLCA); 
+				 }else {
+			        //单位管长漏损量
+					codes.add(Constant.ZONE_LOSS_INDIC_SLMLPL);	
+			     }
+				  
+			 }else { //DMA	
+				 if(indicatorDTO.getType()==1) {
+			      //供水量(月)
+				  codes.add(Constant.BALANCE_INDIC_DMMFWSSITDF);
+				 }else if(indicatorDTO.getType()==2) {
+				  //抄表量(月)
+				  codes.add(Constant.BALANCE_INDIC_DMMBMC);	
+				 } else if(indicatorDTO.getType()==3) {
+				  //产销量	
+				  codes.add(Constant.BALANCE_INDIC_DMMNRW); 
+			     }else if(indicatorDTO.getType()==4) {
+				   //单位户数mnf	
+				  codes.add(Constant.ZONE_LOSS_INDIC_DMMLCA); 
+				 }else {
+			       //单位管长漏损量
+				  codes.add(Constant.ZONE_LOSS_INDIC_DMMLPL);	
+			     }
+			}	
+			 indicatorDTO.setCodes(codes);
+			 indicatorDTO.setTimeType(timeTypeMonth);
+			//查询数据
+			 List<IndicatorVO> currentIndicatorList=new ArrayList<>();
+			 if(areaType == 2) {
+				 if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
+					 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+				 }else{
+					 currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
+				}
+			 }else {
+				 int type = 2;
+				 String foreignKey = indicatorDTO.getZoneCodes().get(0);
+				 TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+				 LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+				 if(node == null) {
+					 currentIndicatorList = null;
+				 }
+				 else{
+					List<TreeZoneVO> zoneList=indicatorMapper.queryAllZone(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+					List<String> zoneNo=new ArrayList<>();
+					for(int i = 0;i < zoneList.size(); i++) {
+						zoneNo.add(zoneList.get(i).getCode());
+					}
+					indicatorDTO.setZoneCodes(zoneNo);
+					currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+				 }
+				 
+			 }
+			 
+			return currentIndicatorList;
+		}
+		
+		
 		
 		/**
 		 * 获取节点下所有子节点(菜单)

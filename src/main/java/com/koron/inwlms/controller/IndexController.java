@@ -64,13 +64,11 @@ public class IndexController {
 		if(indicatorDTO.getEndTime()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间为空", Integer.class).toJson();
 		}
-		if(indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码为空", Integer.class).toJson();
-		}
 		if(indicatorDTO.getAreaType() == null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+		}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
 		}
-		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
 			  List<IndicatorVO> indicatorVOList=ADOConnection.runTask(indexService, "queryCompreInfo", List.class,indicatorDTO);
@@ -206,14 +204,13 @@ public class IndexController {
 		 if(indicatorDTO.getEndTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
 		 }
-		 if(indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
-		 }
 		 if(indicatorDTO.getType()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
 		 }
 		 if(indicatorDTO.getAreaType() == null) {
-				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+		}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
 		}
 		 
 		 MessageBean<MultParamterIndicatorVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MultParamterIndicatorVO.class);	       
@@ -505,15 +502,15 @@ public class IndexController {
 		 if(indicatorDTO.getEndTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
 		 }
-		 if(indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
-		 }
+		 if(indicatorDTO.getAreaType() == null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+			}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
+			}
 		 if(indicatorDTO.getType()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
 		 }
-		 if(indicatorDTO.getAreaType() == null) {
-				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
-		 }
+		 
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
 			  List<IndicatorVO>  infoPageListList=ADOConnection.runTask(indexService, "queryAreaRankInfo", List.class,indicatorDTO);		 
@@ -535,10 +532,57 @@ public class IndexController {
 	     return msg.toJson();
 	}
 	 
+	
+	/*
+     * date:2020-04-29
+     * function:查询子分区排名
+     * author:lzy
+     */
+	@RequestMapping(value = "/queryChildAreaRankInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区下各个子分区排名接口", notes = "查询分区下各个子分区排名接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryChildAreaRankInfo(@RequestBody IndicatorNewDTO indicatorDTO) {
+		 if(indicatorDTO.getStartTime()==null) {
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
+		 }
+		 if(indicatorDTO.getEndTime()==null) {
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
+		 }
+		 if(indicatorDTO.getAreaType() == null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+			}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
+			}
+		 if(indicatorDTO.getType()==null) {
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
+		 }
+		 
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{
+			  List<IndicatorVO>  infoPageListList=ADOConnection.runTask(indexService, "queryChildAreaRankInfo", List.class,indicatorDTO);		 
+				  if(infoPageListList!=null && infoPageListList.size()>0) {
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				    msg.setDescription("查询分区下各个子分区排名接口成功");
+				    msg.setData(infoPageListList);
+				  }
+				  else {
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没查询到分区下各个子分区排名接口信息");
+				  }
+			  
+	        }catch(Exception e){
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	
 	/*
      * date:2020-06-10
      * funtion:查看分区树结构(展开所有)
-     * author:xiaozhan
+     * author:lzy
      */
 	@RequestMapping(value = "/queryTreeZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看分区树结构接口", notes = "查看分区树结构接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
