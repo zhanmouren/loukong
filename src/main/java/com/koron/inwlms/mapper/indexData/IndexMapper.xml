@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.indexData.IndexMapper">
-   <select id="queryBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+   <select id="queryBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO" 
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO"> 
 		select 
 		<if test="timeType != null and timeType == 1">
@@ -9,12 +9,14 @@
 			from ana_base_month as a 
 			left join app_dim_month as b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator as c on a.code = c.code
+			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
-			from ana_base_year a left join lc_app_dim_indicator b on a.code = b.code
+			from ana_base_year as a 
+			left join lc_app_dim_indicator as b on a.code = b.code
+			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
-		where 1 = 1 
 		<if test="codes != null and codes.size > 0">
 			and a.code in 
 			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
@@ -27,22 +29,42 @@
 				#{item}    
 			</foreach> 
 		</if>
-		<if test="startTime != null and endTime !=null and timeType != null and timeType == 2">
-			and a.year &gt;= #{startTime} 
-			and a.year &lt;= #{endTime}
-		</if>
-		<if test="timeType != null and timeType == 1">
-			and b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
-		    order by round( a.value/c.precision :: NUMERIC, 2 ) desc
-		</if>
 	</select>
 	
-	<select id="queryWBBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	<select id="queryWBBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO" 
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
 		<if test="timeType != null and timeType == 1">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
-			from ana_base_month as a 
+			from ana_zone_balance_month as a 
+			left join app_dim_month as b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator as c on a.code = c.code
+			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 2">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from ana_zone_balance_year as a 
+			left join lc_app_dim_indicator as b on a.code = b.code
+			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
+		</if>
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+	
+	
+		<!-- select 
+		<if test="timeType != null and timeType == 1">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			from ana_zone_balance_month as a 
 			left join app_dim_month as b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator as c on a.code = c.code
 		</if>
@@ -70,12 +92,42 @@
 		<if test="timeType != null and timeType == 1">
 			and b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		    order by round( a.value/c.precision :: NUMERIC, 2 ) desc
-		</if>
+		</if> -->
 	</select>
 	
-	<select id="queryZoneLossIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	<select id="queryZoneLossIndicData" parameterType="com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO" 
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
+		<if test="timeType != null and timeType == 1">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			from ana_zone_month as a 
+			left join app_dim_month as b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator as c on a.code = c.code
+			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 2">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from ana_zone_year as a 
+			left join lc_app_dim_indicator as b on a.code = b.code
+			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
+		</if>
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+	
+	
+	
+	
+		<!-- select 
 		<if test="timeType != null and timeType == 1">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
 			from ana_base_month as a 
@@ -106,12 +158,44 @@
 		<if test="timeType != null and timeType == 1">
 			and b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		    order by round( a.value/c.precision :: NUMERIC, 2 ) desc
-		</if>
+		</if> -->
 	</select>
 	
-	<select id="queryZoneMoniIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	<select id="queryZoneMoniIndicData" parameterType="com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO" 
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
+		<if test="timeType != null and timeType == 1">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			from ana_zone_moni_month as a 
+			left join app_dim_month as b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator as c on a.code = c.code
+			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 2">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from ana_zone_moni_year as a 
+			left join lc_app_dim_indicator as b on a.code = b.code
+			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
+		</if>
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+	
+	
+	
+	
+	
+	
+		<!-- select 
 		<if test="timeType != null and timeType == 1">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
 			b."yearMonth" as "timeId",a."zoneNo"
@@ -145,12 +229,43 @@
 		</if>
 		<if test="timeType != null and timeType == 1">
 		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
-		</if>
+		</if> -->
 	</select>
 	
-	<select id="queryLeakIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	<select id="queryLeakIndicData" parameterType="com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO" 
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
+		<if test="timeType != null and timeType == 1">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
+			from ana_leak_month as a 
+			left join app_dim_month as b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator as c on a.code = c.code
+			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
+		</if>
+		<if test="timeType != null and timeType == 2">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from ana_leak_year as a 
+			left join lc_app_dim_indicator as b on a.code = b.code
+			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
+		</if>
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+	
+	
+	
+	
+	
+		<!-- select 
 		<if test="timeType != null and timeType == 1">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
 			b."yearMonth" as "timeId",a."zoneNo"
@@ -184,10 +299,10 @@
 		</if>
 		<if test="timeType != null and timeType == 1">
 		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
-		</if>
+		</if> -->
 	</select>
 	
-	<select id="queryCompanyIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	<select id="queryCompanyIndicData" parameterType="com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO" 
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 
 		<if test="timeType != null and timeType == 1">
@@ -195,10 +310,6 @@
 			from ana_company_month as a 
 			left join app_dim_month as b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator as c on a.code = c.code
-		
-		
-		
-			
 		</if>
 		<if test="timeType != null and timeType == 2">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId"

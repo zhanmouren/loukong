@@ -1103,6 +1103,14 @@ public class IndexServiceImpl implements IndexService{
 			//当年的
 			indicator.setStartTime(midTime);
 			indicator.setEndTime(nowEndTime);
+//			if(areaType==0) {
+//				indZoneLossLYList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+//			}
+//			else {
+//				indZoneLossLYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
+//			}
+//			
+//			
 			if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
 			 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicator);	
 			}else{
