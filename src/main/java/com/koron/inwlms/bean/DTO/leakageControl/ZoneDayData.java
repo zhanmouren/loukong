@@ -12,6 +12,17 @@ public class ZoneDayData {
 	private Double minNigFlow;
 	
 	private String zoneCode;
+	
+	private String zoneIndex;
+	
+
+	public String getZoneIndex() {
+		return zoneIndex;
+	}
+
+	public void setZoneIndex(String zoneIndex) {
+		this.zoneIndex = zoneIndex;
+	}
 
 	public Double getAllFlow() {
 		return allFlow;

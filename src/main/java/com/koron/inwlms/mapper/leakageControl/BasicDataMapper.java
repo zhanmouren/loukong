@@ -17,5 +17,7 @@ public interface BasicDataMapper {
 	
 	@Select("select * from gis_zone_point where \"zoneNo\" = #{zoneNo}")
 	List<GisZonePointVO> queryZonePoint(@Param("zoneNo") String zoneNo);
+	
+	List<PointHourData> queryPointHourDataByTime(BasicDataParam basicDataParam);
 
 }

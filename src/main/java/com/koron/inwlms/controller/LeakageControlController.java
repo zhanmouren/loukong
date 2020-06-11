@@ -30,6 +30,7 @@ import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
+import com.koron.inwlms.bean.DTO.common.FilerelationDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
@@ -422,7 +423,9 @@ public class LeakageControlController {
 	 */
 	@RequestMapping(value = "/uploadAlarmProcessFile.htm", method = RequestMethod.POST, produces = { "text/html;charset=UTF-8" })
     @ResponseBody
-    public String uploadAlarmProcessFile(@RequestParam("file") MultipartFile file, @RequestParam("tId") Integer tId,@RequestParam("fileModule") String fileModule, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String uploadAlarmProcessFile(@RequestParam("file") MultipartFile file, @RequestParam("code") String code, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		String fileModule = "act";
+		Integer tId = 123;
 		MessageBean<UploadFileVO> msg = new MessageBean<>();
 		// 获取上传文件名,包含后缀
    		String originalFilename = file.getOriginalFilename();
@@ -463,8 +466,14 @@ public class LeakageControlController {
    		uploadFileDTO.setCreateBy(createAccount);
    		uploadFileDTO.setFileType(fileType);
    		// 上传文件记录入库
-   		int result = ADOConnection.runTask(new FileServiceImpl(), "insertFileData", Integer.class, uploadFileDTO);
-   		if (result == 1) {
+   		Integer fileId = ADOConnection.runTask(new FileServiceImpl(), "insertFileDataReturnId", Integer.class, uploadFileDTO);
+   		//插入关联表数据
+   		FilerelationDTO filerelationDTO = new FilerelationDTO();
+   		filerelationDTO.setFileId(fileId);
+   		filerelationDTO.setCode("");
+   		Integer num = ADOConnection.runTask(new FileServiceImpl(), "insertFilerelationData", Integer.class, filerelationDTO);
+   		
+   		if (fileId != null) {
    			UploadFileVO uploadFileVO = new UploadFileVO();
    			uploadFileVO.setFileId(uploadFileDTO.getId());
    			uploadFileVO.setFileName(originalFilename);
@@ -1652,7 +1661,7 @@ public class LeakageControlController {
 		if(eventWarnRelation.getProcessCode() == null || eventWarnRelation.getProcessCode().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("预警处理任务编码为空");
-	        return msg.toJson();
+	        return msg.toJson(); 
 		}
 		
 		try {

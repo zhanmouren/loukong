@@ -16,6 +16,7 @@ import com.koron.inwlms.bean.DTO.common.Indicator;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.RecommendStrategy;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
@@ -25,6 +26,7 @@ import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.PointHourData;
 import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
@@ -33,6 +35,7 @@ import com.koron.inwlms.mapper.common.CommonMapper;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
+import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
 import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
 import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
@@ -70,7 +73,6 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		WarningSchemeDTO warningSchemeDTO = new WarningSchemeDTO();
 		warningSchemeDTO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
 		List<WarningSchemeVO> warningSchemeList = mapper.queryWarningScheme(warningSchemeDTO);
-		Boolean warningFlag = true;
 		String dataCode = "";
 		for(WarningSchemeVO warningScheme : warningSchemeList) {
 			
@@ -96,6 +98,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			double max = 0.0;
 			double min = 0.0;	
 			List<AlarmRuleDTO> alarmRuleList = mapper.queryAlarmRuleByAlarmCode(warningScheme.getCode());
+			List<AlertNoticeSchemeVO> alertNoticeSchemeList = mapper.queryNoticeSchemeByWarningCode(warningScheme.getCode());
 			//超限报警
 			if(warningScheme.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN)) {
 				//固定限值
@@ -117,39 +120,25 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 							if(monitorPointData < min || monitorPointData > max) {
 								//产生预警信息
 								String warningCode = "PCX" + new Date().getTime();
-								AlarmMessageVO alarmMessageVO = new AlarmMessageVO();
-								alarmMessageVO.setSchemeCode(warningScheme.getCode());
-								alarmMessageVO.setAlarmSchemeName(warningScheme.getName());
-								alarmMessageVO.setAlarmType(warningScheme.getAlarmType());
-								alarmMessageVO.setObjectType(warningScheme.getObjectType());
-								alarmMessageVO.setAlarmTime(new Date());
-								alarmMessageVO.setCode(warningCode);
-								//产生主报警编码
-								String pointCode = warningScheme.getCode() + minMonitorPoint.getCode(); 
-								alarmMessageVO.setPointCode(pointCode);
-								//TODO 填入监测点信息(缺失分区编码)
-								alarmMessageVO.setObjectCode(minMonitorPoint.getStationCode());
-								//TODO 查询监测点的检测用途（若是表不加这个字段则无需该步骤）
-								
-								//预警信息入库
-								AlarmMessageMapper alarmMessageMapper = factory.getMapper(AlarmMessageMapper.class);
-								alarmMessageMapper.addWarningInf(alarmMessageVO);
+								addwarningMessage(factory,warningScheme,minMonitorPoint,warningCode);
 								
 								//TODO 判断是否需要产生预警信息处理任务
-								List<AlertNoticeSchemeVO> alertNoticeSchemeList = mapper.queryNoticeSchemeByWarningCode(warningScheme.getCode());
+								
 								if(alertNoticeSchemeList != null || alertNoticeSchemeList.size() != 0) {
-									//TODO 产生预警信息处理任务编码
-									
+									//产生预警信息处理任务编码
 									AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
 									alarmProcessVO.setWarningCode(warningCode);
 									alarmProcessVO.setAlarmType(warningScheme.getAlarmType());
 									alarmProcessVO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
 									alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
 									alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
-									
+								    //计算预计完成时间
+									Date expectFinishTime = TimeUtil.addDay(new Date(), Constant.POINTWARNINGPROCESS_FINSHTIME);
+									alarmProcessVO.setExpectFinishTime(expectFinishTime);
+									alarmProcessVO.setType(1);
+									alarmProcessVO.setExecutorCode(alertNoticeSchemeList.get(0).getUserName());
 									AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
-									alarmProcessMapper.addAlarmProcess(alarmProcessVO);
-									
+									alarmProcessMapper.addAlarmProcessOfPCX(alarmProcessVO);
 								}
 								
 							}
@@ -166,12 +155,80 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			//离线报警
 			if(warningScheme.getAlarmType().equals(Constant.DATADICTIONARY_OFFLINE)) {
 				//数据连续缺失时间
-				//TODO 判断数据连续缺失时间过大
-				warningFlag = false;
+				for(AlarmRuleDTO alarmRule : alarmRuleList) {
+					max = alarmRule.getConstant();
+				}
+				int time = (int) max;
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
+				Date nowDate = new Date();
+				String nowDateStr = format.format(nowDate);
+				try {
+					nowDate = format.parse(nowDateStr);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				//产生报警的范围
+				Date startDate = TimeUtil.addHour(nowDate, -time);
+				// 判断数据连续缺失时间过大
+				//查询报警范围内监测点数据
+				BasicDataMapper basicDataMapper = factory.getMapper(BasicDataMapper.class);
+				for(MinMonitorPoint minMonitorPoint : minMonitorPointList) {
+					String stationCode = minMonitorPoint.getStationCode();
+					BasicDataParam basicDataParam = new BasicDataParam();
+					basicDataParam.setStationCode(stationCode);
+					basicDataParam.setStartTime(startDate);
+					basicDataParam.setEndTime(nowDate);
+					List<PointHourData> pointHourDataList = basicDataMapper.queryPointHourDataByTime(basicDataParam);
+					if(pointHourDataList != null && pointHourDataList.size() != 0) {
+						continue;
+					}else {
+						//报警
+						//产生预警信息
+						String warningCode = "PLX" + new Date().getTime();
+						addwarningMessage(factory,warningScheme,minMonitorPoint,warningCode);
+						
+						if(alertNoticeSchemeList != null || alertNoticeSchemeList.size() != 0) {
+							//产生预警信息处理任务编码
+							AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
+							alarmProcessVO.setWarningCode(warningCode);
+							alarmProcessVO.setAlarmType(warningScheme.getAlarmType());
+							alarmProcessVO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
+							alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
+							alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
+						    //计算预计完成时间
+							Date expectFinishTime = TimeUtil.addDay(new Date(), Constant.POINTWARNINGPROCESS_FINSHTIME);
+							alarmProcessVO.setExpectFinishTime(expectFinishTime);
+							alarmProcessVO.setType(1);
+							alarmProcessVO.setExecutorCode(alertNoticeSchemeList.get(0).getUserName());
+							AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
+							alarmProcessMapper.addAlarmProcessOfPLX(alarmProcessVO);
+						}
+					}
+				}
 			}
 		}
 		
 		return null;
+	}
+	
+	public void addwarningMessage(SessionFactory factory,WarningSchemeVO warningScheme,MinMonitorPoint minMonitorPoint,String warningCode) {
+		AlarmMessageVO alarmMessageVO = new AlarmMessageVO();
+		alarmMessageVO.setSchemeCode(warningScheme.getCode());
+		alarmMessageVO.setAlarmSchemeName(warningScheme.getName());
+		alarmMessageVO.setAlarmType(warningScheme.getAlarmType());
+		alarmMessageVO.setObjectType(warningScheme.getObjectType());
+		alarmMessageVO.setAlarmTime(new Date());
+		alarmMessageVO.setCode(warningCode);
+		//产生主报警编码
+		String pointCode = warningScheme.getCode() + minMonitorPoint.getCode(); 
+		alarmMessageVO.setPointCode(pointCode);
+		//填入监测点信息(缺失分区编码)
+		alarmMessageVO.setObjectCode(minMonitorPoint.getStationCode());
+		//TODO 查询监测点的检测用途（若是表不加这个字段则无需该步骤）
+		
+		//预警信息入库
+		AlarmMessageMapper alarmMessageMapper = factory.getMapper(AlarmMessageMapper.class);
+		alarmMessageMapper.addWarningInf(alarmMessageVO);
 	}
 	
 	/**
@@ -192,11 +249,24 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			//通过报警指标获取数据源数据
 			if(warningScheme.getAlarmIndex().equals(Constant.DATADICTIONARY_DAYFLOW)) {
 				zoneFlow = zoneDayData.getAllFlow();
-				dataCode = "";
+				if(zoneDayData.getZoneIndex().equals("1")) {
+					dataCode = "FLDFLOW";
+				}else if(zoneDayData.getZoneIndex().equals("2")) {
+					dataCode = "SLDFLOW";
+				}else {
+					dataCode = "DMDFLOW";
+				}
 				alarmIndexFlag = 1;
 			}else if(warningScheme.getAlarmIndex().equals(Constant.DATADICTIONARY_MINNIGFLOW)) {
 				zoneFlow = zoneDayData.getMinNigFlow();
-				dataCode = "";
+				if(zoneDayData.getZoneIndex().equals("1")) {
+					dataCode = "FLDMNF";
+				}else if(zoneDayData.getZoneIndex().equals("2")) {
+					dataCode = "SLDMNF";
+				}else {
+					dataCode = "DMDMNF";
+				}
+				
 				alarmIndexFlag = 2;
 			}
 			Boolean warningFlag = true;
@@ -252,6 +322,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 						alarmProcessVO.setAlarmContent(alarmMessageVO.getContent());
 						alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
 						alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
+						//获取推荐策略
 						
 						AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
 						alarmProcessMapper.addAlarmProcess(alarmProcessVO);
@@ -642,7 +713,6 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		Date start = new Date();
 		Date end = TimeUtil.addDay(start, -day);
 		
-		
 		List<String> codes = new ArrayList<>();
 		codes.add(code);
 		IndicatorDTO indicatorDTO = new IndicatorDTO();
@@ -651,6 +721,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		
 		if(flag == 1) {
 			List<IndicatorVO> dataList = indicMapper.queryWBBaseIndicData(indicatorDTO);
+			
 		}
 		
 		

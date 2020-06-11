@@ -23,6 +23,31 @@
 		 #{updateBy,jdbcType=VARCHAR},
 		 #{updateTime,jdbcType=TIMESTAMP})
 	</insert>
+	
+	<select id="insertFileDataReturnId" parameterType="com.koron.inwlms.bean.DTO.common.UploadFileDTO" resultType="java.lang.Integer">
+		INSERT INTO
+		app_file
+		("fileName","filePath","fileType","fileSize","storageTime",
+		"tId","moduleType","storeName","createBy","createTime","updateBy","updateTime")
+		VALUES
+		(#{fileName,jdbcType=VARCHAR},
+		 #{filePath,jdbcType=VARCHAR},
+		 #{fileType,jdbcType=INTEGER},
+		 #{fileSize,jdbcType=DOUBLE},
+		 #{storageTime,jdbcType=TIMESTAMP},
+		 #{tId,jdbcType=INTEGER},
+		 #{moduleType,jdbcType=VARCHAR},
+		 #{storeName,jdbcType=VARCHAR},
+		 #{createBy,jdbcType=VARCHAR},
+		 #{createTime,jdbcType=TIMESTAMP},
+		 #{updateBy,jdbcType=VARCHAR},
+		 #{updateTime,jdbcType=TIMESTAMP}) returning id
+	</select>
+	
+	<insert id="insertFilerelationData" parameterType="com.koron.inwlms.bean.DTO.common.FilerelationDTO">
+	insert into app_filerelation("fileId", code)
+	values(#{fileId}, #{code})
+	</insert>
 
 	<select id="queryFilePath"
 		resultType="java.lang.String">

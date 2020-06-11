@@ -441,6 +441,10 @@ public class Constant {
 	 */
 	public final static String DATADICTIONARY_TASKSTATUSON = "2";
 	/**
+	 * 监测预警工单预计完成时间
+	 */
+	public final static Integer POINTWARNINGPROCESS_FINSHTIME = 7;
+	/**
 	 * 任务状态处理结束-数据字典
 	 */
 	public final static String DATADICTIONARY_TASKSTATUSOVER = "3";

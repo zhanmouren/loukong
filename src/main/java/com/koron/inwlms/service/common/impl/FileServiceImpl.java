@@ -4,6 +4,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.common.FilerelationDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.mapper.common.FileMapper;
 import com.koron.inwlms.service.common.FileService;
@@ -17,6 +18,20 @@ public class FileServiceImpl implements FileService {
 		FileMapper mapper = factory.getMapper(FileMapper.class);
 		int result = mapper.insertFileData(uploadFileDTO);
 		return result;
+	}
+	
+	@TaskAnnotation("insertFileDataReturnId")
+	public Integer insertFileDataReturnId(SessionFactory factory,UploadFileDTO uploadFileDTO) {
+		FileMapper mapper = factory.getMapper(FileMapper.class);
+		Integer id = mapper.insertFileDataReturnId(uploadFileDTO);
+		return id;
+	}
+	
+	@TaskAnnotation("insertFilerelationData")
+	public Integer insertFilerelationData(SessionFactory factory,FilerelationDTO filerelationDTO) {
+		FileMapper mapper = factory.getMapper(FileMapper.class);
+		Integer num = mapper.insertFilerelationData(filerelationDTO);
+		return num;
 	}
 
 	@TaskAnnotation("queryFilePath")
