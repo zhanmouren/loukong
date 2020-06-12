@@ -2,7 +2,9 @@ package com.koron.inwlms.service.indexData.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -1159,14 +1161,41 @@ public class IndexServiceImpl implements IndexService{
 	@TaskAnnotation("queryWarningInfo")
 	@Override
 	public InfoPageListVO<List<TaskMsgVO>> queryWarningInfo(SessionFactory factory, WarningInfoDTO warningInfoDTO) {
-		// TODO Auto-generated method stub
 		IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
+		warningInfoDTO.getTaskCreateTime();
 		//TODO查出所有分区的下级单位
+		String searchEndTime = null;
+		try {   
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");   
+            Calendar cd = Calendar.getInstance();   
+            cd.setTime(sdf.parse(warningInfoDTO.getTaskCreateTime()));   
+            cd.add(Calendar.MONTH, 1);//增加一个月   
+            searchEndTime = sdf.format(cd.getTime());
+        } catch (Exception e) {   
+           
+        }   
+		warningInfoDTO.setSearchTaskEndTime(searchEndTime);
+		if(warningInfoDTO.getAreaType() != 0){
+			String foreignKey = warningInfoDTO.getAreaZoneList().get(0);
+			int type = 2;
+			 TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+			 LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+			 if(node == null) {
+				 
+			 }
+			 else{
+				List<TreeZoneVO> zoneList=indicatorMapper.queryAllZone(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+				List<String> zoneNo=new ArrayList<>();
+				for(int i = 0;i < zoneList.size(); i++) {
+					zoneNo.add(zoneList.get(i).getCode());
+				}
+				warningInfoDTO.setAreaZoneList(zoneNo);
+			 }
+		}
 		//查询任务列表
 		List<TaskMsgVO> taskMsgList=indicatorMapper.queryTaskList(warningInfoDTO);
 		//查询列表数量
 		Integer rowNumber = indicatorMapper.queryTaskListNum(warningInfoDTO);
-		//TODO  状态从数据字典查出
 		
 		double completeRate=0.0;
 		double unCompleteRate=0.0;
@@ -1210,28 +1239,52 @@ public class IndexServiceImpl implements IndexService{
           
 		InfoPageListVO<List<TaskMsgVO>> result = new InfoPageListVO<>();
 		result.setDataList(taskMsgList);
-		// 插入分页信息
-		PageVO pageVO = PageUtil.getPageBean(warningInfoDTO.getPage(), warningInfoDTO.getPageCount(), rowNumber.intValue());
-		result.setTotalPage(pageVO.getTotalPage());
-		result.setRowNumber(pageVO.getRowNumber());
-		result.setPageCount(pageVO.getPageCount());
-		result.setPage(pageVO.getPage());
 		result.setCompleteRate(completeRateStr);
 		result.setUnCompleteRate(unCompleteRateStr);
 		result.setCompleteingRate(compleingRateStr);
 		result.setInTimeRate(inTimeRateStr);
+		result.setTaskNum(rowNumber);
 		return result;
 	}
 	
-	    //查询漏损任务相关信息接口 2020/04/28
+	    //查询检测点报警接口 2020/04/28
 		@TaskAnnotation("queryCheckWarningInfo")
 		@Override
 		public InfoPageListVO<List<TaskMsgVO>> queryCheckWarningInfo(SessionFactory factory, WarningInfoDTO warningInfoDTO) {
 			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
-			//TODO查出所有分区的下级单位
+			warningInfoDTO.getTaskCreateTime();
+
+			String searchEndTime = null;
+			try {   
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");   
+                Calendar cd = Calendar.getInstance();   
+                cd.setTime(sdf.parse(warningInfoDTO.getTaskCreateTime()));   
+                cd.add(Calendar.MONTH, 1);//增加一个月   
+                searchEndTime = sdf.format(cd.getTime());
+            } catch (Exception e) {   
+               
+            }
 			
-			//TODO 查询离线报警类别(数据字典)
+			//查出所有分区的下级单位
+			if(warningInfoDTO.getAreaType() != 0){
+    			String foreignKey = warningInfoDTO.getAreaZoneList().get(0);
+    			int type = 2;
+    			 TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+    			 LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+    			 if(node == null) {
+    				 
+    			 }
+    			 else{
+    				List<TreeZoneVO> zoneList=indicatorMapper.queryAllZone(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+    				List<String> zoneNo=new ArrayList<>();
+    				for(int i = 0;i < zoneList.size(); i++) {
+    					zoneNo.add(zoneList.get(i).getCode());
+    				}
+    				warningInfoDTO.setAreaZoneList(zoneNo);
+    			 }
+    		}   
 			
+			warningInfoDTO.setSearchTaskEndTime(searchEndTime);
 			//查询报警类型详细信息
 			List<TaskMsgVO>  taskMsgList=indicatorMapper.queryCheckWarningMsg(warningInfoDTO);
 			
@@ -1245,7 +1298,7 @@ public class IndexServiceImpl implements IndexService{
 			String overWaningRateStr="0.000%";
 			String offlineWarningRateStr="0.000%";
 			String actualNumRateStr="0.00%";
-			//根据分区日期查询有多少个监测点报警的信息(离线总数)
+			//根据分区日期查询有多少个监测点报警的信息
 			Integer checkWarningNum=indicatorMapper.queryCheckWarningNum(warningInfoDTO);
 			//查询噪声报警的个数
 			warningInfoDTO.setAlarmType("L102010005");
@@ -1279,12 +1332,7 @@ public class IndexServiceImpl implements IndexService{
 			
 			InfoPageListVO<List<TaskMsgVO>> result = new InfoPageListVO<>();
 			result.setDataList(taskMsgList);
-			// 插入分页信息
-			PageVO pageVO = PageUtil.getPageBean(warningInfoDTO.getPage(), warningInfoDTO.getPageCount(), checkWarningNum.intValue());
-			result.setTotalPage(pageVO.getTotalPage());
-			result.setRowNumber(pageVO.getRowNumber());
-			result.setPageCount(pageVO.getPageCount());
-			result.setPage(pageVO.getPage());
+			result.setOfflineWarningNum(offlineWarningNum);
 			result.setVoiceWarningRateStr(voiceWarningRateStr);
 			result.setOfflineWarningRateStr(offlineWarningRateStr);
 			result.setOverWaningRateStr(overWaningRateStr);

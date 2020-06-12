@@ -431,7 +431,7 @@ public class LeakageControlController {
    		String originalFilename = file.getOriginalFilename();
    		// 获取后缀
    		String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
-   	// 获取当前月份，时间格式:201910
+   	    // 获取当前月份，时间格式:201910
    		SimpleDateFormat dataFormate = new SimpleDateFormat("yyyyMM");
    		String time = dataFormate.format(new Date());
    		// 保存目录

@@ -6,6 +6,7 @@ import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
+import com.koron.inwlms.bean.VO.common.MapServiceData;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicNewVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
@@ -13,6 +14,7 @@ import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.common.impl.CommonServiceImpl;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
+import com.koron.inwlms.service.common.impl.MapServiceConfigServiceImpl;
 import com.koron.inwlms.util.FileUtil;
 import com.koron.util.Constant;
 import io.swagger.annotations.Api;
@@ -305,6 +307,24 @@ public class CommonController {
 	     }
 		 return msg.toJson();
 		 
+	}
+	
+	@RequestMapping(value = "/queryMapService.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询地图服务配置", notes = "查询地图服务配置", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryMapService() {
+		MessageBean<MapServiceData> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MapServiceData.class);	
+		try {
+			MapServiceData mapServiceData = ADOConnection.runTask(new MapServiceConfigServiceImpl(), "queryMapServiceConfig", MapServiceData.class);
+			msg.setData(mapServiceData);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败");
+		}
+		
+		
+		return msg.toJson();
 	}
 	
 	

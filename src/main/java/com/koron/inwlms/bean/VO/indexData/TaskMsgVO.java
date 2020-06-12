@@ -13,7 +13,8 @@ public class TaskMsgVO {
 	public String content;
 	//任务状态
 	public String state;
-	
+	//是否发起
+	public String initiate;
 	public String getAlarmType() {
 		return alarmType;
 	}
@@ -38,6 +39,12 @@ public class TaskMsgVO {
 	}
 	public void setState(String state) {
 		this.state = state;
+	}
+	public String getInitiate() {
+		return initiate;
+	}
+	public void setInitiate(String initiate) {
+		this.initiate = initiate;
 	}
 	
 }

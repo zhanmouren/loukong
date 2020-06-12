@@ -264,7 +264,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 				}else if(zoneDayData.getZoneIndex().equals("2")) {
 					dataCode = "SLDMNF";
 				}else {
-					dataCode = "DMDMNF";
+					dataCode = "DMDMNF"; 
 				}
 				
 				alarmIndexFlag = 2;

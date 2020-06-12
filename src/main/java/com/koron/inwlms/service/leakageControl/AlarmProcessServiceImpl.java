@@ -131,7 +131,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	public Integer updateAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO,UserVO user) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		Integer num = mapper.updateAlarmProcess(alarmProcessVO);
-		if(alarmProcessVO.getState().equals("2")) {
+		if(alarmProcessVO.getState().equals(Constant.DATADICTIONARY_TASKSTATUSON)) {
 			//添加流程日志
 			AlarmProcessLog alarmProcessLog = new AlarmProcessLog();
 			alarmProcessLog.setTaskCode(alarmProcessVO.getTaskCode());
@@ -141,7 +141,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			}
 			alarmProcessLog.setOperation("确认任务");
 			alarmProcessLog.setCreateBy(user.getCode());
-		}else if(alarmProcessVO.getState().equals("3")) {
+		}else if(alarmProcessVO.getState().equals(Constant.DATADICTIONARY_TASKSTATUSOVER)) {
 			//添加流程日志
 			AlarmProcessLog alarmProcessLog = new AlarmProcessLog();
 			alarmProcessLog.setTaskCode(alarmProcessVO.getTaskCode());
