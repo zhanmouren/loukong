@@ -16,6 +16,10 @@ public class InfoPageListVO<T> {
 	 * 处理中率
 	 */
 	private String completeingRate;
+	/**
+	 * 任务总数
+	 */
+	private Integer taskNum;
 	
 	/*
 	 * 处理及时率
@@ -34,7 +38,8 @@ public class InfoPageListVO<T> {
 	 * 离线报警
 	 */
 	private String offlineWarningRateStr;
-	
+	//离线报警总数
+	private Integer offlineWarningNum;
 	
 	public String getVoiceWarningRateStr() {
 		return voiceWarningRateStr;
@@ -86,30 +91,6 @@ public class InfoPageListVO<T> {
 	 * 列表数据
 	 */
 	private T dataList;
-	
-	/**
-	 * 页数
-	 */
-	private Integer page;
-
-	/**
-	 * 每页记录数
-	 */
-	private Integer pageCount;
-
-	/**
-	 * 总行数
-	 */
-	private Integer rowNumber;
-
-	/**
-	 * 总页数
-	 */
-	private Integer totalPage;
-
-	
-
-	
 
 	public String getCompleteRate() {
 		return completeRate;
@@ -145,45 +126,39 @@ public class InfoPageListVO<T> {
 		this.completeingRate = completeingRate;
 	}
 
+	public void setDataList(T dataList) {
+		this.dataList = dataList;
+	}
+
+
+
+
+	public Integer getOfflineWarningNum() {
+		return offlineWarningNum;
+	}
+
+
+
+	public void setOfflineWarningNum(Integer offlineWarningNum) {
+		this.offlineWarningNum = offlineWarningNum;
+	}
+
+
+
+	public Integer getTaskNum() {
+		return taskNum;
+	}
+
+
+
+	public void setTaskNum(Integer taskNum) {
+		this.taskNum = taskNum;
+	}
+
 
 
 	public T getDataList() {
 		return dataList;
 	}
 
-	public Integer getPage() {
-		return page;
-	}
-
-	public Integer getPageCount() {
-		return pageCount;
-	}
-
-	public Integer getRowNumber() {
-		return rowNumber;
-	}
-
-	public Integer getTotalPage() {
-		return totalPage;
-	}
-
-	public void setDataList(T dataList) {
-		this.dataList = dataList;
-	}
-
-	public void setPage(Integer page) {
-		this.page = page;
-	}
-
-	public void setPageCount(Integer pageCount) {
-		this.pageCount = pageCount;
-	}
-
-	public void setRowNumber(Integer rowNumber) {
-		this.rowNumber = rowNumber;
-	}
-
-	public void setTotalPage(Integer totalPage) {
-		this.totalPage = totalPage;
-	}
 }

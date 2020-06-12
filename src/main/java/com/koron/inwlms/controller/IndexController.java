@@ -423,19 +423,21 @@ public class IndexController {
     @ApiOperation(value = "查询漏损任务相关信息接口", notes = "查询漏损任务相关信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryWarningInfo(@RequestBody WarningInfoDTO warningInfoDTO) {
-		 if(warningInfoDTO.getAreaZoneList()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
-		 }
-		 if(warningInfoDTO.getAreaZoneList().size()<1) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson();  
-		 }
 		 if(warningInfoDTO.getTaskCreateTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "日期不能为空", Integer.class).toJson();   
 		 }
+		 if(warningInfoDTO.getAreaType() == null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+			}else if(warningInfoDTO.getAreaType() != 0 && (warningInfoDTO.getAreaZoneList()==null || warningInfoDTO.getAreaZoneList().size()<1)) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
+			}
+		 if(warningInfoDTO.getAreaType() == 0){
+			 warningInfoDTO.setAreaZoneList(null);
+		}
 		 MessageBean<InfoPageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, InfoPageListVO.class);	       
 		  try{
 			  InfoPageListVO infoPageListVO=ADOConnection.runTask(indexService, "queryWarningInfo", InfoPageListVO.class, warningInfoDTO);		 
-				  if(infoPageListVO!=null && infoPageListVO.getRowNumber()>0) {
+				  if(infoPageListVO!=null ) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("查询漏损任务信息成功");
 				    msg.setData(infoPageListVO);
@@ -462,19 +464,21 @@ public class IndexController {
     @ApiOperation(value = "查询检测点报警信息接口", notes = "查询检测点报警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryCheckWarningInfo(@RequestBody WarningInfoDTO warningInfoDTO) {
-		 if(warningInfoDTO.getAreaZoneList()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
-		 }
-		 if(warningInfoDTO.getAreaZoneList().size()<1) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson();  
-		 }
 		 if(warningInfoDTO.getTaskCreateTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "日期不能为空", Integer.class).toJson();   
 		 }
+		 if(warningInfoDTO.getAreaType() == null) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+			}else if(warningInfoDTO.getAreaType() != 0 && (warningInfoDTO.getAreaZoneList()==null || warningInfoDTO.getAreaZoneList().size()<1)) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
+			}
+		 if(warningInfoDTO.getAreaType() == 0){
+			 warningInfoDTO.setAreaZoneList(null);
+		}
 		 MessageBean<InfoPageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, InfoPageListVO.class);	       
 		  try{
 			  InfoPageListVO infoPageListVO=ADOConnection.runTask(indexService, "queryCheckWarningInfo", InfoPageListVO.class, warningInfoDTO);		 
-				  if(infoPageListVO!=null && infoPageListVO.getRowNumber()>0) {
+				  if(infoPageListVO!=null ) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("查询监测点信息成功");
 				    msg.setData(infoPageListVO);
