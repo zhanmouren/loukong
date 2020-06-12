@@ -69,6 +69,9 @@ public class IndexController {
 		}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
 		}
+		if(indicatorDTO.getAreaType() == 0){
+			indicatorDTO.setZoneCodes(null);
+		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
 			  List<IndicatorVO> indicatorVOList=ADOConnection.runTask(indexService, "queryCompreInfo", List.class,indicatorDTO);
@@ -212,7 +215,9 @@ public class IndexController {
 		}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
 		}
-		 
+		if(indicatorDTO.getAreaType() == 0){
+				indicatorDTO.setZoneCodes(null);
+		}
 		 MessageBean<MultParamterIndicatorVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MultParamterIndicatorVO.class);	       
 		  try{
 			  MultParamterIndicatorVO multParamterIndicator=ADOConnection.runTask(indexService, "queryComYearInfo", MultParamterIndicatorVO.class, indicatorDTO);	
@@ -510,7 +515,9 @@ public class IndexController {
 		 if(indicatorDTO.getType()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
 		 }
-		 
+		 if(indicatorDTO.getAreaType() == 0){
+				indicatorDTO.setZoneCodes(null);
+		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
 			  List<IndicatorVO>  infoPageListList=ADOConnection.runTask(indexService, "queryAreaRankInfo", List.class,indicatorDTO);		 
@@ -556,7 +563,9 @@ public class IndexController {
 		 if(indicatorDTO.getType()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
 		 }
-		 
+		 if(indicatorDTO.getAreaType() == 0){
+				indicatorDTO.setZoneCodes(null);
+		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
 			  List<IndicatorVO>  infoPageListList=ADOConnection.runTask(indexService, "queryChildAreaRankInfo", List.class,indicatorDTO);		 
