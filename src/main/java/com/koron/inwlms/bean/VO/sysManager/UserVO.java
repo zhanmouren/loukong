@@ -45,6 +45,18 @@ public class UserVO {
 	  
 	  //部门名称
 	  private String depName;
+
+	  //环境
+	  private String env;
+
+	public String getEnv() {
+		return env;
+	}
+
+	public void setEnv(String env) {
+		this.env = env;
+	}
+
 	public String getCode() {
 		return code;
 	}

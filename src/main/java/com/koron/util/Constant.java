@@ -1133,7 +1133,12 @@ public class Constant {
 	 */
 	public final static String ZONEMETER_IMPORT_TEMPLATE = "Template_zoneMeter.xlsx";
 	//************************end****************************//
-	
+
+	/**
+	 * 应用标识
+	 */
+	public final static String APPID = "7c8222aa-9cc5-46b1-9bd7-743d24d01b0a";
+
 	/**
 	 * 分区等级4（虚拟分区）
 	 */

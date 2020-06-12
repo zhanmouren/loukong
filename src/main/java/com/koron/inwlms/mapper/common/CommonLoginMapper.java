@@ -1,9 +1,7 @@
 package com.koron.inwlms.mapper.common;
 
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import org.apache.ibatis.annotations.Param;
-
-
-import com.koron.inwlms.bean.VO.sysManager.UserListVO;
 
 
 /**
@@ -18,7 +16,7 @@ public interface CommonLoginMapper {
 	/**
 	 * 用户登录
 	 */
-	public UserListVO login(@Param("loginName") String loginName);
+	public UserVO login(@Param("loginName") String loginName);
 	
 	
 	

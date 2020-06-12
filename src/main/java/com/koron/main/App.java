@@ -1,6 +1,6 @@
 package com.koron.main;
 
-import com.koron.common.PersonResolver;
+import com.koron.common.UserResolver;
 import com.koron.common.stub.ConfigCenter;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
@@ -76,7 +76,8 @@ public class App extends WebMvcConfigurationSupport {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         super.addArgumentResolvers(argumentResolvers);
-        argumentResolvers.add(new PersonResolver());
+        argumentResolvers.add(new UserResolver());
+        //argumentResolvers.add(new PersonResolver());
     }
 
 
@@ -113,7 +114,8 @@ public class App extends WebMvcConfigurationSupport {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/{^[A-Za-z0-9]+$}/**").addResourceLocations("classpath:/static/");
+        //registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         super.addResourceHandlers(registry);

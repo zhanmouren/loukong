@@ -1,79 +1,35 @@
 package com.koron.inwlms.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.koron.ebs.mybatis.ADOConnection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.swan.bean.MessageBean;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.koron.authority.ValidatePermission;
 import com.koron.common.StaffAttribute;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
-import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
-import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
-import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
-import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
-import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
-import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
-import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
-import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
-import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
-import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
-import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
-import com.koron.inwlms.bean.DTO.sysManager.TitleInfoDTO;
-import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
-import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
-import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
+import com.koron.inwlms.bean.DTO.sysManager.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
-import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
-import com.koron.inwlms.bean.VO.sysManager.ImportUserResVO;
-import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
-import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
-import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
-import com.koron.inwlms.bean.VO.sysManager.RoleVO;
-import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
-import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
-import com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO;
-import com.koron.inwlms.bean.VO.sysManager.UserVO;
-import com.koron.inwlms.service.common.impl.FileServiceImpl;
+import com.koron.inwlms.bean.VO.sysManager.*;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.ImportExcelUtil;
 import com.koron.permission.authority.PermissionAOP;
 import com.koron.util.Constant;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
+import org.koron.ebs.mybatis.ADOConnection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.swan.bean.MessageBean;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 系统管理Controller层
@@ -83,7 +39,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "systemManager", description = "系统管理Controller")
-@RequestMapping(value = "/systemManager")
+@RequestMapping(value = "/{tenantID}/systemManager")
 public class SystemManagerController {
 	
 	@Autowired
@@ -2522,7 +2478,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryChildAllMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看一级菜单下可查看所有下级树接口", notes = "查看一级菜单下可查看所有下级树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryChildAllMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
+	public String queryChildAllMenu(@RequestBody MenuTreeDTO menuTreeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		Integer type=Integer.valueOf(menuTreeDTO.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
@@ -2534,7 +2490,7 @@ public class SystemManagerController {
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(new TreeService(), "queryChildAllMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(user.getEnv(),new TreeService(), "queryChildAllMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());
 			  if(treeBeanList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询所有下级树成功"); 
@@ -2784,9 +2740,8 @@ public class SystemManagerController {
 	
 	 /**
    	 * 上传头像
-   	 * 
-   	 * @param type
-   	 *            上传头像的模块类型
+   	 *
+   	 * 上传头像的模块类型
    	 * @param file
    	 */
    	@RequestMapping(value = "/uploadHeadPortrait.htm", method = RequestMethod.POST, produces = { "text/html;charset=UTF-8" })

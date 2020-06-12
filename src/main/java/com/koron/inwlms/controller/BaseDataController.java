@@ -4,9 +4,11 @@ package com.koron.inwlms.controller;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.baseInf.*;
 import com.koron.inwlms.bean.VO.baseInf.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.baseData.*;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.FileUtil;
@@ -36,7 +38,7 @@ import java.util.Map;
  */
 @Controller
 @Api(value = "baseData", description = "基础数据Controller")
-@RequestMapping(value = "/baseData")
+@RequestMapping(value = "/{tenantID}/baseData")
 public class BaseDataController {
 
     @Autowired
@@ -66,7 +68,7 @@ public class BaseDataController {
     @RequestMapping(value = "/queryPGData.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询数据接口", notes = "查询数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryPGData() {
+    public String queryPGData(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
       MessageBean msg = new MessageBean();
       List<DataVO> pipes = ADOConnection.runTask(pipesvr, "queryALList", List.class);
       msg.setCode(0);
@@ -547,7 +549,7 @@ public class BaseDataController {
     }
 
     @RequestMapping("/downloadZonePointTemplate.htm")
-    @ApiOperation(value = "导出分区与监测点Excel模板", notes = "导出分区与监测点Excel模板", httpMethod = "POST", response = MessageBean.class)
+    @ApiOperation(value = "导出分区与监测点Excel模板", notes = "导出分区与监测点Excel模板", httpMethod = "GET", response = MessageBean.class)
     @ResponseBody
     public void downloadZonePointTemplate(HttpServletResponse response, HttpServletRequest request) {
 

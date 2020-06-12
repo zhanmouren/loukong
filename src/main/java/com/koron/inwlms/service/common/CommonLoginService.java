@@ -1,10 +1,9 @@
 package com.koron.inwlms.service.common;
 
 
-import org.koron.ebs.mybatis.SessionFactory;
-
 import com.koron.inwlms.bean.DTO.sysManager.UserLoginDTO;
-import com.koron.inwlms.bean.VO.sysManager.UserListVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import org.koron.ebs.mybatis.SessionFactory;
 
 
 /**
@@ -20,7 +19,7 @@ public interface CommonLoginService {
 	 * @param userLoginDTO 用户登录DTO
 	 * @return
 	 */
-	public UserListVO login(SessionFactory factory,UserLoginDTO userLoginDTO);
+	public UserVO login(SessionFactory factory, UserLoginDTO userLoginDTO);
 
 	
 	
