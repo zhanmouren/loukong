@@ -96,7 +96,7 @@ public class SystemManagerLabelController {
 		MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		//执行查询标签
 		 try {
-			 PageListVO labelList=ADOConnection.runTask(labelService, "queryLabel", PageListVO.class, queryLabelDTO);
+			 PageListVO labelList=ADOConnection.runTask(user.getEnv(),labelService, "queryLabel", PageListVO.class, queryLabelDTO);
 			 if(labelList != null && labelList.getRowNumber() > 0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到标签的信息"); 
@@ -121,12 +121,12 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/addLabel.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "添加标签接口",notes = "添加标签接口", httpMethod = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String addLabel(@RequestBody LabelDTO labelDTO) {
+	public String addLabel(@RequestBody LabelDTO labelDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
 		}
-		MessageBean<?>  insertRes = ADOConnection.runTask(labelService, "addLabel",MessageBean.class,labelDTO);
+		MessageBean<?>  insertRes = ADOConnection.runTask(user.getEnv(),labelService, "addLabel",MessageBean.class,labelDTO);
 		return insertRes.toJson();
 	}
 
@@ -137,14 +137,14 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/deleteLabel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除标签接口", notes = "删除标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String  deleteLabel(@RequestBody LabelDTO labelDTO) {
+	public String  deleteLabel(@RequestBody LabelDTO labelDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除标签的操作
 		  try{
-			  Integer delRes=ADOConnection.runTask(labelService, "deleteLabel", Integer.class, labelDTO);		 
+			  Integer delRes=ADOConnection.runTask(user.getEnv(),labelService, "deleteLabel", Integer.class, labelDTO);		 
 			  if(delRes!=null) {
 				  if(delRes==1) {
 					//删除标签成功
@@ -172,7 +172,7 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/deleteBatchLabel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量删除标签接口", notes = "批量删除标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String  deleteBatchLabel(@RequestBody LabelDTO labelDTO) {
+	public String  deleteBatchLabel(@RequestBody LabelDTO labelDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(labelDTO.getLabelCodeList() == null ) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签列表参数不能为空", Integer.class).toJson();
 		}
@@ -182,7 +182,7 @@ public class SystemManagerLabelController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行批量删除标签的操作
 		  try{
-			  Integer delRes=ADOConnection.runTask(labelService, "deleteBatchLabel", Integer.class, labelDTO);		 
+			  Integer delRes=ADOConnection.runTask(user.getEnv(),labelService, "deleteBatchLabel", Integer.class, labelDTO);		 
 			  if(delRes!=null) {
 				  if(delRes==1) {
 					//批量删除标签成功
@@ -211,14 +211,14 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/updateLabel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改标签接口", notes = "修改标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateLabel(@RequestBody LabelDTO labelDTO) {
+	public String updateLabel(@RequestBody LabelDTO labelDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(labelDTO.getId() == null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签id不能为空", Integer.class).toJson();
 		}
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
 		}
-		MessageBean<?>  updateRes = ADOConnection.runTask(labelService, "updateLabel",MessageBean.class,labelDTO);
+		MessageBean<?>  updateRes = ADOConnection.runTask(user.getEnv(),labelService, "updateLabel",MessageBean.class,labelDTO);
 		return updateRes.toJson();
 	}
 	
@@ -228,8 +228,8 @@ public class SystemManagerLabelController {
      */  
 	@RequestMapping(value = "/downloadFileByFileId.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
     @ResponseBody
-    public void downloadFileByFileId(Integer fileId, HttpServletResponse response, HttpServletRequest request) {
-        UploadFileDTO data = ADOConnection.runTask(labelService, "getAttachmentInfoById", UploadFileDTO.class, fileId);
+    public void downloadFileByFileId(Integer fileId, HttpServletResponse response, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        UploadFileDTO data = ADOConnection.runTask(user.getEnv(),labelService, "getAttachmentInfoById", UploadFileDTO.class, fileId);
         //调用文件工具类下载文件
         if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
     }
@@ -243,7 +243,7 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/downloadAllList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载标签列表数据", notes = "下载标签列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadAllList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadAllList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -255,7 +255,7 @@ public class SystemManagerLabelController {
 			queryLabelDTO.setPage(1);
 			queryLabelDTO.setPageCount(3000);
 			// 查询到导出数据结果
-			PageListVO<List<LabelVO>> pageBean = ADOConnection.runTask(labelService, "queryLabel", PageListVO.class,queryLabelDTO);
+			PageListVO<List<LabelVO>> pageBean = ADOConnection.runTask(user.getEnv(),labelService, "queryLabel", PageListVO.class,queryLabelDTO);
 			if(pageBean.getRowNumber() == 0) {
 				return new HttpEntity<String>("无数据可下载");
 			}
@@ -279,7 +279,7 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/uploadBatchLabel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量导入标签接口", notes = "批量导入标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String uploadBatchLabel(MultipartFile file) {
+	public String uploadBatchLabel(MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		//1.先判断导入的excel格式信息正不正确
         //2.如果正确则excelBeans中数据不为null，然后 执行批量新增操作
         //3.如果不正确则excelBeans中数据为null，返回错误
@@ -290,7 +290,7 @@ public class SystemManagerLabelController {
             msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
         } else {
             try {
-                msg = ADOConnection.runTask(labelService, "uploadBatchLabel", MessageBean.class, excelBeans);
+                msg = ADOConnection.runTask(user.getEnv(),labelService, "uploadBatchLabel", MessageBean.class, excelBeans);
 
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
@@ -307,12 +307,12 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "queryLabelNameList.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询标签列表接口", notes = "查询标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryLabelNameList(HttpServletRequest request) {
+    public String queryLabelNameList(HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<LabelNameListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LabelNameListVO.class);	       
 		//执行查询标签
 		 try {
 			 QueryLabelDTO queryLabelDTO = new QueryLabelDTO();
-			 LabelNameListVO labelNameList = ADOConnection.runTask(labelService, "queryLabelNameList", LabelNameListVO.class, queryLabelDTO);
+			 LabelNameListVO labelNameList = ADOConnection.runTask(user.getEnv(),labelService, "queryLabelNameList", LabelNameListVO.class, queryLabelDTO);
 			 if(labelNameList != null) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到标签的信息"); 

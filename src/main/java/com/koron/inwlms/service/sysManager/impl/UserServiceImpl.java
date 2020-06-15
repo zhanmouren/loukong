@@ -602,14 +602,15 @@ public class UserServiceImpl implements UserService{
 				public Integer updateDicDetById(SessionFactory factory, DataDicDTO dataDicDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					Gson jsonValue = new Gson();
-					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
-						return null;
-					}
-					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
-				
-					dataDicDTO.setUpdateBy(userListVO.getLoginName());
+//					if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
+//						return null;
+//					}
+//					UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
+//				
+//					dataDicDTO.setUpdateBy(userListVO.getLoginName());
 					//修改时候判断key是否重复
 					List<DataDicVO> keyList=userMapper.queryKey(dataDicDTO);
+					boolean result = dataDicDTO.getDicId() != keyList.get(0).getDicId();
 					if(keyList!=null && keyList.size()>0 && dataDicDTO.getDicId()!=keyList.get(0).getDicId()) {
 						return -2;
 					}
