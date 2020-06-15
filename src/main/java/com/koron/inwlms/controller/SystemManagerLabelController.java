@@ -96,6 +96,7 @@ public class SystemManagerLabelController {
 		MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		//执行查询标签
 		 try {
+			 String create = user.getLoginName();
 			 PageListVO labelList=ADOConnection.runTask(user.getEnv(),labelService, "queryLabel", PageListVO.class, queryLabelDTO);
 			 if(labelList != null && labelList.getRowNumber() > 0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -126,6 +127,8 @@ public class SystemManagerLabelController {
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
 		}
+		labelDTO.setCreateBy(user.getLoginName());
+		labelDTO.setUpdateBy(user.getLoginName());
 		MessageBean<?>  insertRes = ADOConnection.runTask(user.getEnv(),labelService, "addLabel",MessageBean.class,labelDTO);
 		return insertRes.toJson();
 	}

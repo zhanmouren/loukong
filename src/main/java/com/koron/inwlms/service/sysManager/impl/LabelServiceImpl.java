@@ -71,11 +71,6 @@ public class LabelServiceImpl implements LabelService{
 				msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 				msg.setDescription("添加标签失败(已存在相同code)");
 			} else {
-				Gson jsonValue = new Gson();
-				// 查询条件字符串转对象，查询数据结果
-				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-				labelDTO.setCreateBy(userListVO.getLoginName());
-				labelDTO.setUpdateBy(userListVO.getLoginName());
 				labelMapper.addLabel(labelDTO);
 			}
 		} catch (Exception e) {
