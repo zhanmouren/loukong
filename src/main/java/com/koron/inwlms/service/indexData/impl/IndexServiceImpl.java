@@ -1162,11 +1162,9 @@ public class IndexServiceImpl implements IndexService{
 	@Override
 	public InfoPageListVO<List<TaskMsgVO>> queryWarningInfo(SessionFactory factory, WarningInfoDTO warningInfoDTO) {
 		IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
-		warningInfoDTO.getTaskCreateTime();
-		//TODO查出所有分区的下级单位
 		String searchEndTime = null;
 		try {   
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");   
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");   
             Calendar cd = Calendar.getInstance();   
             cd.setTime(sdf.parse(warningInfoDTO.getTaskCreateTime()));   
             cd.add(Calendar.MONTH, 1);//增加一个月   
@@ -1176,6 +1174,7 @@ public class IndexServiceImpl implements IndexService{
         }   
 		warningInfoDTO.setSearchTaskEndTime(searchEndTime);
 		if(warningInfoDTO.getAreaType() != 0){
+			//查出所有分区的下级单位
 			String foreignKey = warningInfoDTO.getAreaZoneList().get(0);
 			int type = 2;
 			 TreeMapper mapper = factory.getMapper(TreeMapper.class);	
@@ -1197,53 +1196,28 @@ public class IndexServiceImpl implements IndexService{
 		//查询列表数量
 		Integer rowNumber = indicatorMapper.queryTaskListNum(warningInfoDTO);
 		
-		double completeRate=0.0;
-		double unCompleteRate=0.0;
-		double compleingRate=0.0;
-		double inTimeRate=0.0;
-		String completeRateStr="0%";
-		String unCompleteRateStr="0%";
-		String compleingRateStr="0%";
-		String inTimeRateStr="0%";
-		
-		double completeNum=0.0;
-		DecimalFormat df = new DecimalFormat("0.0000%");
 		//查询完成条数
 		warningInfoDTO.setState("L101990003");
-		List<InfoCompleteRateVO> completeList=indicatorMapper.queryComRateNum(warningInfoDTO);	
-		if(completeList!=null && completeList.size()>0 && rowNumber!=null && rowNumber!=0) {
-			completeNum=completeList.get(0).getCompleNum().longValue()*1.0;
-			completeRate=completeList.get(0).getCompleNum().longValue()*1.0/rowNumber.longValue();		
-			completeRateStr= df.format(completeRate);			
-		}
+//		List<InfoCompleteRateVO> completeList=indicatorMapper.queryComRateNum(warningInfoDTO);	
+		int completeNum = indicatorMapper.queryComRateNum(warningInfoDTO);
 		//查询未完成条数
 		warningInfoDTO.setState("L101990001");
-		List<InfoCompleteRateVO> unCompleteList=indicatorMapper.queryComRateNum(warningInfoDTO);
-        if(unCompleteList!=null && unCompleteList.size()>0 && rowNumber!=null && rowNumber!=0) {
-        	unCompleteRate=unCompleteList.get(0).getCompleNum().longValue()*1.0/rowNumber.longValue();		
-        	unCompleteRateStr= df.format(unCompleteRate);	
-		}
+//		List<InfoCompleteRateVO> unCompleteList=indicatorMapper.queryComRateNum(warningInfoDTO);
+		int unCompleteNum = indicatorMapper.queryComRateNum(warningInfoDTO);
 		//进行中的条数
 		warningInfoDTO.setState("L101990002");
-		List<InfoCompleteRateVO> completeingList=indicatorMapper.queryComRateNum(warningInfoDTO);
-         if(completeingList!=null && completeingList.size()>0 && rowNumber!=null && rowNumber!=0) {
-        	 compleingRate=completeingList.get(0).getCompleNum().longValue()*1.0/rowNumber.longValue();
-        	 compleingRateStr=df.format(compleingRate);	
-		} 
-         //查询预计完成时间大于实际完成时间的条数
-         Integer actualNum= indicatorMapper.queryActualTaskListNum(warningInfoDTO);
-         if(actualNum!=null &&  completeNum!=0) {
-         inTimeRate=actualNum.longValue()*1.0/new Double(completeNum).longValue();
-         }
-         inTimeRateStr=df.format(inTimeRate);
+//		List<InfoCompleteRateVO> completeingList=indicatorMapper.queryComRateNum(warningInfoDTO);
+		int completeingNum = indicatorMapper.queryComRateNum(warningInfoDTO);
+		
+		int inTimeNum = indicatorMapper.queryActualTaskListNum(warningInfoDTO);
           
 		InfoPageListVO<List<TaskMsgVO>> result = new InfoPageListVO<>();
 		result.setDataList(taskMsgList);
-		result.setCompleteRate(completeRateStr);
-		result.setUnCompleteRate(unCompleteRateStr);
-		result.setCompleteingRate(compleingRateStr);
-		result.setInTimeRate(inTimeRateStr);
 		result.setTaskNum(rowNumber);
+		result.setCompleteNum(completeNum);
+		result.setUnCompleteNum(unCompleteNum);
+		result.setCompleteingNum(completeingNum);
+		result.setInTimeNum(inTimeNum);
 		return result;
 	}
 	
@@ -1252,11 +1226,10 @@ public class IndexServiceImpl implements IndexService{
 		@Override
 		public InfoPageListVO<List<TaskMsgVO>> queryCheckWarningInfo(SessionFactory factory, WarningInfoDTO warningInfoDTO) {
 			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
-			warningInfoDTO.getTaskCreateTime();
-
+			
 			String searchEndTime = null;
 			try {   
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");   
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");   
                 Calendar cd = Calendar.getInstance();   
                 cd.setTime(sdf.parse(warningInfoDTO.getTaskCreateTime()));   
                 cd.add(Calendar.MONTH, 1);//增加一个月   
@@ -1288,17 +1261,7 @@ public class IndexServiceImpl implements IndexService{
 			//查询报警类型详细信息
 			List<TaskMsgVO>  taskMsgList=indicatorMapper.queryCheckWarningMsg(warningInfoDTO);
 			
-			double voiceWarningRate=0.0;
-			double overWaningRate=0.0;
-			double offlineWarningRate=0.0;
-			double actualNumRate=0.0;
-			DecimalFormat df = new DecimalFormat("0.0000%");
 			
-			String voiceWarningRateStr="0.000%";
-			String overWaningRateStr="0.000%";
-			String offlineWarningRateStr="0.000%";
-			String actualNumRateStr="0.00%";
-			//根据分区日期查询有多少个监测点报警的信息
 			Integer checkWarningNum=indicatorMapper.queryCheckWarningNum(warningInfoDTO);
 			//查询噪声报警的个数
 			warningInfoDTO.setAlarmType("L102010005");
@@ -1311,32 +1274,18 @@ public class IndexServiceImpl implements IndexService{
 			Integer offlineWarningNum=indicatorMapper.queryTypeWarningNum(warningInfoDTO);
 			
 			//计算检测点任务完成个数
-			 Integer actualNum= indicatorMapper.queryProActualTaskListNum(warningInfoDTO);
+			 Integer inTimeNum= indicatorMapper.queryProActualTaskListNum(warningInfoDTO);
 			 //计算监测点任务总个数
-			 Integer actualTaskNum= indicatorMapper.queryProTaskListNum(warningInfoDTO);
-			 if(actualNum!=null && actualTaskNum!=null && actualTaskNum!=0) {
-				 actualNumRate=checkWarningNum.longValue()*1.0/actualTaskNum.longValue();
-				 actualNumRateStr= df.format(actualNumRate);	
-		     } 
-			
-			if(checkWarningNum!=null && checkWarningNum!=null && checkWarningNum!=0) {
-				voiceWarningRate=voiceWarningNum.longValue()*1.0/checkWarningNum.longValue();
-				voiceWarningRateStr= df.format(voiceWarningRate);	
-			}if(voiceWarningNum!=null && checkWarningNum!=null && checkWarningNum!=0) {
-				overWaningRate=overWaningNum.longValue()*1.0/checkWarningNum.longValue();
-				overWaningRateStr= df.format(overWaningRate);
-			}if(offlineWarningNum!=null && checkWarningNum!=null && checkWarningNum!=0) {
-				offlineWarningRate=offlineWarningNum.longValue()*1.0/checkWarningNum.longValue();
-				offlineWarningRateStr= df.format(offlineWarningRate);
-			}
+			 Integer taskNum= indicatorMapper.queryProTaskListNum(warningInfoDTO);
+			 
 			
 			InfoPageListVO<List<TaskMsgVO>> result = new InfoPageListVO<>();
 			result.setDataList(taskMsgList);
 			result.setOfflineWarningNum(offlineWarningNum);
-			result.setVoiceWarningRateStr(voiceWarningRateStr);
-			result.setOfflineWarningRateStr(offlineWarningRateStr);
-			result.setOverWaningRateStr(overWaningRateStr);
-			result.setInTimeRate(actualNumRateStr);
+			result.setOverWaningNum(overWaningNum);
+			result.setVoiceWarningNum(voiceWarningNum);
+			result.setInTimeNum(inTimeNum);
+			result.setTaskNum(taskNum);
 			return result;
 		}
 		

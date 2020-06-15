@@ -4,18 +4,20 @@ import org.apache.poi.ss.formula.functions.T;
 
 public class InfoPageListVO<T> {
 
+	
 	/**
-	 * 已处理完成率
+	 * 处理中条数
 	 */
-	private String completeRate;
+	private Integer completeingNum;
 	/**
-	 * 未完成率
+	 * 已处理完成条数
 	 */
-	private String unCompleteRate;
+	private Integer completeNum;
 	/**
-	 * 处理中率
+	 * 未完成条数
 	 */
-	private String completeingRate;
+	private Integer unCompleteNum;
+	
 	/**
 	 * 任务总数
 	 */
@@ -25,6 +27,10 @@ public class InfoPageListVO<T> {
 	 * 处理及时率
 	 */
 	private String inTimeRate;
+	/*
+	 * 处理及时条数
+	 */
+	private Integer inTimeNum;
 	
 	/*
 	 * 噪声比率
@@ -35,12 +41,80 @@ public class InfoPageListVO<T> {
 	 */
 	private String overWaningRateStr;
 	/*
+	 * 噪声条数
+	 */
+	private Integer voiceWarningNum;
+	/*
+	 * 超限条数
+	 */
+	private Integer overWaningNum;
+	/*
 	 * 离线报警
 	 */
 	private String offlineWarningRateStr;
 	//离线报警总数
 	private Integer offlineWarningNum;
+
+
+	public Integer getCompleteingNum() {
+		return completeingNum;
+	}
+
+
+
+	public void setCompleteingNum(Integer completeingNum) {
+		this.completeingNum = completeingNum;
+	}
+
+
+
+	public Integer getCompleteNum() {
+		return completeNum;
+	}
+
+
+
+	public void setCompleteNum(Integer completeNum) {
+		this.completeNum = completeNum;
+	}
+
+
+
+	public Integer getUnCompleteNum() {
+		return unCompleteNum;
+	}
+
 	
+	public Integer getVoiceWarningNum() {
+		return voiceWarningNum;
+	}
+
+
+
+	public void setVoiceWarningNum(Integer voiceWarningNum) {
+		this.voiceWarningNum = voiceWarningNum;
+	}
+
+
+
+	public Integer getOverWaningNum() {
+		return overWaningNum;
+	}
+
+
+
+	public void setOverWaningNum(Integer overWaningNum) {
+		this.overWaningNum = overWaningNum;
+	}
+
+
+
+	public void setUnCompleteNum(Integer unCompleteNum) {
+		this.unCompleteNum = unCompleteNum;
+	}
+
+
+
 	public String getVoiceWarningRateStr() {
 		return voiceWarningRateStr;
 	}
@@ -92,39 +166,7 @@ public class InfoPageListVO<T> {
 	 */
 	private T dataList;
 
-	public String getCompleteRate() {
-		return completeRate;
-	}
-
-
-
-	public String getUnCompleteRate() {
-		return unCompleteRate;
-	}
-
-
-
-	public String getCompleteingRate() {
-		return completeingRate;
-	}
-
-
-
-	public void setCompleteRate(String completeRate) {
-		this.completeRate = completeRate;
-	}
-
-
-
-	public void setUnCompleteRate(String unCompleteRate) {
-		this.unCompleteRate = unCompleteRate;
-	}
-
-
-
-	public void setCompleteingRate(String completeingRate) {
-		this.completeingRate = completeingRate;
-	}
+	
 
 	public void setDataList(T dataList) {
 		this.dataList = dataList;
@@ -153,6 +195,19 @@ public class InfoPageListVO<T> {
 
 	public void setTaskNum(Integer taskNum) {
 		this.taskNum = taskNum;
+	}
+
+
+
+
+	public Integer getInTimeNum() {
+		return inTimeNum;
+	}
+
+
+
+	public void setInTimeNum(Integer inTimeNum) {
+		this.inTimeNum = inTimeNum;
 	}
 
 
