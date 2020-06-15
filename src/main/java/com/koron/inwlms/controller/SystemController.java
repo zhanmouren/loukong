@@ -196,7 +196,7 @@ public class SystemController {
 	}
 
 	private String getTenantToken(String APPID,String tenantID){
-		String path = this.cloudManagePlat+"/port/tenant/token.htm?appCode="+APPID+"&tenantCode="+tenantID+"&version=1.0.0";
+		String path = this.cloudManagePlat+"/port/tenant/token.htm?appCode="+APPID+"&tenantCode="+tenantID+"&version="+Constant.APPVersion;
 		JsonObject ret =  InterfaceUtil.interfaceUtil(path);
 		Gson gson = new Gson();
 		MessageBean msg = gson.fromJson(ret, new TypeToken<MessageBean>(){}.getType());
