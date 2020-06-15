@@ -627,5 +627,4 @@ public class TimeUtil {
     	 return cal.getActualMaximum(Calendar.DAY_OF_YEAR);
     } 
      
-     
 }

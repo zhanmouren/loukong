@@ -3,6 +3,8 @@ package com.koron.inwlms.mapper.apparentLoss;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
@@ -14,6 +16,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterQH;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterRTimeUnset;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterReadData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
@@ -132,7 +135,7 @@ public interface ApparentLossMapper {
 	 * @param time
 	 * @return
 	 */
-	List<MeterMFlowData> queryMeterMFlow(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	List<MeterMFlowData> queryMeterMFlow(@Param("lists") List<MeterInfo> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
 
 	/**
 	 * 查询水表零月水量数据
@@ -161,5 +164,26 @@ public interface ApparentLossMapper {
 	/**
 	 * 查询用水异常水表数据
 	 */
-	List<DrqlMeterErrUseData> queryMeterErrUseData(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	List<DrqlMeterErrUseData> queryMeterErrUseData(@Param("lists") List<MeterInfo> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+
+	/**
+	 * 查询水表信息
+	 * @param zoneNo
+	 * @return
+	 */
+	List<MeterInfo> queryMeterInfoByZoneNo(@Param("zoneNo") String zoneNo);
+	
+	/**
+	 * 查询全网水表月抄表水量
+	 * @return
+	 */
+	Double queryWNMMeterReadFlow(@Param("qaDTO") QueryALDTO queryALDTO,@Param("lists") List<MeterInfo> lists);
+
+	/**
+	 * 查询抄表不固定时间信息
+	 * @param queryALDTO
+	 * @return
+	 */
+	MeterRTimeUnset queryRTimeUnset(@Param("qaDTO") QueryALDTO queryALDTO);
+	
 }

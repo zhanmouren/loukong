@@ -44,7 +44,7 @@ public class LeakageParamSetServiceImpl implements LeakageParamSetService {
 	@Override
 	public PageListVO queryLegitimateNightUseList(SessionFactory factory, LegitimateNightUseDTO lnuDTO) {
 		LeakageParamSetMapper mapper = factory.getMapper(LeakageParamSetMapper.class);
-		int count = mapper.countLegitimateNightUseList(lnuDTO.getCode());
+		int count = mapper.countLegitimateNightUseList(lnuDTO.getName());
 		//判断条数是否符合分页
 		if(count<(lnuDTO.getPage()-1)*lnuDTO.getPageCount()) return null;
 		List<LegitimateNightUseVO> lists = mapper.queryLegitimateNightUseList(lnuDTO);

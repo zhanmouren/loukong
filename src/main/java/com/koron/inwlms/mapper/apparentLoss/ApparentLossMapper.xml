@@ -371,7 +371,7 @@
 		) b 
 	</select>
 	
-	<select id="queryMeterQH" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterQH">
+	<!-- <select id="queryMeterQH" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterQH">
 		select code as "meterNo",round( max(flux/day/24*2) :: NUMERIC, 6 ) as qh
 		from gdh_month_flux_c001_jc
 		where month &gt;= #{qaDTO.startTime} || '' and month  &lt;= #{qaDTO.endTime} || ''
@@ -382,7 +382,7 @@
 			</foreach> 
 		</if>
 		group by code;
-	</select>
+	</select> -->
 	
 	<select id="queryFSMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO">
 		select month as date,sum(flux) as value
@@ -427,7 +427,7 @@
 	    group by code;
 	</select>
 	
-	<select id="queryTotalMFlow" resultType="java.lang.Double">
+	<!-- <select id="queryTotalMFlow" resultType="java.lang.Double">
 		select round( sum(flux) :: NUMERIC, 2 ) as mFlow
 		from gdh_month_flux_c001_jc where
 		month = #{time} || ''
@@ -438,9 +438,9 @@
 			</foreach> 
 		</if>
 	    group by month;
-	</select>
+	</select> -->
 	
-	<select id="queryMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
+	<!-- <select id="queryMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
 		select code,month,flux
 		from gdh_month_flux_c001_jc where
 		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
@@ -451,7 +451,7 @@
 			</foreach> 
 		</if>
 	    order by code,month asc;
-	</select>
+	</select> -->
 	
 	<select id="queryMeterMZeroFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
 		select code,month,flux
@@ -496,7 +496,7 @@
 	    group by code;
 	</select>
 	
-	<select id="queryMeterErrUseData" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlMeterErrUseData">
+	<!-- <select id="queryMeterErrUseData" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlMeterErrUseData">
 		select code as meterNo,
 		avg(flux)-3*stddev(flux) as minV,
 		avg(flux)+3*stddev(flux) as maxV
@@ -509,5 +509,85 @@
 			</foreach> 
 		</if>
 	    group by code;
+	</select> -->
+	
+	<select id="queryMeterInfoByZoneNo" parameterType="java.lang.String"
+	resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterInfo">
+		select "CTM_NUM" as accNo,"CTM_NAME" as accName,"TBL_NUM" as meterNo,
+		"BORE_VALUE" as meterDn,"TYPE_NAME" as meterType,"CTM_ADDR" address,"YS_NAME" as useType,
+		"CB_DAY" mReadDate,DATE_PART('days',now()-to_date("KAI_DATE",'YYYY-MM-DD'))/356 as useYear from rw_fct_ctm  
 	</select>
-</mapper>
+	
+	<select id="queryWNMMeterReadFlow" resultType="java.lang.Double">
+		select round(avg(c.avgFlow)/10000 :: NUMERIC, 2 ) from(
+		select "yearMonth",avg(value) as avgFlow
+		from ana_company_month 
+		where "yearMonth" &gt;= (select id from lc_app_dim_month where "yearMonth" = #{qaDTO.startTime}) and "yearMonth"  &lt;= (select id from lc_app_dim_month where "yearMonth" = #{qaDTO.endTime})
+		group by "yearMonth") c
+	</select>
+	
+	<select id="queryMeterQH" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterQH">
+		<!-- select a."CTM_NUM" as meterNo,a."MONTH_ID",max(real_num) as qh from 
+		(select "CTM_NUM","MONTH_ID",round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num
+		from rw_fct_cb 
+		where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}) a group by a."CTM_NUM",a."MONTH_ID"
+		 -->
+		select b."CTM_NUM" as accNo,b."CTM_NAME" as accName,b."TBL_NUM" as meterNo,
+		b."BORE_VALUE" as meterDn,b."CTM_ADDR" address,b."YS_NAME" as useType,b."CB_DAY" mReadDate,a."MONTH_ID",max(real_num) as qh from 
+		(select "CTM_NUM","MONTH_ID",round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num
+		from rw_fct_cb 
+		where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}) a left join 
+		rw_fct_ctm b on a."CTM_NUM" = b."CTM_NUM" group by a."CTM_NUM",a."MONTH_ID", b."CTM_NUM",
+		b."CTM_NAME",b."TBL_NUM",b."BORE_VALUE",b."CTM_ADDR",b."YS_NAME",b."CB_DAY";
+	
+	</select>
+	
+	<select id="queryMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
+		select "CTM_NUM" as code,"MONTH_ID" as month,"REAL_NUM" as flux
+		from rw_fct_cb where 
+		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		<if test="lists != null and lists.size > 0">
+			and "CTM_NUM" in 
+			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+				#{item.accNo}    
+			</foreach> 
+		</if>
+	</select>
+	
+	<select id="queryMeterErrUseData" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlMeterErrUseData">
+		select "CTM_NUM" as accNo,
+		avg("REAL_NUM")-3*stddev("REAL_NUM") as minV,
+		avg("REAL_NUM")+3*stddev("REAL_NUM") as maxV
+		from rw_fct_cb where
+		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		<if test="lists != null and lists.size > 0">
+			and "CTM_NUM" in 
+			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+				#{item.accNo}    
+			</foreach> 
+		</if>
+	    group by "CTM_NUM","REAL_NUM";
+	</select>
+	
+	<select id="queryRTimeUnset" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterRTimeUnset">
+		select count(b.*) as tDNonReadMeterNum,count(c.*) as totalNonReadMeterNum from rw_fct_ctm a left join 
+		(select "COPY_DATE","CTM_NUM" from rw_fct_cb where "MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}) b
+		on a."CTM_NUM" = b."CTM_NUM" and abs(to_date(substring(b."COPY_DATE" from 1 for 7) || '-' || a."CB_DAY",'YYYY-MM-DD') - to_date(b."COPY_DATE",'YYYY-MM-DD')) &gt;= 10 left join 
+		(select "COPY_DATE","CTM_NUM" from rw_fct_cb where "MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}) c
+		on a."CTM_NUM" = c."CTM_NUM" and abs(to_date(substring(c."COPY_DATE" from 1 for 7) || '-' || a."CB_DAY",'YYYY-MM-DD') - to_date(c."COPY_DATE",'YYYY-MM-DD')) &gt;= 3;
+	</select>
+	
+	<select id="queryTotalMFlow" resultType="java.lang.Double">
+		select round( sum("REAL_NUM")/100 :: NUMERIC, 2 ) as mFlow
+		from rw_fct_cb where
+		"MONTH_ID" = #{time}
+		<if test="lists != null and lists.size > 0">
+			and code in 
+			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+	    group by "MONTH_ID";
+	</select>
+	
+</mapper> 

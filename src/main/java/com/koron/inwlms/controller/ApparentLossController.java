@@ -22,6 +22,7 @@ import org.swan.bean.MessageBean;
 import com.github.pagehelper.util.StringUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
@@ -36,6 +37,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.util.Constant;
@@ -50,7 +52,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Controller
 @Api(value = "apparentLossController", description = "表观漏损Controller")
-@RequestMapping(value = "/apparentLossController")
+@RequestMapping(value = "/{tenantID}/apparentLossController")
 public class ApparentLossController {
 
 	@Autowired
@@ -64,7 +66,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryALOverviewData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询表观漏损数据总览接口", notes = "查询表观漏损数据总览接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryALOverviewData(@RequestBody QueryALDTO queryALDTO) {
+	public String queryALOverviewData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ALOverviewDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, ALOverviewDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -98,7 +100,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			ALOverviewDataVO data = ADOConnection.runTask(als, "queryALOverviewData", ALOverviewDataVO.class,queryALDTO);
+			ALOverviewDataVO data = ADOConnection.runTask(user.getEnv(),als, "queryALOverviewData", ALOverviewDataVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -111,7 +113,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryALList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询表观漏损数据列表", notes = "查询表观漏损数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryALList(@RequestBody QueryALListDTO queryALListDTO) {
+	public String queryALList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		if(queryALListDTO.getTimeType() == null) {
 			//参数不正确
@@ -155,7 +157,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			PageListVO data = ADOConnection.runTask(als, "queryALList", PageListVO.class,queryALListDTO);
+			PageListVO data = ADOConnection.runTask(user.getEnv(),als, "queryALList", PageListVO.class,queryALListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -167,7 +169,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryALMapData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询表观漏损图表数据", notes = "查询表观漏损图表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryALMapData(@RequestBody QueryALDTO queryALDTO) {
+	public String queryALMapData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ALMapDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, ALMapDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -201,7 +203,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			ALMapDataVO data = ADOConnection.runTask(als, "queryALMapData", ALMapDataVO.class,queryALDTO);
+			ALMapDataVO data = ADOConnection.runTask(user.getEnv(),als, "queryALMapData", ALMapDataVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -213,7 +215,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadALList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载表观漏损列表数据", notes = "下载表观漏损列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadALList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadALList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -225,7 +227,7 @@ public class ApparentLossController {
 			queryALListDTO.setPage(1);
 			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<ALListVO>> pageBean = ADOConnection.runTask(als, "queryALList", PageListVO.class,queryALListDTO);
+			PageListVO<List<ALListVO>> pageBean = ADOConnection.runTask(user.getEnv(),als, "queryALList", PageListVO.class,queryALListDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -241,7 +243,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryMeterRunAnalysisList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询水表运行分析列表数据", notes = "查询水表运行分析列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryMeterRunAnalysisList(@RequestBody QueryALDTO queryALDTO) {
+	public String queryMeterRunAnalysisList(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -275,7 +277,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			List<MeterRunAnalysisVO> data = ADOConnection.runTask(als, "queryMeterRunAnalysisList", List.class,queryALDTO);
+			List<MeterRunAnalysisVO> data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisList", List.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -287,7 +289,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryMeterRunAnalysisMapData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询水表运行分析图表数据", notes = "查询水表运行分析图表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryMeterRunAnalysisMapData(@RequestBody QueryALDTO queryALDTO) {
+	public String queryMeterRunAnalysisMapData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<MeterAnalysisMapVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, MeterAnalysisMapVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -321,7 +323,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			MeterAnalysisMapVO data = ADOConnection.runTask(als, "queryMeterRunAnalysisMapData", MeterAnalysisMapVO.class,queryALDTO);
+			MeterAnalysisMapVO data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisMapData", MeterAnalysisMapVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -333,7 +335,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadMeterRunAnalysisList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载水表运行分析列表数据", notes = "下载水表运行分析列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadMeterRunAnalysisList(@RequestParam String objValue,@RequestParam String titleInfos) {
+    public HttpEntity<?> downloadMeterRunAnalysisList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -343,7 +345,7 @@ public class ApparentLossController {
 				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			// 查询到导出数据结果
-			List<MeterRunAnalysisVO> lists = ADOConnection.runTask(als, "queryMeterRunAnalysisList", List.class,queryALDTO);
+			List<MeterRunAnalysisVO> lists = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisList", List.class,queryALDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -360,7 +362,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrTotalAnalysisData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告总体分析数据", notes = "查询诊断报告总体分析数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrTotalAnalysisData(@RequestBody QueryALDTO queryALDTO) {
+	public String queryDrTotalAnalysisData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrTotalAnalysisDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrTotalAnalysisDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -394,7 +396,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			DrTotalAnalysisDataVO data = ADOConnection.runTask(als, "queryDrTotalAnalysisData", DrTotalAnalysisDataVO.class,queryALDTO);
+			DrTotalAnalysisDataVO data = ADOConnection.runTask(user.getEnv(),als, "queryDrTotalAnalysisData", DrTotalAnalysisDataVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -406,7 +408,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrCurrentMeterData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告现状水表数据", notes = "查询诊断报告现状水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrCurrentMeterData(@RequestBody QueryALDTO queryALDTO) {
+	public String queryDrCurrentMeterData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrCurrentMeterDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrCurrentMeterDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -440,7 +442,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			DrCurrentMeterDataVO data = ADOConnection.runTask(als, "queryDrCurrentMeterData", DrCurrentMeterDataVO.class,queryALDTO);
+			DrCurrentMeterDataVO data = ADOConnection.runTask(user.getEnv(),als, "queryDrCurrentMeterData", DrCurrentMeterDataVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -452,7 +454,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrMeterManageData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告表计管理数据", notes = "查询诊断报告表计管理数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrMeterManageData(@RequestBody QueryALDTO queryALDTO) {
+	public String queryDrMeterManageData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrMeterManageVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrMeterManageVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -486,7 +488,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			DrMeterManageVO data = ADOConnection.runTask(als, "queryDrMeterManageData", DrMeterManageVO.class,queryALDTO);
+			DrMeterManageVO data = ADOConnection.runTask(user.getEnv(),als, "queryDrMeterManageData", DrMeterManageVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -498,7 +500,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrMeterRunAnalysisData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告水表运行分析数据", notes = "查询诊断报告水表运行分析数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrMeterRunAnalysisData(@RequestBody QueryALDTO queryALDTO) {
+	public String queryDrMeterRunAnalysisData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrMeterAnaDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrMeterAnaDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -532,7 +534,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			DrMeterAnaDataVO data = ADOConnection.runTask(als, "queryMeterAnaData", DrMeterAnaDataVO.class,queryALDTO);
+			DrMeterAnaDataVO data = ADOConnection.runTask(user.getEnv(),als, "queryMeterAnaData", DrMeterAnaDataVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -544,7 +546,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrDealAdvise.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告处理建议数据", notes = "查询诊断报告处理建议数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrDealAdvise(@RequestBody QueryALDTO queryALDTO) {
+	public String queryDrDealAdvise(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrDealAdviseVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrDealAdviseVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -578,7 +580,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			DrDealAdviseVO data = ADOConnection.runTask(als, "queryDrDealAdvise", DrDealAdviseVO.class,queryALDTO);
+			DrDealAdviseVO data = ADOConnection.runTask(user.getEnv(),als, "queryDrDealAdvise", DrDealAdviseVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -590,7 +592,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrQuestionList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告问题清单数据", notes = "查询诊断报告问题清单数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrQuestionList(@RequestBody QueryALDTO queryALDTO) {
+	public String queryDrQuestionList(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrqlVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrqlVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -624,7 +626,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			DrqlVO data = ADOConnection.runTask(als, "queryDrQuestionList", DrqlVO.class,queryALDTO);
+			DrqlVO data = ADOConnection.runTask(user.getEnv(),als, "queryDrQuestionList", DrqlVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -636,11 +638,8 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadDrQuestionList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载诊断报告问题清单列表", notes = "下载诊断报告问题清单列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDrQuestionList(HttpServletResponse response, HttpServletRequest request) {
+	public HttpEntity<?> downloadDrQuestionList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
-			String objValue = request.getParameter("objValue"); // 获取导出数据查询条件bean
-			String titleInfos = request.getParameter("titleInfos"); // 获取导出列表数据表头
-			String labelId = request.getParameter("labelId"); // 获取labelId
 			if(StringUtil.isEmpty(labelId)) return null;
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -650,7 +649,7 @@ public class ApparentLossController {
 				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			}
 			// 查询到导出数据结果
-			DrqlVO data = ADOConnection.runTask(als, "queryDrQuestionList", DrqlVO.class,queryALDTO);
+			DrqlVO data = ADOConnection.runTask(user.getEnv(),als, "queryDrQuestionList", DrqlVO.class,queryALDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件

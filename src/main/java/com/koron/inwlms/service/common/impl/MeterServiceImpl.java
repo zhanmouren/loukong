@@ -7,6 +7,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfoLossData;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterUserTimeVO;
 import com.koron.inwlms.service.common.MeterService;
@@ -14,20 +15,11 @@ import com.koron.inwlms.service.common.MeterService;
 @Service
 public class MeterServiceImpl implements MeterService {
 
-	@TaskAnnotation("queryMeterInfoLossData")
-	@Override
-	public MeterInfoLossData queryMeterInfoLossData(SessionFactory factory, List<String> lists) {
-		MeterInfoLossData meterInfoLossVO = new MeterInfoLossData();
-		meterInfoLossVO.setLossDnNum(1);
-		meterInfoLossVO.setLossInDateNum(4);
-		meterInfoLossVO.setLossMTypeNum(7);
-		meterInfoLossVO.setLossUTypeNum(5);
-		return meterInfoLossVO;
-	}
+	
 
 	@TaskAnnotation("queryMeterUserTimeInfo")
 	@Override
-	public List<MeterUserTimeVO> queryMeterUserTimeInfo(SessionFactory factory, List<String> lists) {
+	public List<MeterUserTimeVO> queryMeterUserTimeInfo(SessionFactory factory, List<MeterInfo> lists) {
 		List<MeterUserTimeVO> list = new ArrayList<>();
 		MeterUserTimeVO mutVO = new MeterUserTimeVO();
 		mutVO.setMeterDn(15);
@@ -75,6 +67,16 @@ public class MeterServiceImpl implements MeterService {
 		mutVO8.setMeterNo("10000020");
 		list.add(mutVO8);
 		return list;
+	}
+
+	@TaskAnnotation("queryMeterInfoLossData")
+	@Override
+	public MeterInfoLossData queryMeterInfoLossData(SessionFactory factory, List<MeterInfo> lists) {
+		MeterInfoLossData meterInfoLossVO = new MeterInfoLossData();
+		meterInfoLossVO.setLossDnNum(1);
+		meterInfoLossVO.setLossMTypeNum(7);
+		meterInfoLossVO.setLossUTypeNum(5);
+		return meterInfoLossVO;
 	}
 
 }

@@ -21,6 +21,8 @@ public class LegitimateNightUseEditDTO {
      * 夜间流量值
      */
     private Double flow;
+    
+    private String name;
 
     private String account;
 
@@ -55,6 +57,14 @@ public class LegitimateNightUseEditDTO {
 
 	public void setFlow(Double flow) {
 		this.flow = flow;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 

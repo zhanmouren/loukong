@@ -47,6 +47,16 @@ public class MeterInfo {
 	 */
 	private String accNo;
 	
+	/**
+	 * 开户日期
+	 */
+	private String kaiDate;
+	
+	/**
+	 * 服役时间（年）
+	 */
+	private Double useYear;
+	
 	public String getMeterNo() {
 		return meterNo;
 	}
@@ -109,6 +119,22 @@ public class MeterInfo {
 
 	public void setAccNo(String accNo) {
 		this.accNo = accNo;
+	}
+
+	public String getKaiDate() {
+		return kaiDate;
+	}
+
+	public void setKaiDate(String kaiDate) {
+		this.kaiDate = kaiDate;
+	}
+
+	public Double getUseYear() {
+		return useYear;
+	}
+
+	public void setUseYear(Double useYear) {
+		this.useYear = useYear;
 	}
 	
 }

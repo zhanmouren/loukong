@@ -43,7 +43,7 @@ public interface LeakageParamSetMapper {
 	 * @param code
 	 * @return
 	 */
-	int countLegitimateNightUseList(@Param("code") String code);
+	int countLegitimateNightUseList(@Param("name") String name);
 
 	/**
 	 * 更新合理夜间流量数据

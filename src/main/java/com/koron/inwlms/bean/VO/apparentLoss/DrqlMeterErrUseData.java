@@ -8,9 +8,9 @@ package com.koron.inwlms.bean.VO.apparentLoss;
 public class DrqlMeterErrUseData {
 
 	/**
-	 * 水表编码
+	 * 用户编码
 	 */
-	private String meterNo;
+	private String accNo;
 	
 	/**
 	 * 均值-3倍标准差
@@ -21,10 +21,7 @@ public class DrqlMeterErrUseData {
 	 * 均值+3倍标准差
 	 */
 	private Double maxV;
-
-	public String getMeterNo() {
-		return meterNo;
-	}
+	
 
 	public Double getMinV() {
 		return minV;
@@ -34,9 +31,6 @@ public class DrqlMeterErrUseData {
 		return maxV;
 	}
 
-	public void setMeterNo(String meterNo) {
-		this.meterNo = meterNo;
-	}
 
 	public void setMinV(Double minV) {
 		this.minV = minV;
@@ -45,5 +39,14 @@ public class DrqlMeterErrUseData {
 	public void setMaxV(Double maxV) {
 		this.maxV = maxV;
 	}
+
+	public String getAccNo() {
+		return accNo;
+	}
+
+	public void setAccNo(String accNo) {
+		this.accNo = accNo;
+	}
+
 	
 }
