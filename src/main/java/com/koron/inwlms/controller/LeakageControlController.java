@@ -484,7 +484,7 @@ public class LeakageControlController {
    			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
    			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
    		}
-		return null;
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/queryAlarmProcessFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
