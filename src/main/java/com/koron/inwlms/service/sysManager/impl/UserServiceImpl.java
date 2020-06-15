@@ -609,11 +609,10 @@ public class UserServiceImpl implements UserService{
 //				
 //					dataDicDTO.setUpdateBy(userListVO.getLoginName());
 					//修改时候判断key是否重复
-					List<DataDicVO> keyList=userMapper.queryKey(dataDicDTO);
-					boolean result = dataDicDTO.getDicId() != keyList.get(0).getDicId();
-					if(keyList!=null && keyList.size()>0 && dataDicDTO.getDicId()!=keyList.get(0).getDicId()) {
-						return -2;
-					}
+//					List<DataDicVO> keyList=userMapper.queryKey(dataDicDTO);
+//					if(keyList!=null && keyList.size()>0 && dataDicDTO.getDicId()!=keyList.get(0).getDicId()) {
+//						return -2;
+//					}
 					Integer updateRes=userMapper.updateDicDetById(dataDicDTO);
 					return updateRes;
 				}

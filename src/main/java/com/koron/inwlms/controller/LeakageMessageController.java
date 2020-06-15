@@ -52,7 +52,7 @@ public class LeakageMessageController {
 			// 查询条件字符串转对象，查询数据结果
 			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
 			loginName = userListVO.getLoginName();
-			LeakageMessageListVO leakageMessageList = ADOConnection.runTask(leakageMessageService, "queryMessage", LeakageMessageListVO.class, loginName);
+			LeakageMessageListVO leakageMessageList = ADOConnection.runTask(user.getEnv(),leakageMessageService, "queryMessage", LeakageMessageListVO.class, loginName);
 			if(leakageMessageList != null ) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			    msg.setDescription("查询到预警信息"); 
@@ -77,7 +77,7 @@ public class LeakageMessageController {
     public String updateAlarmMessageStatus(@RequestBody WarningInfDTO warningInfDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<LeakageMessageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LeakageMessageListVO.class);
 		try {
-			Integer result = ADOConnection.runTask(leakageMessageService, "updateAlarmMessageStatus", Integer.class, warningInfDTO);
+			Integer result = ADOConnection.runTask(user.getEnv(),leakageMessageService, "updateAlarmMessageStatus", Integer.class, warningInfDTO);
 			if(result != null ) {
 				if(result != 0) {
 					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
