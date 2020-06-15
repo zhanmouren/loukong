@@ -77,7 +77,7 @@ public interface IndexMapper {
 	/**
 	 *  查询完成数量,未完成数量,进行中
 	 */
-	List<InfoCompleteRateVO> queryComRateNum(WarningInfoDTO warningInfoDTO);
+	Integer queryComRateNum(WarningInfoDTO warningInfoDTO);
 	
 	/**
 	 *  查询预计完成时间大于实际完成时间的条数

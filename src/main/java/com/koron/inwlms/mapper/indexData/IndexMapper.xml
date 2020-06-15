@@ -13,9 +13,9 @@
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_base_year as a 
-			left join lc_app_dim_indicator as b on a.code = b.code
+			left join lc_app_dim_indicator as c on a.code = c.code
 			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
@@ -31,6 +31,7 @@
 				#{item}    
 			</foreach> 
 		</if>
+		order by round( a.value/c.precision :: NUMERIC, 2 ) desc
 	</select>
 	
 	<select id="queryWBBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO" 
@@ -45,9 +46,9 @@
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_zone_balance_year as a 
-			left join lc_app_dim_indicator as b on a.code = b.code
+			left join lc_app_dim_indicator as c on a.code = c.code
 			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
@@ -110,9 +111,9 @@
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_zone_year as a 
-			left join lc_app_dim_indicator as b on a.code = b.code
+			left join lc_app_dim_indicator as c on a.code = c.code
 			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
@@ -175,9 +176,9 @@
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_zone_moni_year as a 
-			left join lc_app_dim_indicator as b on a.code = b.code
+			left join lc_app_dim_indicator as c on a.code = c.code
 			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
@@ -193,7 +194,7 @@
 				#{item}    
 			</foreach> 
 		</if>
-	
+		order by round( a.value/c.precision :: NUMERIC, 2 ) desc
 	
 	
 	
@@ -248,9 +249,9 @@
 			where b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo",d.name as name
 			from ana_leak_year as a 
-			left join lc_app_dim_indicator as b on a.code = b.code
+			left join lc_app_dim_indicator as c on a.code = c.code
 			left join gis_exist_zone as d on a."zoneNo" = d.p_code
 			where a.year &gt;= #{startTime} and a.year &lt;= #{endTime}
 		</if>
@@ -266,7 +267,7 @@
 				#{item}    
 			</foreach> 
 		</if>
-	
+		order by round( a.value/c.precision :: NUMERIC, 2 ) desc
 	
 	
 	
@@ -318,8 +319,8 @@
 			left join lc_app_dim_indicator as c on a.code = c.code
 		</if>
 		<if test="timeType != null and timeType == 2">
-			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId"
-			from ana_company_year a left join lc_app_dim_indicator b on a.code = b.code
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,a.year as "timeId"
+			from ana_company_year a left join lc_app_dim_indicator c on a.code = c.code
 		</if>
 		where 1 = 1
 		<if test="codes != null and codes.size > 0">
@@ -341,10 +342,9 @@
 	
 	 <!-- 查询任务列表 -->
     <select id="queryTaskList"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="com.koron.inwlms.bean.VO.indexData.TaskMsgVO">
-       select "processing".* ,"zone".name as "objectName","warninginf"."alarmType"
+       select "processing".* ,"warninginf"."alarmType","warninginf"."objectCode"
 		from app_warningprocessing as "processing"
 		left join app_warninginf as "warninginf" on "processing"."warningCode" = "warninginf".code
-		left join gis_exist_zone  as "zone" on "zone".p_code = "warninginf"."areaCode"
        where "warninginf"."alarmTime"  &gt;  to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS')
        and "warninginf"."alarmTime" &lt;  to_date(#{searchTaskEndTime},'YYYY-MM-DD HH24:MI:SS')
         <if test="areaZoneList != null and areaZoneList.size > 0">
@@ -362,7 +362,6 @@
        select count(*)
 		from app_warningprocessing as "processing"
 		left join app_warninginf as "warninginf" on "processing"."warningCode" = "warninginf".code
-		left join gis_exist_zone  as "zone" on "zone".p_code = "warninginf"."areaCode"
        where "warninginf"."alarmTime"  &gt;  to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS')
        and "warninginf"."alarmTime" &lt;  to_date(#{searchTaskEndTime},'YYYY-MM-DD HH24:MI:SS')
         <if test="areaZoneList != null and areaZoneList.size > 0">
@@ -374,7 +373,7 @@
     </select>
     
      <!-- 查询任务完成数量 -->
-    <select id="queryComRateNum"   parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"   resultType="com.koron.inwlms.bean.VO.indexData.InfoCompleteRateVO">
+    <select id="queryComRateNum"   parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"   resultType="java.lang.Integer">
         select count(*) as "compleNum"
         from app_warningprocessing as "processing"
 		left join app_warninginf as "warninginf" on "processing"."warningCode" = "warninginf".code
@@ -440,7 +439,7 @@
     
      <!-- 查询检测点信息列表 -->
     <select id="queryCheckWarningMsg"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="com.koron.inwlms.bean.VO.indexData.TaskMsgVO">
-    	select "warninginf".content ,"zone".name as "objectName","warninginf"."alarmType","processing".state,
+    	select "warninginf".content ,"warninginf"."alarmType","processing".state,"warninginf"."objectCode",
     	case when "warninginf".code is null then  '否' else  '是'  end as initiate
 		from app_warninginf as "warninginf"
 		left join app_warningprocessing as "processing" on "processing"."warningCode" = "warninginf".code
@@ -476,12 +475,9 @@
     
       <!-- 计算监测点的任务总个数-->
     <select id="queryProTaskListNum"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="java.lang.Integer">
-       
-		
 		select count(*)
-		from app_warningprocessing as "processing"
-		left join app_warninginf as "warninginf" on "processing"."warningCode" = "warninginf".code
-		left join gis_exist_zone  as "zone" on "zone".p_code = "warninginf"."areaCode"
+		from app_warninginf as "warninginf"
+		left join app_warningprocessing as "processing" on "processing"."warningCode" = "warninginf".code
        where "warninginf"."alarmTime"  &gt;  to_date(#{taskCreateTime},'YYYY-MM-DD HH24:MI:SS')
        and "warninginf"."alarmTime" &lt;  to_date(#{searchTaskEndTime},'YYYY-MM-DD HH24:MI:SS')
        and  "warninginf"."alarmType" in ('L102010005','L102010002','L102010004')
