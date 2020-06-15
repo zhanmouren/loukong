@@ -432,6 +432,7 @@ public class Constant {
 	 * 对象类型数据字典编码-压力流量
 	 */
 	public final static String DATADICTIONARY_OBJECTTYPE = "L101170001";
+	
 	/**
 	 * 任务状态未处理-数据字典
 	 */
@@ -483,7 +484,7 @@ public class Constant {
 	/**
 	 * DMA/PMA分区 数据字典编码
 	 */
-	public final static String DATADICTIONARY_DPZONE = "L101940003";
+	public final static String DATADICTIONARY_DPZONE = "L101940003"; 
 	/**
 	 * 一级分区 数据字典编码
 	 */

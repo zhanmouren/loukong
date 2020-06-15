@@ -37,7 +37,7 @@ public  class PolicyServiceImpl implements PolicyService{
 
 	@TaskAnnotation("deletePolicyScheme")
 	@Override
-	public Integer deletePolicyScheme(SessionFactory factory,String code) {
+	public Integer deletePolicyScheme(SessionFactory factory,String code) { 
 		PolicyMapper mapper = factory.getMapper(PolicyMapper.class);
 		Integer num = mapper.deletePolicyScheme(code);
 		return num;

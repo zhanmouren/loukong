@@ -26,6 +26,7 @@ import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 import com.koron.inwlms.bean.VO.leakageControl.PointHourData;
 import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
@@ -36,6 +37,7 @@ import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
+import com.koron.inwlms.mapper.leakageControl.EconomicIndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
 import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
@@ -240,7 +242,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		//
 		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
 		WarningSchemeDTO warningSchemeDTO = new WarningSchemeDTO();
-		warningSchemeDTO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
+		warningSchemeDTO.setObjectType(Constant.DATADICTIONARY_DPZONE);
 		List<WarningSchemeVO> warningSchemeList = mapper.queryWarningScheme(warningSchemeDTO);
 		for(WarningSchemeVO warningScheme : warningSchemeList) {
 			//数据指标编码
@@ -318,11 +320,24 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 						AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
 						alarmProcessVO.setWarningCode(warningCode);
 						alarmProcessVO.setAlarmType(Constant.DATADICTIONARY_TRENDCHANGE);
-						alarmProcessVO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
+						alarmProcessVO.setObjectType(warningScheme.getObjectType());
 						alarmProcessVO.setAlarmContent(alarmMessageVO.getContent());
 						alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
 						alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
 						//获取推荐策略
+						//查询分区是否为DMA
+						
+						//查询投资曲线数据
+						EconomicIndicatorMapper eimapper = factory.getMapper(EconomicIndicatorMapper.class);
+						List<PartitionInvestVO> list = eimapper.queryPartitionInvest("dma");
+						RecommendStrategy recommendStrategy = new RecommendStrategy();
+						recommendStrategy.setK3(list.get(0).getOtherInvest());
+						recommendStrategy.setK4(list.get(0).getProjectCost());
+						//获取推荐策略参数
+						PolicyMapper policymapper = factory.getMapper(PolicyMapper.class);
+						recommendStrategy = policymapper.queryRecommendstrategy();
+						
+						getRecommendStrategy(factory, recommendStrategy, zoneDayData.getMinNigFlow(), 1);
 						
 						AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
 						alarmProcessMapper.addAlarmProcess(alarmProcessVO);
@@ -457,6 +472,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 	
 	
 	public String getRecommendStrategy(SessionFactory factory,RecommendStrategy recommendStrategy, double mnf,int flag) {
+		
 		
 		String strategyCode = "";
 		
