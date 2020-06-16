@@ -11,7 +11,6 @@ import com.koron.inwlms.bean.DTO.leakageControl.PartitionInvestDTO;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 
 @Repository
-@EnvSource("_default")
 public interface EconomicIndicatorMapper {
 	
 	@Select("select * from app_partitioninvest where type = #{type}")

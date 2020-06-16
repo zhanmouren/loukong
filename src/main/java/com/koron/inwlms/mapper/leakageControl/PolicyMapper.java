@@ -18,7 +18,6 @@ import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
  *
  */
 @Repository
-@EnvSource("_default")
 public interface PolicyMapper {
 
 	List<Policy> queryPolicySetting(String policyCode);

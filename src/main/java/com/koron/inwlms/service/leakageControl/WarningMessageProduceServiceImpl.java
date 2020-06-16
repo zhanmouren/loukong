@@ -235,8 +235,9 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 	
 	/**
 	 * 漏损报警
+	 * @throws ParseException 
 	 */
-	public String startZoneWarning(SessionFactory factory,ZoneDayData zoneDayData) {
+	public String startZoneWarning(SessionFactory factory,ZoneDayData zoneDayData) throws ParseException {
 		//获取分区数据
 		double zoneFlow = 0.0;
 		//
@@ -310,7 +311,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 					alarmMessageVO.setCode(warningCode);
 					String pointCode = warningScheme.getCode() + zoneDayData.getZoneCode(); 
 					alarmMessageVO.setPointCode(pointCode);
-					//TODO 填入分区信息
+					// 填入分区信息
 					alarmMessageVO.setAreaCode(zoneDayData.getZoneCode());
 					
 					//TODO 判断是否需要产生预警信息处理任务
@@ -325,7 +326,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 						alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
 						alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
 						//获取推荐策略
-						//查询分区是否为DMA
+						//TODO 查询分区是否为DMA
 						
 						//查询投资曲线数据
 						EconomicIndicatorMapper eimapper = factory.getMapper(EconomicIndicatorMapper.class);
@@ -333,12 +334,17 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 						RecommendStrategy recommendStrategy = new RecommendStrategy();
 						recommendStrategy.setK3(list.get(0).getOtherInvest());
 						recommendStrategy.setK4(list.get(0).getProjectCost());
-						//获取推荐策略参数
+						//获取推荐策略
 						PolicyMapper policymapper = factory.getMapper(PolicyMapper.class);
 						recommendStrategy = policymapper.queryRecommendstrategy();
-						
-						getRecommendStrategy(factory, recommendStrategy, zoneDayData.getMinNigFlow(), 1);
-						
+						String recomCode = getRecommendStrategy(factory, recommendStrategy, zoneDayData.getMinNigFlow(), 1);
+						alarmProcessVO.setRecommendStrategy(recomCode);
+						//获取预计完成时间
+						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+						AlarmProcessServiceImpl apsi = new AlarmProcessServiceImpl();
+						String finshdate = apsi.getEstimatedTime(factory, recomCode);
+						Date finishDate = format.parse(finshdate);
+						alarmProcessVO.setExpectFinishTime(finishDate);
 						AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
 						alarmProcessMapper.addAlarmProcess(alarmProcessVO);
 					}
@@ -389,10 +395,30 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 							AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
 							alarmProcessVO.setWarningCode(warningCode);
 							alarmProcessVO.setAlarmType(Constant.DATADICTIONARY_TRENDCHANGE);
-							alarmProcessVO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
+							alarmProcessVO.setObjectType(warningScheme.getObjectType());
 							alarmProcessVO.setAlarmContent(alarmMessageVO.getContent());
 							alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
 							alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
+							//获取推荐策略
+							//TODO 查询分区是否为DMA
+							
+							//查询投资曲线数据
+							EconomicIndicatorMapper eimapper = factory.getMapper(EconomicIndicatorMapper.class);
+							List<PartitionInvestVO> list = eimapper.queryPartitionInvest("dma");
+							RecommendStrategy recommendStrategy = new RecommendStrategy();
+							recommendStrategy.setK3(list.get(0).getOtherInvest());
+							recommendStrategy.setK4(list.get(0).getProjectCost());
+							//获取推荐策略
+							PolicyMapper policymapper = factory.getMapper(PolicyMapper.class);
+							recommendStrategy = policymapper.queryRecommendstrategy();
+							String recomCode = getRecommendStrategy(factory, recommendStrategy, zoneDayData.getMinNigFlow(), 1);
+							alarmProcessVO.setRecommendStrategy(recomCode);
+							//获取预计完成时间
+							SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+							AlarmProcessServiceImpl apsi = new AlarmProcessServiceImpl();
+							String finshdate = apsi.getEstimatedTime(factory, recomCode);
+							Date finishDate = format.parse(finshdate);
+							alarmProcessVO.setExpectFinishTime(finishDate);
 							
 							AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
 							alarmProcessMapper.addAlarmProcess(alarmProcessVO);
@@ -634,7 +660,10 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		
 	}
 	
-	public String aiWarning(SessionFactory factory,double maxMNF,double midMNF,double minMNF,double maxFlow,double midFlow,double minFlow) throws ParseException {
+	public String aiWarning(SessionFactory factory) throws ParseException {
+		//获取参数
+		PolicyMapper policymapper = factory.getMapper(PolicyMapper.class);
+		RecommendStrategy recommend = policymapper.queryRecommendstrategy();
 		//获取时间
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		  Date nowDate = new Date();
@@ -690,21 +719,21 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		//最小夜间流量判断标志，1为小，2为中，3为大
 		int mnfFlag = 0;
 		int flowFlag = 0;
-		if((avgMNF - avgOldMNF) >= maxMNF) {
+		if((avgMNF - avgOldMNF) >= recommend.getMaxMNF()) {
 			mnfFlag = 3;
-		}else if((avgMNF - avgOldMNF) >= midMNF) {
+		}else if((avgMNF - avgOldMNF) >= recommend.getMidMNF()) {
 			mnfFlag = 2;
-		}else if((avgMNF - avgOldMNF) >= minMNF) {
+		}else if((avgMNF - avgOldMNF) >= recommend.getMinMNF()) {
 			mnfFlag = 1;
 		}else {
 			mnfFlag = 0;
 		}
 		
-		if((avgFlow - avgOldFlow) >= maxFlow) {
+		if((avgFlow - avgOldFlow) >= recommend.getMaxFlow()) {
 			flowFlag = 3;
-		}else if((avgFlow - avgOldFlow) >= midFlow) {
+		}else if((avgFlow - avgOldFlow) >= recommend.getMidFlow()) {
 			flowFlag = 2;
-		}else if((avgFlow - avgOldFlow) >= minFlow) {
+		}else if((avgFlow - avgOldFlow) >= recommend.getMinFlow()) {
 			flowFlag = 1;
 		}else {
 			flowFlag = 0;

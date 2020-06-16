@@ -17,7 +17,6 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
  */
 
 @Repository
-@EnvSource("_default")
 public interface AlarmMessageMapper {
 	
 	List<AlarmMessageVO> queryAlarmMessage(WarningInfDTO warningInfDTO);

@@ -23,7 +23,7 @@ import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
  *
  */
 @Repository
-@EnvSource("_default")
+
 public interface EventInfoMapper {
 
 	List<EventInfo> queryEventInfo(EventInfoDTO eventInfoDTO);

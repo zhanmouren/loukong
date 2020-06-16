@@ -19,7 +19,6 @@ import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
  *
  */
 @Repository
-@EnvSource("_default")
 public interface WarningSchemeMapper {
 
 	List<WarningSchemeVO> queryWarningScheme(WarningSchemeDTO warningSchemeDTO);

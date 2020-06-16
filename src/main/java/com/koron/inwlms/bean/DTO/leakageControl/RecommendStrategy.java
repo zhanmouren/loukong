@@ -63,8 +63,67 @@ public class RecommendStrategy {
 	 */
 	private Double k4;
 	
+	private Double maxMNF;
+	
+	private Double midMNF;
+	
+	private Double minMNF;
+	
+	private Double maxFlow;
+	
+	private Double midFlow;
+	
+	private Double minFlow;
 	
 	
+	public Double getMaxMNF() {
+		return maxMNF;
+	}
+
+	public void setMaxMNF(Double maxMNF) {
+		this.maxMNF = maxMNF;
+	}
+
+	public Double getMidMNF() {
+		return midMNF;
+	}
+
+	public void setMidMNF(Double midMNF) {
+		this.midMNF = midMNF;
+	}
+
+	public Double getMinMNF() {
+		return minMNF;
+	}
+
+	public void setMinMNF(Double minMNF) {
+		this.minMNF = minMNF;
+	}
+
+	public Double getMaxFlow() {
+		return maxFlow;
+	}
+
+	public void setMaxFlow(Double maxFlow) {
+		this.maxFlow = maxFlow;
+	}
+
+	public Double getMidFlow() {
+		return midFlow;
+	}
+
+	public void setMidFlow(Double midFlow) {
+		this.midFlow = midFlow;
+	}
+
+	public Double getMinFlow() {
+		return minFlow;
+	}
+
+	public void setMinFlow(Double minFlow) {
+		this.minFlow = minFlow;
+	}
+
 	public Double getAli() {
 		return ali;
 	}
