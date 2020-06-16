@@ -126,10 +126,10 @@ public class IndexServiceImpl implements IndexService{
 					indBaseIndicMList=indicatorMapper.queryBaseIndicData(indicatorDTO);
 				}
 			    
-			    
 			    //拿出indBaseIndicMList
 			    if(indBaseIndicMList!=null && indBaseIndicMList.size()>0) {
-			     for(int m=0;m<indBaseIndicMList.size();m++) {
+			    	
+			    	for(int m=0;m<indBaseIndicMList.size();m++) {
 			         	if(areaType==0) {//如果是全网
 						  //管长(月)
 						  if(Constant.BASE_INDIC_WNMFTPL.equals(indBaseIndicMList.get(m).getCode())) {
@@ -171,7 +171,6 @@ public class IndexServiceImpl implements IndexService{
 			      }
 			    }
 			    
-				
 				//清空条件
 				//indicatorDTO.setCodes(new ArrayList<String>());
 				
@@ -220,6 +219,7 @@ public class IndexServiceImpl implements IndexService{
 			
 			    //取出数据
 			    if(indBalanceMList!=null && indBalanceMList.size()>0) {
+			    	
 				    for(int k=0;k<indBalanceMList.size();k++) {
 				    	if(areaType==0) { //全网								 
 							 //供水量(月)
@@ -977,6 +977,8 @@ public class IndexServiceImpl implements IndexService{
 			finalList.addAll(indZoneLossYList);
 			finalList.addAll(indZoneLossLYList);
 			finalList.addAll(indZoneLossLMList);
+			
+			
 			return finalList;	
 		}
 	

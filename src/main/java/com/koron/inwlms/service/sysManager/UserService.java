@@ -155,7 +155,7 @@ public interface UserService {
 	     Integer updateRoleMenuByRoleCode(SessionFactory factory,RoleMenuDTO roleMenuDTO);
 	     
         //模糊查询部门接口
-	     PageListVO<List<DeptVO>> queryDept(SessionFactory factory,DeptDTO deptDTO);
+	     List<DeptVO> queryDept(SessionFactory factory,DeptDTO deptDTO);
 		 
 		 //通过模块菜单Code和角色加载该角色所有选中菜单以及可操作的权限。
 		 List<RoleMenusVO> queryRoleMenuByRoleMenu(SessionFactory factory,RoleMenuDTO roleMenuDTO);	

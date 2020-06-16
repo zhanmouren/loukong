@@ -1187,21 +1187,10 @@ public class UserServiceImpl implements UserService{
 				//模糊查询部门接口 分页
 				@TaskAnnotation("queryDept") 
 				@Override
-				public PageListVO<List<DeptVO>> queryDept(SessionFactory factory, DeptDTO deptDTO) {
+				public List<DeptVO> queryDept(SessionFactory factory, DeptDTO deptDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					List<DeptVO> deptList=userMapper.queryDept(deptDTO);
-					// 查询部门总条数
-					int rowNumber = userMapper.getDeptCount(deptDTO);
-					// 返回数据结果
-					PageListVO<List<DeptVO>> result = new PageListVO<>();
-					result.setDataList(deptList);
-					// 插入分页信息
-					PageVO pageVO = PageUtil.getPageBean(deptDTO.getPage(), deptDTO.getPageCount(), rowNumber);
-					result.setTotalPage(pageVO.getTotalPage());
-					result.setRowNumber(pageVO.getRowNumber());
-					result.setPageCount(pageVO.getPageCount());
-					result.setPage(pageVO.getPage());
-					return result;
+					return deptList;
 				}
 				//通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限
 				@TaskAnnotation("queryRoleMenuByRoleMenu")

@@ -2405,13 +2405,13 @@ public class SystemManagerController {
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDept(@RequestBody DeptDTO deptDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
-		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  PageListVO pageListVO=ADOConnection.runTask(user.getEnv(),userService, "queryDept", PageListVO.class,deptDTO);	
-			  if(pageListVO!=null && pageListVO.getRowNumber()>0) {			 
+			  List<DeptVO> deptList=ADOConnection.runTask(user.getEnv(),userService, "queryDept", List.class,deptDTO);	
+			  if(deptList!=null && deptList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询部门成功"); 
-					msg.setData(pageListVO);
+					msg.setData(deptList);
 				  }else {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("没有查询到相关部门"); 
