@@ -453,7 +453,7 @@
 	    order by code,month asc;
 	</select> -->
 	
-	<select id="queryMeterMZeroFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
+	<!-- <select id="queryMeterMZeroFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
 		select code,month,flux
 		from gdh_month_flux_c001_jc where
 		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
@@ -465,9 +465,9 @@
 			</foreach> 
 		</if>
 	    order by code;
-	</select>
+	</select> -->
 	
-	<select id="queryMeterMAvgFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
+	<!-- <select id="queryMeterMAvgFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
 		select 
 		code,
 		round( avg(flux) :: NUMERIC, 2 ) as flux
@@ -480,7 +480,7 @@
 			</foreach> 
 		</if>
 	    group by code;
-	</select>
+	</select> -->
 	
 	<select id="queryMeterMMaxFlow" resultType="java.lang.Double">
 		select 
@@ -571,23 +571,54 @@
 	
 	<select id="queryRTimeUnset" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterRTimeUnset">
 		select count(b.*) as tDNonReadMeterNum,count(c.*) as totalNonReadMeterNum from rw_fct_ctm a left join 
-		(select "COPY_DATE","CTM_NUM" from rw_fct_cb where "MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}) b
+		(select "COPY_DATE","CTM_NUM" from rw_fct_cb where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}) b
 		on a."CTM_NUM" = b."CTM_NUM" and abs(to_date(substring(b."COPY_DATE" from 1 for 7) || '-' || a."CB_DAY",'YYYY-MM-DD') - to_date(b."COPY_DATE",'YYYY-MM-DD')) &gt;= 10 left join 
-		(select "COPY_DATE","CTM_NUM" from rw_fct_cb where "MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}) c
+		(select "COPY_DATE","CTM_NUM" from rw_fct_cb where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}) c
 		on a."CTM_NUM" = c."CTM_NUM" and abs(to_date(substring(c."COPY_DATE" from 1 for 7) || '-' || a."CB_DAY",'YYYY-MM-DD') - to_date(c."COPY_DATE",'YYYY-MM-DD')) &gt;= 3;
 	</select>
 	
 	<select id="queryTotalMFlow" resultType="java.lang.Double">
 		select round( sum("REAL_NUM")/100 :: NUMERIC, 2 ) as mFlow
 		from rw_fct_cb where
-		"MONTH_ID" = #{time}
+		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
 		<if test="lists != null and lists.size > 0">
-			and code in 
+			and "CTM_NUM" in 
 			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
-				#{item}    
+				#{item}   
 			</foreach> 
 		</if>
-	    group by "MONTH_ID";
 	</select>
 	
+	<select id="queryMeterMZeroFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
+		select a."CTM_NUM" as code,b."MONTH_ID" as month,b."REAL_NUM" as flux from rw_fct_ctm a INNER JOIN (
+		select "CTM_NUM","MONTH_ID" ,"REAL_NUM"
+		from rw_fct_cb where
+		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		and "REAL_NUM" &lt;= 0
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50'
+	</select>
+	
+	<select id="queryMeterMAvgFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
+		select b."CTM_NUM" as code,avg(b."REAL_NUM") as flux,a."BORE_VALUE" as meterDn from rw_fct_ctm a INNER JOIN (
+		select "CTM_NUM","MONTH_ID" ,"REAL_NUM"
+		from rw_fct_cb where
+		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50' group by b."CTM_NUM",a."BORE_VALUE"
+	</select>
+	
+	<select id="queryBigDnTotalMFlow" resultType="java.lang.Double">
+		select round( sum(b."REAL_NUM")/100 :: NUMERIC, 2 ) as flux from rw_fct_ctm a INNER JOIN (
+		select "CTM_NUM","MONTH_ID" ,"REAL_NUM"
+		from rw_fct_cb where
+		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE"  &gt;= '50'
+	</select>
+	
+	<select id="querySmallDnTotalMFlow" resultType="java.lang.Double">
+		select round( sum(b."REAL_NUM")/100 :: NUMERIC, 2 ) as flux from rw_fct_ctm a INNER JOIN (
+		select "CTM_NUM","MONTH_ID" ,"REAL_NUM"
+		from rw_fct_cb where
+		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE"  &lt; '50'
+	</select>
 </mapper> 

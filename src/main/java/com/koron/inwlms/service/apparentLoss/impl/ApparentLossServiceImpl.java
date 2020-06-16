@@ -411,7 +411,10 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		// 计算所有水表的QH值,
 		// 计算流量异常情况，零流量/低流量/正常/过载
 		List<MeterQH> queryMeterQH = mapper.queryMeterQH(queryALDTO, lists);
+		try {
+			
 		for (MeterQH meterQH : queryMeterQH) {
+			if(meterQH.getQh() == null || meterQH.getMeterDn() == null) continue;
 			double qh = Double.parseDouble(meterQH.getQh());
 			for (MeterRunAnalysisVO mraVO : resLists) {
 				if (mraVO.getMeterDn() == meterQH.getMeterDn()) {
@@ -421,6 +424,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 					} else {
 						// 计算低流量/正常/过载水表
 						MeterDNParam meterDNParam = getMeterDNParam(qhMaxMinMap, meterQH.getMeterDn());
+						if(meterDNParam.getMaxQ() == null || meterDNParam.getMinQ() == null) break;
 						if (qh < Double.parseDouble(meterDNParam.getMinQ())) {
 							mraVO.setLowFlowMeterNum(mraVO.getLowFlowMeterNum() + 1);
 						} else if (qh < Double.parseDouble(meterDNParam.getMaxQ())) {
@@ -433,7 +437,9 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 					break;
 				}
 			}
-			break;		
+		}
+		} catch (Exception e) {
+			System.out.println(33);
 		}
 		return resLists;
 	}
@@ -1039,7 +1045,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			e.printStackTrace();
 		}
 		int monthNum = monthsList.size();
-		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMFlow(lists, startTime,endTime);
+//		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMFlow(null, startTime,endTime);
 		int lossKaiDateNum = 0; //缺少安装日期的水表数量
 		int lossDnNum = 0; //缺少口径的水表数量
 		int lossMTypeNum = 0;  //缺少水表类型的水表数量
@@ -1051,19 +1057,24 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		double ftMeterRate = 0.0; //超期服役六年内的水表占比
 		double tMeterRate = 0.0; //超期服役六年内的水表占比
 		
+		List<String> useList = new ArrayList<>();
+		int useBadNum = 0;
 		int sDnMeterNum = 0; //小口径超期服役的水表数目
 		int fMeterNum = 0; //超期服役六年内的水表数目
 		int ftMeterNum = 0; //超期服役6-10年内的水表数目
-		int tMeterNum = 0; //超期服役10年以上的水表数目		
+		int tMeterNum = 0; //超期服役10年以上的水表数目	
+		
+		String[] priKeySplit1 = Constant.USE_PRI1.split(",");
+		String[] priKeySplit2 = Constant.USE_PRI2.split(",");
 		for (MeterInfo meterInfo : lists) {
 			int codeNum = 0;
 			List<String> mList = new ArrayList<>();
-			for (MeterMFlowData meterMFlowData : queryMeterMFlow) {
-				if(meterMFlowData.getCode().equals(meterInfo.getAccNo())) {
-					codeNum++;
-					mList.add(meterMFlowData.getMonth());
-				}
-			}
+//			for (MeterMFlowData meterMFlowData : queryMeterMFlow) {
+//				if(meterMFlowData.getCode().equals(meterInfo.getAccNo())) {
+//					codeNum++;
+//					mList.add(meterMFlowData.getMonth());
+//				}
+//			}
 			if(codeNum == 0 && monthNum >= 5) {
 				fNum++;
 			}else if(codeNum == 0 && monthNum < 5) {
@@ -1093,6 +1104,23 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 					ftMeterNum++;
 				}
 			} 
+			
+			//用户用水可疑信息
+			String accName = meterInfo.getAccName();
+			String useType = meterInfo.getUseType();
+			for (String string : priKeySplit1) {
+				if(accName != null && accName.contains(string) && Constant.USER_TYPE_PP.equals(useType)) {
+					useBadNum++;
+					useList.add(meterInfo.getAccNo());
+				}
+			}
+			
+			for (String string : priKeySplit2) {
+				if(accName != null && accName.contains(string) && !Constant.USER_TYPE_SP.equals(useType)) {
+					useBadNum++;
+					useList.add(meterInfo.getAccNo());
+				}
+			}
 		}
 		MeterReadData meterReadData = new MeterReadData();
 		meterReadData.setfMNonMeterReadNum(fNum);
@@ -1111,7 +1139,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		//3、抄表时间不固定
 		MeterRTimeUnset queryRTimeUnset = mapper.queryRTimeUnset(queryALDTO);
 		queryRTimeUnset.settTDNonReadMeterNum(queryRTimeUnset.getTotalNonReadMeterNum()-queryRTimeUnset.gettDNonReadMeterNum());
-		
+		drMeterManageVO.setMeterRTimeUnset(queryRTimeUnset);
 		
 		//水表超期服役
 		int meterNum = lists.size();
@@ -1132,29 +1160,8 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drMeterManageVO.setMeterOverUseTimeInfo(meterOverUseTimeInfo);
 		
 		//5、用户用水可疑信息
-		List<String> useList = new ArrayList<>();
-		int useBadNum = 0;
-		String[] priKeySplit1 = Constant.USE_PRI1.split(",");
-		String[] priKeySplit2 = Constant.USE_PRI2.split(",");
-		for (MeterInfo meterInfo : lists) {
-			String accName = meterInfo.getAccName();
-			String useType = meterInfo.getUseType();
-			for (String string : priKeySplit1) {
-				if(accName != null && accName.contains(string) && Constant.USER_TYPE_PP.equals(useType)) {
-					useBadNum++;
-					useList.add(meterInfo.getMeterNo());
-				}
-			}
-			
-			for (String string : priKeySplit2) {
-				if(accName != null && accName.contains(string) && !Constant.USER_TYPE_SP.equals(useType)) {
-					useBadNum++;
-					useList.add(meterInfo.getMeterNo());
-				}
-			}
-		}
-		int currentMonth = Integer.parseInt(TimeUtil.getcurrentDay("yyyyMM",new Date()));
-		Double useFlow = mapper.queryTotalMFlow(useList, currentMonth);
+//		int currentMonth = Integer.parseInt(TimeUtil.getcurrentDay("yyyyMM",new Date()));
+		Double useFlow = mapper.queryTotalMFlow(useList, startTime,endTime);
 		drMeterManageVO.setUseBadNum(useBadNum);
 		drMeterManageVO.setUserBadFlow(useFlow);
 		return drMeterManageVO;
@@ -1204,12 +1211,12 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	public DrMeterAnaDataVO queryMeterAnaData(SessionFactory factory, QueryALDTO queryALDTO) {
 		DrMeterAnaDataVO drMeterAnaDataVO = new DrMeterAnaDataVO();
 		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory, "");
-		List<String> sDnMeterList = new ArrayList<>();
-		for (MeterInfo meterInfo : lists) {
-			if(meterInfo.getMeterDn()<Constant.DN_50) {
-				sDnMeterList.add(meterInfo.getMeterNo());
-			}
-		}
+//		List<String> sDnMeterList = new ArrayList<>();
+//		for (MeterInfo meterInfo : lists) {
+//			if(meterInfo.getMeterDn()<Constant.DN_50) {
+//				sDnMeterList.add(meterInfo.getAccNo());
+//			}
+//		}
 		Integer startTime = queryALDTO.getStartTime();
 		Integer endTime = queryALDTO.getEndTime();
 	
@@ -1228,19 +1235,15 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drMeterAnaDataVO.setFsMeterReadData(fsMeterReadData);
 
 		// 4、小口径零用量分析和小口径低流量月水量统计情况
-		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMZeroFlow(sDnMeterList, startTime,endTime);
+		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMZeroFlow(startTime,endTime);
 		int fNum = 0;  //大于5个月没数据的水表个数
 		int tfNum = 0; //2-4个月没数据的水表个数
 		if(queryMeterMFlow != null && queryMeterMFlow.size() != 0) {
-			for (String meterNo : sDnMeterList) {
-				List<String> mList = new ArrayList<>();
-				for (MeterMFlowData meterMFlowData : queryMeterMFlow) {
-					if(meterMFlowData.getCode().equals(meterNo)) {
-						mList.add(meterMFlowData.getMonth());
-					}
-				}
-				getMeterNoMDataNum(fNum,tfNum,mList,startTime,endTime);
+			List<String> mList = new ArrayList<>();
+			for (MeterMFlowData meterMFlowData : queryMeterMFlow) {
+				mList.add(meterMFlowData.getMonth());
 			}
+			getMeterNoMDataNum(fNum,tfNum,mList,startTime,endTime);	
 		}
 		DrSmallDnMeterData drSmallDnMeterData = new DrSmallDnMeterData();
 		drSmallDnMeterData.setFmZeroMeterNum(fNum);
@@ -1249,7 +1252,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drMeterAnaDataVO.setDrSmallDnMeterData(drSmallDnMeterData);
 		
 		//小口径低流量月水量统计情况
-		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(sDnMeterList, startTime, endTime);
+		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(startTime, endTime);
 		DrSmallDnAnaData drSmallDn15AnaData = new DrSmallDnAnaData();
 		DrSmallDnAnaData drSmallDn20AnaData = new DrSmallDnAnaData();
 		DrSmallDnAnaData drSmallDn25AnaData = new DrSmallDnAnaData();
@@ -1261,73 +1264,70 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		int allTNum = 0;
 		for (MeterMFlowData meterMFlowData : queryMeterMAvgFlow) {
 			Double flux = meterMFlowData.getFlux();
-			for (MeterInfo meterInfo : lists) {
-				Integer meterDn = meterInfo.getMeterDn();
-				switch (meterDn) {
-				case Constant.DN_15:
-					if(flux <= 5) {
-						allFNum++;
-						drSmallDn15AnaData.setfFlowNum(drSmallDn15AnaData.getfFlowNum()+1);
-					}else if(flux > 5 && flux <= 10) {
-						allFtNum++;
-						drSmallDn15AnaData.setfFlowNum(drSmallDn15AnaData.getFtFlowNum()+1);
-					}else if(flux > 10 && flux <= 20) {
-						allTtNum++;
-						drSmallDn15AnaData.setfFlowNum(drSmallDn15AnaData.getTtFlowNum()+1);
-					}else {
-						allTNum++;
-						drSmallDn15AnaData.setfFlowNum(drSmallDn15AnaData.gettFlowNum()+1);
-					}
-					break;
-				case Constant.DN_20:
-					if(flux <= 5) {
-						allFNum++;
-						drSmallDn20AnaData.setfFlowNum(drSmallDn20AnaData.getfFlowNum()+1);
-					}else if(flux > 5 && flux <= 10) {
-						allFtNum++;
-						drSmallDn20AnaData.setfFlowNum(drSmallDn20AnaData.getFtFlowNum()+1);
-					}else if(flux > 10 && flux <= 20) {
-						allTtNum++;
-						drSmallDn20AnaData.setfFlowNum(drSmallDn20AnaData.getTtFlowNum()+1);
-					}else {
-						allTNum++;
-						drSmallDn20AnaData.setfFlowNum(drSmallDn20AnaData.gettFlowNum()+1);
-					}
-					break;
-				case Constant.DN_25:
-					if(flux <= 5) {
-						allFNum++;
-						drSmallDn25AnaData.setfFlowNum(drSmallDn25AnaData.getfFlowNum()+1);
-					}else if(flux > 5 && flux <= 10) {
-						allFtNum++;
-						drSmallDn25AnaData.setfFlowNum(drSmallDn25AnaData.getFtFlowNum()+1);
-					}else if(flux > 10 && flux <= 20) {
-						allTtNum++;
-						drSmallDn25AnaData.setfFlowNum(drSmallDn25AnaData.getTtFlowNum()+1);
-					}else {
-						allTNum++;
-						drSmallDn25AnaData.setfFlowNum(drSmallDn25AnaData.gettFlowNum()+1);
-					}
-					break;
-				case Constant.DN_40:
-					if(flux <= 5) {
-						allFNum++;
-						drSmallDn40AnaData.setfFlowNum(drSmallDn40AnaData.getfFlowNum()+1);
-					}else if(flux > 5 && flux <= 10) {
-						allFtNum++;
-						drSmallDn40AnaData.setfFlowNum(drSmallDn40AnaData.getFtFlowNum()+1);
-					}else if(flux > 10 && flux <= 20) {
-						allTtNum++;
-						drSmallDn40AnaData.setfFlowNum(drSmallDn40AnaData.getTtFlowNum()+1);
-					}else {
-						allTNum++;
-						drSmallDn40AnaData.setfFlowNum(drSmallDn40AnaData.gettFlowNum()+1);
-					}
-					break;
-
-				default:
-					break;
+			switch (meterMFlowData.getMeterDn()) {
+			case Constant.DN_15:
+				if(flux <= 5) {
+					allFNum++;
+					drSmallDn15AnaData.setfFlowNum(drSmallDn15AnaData.getfFlowNum()+1);
+				}else if(flux > 5 && flux <= 10) {
+					allFtNum++;
+					drSmallDn15AnaData.setfFlowNum(drSmallDn15AnaData.getFtFlowNum()+1);
+				}else if(flux > 10 && flux <= 20) {
+					allTtNum++;
+					drSmallDn15AnaData.setfFlowNum(drSmallDn15AnaData.getTtFlowNum()+1);
+				}else {
+					allTNum++;
+					drSmallDn15AnaData.setfFlowNum(drSmallDn15AnaData.gettFlowNum()+1);
 				}
+				break;
+			case Constant.DN_20:
+				if(flux <= 5) {
+					allFNum++;
+					drSmallDn20AnaData.setfFlowNum(drSmallDn20AnaData.getfFlowNum()+1);
+				}else if(flux > 5 && flux <= 10) {
+					allFtNum++;
+					drSmallDn20AnaData.setfFlowNum(drSmallDn20AnaData.getFtFlowNum()+1);
+				}else if(flux > 10 && flux <= 20) {
+					allTtNum++;
+					drSmallDn20AnaData.setfFlowNum(drSmallDn20AnaData.getTtFlowNum()+1);
+				}else {
+					allTNum++;
+					drSmallDn20AnaData.setfFlowNum(drSmallDn20AnaData.gettFlowNum()+1);
+				}
+				break;
+			case Constant.DN_25:
+				if(flux <= 5) {
+					allFNum++;
+					drSmallDn25AnaData.setfFlowNum(drSmallDn25AnaData.getfFlowNum()+1);
+				}else if(flux > 5 && flux <= 10) {
+					allFtNum++;
+					drSmallDn25AnaData.setfFlowNum(drSmallDn25AnaData.getFtFlowNum()+1);
+				}else if(flux > 10 && flux <= 20) {
+					allTtNum++;
+					drSmallDn25AnaData.setfFlowNum(drSmallDn25AnaData.getTtFlowNum()+1);
+				}else {
+					allTNum++;
+					drSmallDn25AnaData.setfFlowNum(drSmallDn25AnaData.gettFlowNum()+1);
+				}
+				break;
+			case Constant.DN_40:
+				if(flux <= 5) {
+					allFNum++;
+					drSmallDn40AnaData.setfFlowNum(drSmallDn40AnaData.getfFlowNum()+1);
+				}else if(flux > 5 && flux <= 10) {
+					allFtNum++;
+					drSmallDn40AnaData.setfFlowNum(drSmallDn40AnaData.getFtFlowNum()+1);
+				}else if(flux > 10 && flux <= 20) {
+					allTtNum++;
+					drSmallDn40AnaData.setfFlowNum(drSmallDn40AnaData.getTtFlowNum()+1);
+				}else {
+					allTNum++;
+					drSmallDn40AnaData.setfFlowNum(drSmallDn40AnaData.gettFlowNum()+1);
+				}
+				break;
+
+			default:
+				break;
 			}
 		}
 		drSmallDnAllAnaData.setfFlowNum(allFNum);
@@ -1375,7 +1375,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	@TaskAnnotation("queryDrDealAdvise")
 	@Override
 	public DrDealAdviseVO queryDrDealAdvise(SessionFactory factory, QueryALDTO queryALDTO) {
-		List<MeterInfo> lists = getMeterInfo(factory, queryALDTO);
+		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory, "");
 		Integer startTime = queryALDTO.getStartTime();
 		Integer endTime = queryALDTO.getEndTime();
 		int meterNum = lists.size();
@@ -1386,36 +1386,22 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		// 大口径水表总数
 		int bigDnMeterNum = 0;
 		int smallDnMeterNum = 0;
-		List<String> allMeterList = new ArrayList<>();
-		List<String> bigDnMeterList = new ArrayList<>();
-		List<String> sDnMeterList = new ArrayList<>();
-		for (MeterInfo meterInfo : lists) {
-			if (meterInfo.getMeterDn() >= Constant.DN_50) {
-				bigDnMeterNum++;
-				bigDnMeterList.add(meterInfo.getMeterNo());
-			}else {
-				sDnMeterList.add(meterInfo.getMeterNo());
-			}
-			allMeterList.add(meterInfo.getMeterNo());
-		}
 		smallDnMeterNum = meterNum - bigDnMeterNum;
 		DecimalFormat df = new DecimalFormat("#.0000");
 		// 大口径水表占比
 		double bigDnMeterRate = Double.parseDouble(df.format(bigDnMeterNum / (lists.size() * 1.0)));
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		int currentMonth = Integer.parseInt(TimeUtil.getcurrentDay("yyyyMM", new Date()));
-		Double allMFlow = mapper.queryTotalMFlow(allMeterList, currentMonth);
-		Double bigDnMFlow = mapper.queryTotalMFlow(bigDnMeterList, currentMonth);
+		Double bigDnMFlow = mapper.queryBigDnTotalMFlow(currentMonth,currentMonth);
+		Double smallDnMFlow = mapper.querySmallDnTotalMFlow(currentMonth,currentMonth);
 		// 大口径最新月水量占比
-		double sDnMFlow = 0.0;
-		double bDnMFlow = 0.0;
+		double allMFlow = 0.0;
 		double sDnMFlowRate = 0.0;
 		double bDnMFlowRate = 0.0;
-		if (allMFlow != null && bigDnMFlow != null) {
-			sDnMFlow = allMFlow - bigDnMFlow;
-			bDnMFlow = bigDnMFlow;
-			sDnMFlowRate = Double.parseDouble(df.format(sDnMFlow / allMFlow));
-			bDnMFlowRate = Double.parseDouble(df.format(bDnMFlowRate / allMFlow));
+		if (smallDnMFlow != null || bigDnMFlow != null) {
+			allMFlow = smallDnMFlow + bigDnMFlow;
+			sDnMFlowRate = Double.parseDouble(df.format(smallDnMFlow / allMFlow));
+			bDnMFlowRate = Double.parseDouble(df.format(bigDnMFlow / allMFlow));
 		}
 		DrBigDnDealData drBigDnDealData = new DrBigDnDealData();
 		drBigDnDealData.setBigDnMeterNum(bigDnMeterNum);
@@ -1427,13 +1413,13 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		List<DrMeterStatisData> dmsLists = new ArrayList<>();
 		DrMeterStatisData smallDnData = new DrMeterStatisData();
 		smallDnData.setMeterDn("DN15~40");
-		smallDnData.setmFlow(sDnMFlow);
+		smallDnData.setmFlow(smallDnMFlow);
 		smallDnData.setmFlowRate(sDnMFlowRate);
 		smallDnData.setReadMeterNum(smallDnMeterNum);
 		smallDnData.setReadMeterRate(Double.parseDouble(df.format(smallDnMeterNum / (meterNum * 1.0))));
 		DrMeterStatisData bigDnData = new DrMeterStatisData();
 		bigDnData.setMeterDn(">=DN50");
-		bigDnData.setmFlow(bDnMFlow);
+		bigDnData.setmFlow(bigDnMFlow);
 		bigDnData.setmFlowRate(bDnMFlowRate);
 		bigDnData.setReadMeterNum(bigDnMeterNum);
 		bigDnData.setReadMeterRate(Double.parseDouble(df.format(bigDnMeterNum / (meterNum * 1.0))));
@@ -1447,44 +1433,44 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		List<DrFlowMeterData> sdfmList = new ArrayList<>();
 		List<MeterQH> queryMeterQH = mapper.queryMeterQH(queryALDTO, lists);
 		Map<String, Double> qhMaxMinMap = getQhMaxMinMap(factory);
-		
+		try {
+			
 		for (MeterQH meterQH : queryMeterQH) {
+			if(meterQH.getQh() == null || meterQH.getMeterDn() == null) continue;
 			double qh = Double.parseDouble(meterQH.getQh());
-			for (MeterInfo meterInfo : lists) {
-				if (meterInfo.getMeterNo().equals(meterQH.getMeterNo())) {
-					if (meterInfo.getMeterDn() == meterInfo.getMeterDn()) {
-						// 判断流量QH是否大于0.001，并且大于等于最大流量
-						MeterDNParam meterDNParam = getMeterDNParam(qhMaxMinMap, meterInfo.getMeterDn());
-						if (qh >= Double.parseDouble(meterDNParam.getMaxQ()) ) {
-							//计算最高月流量
-							List<String> maxFlowCodeList = new ArrayList<>();
-							maxFlowCodeList.add(meterInfo.getMeterNo());
-							List<Double> maxFList = mapper.queryMeterMMaxFlow(maxFlowCodeList, startTime, endTime);
-							//判断是大口径，小口径
-							DrFlowMeterData drFlowMeterData = new DrFlowMeterData();
-							drFlowMeterData.setAddress(meterInfo.getAddress());
-							drFlowMeterData.setMeterNo(meterInfo.getMeterNo());
-							drFlowMeterData.setMeterDn(meterInfo.getMeterDn());
-							drFlowMeterData.sethMFlow(maxFList.size()>0?maxFList.get(0):0.0);
-							int changeDn = getChangeDn(qh,qhMaxMinMap); //获取更换的口径
-							drFlowMeterData.setChangeMeterDn(changeDn);
-							if(meterInfo.getMeterDn() < Constant.METER_DN_SIZE) {
-								//小口径
-								sdfmList.add(drFlowMeterData);
-							}else {
-								//大口径
-								bdfmList.add(drFlowMeterData);
-							}
-						}
-					}
+			// 判断流量QH是否大于0.001，并且大于等于最大流量
+			MeterDNParam meterDNParam = getMeterDNParam(qhMaxMinMap, meterQH.getMeterDn());
+			if(meterDNParam.getMaxQ() == null) continue;
+			if (qh >= Double.parseDouble(meterDNParam.getMaxQ()) ) {
+				//计算最高月流量
+				List<String> maxFlowCodeList = new ArrayList<>();
+				maxFlowCodeList.add(meterQH.getMeterNo());
+				List<Double> maxFList = mapper.queryMeterMMaxFlow(maxFlowCodeList, startTime, endTime);
+				//判断是大口径，小口径
+				DrFlowMeterData drFlowMeterData = new DrFlowMeterData();
+				drFlowMeterData.setAddress(meterQH.getAddress());
+				drFlowMeterData.setMeterNo(meterQH.getMeterNo());
+				drFlowMeterData.setMeterDn(meterQH.getMeterDn());
+				drFlowMeterData.sethMFlow(maxFList.size()>0?maxFList.get(0):0.0);
+				int changeDn = getChangeDn(qh,qhMaxMinMap); //获取更换的口径
+				drFlowMeterData.setChangeMeterDn(changeDn);
+				if(meterQH.getMeterDn() < Constant.METER_DN_SIZE) {
+					//小口径
+					sdfmList.add(drFlowMeterData);
+				}else {
+					//大口径
+					bdfmList.add(drFlowMeterData);
 				}
 			}
+		}
+		} catch (Exception e) {
+			System.out.println(333);
 		}
 		drDealAdviseVO.setBdfmList(bdfmList);
 		drDealAdviseVO.setSdfmList(sdfmList);
 
 		// 5、其他
-		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(sDnMeterList, startTime, endTime);
+		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(startTime, endTime);
 		int fNum = 0;
 		int ftNum = 0;
 		int ttNum = 0;
@@ -1531,7 +1517,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		for(Map.Entry<String, Double> entry : qhMaxMinMap.entrySet()){
 		    String mapKey = entry.getKey();
 		    Double mapValue = entry.getValue();
-		    if(Constant.MIN_DN_PARAM.contains(mapKey) && qh > mapValue) {
+		    if(mapKey != null && mapKey.contains(Constant.MIN_DN_PARAM) && qh > mapValue) {
 		    	String[] split = mapKey.split(Constant.MIN_DN_PARAM);
 		    	String maxP = Constant.MAX_DN_PARAM + split[1];
 		    	Double maxV = qhMaxMinMap.get(maxP);
@@ -1581,12 +1567,17 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	 */
 	public MeterDNParam getMeterDNParam(Map<String, Double> qhMaxMinMap, Integer meterDN) {
 		MeterDNParam meterDNParam = new MeterDNParam();
+		try {
+			
 		String maxP = Constant.MAX_DN_PARAM + meterDN.toString();
 		String minP = Constant.MIN_DN_PARAM + meterDN.toString();
 		Double maxValue = qhMaxMinMap.get(maxP);
 		Double minValue = qhMaxMinMap.get(minP);
 		meterDNParam.setMaxQ(maxValue+"");
 		meterDNParam.setMinQ(minValue+"");
+		} catch (Exception e) {
+			System.out.println(99);
+		}
 		return meterDNParam;
 	}
 

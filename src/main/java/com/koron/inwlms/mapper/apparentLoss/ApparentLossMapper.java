@@ -127,7 +127,7 @@ public interface ApparentLossMapper {
 	 * 查询月总水量
 	 * @return
 	 */
-	Double queryTotalMFlow(@Param("lists") List<String> lists,@Param("time") Integer time);
+	Double queryTotalMFlow(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
 	
 	/**
 	 * 查询水表月水量
@@ -143,15 +143,15 @@ public interface ApparentLossMapper {
 	 * @param time
 	 * @return
 	 */
-	List<MeterMFlowData> queryMeterMZeroFlow(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	List<MeterMFlowData> queryMeterMZeroFlow(@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
 
 	/**
-	 * 查询水表平均月水量
+	 * 查询小口径水表平均月水量
 	 * @param lists
 	 * @param time
 	 * @return
 	 */
-	List<MeterMFlowData> queryMeterMAvgFlow(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	List<MeterMFlowData> queryMeterMAvgFlow(@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
 	
 	/**
 	 * 查询水表月最高用水量
@@ -185,5 +185,17 @@ public interface ApparentLossMapper {
 	 * @return
 	 */
 	MeterRTimeUnset queryRTimeUnset(@Param("qaDTO") QueryALDTO queryALDTO);
+	
+	/**
+	 * 查询大口径月总水量
+	 * @return
+	 */
+	Double queryBigDnTotalMFlow(@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	
+	/**
+	 * 查询小口径月总水量
+	 * @return
+	 */
+	Double querySmallDnTotalMFlow(@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
 	
 }

@@ -1293,7 +1293,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryZoneIndicatorDic.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区指标数据字典", notes = "查询分区指标数据字典", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZoneIndicatorDic(Integer zoneType) {
+	public String queryZoneIndicatorDic(Integer zoneType,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		if(zoneType == null) {
 			//参数不正确
@@ -1307,7 +1307,7 @@ public class ZoneLossController {
 			return msg.toJson();
 		}
 		try{
-			List<ZoneIndicatorDicVO> lists = ADOConnection.runTask(zlas,"queryZoneIndicatorDic",List.class,zoneType);
+			List<ZoneIndicatorDicVO> lists = ADOConnection.runTask(user.getEnv(),zlas,"queryZoneIndicatorDic",List.class,zoneType);
 			msg.setData(lists);
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_DELERROR);
