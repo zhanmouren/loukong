@@ -2424,6 +2424,37 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	
+	
+	/*
+     * date:2020-04-09
+     * funtion:查询职位接口
+     * author:xiaozhan
+     */	
+	@RequestMapping(value = "/queryPosition.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询职位接口", notes = "查询职位接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<PositionVO> positionList=ADOConnection.runTask(user.getEnv(),userService, "queryPosition", List.class,positionDTO);	
+			  if(positionList!=null && positionList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询部门成功"); 
+					msg.setData(positionList);
+				  }else {
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询到相关部门"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
 	/*
      * date:2020-04-08
      * funtion:根据userCode可查看菜单目录结构(查看下级的菜单)加入菜单权限,类似查询一级菜单

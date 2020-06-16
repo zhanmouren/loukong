@@ -11,7 +11,7 @@ public class PositionDTO extends BaseDTO{
 	//职位code
 	private String code;
 	//职位状态
-	private short status;
+	private String status;
 	//职位权重
 	private int weight;
 	//职位名称
@@ -43,11 +43,11 @@ public class PositionDTO extends BaseDTO{
 		this.code = code;
 	}
 
-	public short getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(short status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

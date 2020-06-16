@@ -17,6 +17,7 @@ import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.PositionDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -35,6 +36,7 @@ import com.koron.inwlms.bean.VO.sysManager.FieldMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.ImportUserResVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
+import com.koron.inwlms.bean.VO.sysManager.PositionVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -156,6 +158,10 @@ public interface UserService {
 	     
         //模糊查询部门接口
 	     List<DeptVO> queryDept(SessionFactory factory,DeptDTO deptDTO);
+	     
+	     
+	   //模糊查询职位接口
+	     List<PositionVO> queryPosition(SessionFactory factory,PositionDTO positionDTO);
 		 
 		 //通过模块菜单Code和角色加载该角色所有选中菜单以及可操作的权限。
 		 List<RoleMenusVO> queryRoleMenuByRoleMenu(SessionFactory factory,RoleMenuDTO roleMenuDTO);	

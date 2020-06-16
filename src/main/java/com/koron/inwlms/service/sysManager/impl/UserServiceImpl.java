@@ -46,6 +46,7 @@ import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.PositionDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -68,6 +69,7 @@ import com.koron.inwlms.bean.VO.sysManager.FieldMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.ImportUserResVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
+import com.koron.inwlms.bean.VO.sysManager.PositionVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
@@ -1184,7 +1186,7 @@ public class UserServiceImpl implements UserService{
 					return updateRes;
 				}
 
-				//模糊查询部门接口 分页
+				//模糊查询部门接口 
 				@TaskAnnotation("queryDept") 
 				@Override
 				public List<DeptVO> queryDept(SessionFactory factory, DeptDTO deptDTO) {
@@ -1192,6 +1194,16 @@ public class UserServiceImpl implements UserService{
 					List<DeptVO> deptList=userMapper.queryDept(deptDTO);
 					return deptList;
 				}
+				
+				//查询职位接口 
+				@TaskAnnotation("queryPosition") 
+				@Override
+				public List<PositionVO> queryPosition(SessionFactory factory, PositionDTO positionDTO) {
+					UserMapper userMapper = factory.getMapper(UserMapper.class);
+					List<PositionVO> positionList=userMapper.queryPosition(positionDTO);
+					return positionList;
+				}
+				
 				//通过模块菜单Code和角色加载该角色所有菜单以及可操作的权限
 				@TaskAnnotation("queryRoleMenuByRoleMenu")
 				@Override

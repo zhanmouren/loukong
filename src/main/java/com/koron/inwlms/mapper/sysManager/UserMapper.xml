@@ -623,6 +623,16 @@
 		 <if test="status != null"> and "dept".status=#{status}</if>         
 	   </trim>
       </select>
+      
+       <!--查询职位接口-->
+     <select id="queryPosition"  parameterType="com.koron.inwlms.bean.DTO.sysManager.PositionDTO" resultType="com.koron.inwlms.bean.VO.sysManager.PositionVO">
+         select *
+         from sm_position
+      </select>
+      
+      
+      
+      
        <!--模糊查询部门接口部门总数量-->
       <select id="getDeptCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="java.lang.Integer">
          select count(*)

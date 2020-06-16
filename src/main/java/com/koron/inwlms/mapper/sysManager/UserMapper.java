@@ -19,6 +19,7 @@ import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.PositionDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -39,6 +40,7 @@ import com.koron.inwlms.bean.VO.sysManager.FieldMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
 import com.koron.inwlms.bean.VO.sysManager.OrgVO;
+import com.koron.inwlms.bean.VO.sysManager.PositionVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleUserCodeVO;
@@ -253,6 +255,10 @@ public interface UserMapper {
 	    
 	    //模糊查询部门接口
 		public List<DeptVO> queryDept(DeptDTO deptDTO);
+		
+		//查询职位接口
+		public List<PositionVO> queryPosition(PositionDTO positionDTO);
+		
 	    //查询部门接口 总数量
 		public int getDeptCount(DeptDTO deptDTO);
 	    

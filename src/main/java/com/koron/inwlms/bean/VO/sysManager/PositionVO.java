@@ -9,7 +9,7 @@ public class PositionVO {
 	//职位code
 	private String code;
 	//职位状态
-	private short status;
+	private String status;
 	//职位权重
 	private int weight;
 	//职位名称
@@ -28,10 +28,10 @@ public class PositionVO {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public short getStatus() {
+	public String getStatus() {
 		return status;
 	}
-	public void setStatus(short status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	public int getWeight() {
