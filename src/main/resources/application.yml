@@ -1,0 +1,7 @@
+app:
+  oppath:
+   http://127.0.0.1:9999/permissionController/getOPList.htm
+  datapath:
+   http://127.0.0.1:9999/permissionController/getUserRangeValueList.htm
+  filePath:
+   json/Tenant.json 

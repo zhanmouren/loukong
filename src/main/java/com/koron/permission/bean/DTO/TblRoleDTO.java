@@ -1,11 +1,14 @@
 package com.koron.permission.bean.DTO;
+
+import java.sql.Timestamp;
+
 /**
  * date: 2020/05/28
  * @author 小詹
  * description:角色表DTO
  *
  */
-public class TblRoleDTO {
+public class TblRoleDTO extends TblTenantDTO{
 
 	//主键id
 	private Integer roleId;
@@ -18,10 +21,50 @@ public class TblRoleDTO {
 	//角色名称
 	private String roleName;
 	//应用编码
-	private String app;
+	private String app;	
+	 //用户Code
+	private  String userCode;
 	
+	//创建人
+    private String creator;
+    //修改人
+    private String modifier;
+    //创建时间
+    private Timestamp create_time;
+    //修改时间
+    private Timestamp modify_time;
+    
 	
-	
+	public String getCreator() {
+		return creator;
+	}
+	public String getModifier() {
+		return modifier;
+	}
+	public Timestamp getCreate_time() {
+		return create_time;
+	}
+	public Timestamp getModify_time() {
+		return modify_time;
+	}
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+	public void setModifier(String modifier) {
+		this.modifier = modifier;
+	}
+	public void setCreate_time(Timestamp create_time) {
+		this.create_time = create_time;
+	}
+	public void setModify_time(Timestamp modify_time) {
+		this.modify_time = modify_time;
+	}
+	public String getUserCode() {
+		return userCode;
+	}
+	public void setUserCode(String userCode) {
+		this.userCode = userCode;
+	}
 	public Integer getRoleId() {
 		return roleId;
 	}

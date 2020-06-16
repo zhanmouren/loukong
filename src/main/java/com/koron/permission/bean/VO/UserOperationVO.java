@@ -1,12 +1,13 @@
 package com.koron.permission.bean.VO;
 
+
 /**
  * date:2020/05/29
  * @author 小詹
  * description:用户权限列表DTO
  *
  */
-public class userOperationVO {
+public class UserOperationVO {
      //用户Code
 	private  String userCode;
 	//用户权限标识编码
@@ -99,3 +100,4 @@ public class userOperationVO {
 	
 
 }
+

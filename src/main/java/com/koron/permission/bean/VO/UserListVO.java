@@ -1,5 +1,6 @@
 package com.koron.permission.bean.VO;
 
+
 /**
  * 用户登录列表实体VO
  * @createTime 2020/04/08
