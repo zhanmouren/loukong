@@ -278,10 +278,18 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	 */
 	@TaskAnnotation("queryAlarmProcessFile")
 	@Override
-	public List<UploadFileDTO> queryAlarmProcessFile(SessionFactory factory,String type) {
+	public List<UploadFileDTO> queryAlarmProcessFile(SessionFactory factory,String code) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
-		List<UploadFileDTO> list = mapper.queryAlarmProcessFile(type);
-		return list;
+		List<UploadFileDTO> uploadList = new ArrayList<>();
+		List<Integer> list = mapper.queryAlarmProcessFileRelation(code);
+		if(list != null && list.size() != 0) {
+			for(Integer id : list) {
+				UploadFileDTO upload = mapper.queryAlarmProcessFile(id);
+				uploadList.add(upload);
+			}
+			
+		}
+		return uploadList;
 	}
 	
 	/**

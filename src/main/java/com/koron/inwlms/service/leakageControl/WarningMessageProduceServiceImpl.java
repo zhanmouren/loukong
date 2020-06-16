@@ -660,7 +660,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		
 	}
 	
-	public String aiWarning(SessionFactory factory) throws ParseException {
+	public Integer aiWarning(SessionFactory factory,Integer zoneindex) throws ParseException {
 		//获取参数
 		PolicyMapper policymapper = factory.getMapper(PolicyMapper.class);
 		RecommendStrategy recommend = policymapper.queryRecommendstrategy();
@@ -682,6 +682,9 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		//获取前7日的平均流量和最小夜间流量
 		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
 		//TODO 获取分区供水量的指标编码
+		if(zoneindex == 1) {
+			
+		}
 		String allFlowCode = "";
 		String mnfFlowCode = "";
 		List<String> codes = new ArrayList<>();
@@ -749,8 +752,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			endFlag = mnfFlag;
 		}
 		
-		
-		return null;
+		return endFlag;
 	}
 	
 	public Double getHisAvgData(String code,int flag,IndicatorMapper indicMapper,int day) {

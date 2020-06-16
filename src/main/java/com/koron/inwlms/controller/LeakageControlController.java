@@ -490,11 +490,11 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmProcessFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息任务附件接口", notes = "查询预警信息任务附件接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmProcessFile(@RequestBody String type,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryAlarmProcessFile(@RequestBody String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		try {
-			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),aps, "queryAlarmProcessFile",List.class,type);
+			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),aps, "queryAlarmProcessFile",List.class,code);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 		}catch(Exception e) {

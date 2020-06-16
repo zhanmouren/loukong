@@ -36,8 +36,12 @@ public interface AlarmProcessMapper {
 	String addAlarmProcessOfPLX(AlarmProcessVO alarmProcessVO);
 	String addAlarmProcessOfPZS(AlarmProcessVO alarmProcessVO);
 	
-	@Select(" select * from app_file where \"moduleType\" = #{type}")
-	List<UploadFileDTO> queryAlarmProcessFile(@Param("type") String type);
+	@Select(" select * from app_file where id = #{id}")
+	UploadFileDTO queryAlarmProcessFile(@Param("id") Integer id);
+	
+	@Select(" select \"fileId\" from app_filerelation where code = #{code}")
+	List<Integer> queryAlarmProcessFileRelation(@Param("code") String code);
+	
 	
 	@Select("select * from gis_exist_zone where p_code = #{code}")
 	GisExistZoneVO queryGisZone(@Param("code") String code);

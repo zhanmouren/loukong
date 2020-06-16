@@ -22,6 +22,7 @@
  <if test="dmaCode != null and dmaCode != '' ">inner join app_warninginf b on a."warningCode" = b.code where b."objectCode" like '%'||#{dmaCode}||'%'</if>
  </select>
  
+ 
  <select id="queryAlarmMessageByP" parameterType="com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
  select b.code as "warningCode",b.content as content,b."alarmType" as "alarmType",c."objectType" as "objectType",b."objectCode" as "objectCode" 
  from app_warninginf b inner join app_warningscheme c on b."schemeCode" = c.code 
