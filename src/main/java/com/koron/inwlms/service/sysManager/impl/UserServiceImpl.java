@@ -176,9 +176,9 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public List<UserVO> queryUserDetail(SessionFactory factory, QueryUserDTO userDTO) {
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		int mainDeptFlag = userMapper.queryUserMainDept(userDTO);
+		int mainDeptFlag= userMapper.queryUserMainDept(userDTO);
 		//有主职部门
-		if(mainDeptFlag > 0 ) {
+		if(mainDeptFlag >0) {
 			userDTO.setMainDeptFlag(0);
 		}
 		List<UserVO> userList=userMapper.queryUserDetail(userDTO);
@@ -191,40 +191,49 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public Integer updateUser(SessionFactory factory, UserDTO userDTO) {
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
-		Gson jsonValue = new Gson();
-		if(SessionUtil.getAttribute(Constant.LOGIN_USER)==null) {
-			return null;
-		}
-		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);	
-		userDTO.setUpdateBy(userListVO.getLoginName());
-		Integer editResult=userMapper.updateUser(userDTO);
-	    List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
+		QueryUserDTO queryUserDTO = new QueryUserDTO();
+		queryUserDTO.setLoginName(userDTO.getLoginName());
+		List<UserVO> userListFirst = userMapper.queryUser(queryUserDTO);
 		
-	  if(editResult==1 && userDTO.getDepCode()!=null && !"".equals(userDTO.getDepCode())) {
-		 //准备数据
-	    DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
-	    deptAndUserDTO.setDepCode(userDTO.getDepCode());
-	    deptAndUserDTO.setUserCode(userDTO.getCode());
-	    deptAndUserDTO.setCreateBy(userListVO.getLoginName());
-	    deptAndUserDTO.setUpdateBy(userListVO.getLoginName());
-	    deptAndUserDTO.setMainDeptFlag(mainDeptFlag);  
-	    deptUserDTOList.add(deptAndUserDTO);
-	    //修改前先查询是否存在主部门，没有的话先插入	
-		List<DeptAndUserVO> deptUserList=userMapper.queryMainDept(userDTO);
-		if(deptUserList!=null && deptUserList.size()>0) {
-			 //根据职员修改中间表MainDeptFlag为1的操作
-		     UserDTO user=new UserDTO();
-		     user.setCode(userDTO.getCode()); 
-			 userMapper.updateUserDeptFlag(user);
-			 //修改用户和部门关系的操作
-			editResult=userMapper.editDeptUser(deptUserDTOList);
-		}
-		else {	 			  
-		     //添加用户和部门关系的操作
-	        editResult=userMapper.addDeptUser(deptUserDTOList);		   
-		}
-	  }
-		return editResult;
+		queryUserDTO.setLoginName(null);
+		queryUserDTO.setWorkNo(userDTO.getWorkNo());
+		List<UserVO> userListSecond = userMapper.queryUser(queryUserDTO);
+		
+		if(userListFirst != null && userListFirst.size() > 0 && !userListFirst.get(0).getCode().equals(userDTO.getCode())) {
+			//loginName 重复
+			return -1;
+		}else if(userListSecond != null && userListSecond.size() > 0 && !userListSecond.get(0).getCode().equals(userDTO.getCode())) {
+			//workNo 重复
+			return -2;
+		}else {
+			Integer editResult=userMapper.updateUser(userDTO);
+		    List<DeptAndUserDTO> deptUserDTOList=new ArrayList<DeptAndUserDTO>();
+		    if(editResult==1 && userDTO.getDepCode()!=null && !"".equals(userDTO.getDepCode())) {
+				 //准备数据
+			    DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
+			    deptAndUserDTO.setDepCode(userDTO.getDepCode());
+			    deptAndUserDTO.setUserCode(userDTO.getCode());
+			    deptAndUserDTO.setCreateBy(userDTO.getLoginName());
+			    deptAndUserDTO.setUpdateBy(userDTO.getLoginName());
+			    deptAndUserDTO.setMainDeptFlag(mainDeptFlag);  
+			    deptUserDTOList.add(deptAndUserDTO);
+			    //修改前先查询是否存在主部门，没有的话先插入	
+				List<DeptAndUserVO> deptUserList=userMapper.queryMainDept(userDTO);
+				if(deptUserList!=null && deptUserList.size()>0) {
+					 //根据职员修改中间表MainDeptFlag为1的操作
+				     UserDTO user=new UserDTO();
+				     user.setCode(userDTO.getCode()); 
+					 userMapper.updateUserDeptFlag(user);
+					 //修改用户和部门关系的操作
+					editResult=userMapper.editDeptUser(deptUserDTOList);
+				}
+				else {	 			  
+				     //添加用户和部门关系的操作
+			        editResult=userMapper.addDeptUser(deptUserDTOList);		   
+				}
+			  }
+				return editResult;
+		}	  
 	}
    
 	//删除职员 2020/03/23

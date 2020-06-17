@@ -168,8 +168,11 @@ public class SystemManagerController {
     @ApiOperation(value = "修改职员信息接口", notes = "修改职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateUser(@RequestBody UserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
-		if(userDTO.getCode()==null) {
+		if(userDTO.getCode()==null || StringUtils.isBlank(userDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员编码不能为空", Integer.class).toJson();
+		}
+		if(userDTO.getWorkNo()==null || StringUtils.isBlank(userDTO.getWorkNo())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员工号不能为空", Integer.class).toJson();
 		}
 		if(userDTO.getName()==null || StringUtils.isBlank(userDTO.getName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员名不能为空", Integer.class).toJson();
@@ -177,22 +180,29 @@ public class SystemManagerController {
 		if(userDTO.getLoginName()==null || StringUtils.isBlank(userDTO.getLoginName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "登录名称不能为空", Integer.class).toJson();
 		}
-		if(userDTO.getSex()==null) {
+		if(userDTO.getSex()==null || StringUtils.isBlank(userDTO.getSex())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "性别不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行修改职员的操作
 		  try{
+			  userDTO.setUpdateBy(user.getLoginName());
 			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateUser", Integer.class, userDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
 					//修改用户成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("修改用户成功");
-				  }else {
-				    //修改用户失败
-			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
-			        msg.setDescription("修改用户失败");
+				  }else if(updateRes== -1){
+					  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					  msg.setDescription("loginName 重复");
+				  }else if(updateRes== -2){
+					  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					  msg.setDescription("workNo 重复");
+				  }else{
+					  //修改用户失败
+				      msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("修改用户失败");
 				  }
 			  }
 	        }catch(Exception e){
@@ -2750,17 +2760,17 @@ public class SystemManagerController {
      * author:xiaozhan
      */  	
 	@RequestMapping(value = "/updateMyPassword.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "重置职员密码接口", notes = "重置职员密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "个人修改密码接口", notes = "个人修改密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String updateMyPassword(@RequestBody UpdateWordDTO updateWordDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(updateWordDTO.getOldPassWord()==null || "".equals(updateWordDTO.getOldPassWord())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "旧密码不能为空", Integer.class).toJson();
 		}
 		if(updateWordDTO.getNewPassWord()==null || "".equals(updateWordDTO.getNewPassWord())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "旧密码不能为空", Integer.class).toJson();
 		}
 		if(updateWordDTO.getSurePassWord()==null || "".equals(updateWordDTO.getSurePassWord())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "旧密码不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       		
 		  try{

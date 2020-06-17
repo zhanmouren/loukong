@@ -87,11 +87,12 @@
 		<set>	    
              <if test="name != null  and name !=''" > name = #{name},  </if>                       
              <if test="loginName != null and loginName !=''" > "loginName" = #{loginName},</if>                                 
-             <if test="sex != null" >sex = #{sex,jdbcType=INTEGER}, </if>                        
-             <if test="email != null and email != ''" > "email" = #{email}, </if>               
+             <if test="sex != null" >sex = #{sex}, </if>                        
+             <if test="email != null " > "email" = #{email}, </if>               
              <if test="updateBy != null and updateBy!=''" >  "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if>  
-             <if test="status != null" > status = #{status},  </if>               
+             <if test="status != null" > status = #{status},  </if>  
+             <if test="position != null" > position = #{position},  </if>             
 		</set>
 		where code=#{code}
      </update>

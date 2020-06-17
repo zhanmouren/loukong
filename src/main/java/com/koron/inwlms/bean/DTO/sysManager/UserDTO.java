@@ -34,7 +34,7 @@ public class UserDTO{
   private String position;
 
 //职员性别
-  private Integer sex;
+  private String sex;
   //职员电话
   private String photo;
   //微信Id
@@ -155,10 +155,11 @@ public void setEmail(String email) {
 }
 
 
-public Integer getSex() {
+
+public String getSex() {
 	return sex;
 }
-public void setSex(Integer sex) {
+public void setSex(String sex) {
 	this.sex = sex;
 }
 public String getPhoto() {
