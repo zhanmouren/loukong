@@ -190,7 +190,9 @@
     <!--添加角色数据范围操作 -->
     <insert id="addRoleRangeValue" parameterType="com.koron.permission.bean.DTO.TblRoleRangeValueDTO">  
         insert into tblrole_range_value  (role,catalogue,value)values
-		(#{roleCode},#{catalogue},#{value})
+		<foreach collection="list" index="index" separator="," item="item">
+          (#{item.roleCode},#{item.catalogue},#{item.value})  
+        </foreach> 
     </insert>
     
      <!--添加 域-->

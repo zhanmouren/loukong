@@ -114,7 +114,7 @@ public class PermissionServiceImpl implements PermissionService{
 			  addRes=-3;
 			  return addRes;
 		  }else {
-			  //生成根节点
+			  //生成子节点
 		      LongTreeBean longTreeBean =treeService.add(factory, parent, child);
 		      if(longTreeBean==null) {
 		    	  addRes=-4;
@@ -320,8 +320,17 @@ public class PermissionServiceImpl implements PermissionService{
 		@TaskAnnotation("addRoleRangeValue")
 		@Override
 		public Integer addRoleRangeValue(SessionFactory factory, TblRoleRangeValueDTO tblRoleRangeValueDTO) {
-			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);			 
-			Integer addRes=mapper.addRoleRangeValue(tblRoleRangeValueDTO);
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
+			//封装数据
+			List<TblRoleRangeValueDTO> tblRoleRangeValueList=new ArrayList<>();
+			for(int i=0;i<tblRoleRangeValueDTO.getValueList().size();i++) {
+				TblRoleRangeValueDTO tblRoleRangeValue=new TblRoleRangeValueDTO();
+				tblRoleRangeValue.setRoleCode(tblRoleRangeValueDTO.getRoleCode());
+				tblRoleRangeValue.setCatalogue(tblRoleRangeValueDTO.getCatalogue());
+				tblRoleRangeValue.setValue(tblRoleRangeValueDTO.getValueList().get(i));
+				tblRoleRangeValueList.add(tblRoleRangeValue);
+			}
+			Integer addRes=mapper.addRoleRangeValue(tblRoleRangeValueList);
 			return addRes;
 		}
 
@@ -358,7 +367,21 @@ public class PermissionServiceImpl implements PermissionService{
 		@Override
 		public Integer updateRoleRangeValue(SessionFactory factory, TblRoleRangeValueDTO tblRoleRangeValueDTO) {
 			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
-			Integer updateRes=mapper.updateRoleRangeValue(tblRoleRangeValueDTO);
+			//修改角色数据范围前，先删除 根据角色和目录
+			Integer delRes=mapper.deleteRoleRangeValue(tblRoleRangeValueDTO);
+			if(tblRoleRangeValueDTO.getValueList().size()<1) {
+				return delRes;
+			}
+			//封装数据
+			List<TblRoleRangeValueDTO> tblRoleRangeValueList=new ArrayList<>();
+			for(int i=0;i<tblRoleRangeValueDTO.getValueList().size();i++) {
+				TblRoleRangeValueDTO tblRoleRangeValue=new TblRoleRangeValueDTO();
+				tblRoleRangeValue.setRoleCode(tblRoleRangeValueDTO.getRoleCode());
+				tblRoleRangeValue.setCatalogue(tblRoleRangeValueDTO.getCatalogue());
+				tblRoleRangeValue.setValue(tblRoleRangeValueDTO.getValueList().get(i));
+				tblRoleRangeValueList.add(tblRoleRangeValue);
+			}
+			Integer updateRes=mapper.addRoleRangeValue(tblRoleRangeValueList);
 			return updateRes;
 		}
 		

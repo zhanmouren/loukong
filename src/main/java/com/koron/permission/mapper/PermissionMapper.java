@@ -103,7 +103,7 @@ public interface PermissionMapper {
     public Integer deleteRoleOP(@Param("roleCode") String roleCode,@Param("list") List<String> opCodeList);
     
     //添加角色数据范围操作
-    public Integer addRoleRangeValue(TblRoleRangeValueDTO tblRoleRangeValueDTO);
+    public Integer addRoleRangeValue(List<TblRoleRangeValueDTO> list);
     
     //添加域
     public Integer addAppCatalogue(TblAppCatalogueDTO tblAppCatalogueDTO);
@@ -114,7 +114,7 @@ public interface PermissionMapper {
     //删除域
     public Integer deleteAppCatalogue(TblAppCatalogueDTO tblAppCatalogueDTO);
     
-    //修改角色数据范围操作
+    //修改角色数据范围操作(修改值而已)
     public Integer updateRoleRangeValue(TblRoleRangeValueDTO tblRoleRangeValueDTO);
     
     //添加组织角色关系

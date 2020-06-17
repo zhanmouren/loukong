@@ -812,7 +812,7 @@ public class PermissionController {
 	    * function:通过此接口添加角色数据范围操作
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  // @OPSPIMethod("op001")
 	   @RequestMapping(value = "/addRoleRangeValue.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "添加角色数据范围操作接口", notes = "添加角色数据范围操作接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -823,8 +823,11 @@ public class PermissionController {
 		     if(tblRoleRangeValueDTO.getCatalogue()==null || "".equals(tblRoleRangeValueDTO.getCatalogue())) {
 			    return  MessageBean.create(MESSAGE_INT_PARAMS, "目录编码不能为空", Integer.class).toJson();
 			 }
-		     if(tblRoleRangeValueDTO.getValue()==null || "".equals(tblRoleRangeValueDTO.getValue())) {
-		        return  MessageBean.create(MESSAGE_INT_PARAMS, "值不能为空", Integer.class).toJson(); 
+		     if(tblRoleRangeValueDTO.getValueList()==null) {
+		    	return  MessageBean.create(MESSAGE_INT_PARAMS, "值不能为空", Integer.class).toJson();
+		     }
+		     if(tblRoleRangeValueDTO.getValueList().size()<1) {
+		    	 return  MessageBean.create(MESSAGE_INT_PARAMS, "值不能为空", Integer.class).toJson();
 		     }
 			 MessageBean<Integer> msg = MessageBean.create(MESSAGE_INT_SUCCESS, MESSAGE_STRING_SUCCESS, Integer.class);	       
 			  try{				
@@ -976,9 +979,9 @@ public class PermissionController {
 		     if(tblRoleRangeValueDTO.getCatalogue()==null || "".equals(tblRoleRangeValueDTO.getCatalogue())) {
 			    return  MessageBean.create(MESSAGE_INT_PARAMS, "目录编码不能为空", Integer.class).toJson();
 			 }
-		     if(tblRoleRangeValueDTO.getValue()==null || "".equals(tblRoleRangeValueDTO.getValue())) {
-		        return  MessageBean.create(MESSAGE_INT_PARAMS, "值不能为空", Integer.class).toJson(); 
-		     }
+		     if(tblRoleRangeValueDTO.getValueList()==null) {
+			    	return  MessageBean.create(MESSAGE_INT_PARAMS, "值不能为空", Integer.class).toJson();
+			  }	     
 			 MessageBean<Integer> msg = MessageBean.create(MESSAGE_INT_SUCCESS, MESSAGE_STRING_SUCCESS, Integer.class);	       
 			  try{				
 				 Integer addRes=ADOConnection.runTask(user.getEnv(),permissionService, "updateRoleRangeValue", Integer.class,tblRoleRangeValueDTO);	

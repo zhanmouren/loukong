@@ -1,5 +1,7 @@
 package com.koron.permission.bean.DTO;
 
+import java.util.List;
+
 /**
  * date: 2020/05/28
  * @author 小詹
@@ -15,6 +17,16 @@ public class TblRoleRangeValueDTO{
 	private String catalogue;
 	//具体的值
 	private String value;
+	//具体值的List
+	private List<String> valueList;
+	
+	
+	public List<String> getValueList() {
+		return valueList;
+	}
+	public void setValueList(List<String> valueList) {
+		this.valueList = valueList;
+	}
 	public Integer getId() {
 		return id;
 	}
