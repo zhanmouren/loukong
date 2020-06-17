@@ -22,6 +22,8 @@ public class QueryUserDTO extends BaseDTO{
 	private String name;
 	//部门名称
 	private String depName;
+	//主职部门标识
+	private Integer mainDeptFlag;
 	
 	  //是否停用(0 启用，-1 停用)
 	  private Integer whetUse;
@@ -74,6 +76,12 @@ public class QueryUserDTO extends BaseDTO{
 	}
 	public void setDepName(String depName) {
 		this.depName = depName;
+	}
+	public Integer getMainDeptFlag() {
+		return mainDeptFlag;
+	}
+	public void setMainDeptFlag(Integer mainDeptFlag) {
+		this.mainDeptFlag = mainDeptFlag;
 	}
 	
 }

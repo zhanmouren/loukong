@@ -68,6 +68,9 @@ public interface UserMapper {
 	//查询职员条数
 	public int getUserCount(QueryUserDTO userDTO);
 	
+	//查询职员是否拥有主职部门
+	public int queryUserMainDept(QueryUserDTO userDTO);
+	
 	//修改职员
     public Integer updateUser(UserDTO userDTO);
     

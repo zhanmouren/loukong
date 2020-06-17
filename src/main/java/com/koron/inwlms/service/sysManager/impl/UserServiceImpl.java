@@ -176,6 +176,11 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public List<UserVO> queryUserDetail(SessionFactory factory, QueryUserDTO userDTO) {
 		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		int mainDeptFlag = userMapper.queryUserMainDept(userDTO);
+		//有主职部门
+		if(mainDeptFlag > 0 ) {
+			userDTO.setMainDeptFlag(0);
+		}
 		List<UserVO> userList=userMapper.queryUserDetail(userDTO);
 		return userList;
 	}

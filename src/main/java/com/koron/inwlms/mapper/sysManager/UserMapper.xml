@@ -33,14 +33,32 @@
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
     
-    
     <select id="queryUserDetail"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-      select "user".id as "userId","user"."loginName","user".phone,"user"."email","user".name,"dept".name as "depName","dept".code as "depCode",
+      select 
+      <if test="mainDeptFlag != null">
+      "user".id as "userId","user"."loginName","user".phone,"user"."email","user".name,"dept".name as "depName","dept".code as "depCode",
 	   "user".sex,"user".photo,"user"."openID","user"."workNo","position".name as position,"position".code as "positionCode"
 	   from sm_user as "user"
 	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
 	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
 	   left join sm_position as "position" on "user".position = "position".code
+	   where "user".code = #{code} and "userdept"."mainDeptFlag" = 0
+	   </if> 
+	   <if test="mainDeptFlag == null">
+      	"user".id as "userId","user"."loginName","user".phone,"user"."email","user".name,
+	   	"user".sex,"user".photo,"user"."openID","user"."workNo","position".name as position,"position".code as "positionCode"
+	   	from sm_user as "user"
+	   	left join sm_position as "position" on "user".position = "position".code
+	   	where "user".code = #{code} 
+	   </if> 
+    </select>
+    
+    <!-- 查询职员是否有主职部门 -->
+    <select id="queryUserMainDept"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="java.lang.Integer">
+       select count(*)
+	   from sm_user as "user"
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
 	   where "userdept"."mainDeptFlag" = 0   and "user"."code" = #{code}
     </select>
     
