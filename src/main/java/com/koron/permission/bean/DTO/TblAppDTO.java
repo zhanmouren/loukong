@@ -8,7 +8,7 @@ import java.sql.Timestamp;
  * description:应用appDTO
  *
  */
-public class TblAppDTO extends TblTenantDTO{
+public class TblAppDTO{
 	//主键id
     private Integer appId;
     //应用编码

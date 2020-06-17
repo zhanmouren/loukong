@@ -8,7 +8,7 @@ import java.sql.Timestamp;
  * description:操作DTO
  *
  */
-public class TblOperationDTO extends TblTenantDTO{
+public class TblOperationDTO{
 	 //操作编码
      private String  opCode;
      //操作启用状态  0启用1停用

@@ -7,7 +7,7 @@ import java.util.List;
  * description:角色-用户DTO
  *
  */
-public class TblRoleUserDTO extends TblTenantDTO{
+public class TblRoleUserDTO{
 	
 	//用户code
 	private String userCode;

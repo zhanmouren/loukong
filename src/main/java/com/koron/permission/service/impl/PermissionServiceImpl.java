@@ -1,34 +1,21 @@
 package com.koron.permission.service.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
-import org.koron.ebs.mybatis.ADOSessionImpl;
-import org.koron.ebs.mybatis.EnvSource;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
 import com.koron.permission.bean.DTO.TblAppCatalogueDTO;
 import com.koron.permission.bean.DTO.TblAppDTO;
 import com.koron.permission.bean.DTO.TblAppOPDTO;
-import com.koron.permission.bean.DTO.TblDatabaseDTO;
 import com.koron.permission.bean.DTO.TblOpCodeListDTO;
 import com.koron.permission.bean.DTO.TblOperationDTO;
 import com.koron.permission.bean.DTO.TblOrgRoleDTO;
@@ -47,14 +34,8 @@ import com.koron.permission.service.PermissionService;
 import com.koron.util.RandomCodeUtil;
 
 @Service
-public class PermissionServiceImpl implements PermissionService{
+public class PermissionServiceImpl implements PermissionService{	
 	
-	@Value("${app.filePath}")
-	private String filePath;
-	
-	
-	//静态变量存储
-	private final Map<String,String> envMap=new HashMap<>();
 		
 	@Autowired
 	private RandomCodeUtil randomCodeUtil;
@@ -62,40 +43,8 @@ public class PermissionServiceImpl implements PermissionService{
 	//添加应用信息 2020-06-01
 	@TaskAnnotation("addApp")
 	@Override
-	public Integer addApp(SessionFactory factory,TblAppDTO tblAppDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblAppDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblAppDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 
+	public Integer addApp(SessionFactory factory,TblAppDTO tblAppDTO) {		
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 	    //应用code需要鉴别是否重复
 		TblAppDTO tblApp=new TblAppDTO();
 		tblApp.setAppCode(tblAppDTO.getAppCode());
@@ -110,39 +59,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("updateApp")
 	@Override
 	public Integer updateApp(SessionFactory factory, TblAppDTO tblAppDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblAppDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblAppDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 		Integer updateRes=mapper.updateApp(tblAppDTO);
 		return updateRes;
 	}
@@ -151,39 +68,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("deleteApp")
 	@Override
 	public Integer deleteApp(SessionFactory factory, TblAppDTO tblAppDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblAppDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblAppDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 		Integer deleteRes=mapper.deleteApp(tblAppDTO);
 		return deleteRes;
 	}
@@ -192,39 +77,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("queryApp")
 	@Override
 	public List<TblAppVO> queryApp(SessionFactory factory, TblAppDTO tblAppDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblAppDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblAppDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);	 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);	 
 		List<TblAppVO> appList=mapper.queryApp(tblAppDTO);
 		return appList;
 	}
@@ -233,8 +86,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("addOperate")
 	@Override
 	public Integer addOperate(SessionFactory factory, TblOperationDTO tblOperationDTO) {
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
-		 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 		//生成code
 		String opCode=randomCodeUtil.getUUID32();
 		tblOperationDTO.setOpCode(opCode);
@@ -272,39 +124,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("deleteOperate")
 	@Override
 	public Integer deleteOperate(SessionFactory factory, TblOpCodeListDTO tblOpCodeListDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblOpCodeListDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblOpCodeListDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 		
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 		
 		List<String> codeList=new ArrayList<>();
 		//先批量删除操作节点
 		Integer deleteRes=mapper.deleteOperate(tblOpCodeListDTO.getOpCodeList());		
@@ -317,39 +137,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("updateOperate")
 	@Override
 	public Integer updateOperate(SessionFactory factory, TblOperationDTO tblOperationDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblOperationDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblOperationDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 	
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 	
 		Integer   updateRes =mapper.updateOperate(tblOperationDTO);
 		return updateRes;
 	}
@@ -358,39 +146,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("addAppOP")
 	@Override
 	public Integer addAppOP(SessionFactory factory, TblAppOPDTO tblAppOPDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblAppOPDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblAppOPDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 		//添加的时候判断是否存在appCode(防止滥数据)
 		TblAppDTO tblAppDTO=new TblAppDTO();
 		tblAppDTO.setAppCode(tblAppOPDTO.getAppCode());
@@ -431,39 +187,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("deleteAppOp")
 	@Override
 	public Integer deleteAppOp(SessionFactory factory, TblAppOPDTO tblAppOPDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblAppOPDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblAppOPDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 		Integer delRes=mapper.deleteAppOp(tblAppOPDTO.getAppCode(),tblAppOPDTO.getOpCodeList());
 		return delRes;
 	}
@@ -472,39 +196,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("addRole")
 	@Override
 	public Integer addRole(SessionFactory factory, TblRoleDTO tblRoleDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblRoleDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblRoleDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);	 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);	 
 		//添加的时候查询appCode是否存在
 		TblAppDTO tblAppDTO=new TblAppDTO();
 		tblAppDTO.setAppCode(tblRoleDTO.getApp());
@@ -523,39 +215,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("updateRole")
 	@Override
 	public Integer updateRole(SessionFactory factory, TblRoleDTO tblRoleDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblRoleDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblRoleDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 		Integer updateRes=mapper.updateRole(tblRoleDTO);
 		return updateRes;
 	}
@@ -564,39 +224,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("deleteRole")
 	@Override
 	public Integer deleteRole(SessionFactory factory, TblRoleDTO tblRoleDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblRoleDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblRoleDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		 PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);
-		 
+		 PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 		//删除角色-用户中关于该角色
 	     Integer deleteRes=mapper.deleteRoleUser(tblRoleDTO.getRoleCode());		
 		//删除角色-操作中关于该角色
@@ -614,38 +242,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("queryAllRole")
 	@Override
 	public List<TblRoleVO> queryAllRole(SessionFactory factory,TblTenantDTO tblTenantDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblTenantDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblTenantDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);	 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);	 
 		List<TblRoleVO> roleList=mapper.queryAllRole(tblTenantDTO);
 		return roleList;
 	}
@@ -653,39 +250,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("addRoleUser")
 	@Override
 	public Integer addRoleUser(SessionFactory factory, TblRoleUserDTO tblRoleUserDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblRoleUserDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblRoleUserDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 		//封装数据
 		List<TblRoleUserDTO> roleUserList=new ArrayList<>();
 		for(int i=0;i<tblRoleUserDTO.getUserCodeList().size();i++) {
@@ -702,38 +267,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("addRoleOP")
 	@Override
 	public Integer addRoleOP(SessionFactory factory, TblRoleOpDTO tblRoleOpDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblRoleOpDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblRoleOpDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 	   
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 	   
 		//封装数据
 		List<TblRoleOpDTO> roleOpList=new ArrayList<>();
 		for(int i=0;i<tblRoleOpDTO.getOpCodeList().size();i++) {
@@ -750,38 +284,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("deleteRoleOP")
 	@Override
 	public Integer deleteRoleOP(SessionFactory factory, TblRoleOpDTO tblRoleOpDTO) {
-		String env=EnvSource.DEFAULT;
-		try {
-			ClassPathResource classPathResource = new ClassPathResource(filePath);
-			InputStream inputStream =classPathResource.getInputStream();
-		    JSONObject json = JSON.parseObject(IOUtils.toString(
-		    		 inputStream,"utf-8"));
-		    JSONArray jsonArray =json.getJSONArray(tblRoleOpDTO.get_tenantCode());
-		    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-		    for(int i=0;i<jsonArray.size();i++) {
-		    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-		    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-		    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-		    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-		    }		    
-		    String terant = tblRoleOpDTO.get_tenantCode();
-			env = terant+EnvSource.DEFAULT;
-			
-			Properties prop = new Properties();
-			prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-			prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-			prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-			prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-			if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(terant,terant);
-			}
-		    
-		 } catch (IOException e) {
-			e.printStackTrace();
-		}
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);		 	
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 	
 		Integer delRes=mapper.deleteRoleOP(tblRoleOpDTO.getRoleCode(),tblRoleOpDTO.getOpCodeList());
 		return delRes;
 	}
@@ -790,38 +293,7 @@ public class PermissionServiceImpl implements PermissionService{
 		@TaskAnnotation("updateRoleOP")
 		@Override
 		public Integer updateRoleOP(SessionFactory factory, TblRoleOpDTO tblRoleOpDTO) {
-			String env=EnvSource.DEFAULT;			
-			try {
-				ClassPathResource classPathResource = new ClassPathResource(filePath);
-				InputStream inputStream =classPathResource.getInputStream();
-			    JSONObject json = JSON.parseObject(IOUtils.toString(
-			    		 inputStream,"utf-8"));
-			    JSONArray jsonArray =json.getJSONArray(tblRoleOpDTO.get_tenantCode());
-			    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-			    for(int i=0;i<jsonArray.size();i++) {
-			    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-			    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-			    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-			    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-			    }		    
-			    String terant = tblRoleOpDTO.get_tenantCode();
-				env = terant+EnvSource.DEFAULT;
-				
-				Properties prop = new Properties();
-				prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-				prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-				prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-				prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-				if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-					new ADOSessionImpl().registeDBMap(env, prop);
-					//设置到envMap里面
-					envMap.put(terant,terant);
-				}
-			    
-			 } catch (IOException e) {
-				e.printStackTrace();
-			}
-			PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);			 
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);			 
 			//修改的时候先删除该角色之前的操作  (角色-操作表)
 		    Integer deleteRes=mapper.deleteRoleOp(tblRoleOpDTO.getRoleCode());	
 		    if(deleteRes==-1) {
@@ -842,39 +314,7 @@ public class PermissionServiceImpl implements PermissionService{
 		@TaskAnnotation("addRoleRangeValue")
 		@Override
 		public Integer addRoleRangeValue(SessionFactory factory, TblRoleRangeValueDTO tblRoleRangeValueDTO) {
-			String env=EnvSource.DEFAULT;
-			
-			try {
-				ClassPathResource classPathResource = new ClassPathResource(filePath);
-				InputStream inputStream =classPathResource.getInputStream();
-			    JSONObject json = JSON.parseObject(IOUtils.toString(
-			    		 inputStream,"utf-8"));
-			    JSONArray jsonArray =json.getJSONArray(tblRoleRangeValueDTO.get_tenantCode());
-			    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-			    for(int i=0;i<jsonArray.size();i++) {
-			    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-			    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-			    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-			    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-			    }		    
-			    String terant = tblRoleRangeValueDTO.get_tenantCode();
-				env = terant+EnvSource.DEFAULT;
-				
-				Properties prop = new Properties();
-				prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-				prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-				prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-				prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-				if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-					new ADOSessionImpl().registeDBMap(env, prop);
-					//设置到envMap里面
-					envMap.put(terant,terant);
-				}
-			    
-			 } catch (IOException e) {
-				e.printStackTrace();
-			}
-			PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);			 
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);			 
 			Integer addRes=mapper.addRoleRangeValue(tblRoleRangeValueDTO);
 			return addRes;
 		}
@@ -883,38 +323,7 @@ public class PermissionServiceImpl implements PermissionService{
 		@TaskAnnotation("addAppCatalogue")
 		@Override
 		public Integer addAppCatalogue(SessionFactory factory, TblAppCatalogueDTO tblAppCatalogueDTO) {
-			String env=EnvSource.DEFAULT;
-			try {
-				ClassPathResource classPathResource = new ClassPathResource(filePath);
-				InputStream inputStream =classPathResource.getInputStream();
-			    JSONObject json = JSON.parseObject(IOUtils.toString(
-			    		 inputStream,"utf-8"));
-			    JSONArray jsonArray =json.getJSONArray(tblAppCatalogueDTO.get_tenantCode());
-			    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-			    for(int i=0;i<jsonArray.size();i++) {
-			    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-			    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-			    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-			    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-			    }		    
-			    String terant = tblAppCatalogueDTO.get_tenantCode();
-				env = terant+EnvSource.DEFAULT;
-				
-				Properties prop = new Properties();
-				prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-				prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-				prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-				prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-				if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-					new ADOSessionImpl().registeDBMap(env, prop);
-					//设置到envMap里面
-					envMap.put(terant,terant);
-				}
-			    
-			 } catch (IOException e) {
-				e.printStackTrace();
-			}
-			PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
 			tblAppCatalogueDTO.setCode(randomCodeUtil.getUUID32());
 			Integer addRes=mapper.addAppCatalogue(tblAppCatalogueDTO);
 			return addRes;
@@ -924,38 +333,7 @@ public class PermissionServiceImpl implements PermissionService{
 		@TaskAnnotation("updateAppCatalogue")
 		@Override
 		public Integer updateAppCatalogue(SessionFactory factory, TblAppCatalogueDTO tblAppCatalogueDTO) {
-			String env=EnvSource.DEFAULT;
-			try {
-				ClassPathResource classPathResource = new ClassPathResource(filePath);
-				InputStream inputStream =classPathResource.getInputStream();
-			    JSONObject json = JSON.parseObject(IOUtils.toString(
-			    		 inputStream,"utf-8"));
-			    JSONArray jsonArray =json.getJSONArray(tblAppCatalogueDTO.get_tenantCode());
-			    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-			    for(int i=0;i<jsonArray.size();i++) {
-			    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-			    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-			    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-			    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-			    }		    
-			    String terant = tblAppCatalogueDTO.get_tenantCode();
-				env = terant+EnvSource.DEFAULT;
-				
-				Properties prop = new Properties();
-				prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-				prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-				prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-				prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-				if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-					new ADOSessionImpl().registeDBMap(env, prop);
-					//设置到envMap里面
-					envMap.put(terant,terant);
-				}
-			    
-			 } catch (IOException e) {
-				e.printStackTrace();
-			}
-			PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
 			Integer updateRes=mapper.updateAppCatalogue(tblAppCatalogueDTO);
 			return updateRes;
 		}
@@ -964,78 +342,16 @@ public class PermissionServiceImpl implements PermissionService{
 		@TaskAnnotation("deleteAppCatalogue")
 		@Override
 		public Integer deleteAppCatalogue(SessionFactory factory, TblAppCatalogueDTO tblAppCatalogueDTO) {
-			String env=EnvSource.DEFAULT;
-			try {
-				ClassPathResource classPathResource = new ClassPathResource(filePath);
-				InputStream inputStream =classPathResource.getInputStream();
-			    JSONObject json = JSON.parseObject(IOUtils.toString(
-			    		 inputStream,"utf-8"));
-			    JSONArray jsonArray =json.getJSONArray(tblAppCatalogueDTO.get_tenantCode());
-			    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-			    for(int i=0;i<jsonArray.size();i++) {
-			    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-			    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-			    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-			    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-			    }		    
-			    String terant = tblAppCatalogueDTO.get_tenantCode();
-				env = terant+EnvSource.DEFAULT;
-				
-				Properties prop = new Properties();
-				prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-				prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-				prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-				prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-				if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-					new ADOSessionImpl().registeDBMap(env, prop);
-					//设置到envMap里面
-					envMap.put(terant,terant);
-				}
-			    
-			 } catch (IOException e) {
-				e.printStackTrace();
-			}
-			PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);
-			Integer updateRes=mapper.deleteAppCatalogue(tblAppCatalogueDTO);
-			return null;
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
+			Integer deleteRes=mapper.deleteAppCatalogue(tblAppCatalogueDTO);
+			return deleteRes;
 		}
 
 		//修改角色数据范围操作
 		@TaskAnnotation("updateRoleRangeValue")
 		@Override
 		public Integer updateRoleRangeValue(SessionFactory factory, TblRoleRangeValueDTO tblRoleRangeValueDTO) {
-			String env=EnvSource.DEFAULT;
-			try {
-				ClassPathResource classPathResource = new ClassPathResource(filePath);
-				InputStream inputStream =classPathResource.getInputStream();
-			    JSONObject json = JSON.parseObject(IOUtils.toString(
-			    		 inputStream,"utf-8"));
-			    JSONArray jsonArray =json.getJSONArray(tblRoleRangeValueDTO.get_tenantCode());
-			    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-			    for(int i=0;i<jsonArray.size();i++) {
-			    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-			    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-			    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-			    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-			    }		    
-			    String terant = tblRoleRangeValueDTO.get_tenantCode();
-				env = terant+EnvSource.DEFAULT;
-				
-				Properties prop = new Properties();
-				prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-				prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-				prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-				prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-				if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-					new ADOSessionImpl().registeDBMap(env, prop);
-					//设置到envMap里面
-					envMap.put(terant,terant);
-				}
-			    
-			 } catch (IOException e) {
-				e.printStackTrace();
-			}
-			PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
 			Integer updateRes=mapper.updateRoleRangeValue(tblRoleRangeValueDTO);
 			return updateRes;
 		}
@@ -1044,38 +360,7 @@ public class PermissionServiceImpl implements PermissionService{
 		@TaskAnnotation("addRoleOrg")
 		@Override
 		public Integer addRoleOrg(SessionFactory factory, TblOrgRoleDTO tblOrgRoleDTO) {
-					String env=EnvSource.DEFAULT;
-					try {
-						ClassPathResource classPathResource = new ClassPathResource(filePath);
-						InputStream inputStream =classPathResource.getInputStream();
-					    JSONObject json = JSON.parseObject(IOUtils.toString(
-					    		 inputStream,"utf-8"));
-					    JSONArray jsonArray =json.getJSONArray(tblOrgRoleDTO.get_tenantCode());
-					    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-					    for(int i=0;i<jsonArray.size();i++) {
-					    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-					    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-					    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-					    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-					    }		    
-					    String terant = tblOrgRoleDTO.get_tenantCode();
-						env = terant+EnvSource.DEFAULT;
-						
-						Properties prop = new Properties();
-						prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-						prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-						prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-						prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-						if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-							new ADOSessionImpl().registeDBMap(env, prop);
-							//设置到envMap里面
-							envMap.put(terant,terant);
-						}
-					    
-					 } catch (IOException e) {
-						e.printStackTrace();
-					}
-					PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);	
+		      PermissionMapper mapper=factory.getMapper(PermissionMapper.class);	
 					List<TblOrgRoleDTO> tblOrgRoleList=new ArrayList<>();
 					for(int i=0;i<tblOrgRoleDTO.getRoleCodeList().size();i++) {
 						TblOrgRoleDTO tblOrgRole=new TblOrgRoleDTO();
@@ -1085,44 +370,13 @@ public class PermissionServiceImpl implements PermissionService{
 					}
 					Integer addRes=mapper.addRoleOrg(tblOrgRoleList);	
 					return addRes;
-				}	
+		}	
 		
 		//查询域
 	   @TaskAnnotation("queryAppCatalogue")	
 	   @Override
 	   public List<TblAppCatalogueVO> queryAppCatalogue(SessionFactory factory,TblAppCatalogueDTO tblAppCatalogueDTO) {
-		   String env=EnvSource.DEFAULT;
-			  try {
-				 ClassPathResource classPathResource = new ClassPathResource(filePath);
-				 InputStream inputStream =classPathResource.getInputStream();
-				 JSONObject json = JSON.parseObject(IOUtils.toString(
-				  inputStream,"utf-8"));
-			      JSONArray jsonArray =json.getJSONArray(tblAppCatalogueDTO.get_tenantCode());
-				 TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-					 for(int i=0;i<jsonArray.size();i++) {
-					    tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-					    tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-					    tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-					    tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-					}		    
-					    String terant = tblAppCatalogueDTO.get_tenantCode();
-						env = terant+EnvSource.DEFAULT;
-						
-						Properties prop = new Properties();
-						prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-						prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-						prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-						prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-						if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-							new ADOSessionImpl().registeDBMap(env, prop);
-							//设置到envMap里面
-							envMap.put(terant,terant);
-						}
-					    
-					 } catch (IOException e) {
-						e.printStackTrace();
-					}
-			  PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);	
+			  PermissionMapper mapper=factory.getMapper(PermissionMapper.class);	
 			  List<TblAppCatalogueVO> tblAppCatalogueList=mapper.queryAppCatalogue(tblAppCatalogueDTO);
 			  return tblAppCatalogueList;
 			
@@ -1132,90 +386,26 @@ public class PermissionServiceImpl implements PermissionService{
 		@TaskAnnotation("deleteManyRoleOrg")
 		@Override
 		public Integer deleteManyRoleOrg(SessionFactory factory, TblOrgRoleDTO tblOrgRoleDTO) {
-		      String env=EnvSource.DEFAULT;
-			  try {
-				 ClassPathResource classPathResource = new ClassPathResource(filePath);
-				 InputStream inputStream =classPathResource.getInputStream();
-				 JSONObject json = JSON.parseObject(IOUtils.toString(
-				  inputStream,"utf-8"));
-			      JSONArray jsonArray =json.getJSONArray(tblOrgRoleDTO.get_tenantCode());
-				 TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-					 for(int i=0;i<jsonArray.size();i++) {
-					    tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-					    tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-					    tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-					    tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-					}		    
-					    String terant = tblOrgRoleDTO.get_tenantCode();
-						env = terant+EnvSource.DEFAULT;
-						
-						Properties prop = new Properties();
-						prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-						prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-						prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-						prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-						if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-							new ADOSessionImpl().registeDBMap(env, prop);
-							//设置到envMap里面
-							envMap.put(terant,terant);
-						}
-					    
-					 } catch (IOException e) {
-						e.printStackTrace();
-					}
-					PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);	
-					List<TblOrgRoleDTO> tblOrgRoleList=new ArrayList<>();
-					for(int i=0;i<tblOrgRoleDTO.getRoleCodeList().size();i++) {
-						TblOrgRoleDTO tblOrgRole=new TblOrgRoleDTO();
-						tblOrgRole.setOrgCode(tblOrgRoleDTO.getOrgCode());
-						tblOrgRole.setRoleCode(tblOrgRoleDTO.getRoleCodeList().get(i));
-						tblOrgRoleList.add(tblOrgRole);
-					}
-					Integer deleteRes=mapper.deleteManyRoleOrg(tblOrgRoleList);
-					return deleteRes;
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);	
+			List<TblOrgRoleDTO> tblOrgRoleList=new ArrayList<>();
+			for(int i=0;i<tblOrgRoleDTO.getRoleCodeList().size();i++) {
+				TblOrgRoleDTO tblOrgRole=new TblOrgRoleDTO();
+				tblOrgRole.setOrgCode(tblOrgRoleDTO.getOrgCode());
+				tblOrgRole.setRoleCode(tblOrgRoleDTO.getRoleCodeList().get(i));
+				tblOrgRoleList.add(tblOrgRole);
+			}
+			Integer deleteRes=mapper.deleteManyRoleOrg(tblOrgRoleList);
+		    return deleteRes;
 					
-				}
+	    }
 				
-				//删除(一)组织角色(多)关系
-				@TaskAnnotation("deleteRoleRangeValue")
-				@Override
-				public Integer deleteRoleRangeValue(SessionFactory factory, TblRoleRangeValueDTO tblRoleRangeValueDTO) {
-					String env=EnvSource.DEFAULT;
-					try {
-						ClassPathResource classPathResource = new ClassPathResource(filePath);
-						InputStream inputStream =classPathResource.getInputStream();
-					    JSONObject json = JSON.parseObject(IOUtils.toString(
-					    		 inputStream,"utf-8"));
-					    JSONArray jsonArray =json.getJSONArray(tblRoleRangeValueDTO.get_tenantCode());
-					    TblDatabaseDTO tblDatabaseDTO=new TblDatabaseDTO();
-					    for(int i=0;i<jsonArray.size();i++) {
-					    	tblDatabaseDTO.setDirver(jsonArray.getJSONObject(i).getString("driver")) ;
-					    	tblDatabaseDTO.setPassword(jsonArray.getJSONObject(i).getString("password")) ;
-					    	tblDatabaseDTO.setUrl(jsonArray.getJSONObject(i).getString("url")) ;
-					    	tblDatabaseDTO.setUsername(jsonArray.getJSONObject(i).getString("username"));
-					    }		    
-					    String terant = tblRoleRangeValueDTO.get_tenantCode();
-						env = terant+EnvSource.DEFAULT;
-						
-						Properties prop = new Properties();
-						prop.put(SessionFactory.PROPERTY_DRIVER,tblDatabaseDTO.getDirver());
-						prop.put(SessionFactory.PROPERTY_URL,tblDatabaseDTO.getUrl());
-						prop.put(SessionFactory.PROPERTY_USER,tblDatabaseDTO.getUsername());
-						prop.put(SessionFactory.PROPERTY_PASSWORD,tblDatabaseDTO.getPassword());				
-						if(envMap.get(terant)==null || "".equals(envMap.get(terant))) {
-							new ADOSessionImpl().registeDBMap(env, prop);
-							//设置到envMap里面
-							envMap.put(terant,terant);
-						}
-					    
-					 } catch (IOException e) {
-						e.printStackTrace();
-					}
-					PermissionMapper mapper=factory.getMapper(PermissionMapper.class,env);
-					Integer delRes=mapper.deleteRoleRangeValue(tblRoleRangeValueDTO);
-					return delRes;
-				}
-
-		
+		//删除(一)组织数据值(多)关系
+		 @TaskAnnotation("deleteRoleRangeValue")
+		 @Override
+		 public Integer deleteRoleRangeValue(SessionFactory factory, TblRoleRangeValueDTO tblRoleRangeValueDTO) {
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
+			Integer delRes=mapper.deleteRoleRangeValue(tblRoleRangeValueDTO);
+			return delRes;
+		}
 
 }

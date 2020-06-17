@@ -8,7 +8,7 @@ import java.util.List;
  * description:应用-操作DTO
  *
  */
-public class TblAppOPDTO extends TblTenantDTO{
+public class TblAppOPDTO{
 	 //主键id
 	 private Integer id;
 	 //应用编码

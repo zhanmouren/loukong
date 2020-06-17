@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.koron.permission.mapper.PermissionMapper">
+<mapper namespace="com.koron.permission.mapper.PermissionOuterMapper">
 
 <!--根据登录的用户名查询相关联操作 -->
     <select id="getUserOPList"  parameterType="com.koron.permission.bean.DTO.TblTenantDTO"  resultType="com.koron.permission.bean.VO.UserOperationVO">
@@ -11,7 +11,7 @@
        left join tblrole as role on role.code=roleop.role
        left join tblrole_user as roleuser on roleuser.role=role.code
        left join tbltree as tree on tree.foreignkey=op.code
-       where roleuser.user=#{_userCode} and role.app=#{_app}
+       where roleuser.user=#{_userCode} 
        order by tree.seq
     </select>
 
@@ -21,7 +21,7 @@
        role.creator as creator,role.modifier as modifier,role.create_time as create_time,role.modify_time as modify_time
        from tblrole as role 
        left join tblrole_user as roleuser on roleuser.role=role.code
-       where roleuser.user=#{_userCode} and role.app=#{_app} 
+       where roleuser.user=#{_userCode} 
        order by role.create_time desc
     </select>
     
@@ -31,7 +31,7 @@
       from tblrole_range_value as rangeval
       left join tblrole as role on role.code=rangeval.role
       left join tblrole_user roleuser on roleuser.role=role.code
-      where roleuser.user=#{_userCode} and role.app=#{_app} 
+      where roleuser.user=#{_userCode} 
     </select>
     
     <!--根据用户是否有该接口的操作权限(还要加上数据范围)1.0-->
@@ -42,6 +42,6 @@
        left join tblrole   as role  on role.code=roleop.role
        left join tblrole_range_value as rolerangevalue on rolerangevalue.role=role.code
        left join tblrole_user as roleuser on roleuser.role=role.code     
-       where op.code=#{opCode} and roleuser.user=#{userCode} and role.app=#{_app}
+       where op.code=#{opCode} and roleuser.user=#{userCode}
     </select>  
  </mapper>

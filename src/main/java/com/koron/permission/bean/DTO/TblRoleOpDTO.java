@@ -7,7 +7,7 @@ import java.util.List;
  * description:角色-操作DTO
  *
  */
-public class TblRoleOpDTO extends TblTenantDTO{
+public class TblRoleOpDTO{
 	//主键
     private Integer id;
     //角色编码

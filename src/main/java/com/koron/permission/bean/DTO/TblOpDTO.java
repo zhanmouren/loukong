@@ -7,7 +7,7 @@ package com.koron.permission.bean.DTO;
  * description:操作-用户DTO
  *
  */
-public class TblOpDTO extends TblTenantDTO{
+public class TblOpDTO{
     //用户编码
 	private String userCode;
 	//操作编码

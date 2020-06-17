@@ -14,13 +14,14 @@ import org.swan.bean.MessageBean;
 import com.koron.common.StaffAttribute;
 import com.koron.common.bean.StaffBean;
 import com.koron.common.permission.SPIAccountAnno;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.permission.authority.DataInject;
 import com.koron.permission.authority.DataRangeMethod;
 import com.koron.permission.authority.OPSPIMethod;
 import com.koron.permission.bean.DTO.TblOpDTO;
 import com.koron.permission.bean.DTO.TblTenantDTO;
 import com.koron.permission.bean.VO.TblRoleRangeValueListVO;
-import com.koron.permission.service.PermissionService;
+import com.koron.permission.service.PermissionOuterService;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -32,7 +33,7 @@ import io.swagger.annotations.ApiOperation;
 public class PermissionOuterController {
 	
 	@Autowired
-	private PermissionService permissionService;
+	private PermissionOuterService permissionOuterService;
 	
 	/**
 	 * 登录用户在SESSION里的储存KEY
@@ -85,24 +86,16 @@ public class PermissionOuterController {
 	 * @Date 2020.05.28
 	 * description:根据用户信息获取有关联(有权限)的操作，如果传父操作， 则只返回此操作下有权限的操作1.0。
 	 */
-	@OPSPIMethod("op001")
-	@DataRangeMethod
 	@RequestMapping(value = "/getUserOPList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "获取用户相关联操作接口", notes = "获取用户相关联操作接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String getUserOPList(@RequestBody TblTenantDTO tblTenantDTO,@DataInject  TblRoleRangeValueListVO tblRoleRangeValueListVO) {	
-		if(tblTenantDTO.get_tenantCode()==null || "".equals(tblTenantDTO.get_tenantCode())) {
-			return  MessageBean.create(MESSAGE_INT_PARAMS, "租户code不能为空", Integer.class).toJson();
-		}
-		if(tblTenantDTO.get_app()==null || "".equals(tblTenantDTO.get_app())) {
-			return  MessageBean.create(MESSAGE_INT_PARAMS, "应用code不能为空", Integer.class).toJson();
-		}
+	public String getUserOPList(@RequestBody TblTenantDTO tblTenantDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(tblTenantDTO.get_userCode()==null || "".equals(tblTenantDTO.get_userCode())) {
 			return  MessageBean.create(MESSAGE_INT_PARAMS, "用户code不能为空", Integer.class).toJson();
 		}
 		MessageBean<List> msg = MessageBean.create(MESSAGE_INT_SUCCESS, MESSAGE_STRING_SUCCESS, List.class);	
 		  try{
-			  List<?> opList=ADOConnection.runTask(permissionService, "getUserOPList", List.class,tblTenantDTO);
+			  List<?> opList=ADOConnection.runTask(user.getEnv(),permissionOuterService, "getUserOPList", List.class,tblTenantDTO);
 			  if(opList.size()>=0) {
 				  msg.setCode(MESSAGE_INT_SUCCESS);
 				  msg.setDescription("获取用户权限列表成功");
@@ -128,19 +121,13 @@ public class PermissionOuterController {
 	@RequestMapping(value = "/getUserRoleList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "获取用户所有角色接口", notes = "获取用户所有角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String getUserRoleList(@RequestBody TblTenantDTO tblTenantDTO) {	
-    	 if(tblTenantDTO.get_tenantCode()==null || "".equals(tblTenantDTO.get_tenantCode())) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "租户code不能为空", Integer.class).toJson();
-	     }
+	public String getUserRoleList(@RequestBody TblTenantDTO tblTenantDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
     	 if(tblTenantDTO.get_userCode()==null || "".equals(tblTenantDTO.get_userCode())) {
     		 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户code不能为空", Integer.class).toJson();
     	 }
-    	 if(tblTenantDTO.get_app()==null || "".equals(tblTenantDTO.get_app())) {
-    		 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "应用code不能为空", Integer.class).toJson();
-    	 }	
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	
 		  try{
-			  List<?> opList=ADOConnection.runTask(permissionService, "getUserRoleList", List.class,tblTenantDTO);
+			  List<?> opList=ADOConnection.runTask(user.getEnv(),permissionOuterService, "getUserRoleList", List.class,tblTenantDTO);
 			  if(opList.size()>=0) {
 				  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				  msg.setDescription("查询用户角色列表成功");
@@ -165,13 +152,7 @@ public class PermissionOuterController {
 	@RequestMapping(value = "/getOPList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "获取用户是否存在操作权限接口", notes = "获取用户是否存在操作权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String getOPList(@RequestBody TblOpDTO tblOpDTO,@SPIAccountAnno @StaffAttribute(Constant.USER) StaffBean account) {				
-		if(tblOpDTO.get_tenantCode()==null || "".equals(tblOpDTO.get_tenantCode())) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "租户code不能为空", Integer.class).toJson();
-	    }
-		if(tblOpDTO.get_app()==null || "".equals(tblOpDTO.get_app())) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "应用code不能为空", Integer.class).toJson();
-		}
+	public String getOPList(@RequestBody TblOpDTO tblOpDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {				
 		if(tblOpDTO.getUserCode()==null || "".equals(tblOpDTO.getUserCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户code不能为空", Integer.class).toJson();
 		}
@@ -180,7 +161,7 @@ public class PermissionOuterController {
 		}			
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	
 		  try{
-			  List<?> opList=ADOConnection.runTask(permissionService, "getOPList", List.class,tblOpDTO);
+			  List<?> opList=ADOConnection.runTask(user.getEnv(),permissionOuterService, "getOPList", List.class,tblOpDTO);
 			  if(opList.size()>=0) {
 				  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				  msg.setDescription("查询用户操作权限成功");
@@ -206,19 +187,13 @@ public class PermissionOuterController {
 	@RequestMapping(value = "/getUserRangeValueList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "获取用户数据范围接口", notes = "获取用户数据范围接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String getUserRangeValueList(@RequestBody TblTenantDTO tblOpDTO) {	
-		if(tblOpDTO.get_tenantCode()==null || "".equals(tblOpDTO.get_tenantCode())) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "租户code不能为空", Integer.class).toJson();
-	    }
-		if(tblOpDTO.get_app()==null || "".equals(tblOpDTO.get_app())) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "应用code不能为空", Integer.class).toJson();
-		}
+	public String getUserRangeValueList(@RequestBody TblTenantDTO tblOpDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(tblOpDTO.get_userCode()==null || "".equals(tblOpDTO.get_userCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户code不能为空", Integer.class).toJson();
 		}
     	MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	
 		  try{
-			  List<?> opList=ADOConnection.runTask(permissionService, "getUserRangeValueList", List.class,tblOpDTO);
+			  List<?> opList=ADOConnection.runTask(user.getEnv(),permissionOuterService, "getUserRangeValueList", List.class,tblOpDTO);
 			  if(opList.size()>=0) {
 				  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				  msg.setDescription("获取用户数据范围成功");

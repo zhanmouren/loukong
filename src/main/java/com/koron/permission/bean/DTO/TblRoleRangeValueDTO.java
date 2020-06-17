@@ -6,7 +6,7 @@ package com.koron.permission.bean.DTO;
  * description:角色范围DTO
  *
  */
-public class TblRoleRangeValueDTO extends TblTenantDTO{
+public class TblRoleRangeValueDTO{
 	//主键
 	private Integer id;
 	//角色编码

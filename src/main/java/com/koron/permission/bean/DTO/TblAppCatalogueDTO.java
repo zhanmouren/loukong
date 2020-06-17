@@ -8,7 +8,7 @@ import java.sql.Timestamp;
  * description:应用-数据目录DTO
  *
  */
-public class TblAppCatalogueDTO extends TblTenantDTO{
+public class TblAppCatalogueDTO{
     //编码
 	private String code;
 	//应用编码

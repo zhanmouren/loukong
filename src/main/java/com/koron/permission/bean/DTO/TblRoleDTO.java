@@ -8,7 +8,7 @@ import java.sql.Timestamp;
  * description:角色表DTO
  *
  */
-public class TblRoleDTO extends TblTenantDTO{
+public class TblRoleDTO{
 
 	//主键id
 	private Integer roleId;

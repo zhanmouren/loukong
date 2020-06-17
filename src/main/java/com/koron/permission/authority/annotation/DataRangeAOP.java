@@ -12,6 +12,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.koron.ebs.mybatis.ADOConnection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.swan.bean.MessageBean;
@@ -23,22 +25,26 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.koron.common.bean.StaffBean;
 import com.koron.common.permission.SPIAccountAnno;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.util.InterfaceUtil;
 import com.koron.permission.authority.DataInject;
 import com.koron.permission.authority.DataRangeMethod;
+import com.koron.permission.bean.DTO.TblOpDTO;
 import com.koron.permission.bean.DTO.TblTenantDTO;
 import com.koron.permission.bean.VO.ResponseVO;
 import com.koron.permission.bean.VO.TblRoleRangeValueListVO;
 import com.koron.permission.bean.VO.TblRoleRangeValueVO;
+import com.koron.permission.service.PermissionOuterService;
+import com.koron.permission.service.impl.PermissionOuterServiceImpl;
 import com.koron.util.Constant;
 
 
 @Configuration
 @Aspect
 public class DataRangeAOP {
-	
-	@Value("${app.datapath}")
-	private String path;	
+		
+	@Autowired
+	private PermissionOuterService permissionOuterService;
 	/**
 	 * 参数校验异常码
 	 */
@@ -79,93 +85,45 @@ public class DataRangeAOP {
         Gson gson = new Gson();
         if (methodAnnotation != null) {
             String operationString = methodAnnotation.value();
-            Object[] args = pjp.getArgs();         
-            String tenantCode ="";
-            String app="";
-            if(args!=null) {
-	            for(int i=0;i<args.length;i++) {
-	            	String string=gson.toJson(args[i]);	 	            	
-	            	if(string.contains("_tenantCode")) {
-	            		JsonObject  jo = new JsonParser().parse(string).getAsJsonObject();
-	            		//获取值
-	                    tenantCode = jo.get("_tenantCode").getAsString();	                    
-	            	}
-	            	if(string.contains("_app")) {
-	            		JsonObject  jo = new JsonParser().parse(string).getAsJsonObject();
-	            		//获取值
-	            		app = jo.get("_app").getAsString();	                    
-	            	}	            	
-	            	
-	            }
-            }else {
-            	return  MessageBean.create(MESSAGE_INT_PARAMS, MESSAGE_STRING_PARAMS, Integer.class).toJson();
-            }
-            if("".equals(tenantCode)){
-            	return  MessageBean.create(MESSAGE_INT_PARAMS, MESSAGE_STRING_PARAMS_TENANT, Integer.class).toJson();
-            } 
-            if("".equals(app)){
-            	return  MessageBean.create(MESSAGE_INT_PARAMS, MESSAGE_STRING_PARAMS_APP, Integer.class).toJson();
-            } 
-            
+            Object[] args = pjp.getArgs();                   
             // 获取方法的所有参数，找出所有 SPIInject SPIAccount注解的参数
-            StaffBean account = null;    
+            UserVO account = null;    
             int i = 0;
+            int y = 0;
             for (Parameter param : method.getParameters()) {
                 SPIAccountAnno obj = param.getAnnotation(SPIAccountAnno.class);
-                if (obj != null && StaffBean.class.isAssignableFrom(param.getType())) {// 如果账号存在，则给参数赋值
-                    account = (StaffBean) args[i];
-                    if(account==null) {
-                    	return  MessageBean.create(MESSAGE_INT_NOLOGIN, MESSAGE_STRING_NOLOGIN, Integer.class).toJson();
-                    }
-                }
-                DataInject data = param.getAnnotation(DataInject.class);
-                if (data != null) {
-                	//获取范围值，并放入args[i]对应的参数中               	               	
-                	List<TblRoleRangeValueVO>  rangeValueList=new ArrayList<>();
-                	//调用第三方权限接口
-    	            InterfaceUtil interfaceUtil=new InterfaceUtil();  
-    	            TblTenantDTO tblTenant=new TblTenantDTO();
-    	         //   tblTenant.set_userCode(account.getCode());
-    	            tblTenant.set_userCode("user001");
-    	            tblTenant.set_tenantCode(tenantCode);
-    	            tblTenant.set_app(app);
-    	            String jsonData= gson.toJson(tblTenant);
-    	            JsonObject json=InterfaceUtil.interfaceOfPostUtil(path, jsonData);  
-    	            if(json!=null) {	            	
-    	            	String jsonString=json.toString();
-    	            	JsonElement  je = new JsonParser().parse(jsonString);
-    	            	JsonArray jsonArray=(JsonArray) je.getAsJsonObject().get("data");
-    	            	if(jsonArray.size()>0) {   	            		
-    	                    for (JsonElement bean : jsonArray) {
-    	                    	TblRoleRangeValueVO tblRoleRangeValue=gson.fromJson(bean, TblRoleRangeValueVO.class);
-    	                    	rangeValueList.add(tblRoleRangeValue);
-    	                    }
-    	                   //处理数据
-    	    	        	TblRoleRangeValueListVO tblRoleRangeValueListVO=new TblRoleRangeValueListVO();
-    	    	        	List<TblRoleRangeValueListVO> tblRoleRangeValueList=new ArrayList<>();
-    	    	        	tblRoleRangeValueListVO.setRoleRangeValueList(rangeValueList);
-    	    	        	tblRoleRangeValueList.add(tblRoleRangeValueListVO);
-    	    	        	for(TblRoleRangeValueListVO bean:tblRoleRangeValueList) {          	
-    	                    	BeanUtils.copyProperties(args[i], bean);
-    	                    } 
-    	            	}
-    	            	
-    	            }
-                	               	   	 
-                }
+                if (obj != null) {// 如果账号存在，则给参数赋值
+                    account = (UserVO) args[i]; 
+                    break;
+                }              
                 i++;
+            }
+            if(account==null) {
+            	return  MessageBean.create(MESSAGE_INT_NOLOGIN, MESSAGE_STRING_NOLOGIN, Integer.class).toJson();
+            }
+            for(Parameter param : method.getParameters()) {
+            	DataInject data = param.getAnnotation(DataInject.class);
+                if (data != null) {
+                	//获取范围值，并放入args[i]对应的参数中   
+                	TblTenantDTO tblTenantDTO=new TblTenantDTO();
+                	tblTenantDTO.set_userCode(account.getCode());
+                    List<TblRoleRangeValueVO> rangeValueList=ADOConnection.runTask(account.getEnv(),permissionOuterService, "getUserRangeValueList", List.class,tblTenantDTO);
+                    //处理数据
+    	        	TblRoleRangeValueListVO tblRoleRangeValueListVO=new TblRoleRangeValueListVO();
+    	        	List<TblRoleRangeValueListVO> tblRoleRangeValueList=new ArrayList<>();
+    	        	tblRoleRangeValueListVO.setRoleRangeValueList(rangeValueList);
+    	        	tblRoleRangeValueList.add(tblRoleRangeValueListVO);
+    	        	for(TblRoleRangeValueListVO bean:tblRoleRangeValueList) {          	
+                    	BeanUtils.copyProperties(args[y], bean);
+                    }
+    	        	break;
+               	               	   	 
+                }
+                y++;
             }
            
         }
         Object object = pjp.proceed();// 执行该方法
         return object;
-    }
-    
-    
-    public static ResponseVO create(int code, String description) {
-    	ResponseVO bean=new ResponseVO();
-        bean.setCode(code);
-        bean.setDescription(description);
-        return bean;
     }
 }
