@@ -25,7 +25,7 @@
     </select>
    
    <select id="queryLeakageProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
-	select * 
+	select * ,"warningProcessing".code as "taskCode"
 	from app_warningProcessing as "warningProcessing"
 	where type = 0 and state = 'L101990001' and "warningCode" in
 	(
@@ -52,7 +52,7 @@
     </select>
     
     <select id="queryMonitorProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
-	select * 
+	select * ,"warningProcessing".code as "taskCode"
 	from app_warningProcessing as "warningProcessing"
 	where type = 1 and state = 'L101990001' and "warningCode" in
 	(

@@ -37,7 +37,7 @@
       select 
       <if test="mainDeptFlag != null">
       "user".id as "userId","user"."loginName","user".phone,"user"."email","user".name,"dept".name as "depName","dept".code as "depCode",
-	   "user".sex,"user".photo,"user"."openID","user"."workNo","position".name as position,"position".code as "positionCode"
+	   "user".sex,"user".photo,"user"."openID","user"."workNo","position".name as position,"position".code as "positionCode","user".code
 	   from sm_user as "user"
 	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
 	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
@@ -46,7 +46,7 @@
 	   </if> 
 	   <if test="mainDeptFlag == null">
       	"user".id as "userId","user"."loginName","user".phone,"user"."email","user".name,
-	   	"user".sex,"user".photo,"user"."openID","user"."workNo","position".name as position,"position".code as "positionCode"
+	   	"user".sex,"user".photo,"user"."openID","user"."workNo","position".name as position,"position".code as "positionCode","user".code
 	   	from sm_user as "user"
 	   	left join sm_position as "position" on "user".position = "position".code
 	   	where "user".code = #{code} 
