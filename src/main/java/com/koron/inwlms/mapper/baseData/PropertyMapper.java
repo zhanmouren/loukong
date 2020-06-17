@@ -23,6 +23,13 @@ public interface PropertyMapper {
     Integer addBatchZonePoint(@Param("excelBeans")List<ZonePointExcelBean> excelBeans);
 
     /**
+     * 批量添加分区户表数据
+     * @param excelBeans
+     * @return
+     */
+    Integer addBatchZoneMeter(@Param("excelBeans")List<ZoneMeterExcelBean> excelBeans);
+
+    /**
      * 查询管线数据
      */
     List<PipeLineVO> queryPipes(PipeDTO pipeDTO);

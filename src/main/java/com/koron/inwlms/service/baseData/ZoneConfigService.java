@@ -64,6 +64,14 @@ public interface ZoneConfigService {
     public Integer deleteZonePointByBatch(SessionFactory factory, String BatchNo);
 
     /**
+     * 导入分区与户表数据
+     * @param factory
+     * @param excelBeans
+     * @return
+     */
+    public Integer addBatchZoneMeter(SessionFactory factory,List<ZoneMeterExcelBean> excelBeans);
+
+    /**
      * 查询分区户表导入历史列表数据
      * @param factory
      * @param zoneMeterDTO

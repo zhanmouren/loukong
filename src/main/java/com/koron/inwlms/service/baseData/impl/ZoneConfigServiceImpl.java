@@ -1,9 +1,6 @@
 package com.koron.inwlms.service.baseData.impl;
 
-import com.koron.inwlms.bean.DTO.baseInf.ZoneDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZonePointDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZonePointExcelBean;
+import com.koron.inwlms.bean.DTO.baseInf.*;
 import com.koron.inwlms.bean.VO.baseInf.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
@@ -157,6 +154,17 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
     public Integer deleteZonePointByBatch(SessionFactory factory, String BatchNo) {
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
         Integer result = mapper.deleteZonePointByBatch(BatchNo);
+        return result;
+    }
+
+    /**
+     * 导入分区户表数据
+     */
+    @TaskAnnotation("addBatchZoneMeter")
+    @Override
+    public Integer addBatchZoneMeter(SessionFactory factory,List<ZoneMeterExcelBean> excelBeans){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer result = mapper.addBatchZoneMeter(excelBeans);
         return result;
     }
 

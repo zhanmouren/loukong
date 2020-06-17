@@ -2,13 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.baseData.PropertyMapper">
 
-    <insert id="addBatchMeterData" >
+    <insert id="addBatchZonePoint" >
         insert into gis_zone_point(
         "zoneNo","pointNo",type,"BatchNo","createBy","createTime"
         )values
         <if test="excelBeans != null and excelBeans.size > 0">
             <foreach collection="excelBeans" item="item" index="" separator=",">
                 (#{item.zoneNo},#{item.pointNo},#{item.type},#{item.BatchNo},#{item.createBy},#{item.createTime})
+            </foreach>
+        </if>
+    </insert>
+    <insert id="addBatchZoneMeter" >
+        insert into gis_zone_meter(
+        "zoneNo","meterNo",type,"BatchNo","createBy","createTime"
+        )values
+        <if test="excelBeans != null and excelBeans.size > 0">
+            <foreach collection="excelBeans" item="item" index="" separator=",">
+                (#{item.zoneNo},#{item.meterNo},#{item.type},#{item.BatchNo},#{item.createBy},#{item.createTime})
             </foreach>
         </if>
     </insert>
