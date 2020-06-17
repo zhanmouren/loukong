@@ -6,6 +6,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.permission.bean.DTO.TblAppCatalogueDTO;
 import com.koron.permission.bean.DTO.TblAppDTO;
 import com.koron.permission.bean.DTO.TblAppOPDTO;
@@ -127,6 +129,10 @@ public interface PermissionMapper {
     //查询域
     public List<TblAppCatalogueVO> queryAppCatalogue(TblAppCatalogueDTO tblAppCatalogueDTO);
     
-    
+    /****系统内接口***/
+    //根据角色Code加载角色人员接口
+  	public List<UserVO> queryUserByRoleCode(RoleDTO roleDTO);
 	
+	//根据角色code查询人员总条数
+  	public int getRoleUserCount(RoleDTO roleDTO);
 }

@@ -16,6 +16,8 @@ import com.koron.common.StaffAttribute;
 import com.koron.common.bean.StaffBean;
 import com.koron.common.permission.SPIAccountAnno;
 import com.koron.common.web.service.TreeService;
+import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.permission.authority.DataInject;
 import com.koron.permission.authority.DataRangeMethod;
@@ -1138,5 +1140,38 @@ public class PermissionController {
 			
 		     return msg.toJson();
 		}	
+	   /*******系统内接口*******/
+	   
+	   /*
+	    * date:2020-06-17
+	    * function:通过此接口根据角色查询人员
+	    * author:xiaozhan
+	    */
+	   @RequestMapping(value = "/queryUserByRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	   @ApiOperation(value = "根据角色查询人员接口", notes = "根据角色查询人员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	   @ResponseBody
+		public String queryUserByRole(@RequestBody RoleDTO roleDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
+		     if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
+				 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
+			 }
+			 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	          
+			  try{				
+				  PageListVO userVO=ADOConnection.runTask(user.getEnv(),permissionService, "queryUserByRole", PageListVO.class,roleDTO);	
+				  if(userVO!=null && userVO.getRowNumber()>0) {				 
+						 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+						 msg.setDescription("根据角色code查询到相关职员信息列表"); 
+						 msg.setData(userVO);
+				 }else {
+					     msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					     msg.setDescription("该角色未查询到相关职员信息列表"); 
+				 } 
+		        }catch(Exception e){
+		        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+		            msg.setDescription("查询失败");
+		        }
+			
+		     return msg.toJson();
+		}	
+	   
 
 }

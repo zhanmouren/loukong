@@ -13,6 +13,12 @@ import org.springframework.stereotype.Service;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
+import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.common.PageVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.inwlms.mapper.sysManager.UserMapper;
+import com.koron.inwlms.util.PageUtil;
 import com.koron.permission.bean.DTO.TblAppCatalogueDTO;
 import com.koron.permission.bean.DTO.TblAppDTO;
 import com.koron.permission.bean.DTO.TblAppOPDTO;
@@ -406,6 +412,27 @@ public class PermissionServiceImpl implements PermissionService{
 			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
 			Integer delRes=mapper.deleteRoleRangeValue(tblRoleRangeValueDTO);
 			return delRes;
+		}
+		 
+		/*******系统内接口*******/
+		// 通过此接口根据角色查询人员
+		@TaskAnnotation("queryUserByRole")
+		@Override
+		public PageListVO<List<UserVO>> queryUserByRole(SessionFactory factory, RoleDTO roleDTO) {
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
+			List<UserVO> userList=mapper.queryUserByRoleCode(roleDTO);
+			//查询总条数
+			int rowNumber = mapper.getRoleUserCount(roleDTO);
+			// 返回数据结果
+			PageListVO<List<UserVO>> result = new PageListVO<>();
+			result.setDataList(userList);
+			// 插入分页信息
+			PageVO pageVO = PageUtil.getPageBean(roleDTO.getPage(), roleDTO.getPageCount(), rowNumber);
+			result.setTotalPage(pageVO.getTotalPage());
+			result.setRowNumber(pageVO.getRowNumber());
+			result.setPageCount(pageVO.getPageCount());
+			result.setPage(pageVO.getPage());
+			return result;		
 		}
 
 }

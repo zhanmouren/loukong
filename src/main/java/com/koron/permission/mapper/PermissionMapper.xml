@@ -265,5 +265,38 @@
 	    </trim>	
 	    order by create_time desc
       </select>
+      
+      <!-- 系统内接口-->
+      <!--根据角色Code加载角色人员列表接口 -->
+     <select id="queryUserByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,
+       "pos".name as position,case when "dic".value is null then '' else "dic".value end,"user".photo,"user"."openID","user".status,"user"."workNo",
+	  "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
+       else string_agg(distinct("dept".name),';') end as "depname","user".code  as code ,"user".code as code
+       from tblrole_user  as "userRela"
+       left join sm_user as "user" on "userRela".user="user".code
+       left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
+	   left join sm_datadictionary as "dic" on "user".sex="dic".key
+	   left join sm_position as "pos" on "pos".code="user".position
+       where "userRela".role=#{roleCode} and "user"."whetUse"=0
+       group by "user".id ,"user"."loginName","user".phone,"user"."email",
+		"user".name,"pos".name,"dic".value,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
+		"user"."createBy","user"."createTime" 
+       order by "user"."createTime" desc
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+    </select>
+    
+     <!--根据角色Code加载角色人员总条数 -->
+     <select id="getRoleUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="java.lang.Integer">
+       select count(distinct("user"."loginName")) 
+       from tblrole_user  as "userRela"
+       left join sm_user as "user" on "userRela".user="user".code
+       left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
+	   left join sm_datadictionary as "dic" on "user".sex="dic".key
+	   left join sm_position as "pos" on "pos".code="user".position
+       where "userRela".role=#{roleCode}     
+    </select>
     
 </mapper>

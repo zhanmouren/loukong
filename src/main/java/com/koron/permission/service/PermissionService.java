@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 
-
+import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.permission.bean.DTO.TblAppCatalogueDTO;
 import com.koron.permission.bean.DTO.TblAppDTO;
 import com.koron.permission.bean.DTO.TblAppOPDTO;
@@ -104,5 +106,8 @@ public interface PermissionService {
     //查询域
     public List<TblAppCatalogueVO> queryAppCatalogue(SessionFactory factory,TblAppCatalogueDTO tblAppCatalogueDTO);
     
+    /*******系统内接口*******/
+    //根据角色查询用户
+    public PageListVO<List<UserVO>> queryUserByRole(SessionFactory factory,RoleDTO roleDTO);   
     
 }
