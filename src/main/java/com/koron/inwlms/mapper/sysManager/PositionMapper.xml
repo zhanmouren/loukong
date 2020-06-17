@@ -7,7 +7,8 @@
 	select *
 	from sm_position as "position"
 	<trim prefix="where" prefixOverrides="and|or">
-		<if test="name != null  and name !='' "> and "position".name like '%'||#{name}||'%'</if>         
+		<if test="name != null  and name !='' "> and "position".name like '%'||#{name}||'%',</if>
+		<if test="status != null  and status !='' ">and "position".status = #{status} </if>           
 	</trim>
 	order by "position"."createTime" desc
 	limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
@@ -27,9 +28,11 @@
 	where "position".code = #{code}
     </select>
     
-    <delete id="deletePosition" parameterType="com.koron.inwlms.bean.DTO.sysManager.PositionDTO">
-    delete from sm_position where code = #{code}
-    </delete>
+    <update id="deletePosition" parameterType="com.koron.inwlms.bean.DTO.sysManager.PositionDTO">
+		update sm_position 
+		set status = 'L102130002'
+		where code = #{code}
+	</update>
     
     <select id="queryPositionByCode" resultType="com.koron.inwlms.bean.VO.sysManager.PositionVO">
     select *

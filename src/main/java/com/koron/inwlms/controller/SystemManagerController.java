@@ -125,6 +125,40 @@ public class SystemManagerController {
 		 
 	}
 	
+	/*
+     * date:2020-06-17
+     * funtion:查询职员详情信息接口
+     * author:lzy
+     */
+	@RequestMapping(value = "/queryUserDetail.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询职员接口", notes = "查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryUserDetail(@RequestBody QueryUserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+		 if(userDTO.getCode() == null || StringUtils.isBlank(userDTO.getCode())) {
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员code不能为空", Integer.class).toJson();
+		 }
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	 
+		 //执行查询职员
+		 try {
+			 List<UserVO> result=ADOConnection.runTask(user.getEnv(),userService, "queryUserDetail", List.class,userDTO);	
+			 if(result!=null  && result.size() > 0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到相关职员的信息"); 
+			     msg.setData(result);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("没有查询到相关职员的信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询职员失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
 	 /*
      * date:2020-03-20
      * funtion:修改新职员接口
@@ -2440,11 +2474,11 @@ public class SystemManagerController {
 			  List<PositionVO> positionList=ADOConnection.runTask(user.getEnv(),userService, "queryPosition", List.class,positionDTO);	
 			  if(positionList!=null && positionList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
-					msg.setDescription("查询部门成功"); 
+					msg.setDescription("查询职位成功"); 
 					msg.setData(positionList);
 				  }else {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			        msg.setDescription("没有查询到相关部门"); 
+			        msg.setDescription("没有查询到相关职位"); 
 			 }		  
 	        }catch(Exception e){
 	        	//查询失败

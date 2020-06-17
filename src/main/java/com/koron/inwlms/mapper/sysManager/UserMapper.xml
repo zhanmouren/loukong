@@ -33,6 +33,19 @@
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
     
+    
+    <select id="queryUserDetail"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+      select "user".id as "userId","user"."loginName","user".phone,"user"."email","user".name,"dept".name as "depName","dept".code as "depCode",
+	   "user".sex,"user".photo,"user"."openID","user"."workNo","position".name as position,"position".code as "positionCode"
+	   from sm_user as "user"
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
+	   left join sm_position as "position" on "user".position = "position".code
+	   where "userdept"."mainDeptFlag" = 0   and "user"."code" = #{code}
+    </select>
+    
+    
+    
     <!-- 查询相关职员信息总条数 -->
     <select id="getUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO" resultType="java.lang.Integer">
         select count(distinct("user"."loginName")) from sm_user as "user"
@@ -628,6 +641,7 @@
      <select id="queryPosition"  parameterType="com.koron.inwlms.bean.DTO.sysManager.PositionDTO" resultType="com.koron.inwlms.bean.VO.sysManager.PositionVO">
          select *
          from sm_position
+         where sm_position.status = 'L102130001'
       </select>
       
       

@@ -53,6 +53,8 @@ public interface UserService {
 	Integer addUser(SessionFactory factory, UserDTO userDTO);
 	//查询职员（名称或部门）
 	PageListVO<List<UserVO>> queryUser(SessionFactory factory, QueryUserDTO userDTO);
+	//查询职员详情
+	List<UserVO> queryUserDetail(SessionFactory factory,QueryUserDTO userDTO);
 	//修改职员
     Integer  updateUser(SessionFactory factory, UserDTO userDTO);
     //批量重置职员密码
@@ -160,7 +162,7 @@ public interface UserService {
 	     List<DeptVO> queryDept(SessionFactory factory,DeptDTO deptDTO);
 	     
 	     
-	   //模糊查询职位接口
+	    //查询职位接口
 	     List<PositionVO> queryPosition(SessionFactory factory,PositionDTO positionDTO);
 		 
 		 //通过模块菜单Code和角色加载该角色所有选中菜单以及可操作的权限。

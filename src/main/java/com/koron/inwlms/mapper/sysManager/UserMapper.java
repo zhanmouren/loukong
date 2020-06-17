@@ -62,6 +62,9 @@ public interface UserMapper {
 	//查询职员
 	public List<UserVO> queryUser(QueryUserDTO userDTO);
 	
+	//查询职位接口
+	public List<UserVO> queryUserDetail(QueryUserDTO userDTO);
+	
 	//查询职员条数
 	public int getUserCount(QueryUserDTO userDTO);
 	

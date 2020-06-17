@@ -169,6 +169,18 @@ public class UserServiceImpl implements UserService{
 		result.setPage(pageVO.getPage());
 		return result;
 	}
+	
+	
+	//查询职员详情接口   2020/06/17
+	@TaskAnnotation("queryUserDetail") 
+	@Override
+	public List<UserVO> queryUserDetail(SessionFactory factory, QueryUserDTO userDTO) {
+		UserMapper userMapper = factory.getMapper(UserMapper.class);
+		List<UserVO> userList=userMapper.queryUserDetail(userDTO);
+		return userList;
+	}
+	
+	
 	//修改职员 2020/03/20
 	@TaskAnnotation("updateUser")
 	@Override

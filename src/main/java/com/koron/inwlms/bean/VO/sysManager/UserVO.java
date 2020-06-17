@@ -26,6 +26,8 @@ public class UserVO {
 	  private String Email;
 	  //职员职位
 	  private String position;
+	  //职员职位code
+	  private String positionCode;
 	  //职员性别
 	  private String sex;
 	  //职员电话
@@ -42,12 +44,30 @@ public class UserVO {
 	  private String updateBy;
 	  //修改时间
 	  private Timestamp updateTime;
-	  
+	  //状态
+	  private String status;
 	  //部门名称
 	  private String depName;
 
+	  private String depCode;
 	  //环境
 	  private String env;
+
+	public String getPositionCode() {
+		return positionCode;
+	}
+
+	public void setPositionCode(String positionCode) {
+		this.positionCode = positionCode;
+	}
+
+	public String getDepCode() {
+		return depCode;
+	}
+
+	public void setDepCode(String depCode) {
+		this.depCode = depCode;
+	}
 
 	public String getEnv() {
 		return env;
@@ -107,6 +127,14 @@ public class UserVO {
 	}
 	
 	
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	public String getPosition() {
 		return position;
 	}
