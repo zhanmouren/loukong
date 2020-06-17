@@ -221,6 +221,7 @@ public class SystemManagerLabelController {
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
 		}
+		labelDTO.setUpdateBy(user.getLoginName());
 		MessageBean<?>  updateRes = ADOConnection.runTask(user.getEnv(),labelService, "updateLabel",MessageBean.class,labelDTO);
 		return updateRes.toJson();
 	}

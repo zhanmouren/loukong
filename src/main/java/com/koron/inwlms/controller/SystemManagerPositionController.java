@@ -135,6 +135,8 @@ public class SystemManagerPositionController {
 	@ApiOperation(value = "添加职位接口",notes = "添加职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String addPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		positionDTO.setCreateBy(user.getLoginName());
+		positionDTO.setUpdateBy(user.getLoginName());
 		MessageBean<?>  insertRes = ADOConnection.runTask(user.getEnv(),positionService, "addPosition",MessageBean.class,positionDTO);
 		return insertRes.toJson();
 	}
@@ -146,6 +148,7 @@ public class SystemManagerPositionController {
 		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
 		}
+		positionDTO.setUpdateBy(user.getLoginName());
 		MessageBean<?>  insertRes = ADOConnection.runTask(user.getEnv(),positionService, "updatePosition",MessageBean.class,positionDTO);
 		return insertRes.toJson();
 	}

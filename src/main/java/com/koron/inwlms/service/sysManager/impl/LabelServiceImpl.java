@@ -117,9 +117,6 @@ public class LabelServiceImpl implements LabelService{
 				msg.setCode(Constant.MESSAGE_INT_ERROR);
 				msg.setDescription("标签code已存在");
 			}else {
-				Gson jsonValue = new Gson();
-				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-				labelDTO.setUpdateBy(userListVO.getLoginName());
 				labelMapper.updateLabel(labelDTO);
 			}
 		} catch (Exception e) {
@@ -151,7 +148,7 @@ public class LabelServiceImpl implements LabelService{
                 break;
             }
           Gson jsonValue = new Gson();
-			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+		  UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
           labelExcelBean.setCreateBy(userListVO.getLoginName());
           labelExcelBean.setUpdateBy(userListVO.getLoginName());
         }

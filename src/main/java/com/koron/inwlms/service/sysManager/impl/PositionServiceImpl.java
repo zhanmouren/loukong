@@ -76,12 +76,7 @@ public class PositionServiceImpl implements PositionService{
 		positionDTO.setCode(code);
 		try {
 			PositionVO position = positionMapper.queryPositionByCode(positionDTO.getCode());
-				Gson jsonValue = new Gson();
-				// 查询条件字符串转对象，查询数据结果
-				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-				positionDTO.setCreateBy(userListVO.getLoginName());
-				positionDTO.setUpdateBy(userListVO.getLoginName());
-				positionMapper.addPosition(positionDTO);
+			positionMapper.addPosition(positionDTO);
 		} catch (Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
@@ -102,9 +97,6 @@ public class PositionServiceImpl implements PositionService{
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("不存在该职位");
 			}else{
-				Gson jsonValue = new Gson();
-				UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-				positionDTO.setUpdateBy(userListVO.getLoginName());
 				positionMapper.updatePosition(positionDTO);
 			}
 		} catch (Exception e) {
