@@ -64,7 +64,7 @@
 			and "zoneNo" = #{zoneNo}
 			</if>
 		) a, lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code 
-		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{startTime} 
+		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qaDTO..startTime} 
 		and m."yearMonth" &lt;= #{endTime}) b
 		group by b."yearMonth") c
 	</select>
@@ -413,10 +413,10 @@
 		group by month) c
 	</select>
 	
-	<select id="queryFsMeterReadData" resultType="java.lang.String">
+	<!-- <select id="queryFsMeterReadData" resultType="java.lang.String">
 		select code
 		from gdh_month_flux_c001_jc where
-		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
+		month &gt;= #{qaDTO.startTime} || '' and month  &lt;= #{qaDTO.endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
 			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
@@ -425,7 +425,7 @@
 		</if>
 		and flux = 0.0
 	    group by code;
-	</select>
+	</select> -->
 	
 	<!-- <select id="queryTotalMFlow" resultType="java.lang.Double">
 		select round( sum(flux) :: NUMERIC, 2 ) as mFlow
@@ -486,7 +486,7 @@
 		select 
 		round( max(flux) :: NUMERIC, 2 ) as flux
 		from gdh_month_flux_c001_jc where
-		month &gt;= #{startTime} || '' and month  &lt;= #{endTime} || ''
+		month &gt;= #{qaDTO.startTime} || '' and month  &lt;= #{qaDTO.endTime} || ''
 		<if test="lists != null and lists.size > 0">
 			and code in 
 			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
@@ -514,7 +514,7 @@
 	<select id="queryMeterInfoByZoneNo" parameterType="java.lang.String"
 	resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterInfo">
 		select "CTM_NUM" as accNo,"CTM_NAME" as accName,"TBL_NUM" as meterNo,
-		"BORE_VALUE" as meterDn,"TYPE_NAME" as meterType,"CTM_ADDR" address,"YS_NAME" as useType,
+		"BORE_VALUE" as meterDn,"CLASS_ID" as meterType,"CTM_ADDR" address,"YS_NAME" as useType,
 		"CB_DAY" mReadDate,DATE_PART('days',now()-to_date("KAI_DATE",'YYYY-MM-DD'))/356 as useYear from rw_fct_ctm  
 	</select>
 	
@@ -545,7 +545,7 @@
 	<select id="queryMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData">
 		select "CTM_NUM" as code,"MONTH_ID" as month,"REAL_NUM" as flux
 		from rw_fct_cb where 
-		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		"MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
 		<if test="lists != null and lists.size > 0">
 			and "CTM_NUM" in 
 			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
@@ -559,14 +559,14 @@
 		avg("REAL_NUM")-3*stddev("REAL_NUM") as minV,
 		avg("REAL_NUM")+3*stddev("REAL_NUM") as maxV
 		from rw_fct_cb where
-		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		"MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
 		<if test="lists != null and lists.size > 0">
 			and "CTM_NUM" in 
 			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
 				#{item.accNo}    
 			</foreach> 
 		</if>
-	    group by "CTM_NUM","REAL_NUM";
+	    group by "CTM_NUM";
 	</select>
 	
 	<select id="queryRTimeUnset" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterRTimeUnset">
@@ -580,7 +580,7 @@
 	<select id="queryTotalMFlow" resultType="java.lang.Double">
 		select round( sum("REAL_NUM")/100 :: NUMERIC, 2 ) as mFlow
 		from rw_fct_cb where
-		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		"MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
 		<if test="lists != null and lists.size > 0">
 			and "CTM_NUM" in 
 			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
@@ -593,7 +593,7 @@
 		select a."CTM_NUM" as code,b."MONTH_ID" as month,b."REAL_NUM" as flux from rw_fct_ctm a INNER JOIN (
 		select "CTM_NUM","MONTH_ID" ,"REAL_NUM"
 		from rw_fct_cb where
-		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		"MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
 		and "REAL_NUM" &lt;= 0
 		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50'
 	</select>
@@ -602,7 +602,7 @@
 		select b."CTM_NUM" as code,avg(b."REAL_NUM") as flux,a."BORE_VALUE" as meterDn from rw_fct_ctm a INNER JOIN (
 		select "CTM_NUM","MONTH_ID" ,"REAL_NUM"
 		from rw_fct_cb where
-		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
+		"MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
 		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50' group by b."CTM_NUM",a."BORE_VALUE"
 	</select>
 	
@@ -621,4 +621,156 @@
 		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID"  &lt;= #{endTime}
 		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE"  &lt; '50'
 	</select>
+	
+	<select id="queryFsMeterReadData" resultType="java.lang.Integer">
+		select count(a."CTM_NUM") from (select "CTM_NUM" from rw_fct_ctm where "CLASS_ID" = 2) a inner join 
+		(select DISTINCT "CTM_NUM" from rw_fct_cb where "REAL_NUM" &lt;= 0 and 
+		"MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}) b 
+		on a."CTM_NUM" = b."CTM_NUM"
+	</select>
+	
+	<select id="queryMFlowByCtmNum" resultType="com.koron.inwlms.bean.VO.apparentLoss.MonthFlowData">
+		SELECT "MONTH_ID" as month, "REAL_NUM" as value
+    	FROM rw_fct_cb where "CTM_NUM" = #{ctmNum} and "MONTH_ID" &gt;= #{startTime} and "MONTH_ID" &lt;= #{endTime} order by "MONTH_ID" 
+	</select>
+	
+	<!-- 大口径零流量 -->
+	<select id="queryDrqlBDnZeroFlowDataList" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnZeroFlowDataListVO">
+		select d.accNo,d.meterDn,d.accName,d.meterNo,d.address,d.useType,d.mReadDate from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,max(c.real_num) as qh from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",b.real_num from rw_fct_ctm a INNER JOIN (
+			select round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num,"CTM_NUM" from rw_fct_cb
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &gt;= '50') c group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY") d where d.qh &lt; 0.001
+		limit #{qaDTO.pageCount} OFFSET #{qaDTO.pageCount}*(#{qaDTO.page}-1)
+	</select>
+	
+	<!-- 大口径零流量总条数 -->
+	<select id="countDrqlBDnZeroFlowDataList" resultType="java.lang.Integer">
+		select count(*) from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,max(c.real_num) as qh from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",b.real_num from rw_fct_ctm a INNER JOIN (
+			select round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num,"CTM_NUM" from rw_fct_cb
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &gt;= '50') c group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY") d where d.qh &lt; 0.001
+	</select>
+	
+	<!-- 大口径低流量过载 -->
+	<select id="queryDrqlBDnLHFlowDataList" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnLHFlowDataListVO">
+		select d.accNo,d.meterDn,d.accName,d.meterNo,d.address,d.useType,d.mReadDate,
+		(case when d.qh &lt; (select cast(value as numeric) from sm_config where key = 'QMIDN' || d.meterDn) 
+	  then '低流量'
+		when d.qh &gt;= (select cast(value as numeric) from sm_config where key = 'QMADN' || d.meterDn)
+		then '过载'
+		end
+		) as analysisResult,(case when d.fsMeterStatus = 2 then '是' else '否' end) as fsMeterStatus
+		from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,c."CLASS_ID" as fsMeterStatus,max(c.real_num) as qh from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",
+		a."CLASS_ID",b.real_num from rw_fct_ctm a INNER JOIN (
+			select round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num,"CTM_NUM" from rw_fct_cb 
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &gt;= '50') c group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY",c."CLASS_ID") d 
+		where d.qh &lt; (select cast(value as numeric) from sm_config where key = 'QMIDN' || d.meterDn) or d.qh &gt;= (select cast(value as numeric) from sm_config where key = 'QMADN' || d.meterDn)
+		limit #{qaDTO.pageCount} OFFSET #{qaDTO.pageCount}*(#{qaDTO.page}-1)
+	</select>
+	
+	<!-- 大口径低流量过载总条数 -->
+	<select id="countDrqlBDnLHFlowDataList" resultType="java.lang.Integer">
+		select count(*)
+		from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,c."CLASS_ID" as fsMeterStatus,max(c.real_num) as qh from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",
+		a."CLASS_ID",b.real_num from rw_fct_ctm a INNER JOIN (
+			select round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num,"CTM_NUM" from rw_fct_cb 
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &gt;= '50') c group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY",c."CLASS_ID") d 
+		where d.qh &lt; (select cast(value as numeric) from sm_config where key = 'QMIDN' || d.meterDn) or d.qh &gt;= (select cast(value as numeric) from sm_config where key = 'QMADN' || d.meterDn)
+	</select>
+	
+	<!-- 大口径异常用水 -->
+	<select id="queryDrqlBDnErrFlowDataList" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnErrFlowDataListVO">
+	 select d.accNo,d.meterDn, d.accName,d.meterNo,d.address,d.useType,d.mReadDate from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,avg(c."REAL_NUM")-3*stddev(c."REAL_NUM") as minV,c."REAL_NUM",
+		avg(c."REAL_NUM")+3*stddev(c."REAL_NUM") as maxV
+		from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",
+		b."REAL_NUM" from rw_fct_ctm a INNER JOIN (
+			select "REAL_NUM" ,"CTM_NUM" from rw_fct_cb 
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &gt;= '50') c 
+		group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY",c."REAL_NUM") d 
+		where d."REAL_NUM" &lt; d.minV or d."REAL_NUM" &gt; d.maxV
+		limit #{qaDTO.pageCount} OFFSET #{qaDTO.pageCount}*(#{qaDTO.page}-1)
+	</select>
+	
+	<!-- 大口径异常用水总条数 -->
+	<select id="countDrqlBDnErrFlowDataList" resultType="java.lang.Integer">
+	 select count(*) from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,avg(c."REAL_NUM")-3*stddev(c."REAL_NUM") as minV,c."REAL_NUM",
+		avg(c."REAL_NUM")+3*stddev(c."REAL_NUM") as maxV
+		from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",
+		b."REAL_NUM" from rw_fct_ctm a INNER JOIN (
+			select "REAL_NUM" ,"CTM_NUM" from rw_fct_cb 
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &gt;= '50') c 
+		group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY",c."REAL_NUM") d 
+		where d."REAL_NUM" &lt; d.minV or d."REAL_NUM" &gt; d.maxV
+	</select>
+	
+	<!-- 小口径零流量 -->
+	<select id="queryDrqlSDnZeroFlowDataList" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlSDnZeroFlowDataListVO">
+		select d.accNo,d.meterDn,d.accName,d.meterNo,d.address,d.useType,d.mReadDate from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,max(c.real_num) as qh from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",b.real_num from rw_fct_ctm a INNER JOIN (
+			select round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num,"CTM_NUM" from rw_fct_cb
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50') c group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY") d where d.qh &lt; 0.001
+		limit #{qaDTO.pageCount} OFFSET #{qaDTO.pageCount}*(#{qaDTO.page}-1)
+	</select>
+	
+	<!-- 小口径零流量总条数 -->
+	<select id="countDrqlSDnZeroFlowDataList" resultType="java.lang.Integer">
+		select count(*) from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,max(c.real_num) as qh from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",b.real_num from rw_fct_ctm a INNER JOIN (
+			select round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num,"CTM_NUM" from rw_fct_cb
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50') c group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY") d where d.qh &lt; 0.001
+	</select>
+	
+	<!-- 小口径低流量过载 -->
+	<select id="queryDrqlSDnLHFlowDataList" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlSDnLHFlowDataListVO">
+		select d.accNo,d.meterDn,d.accName,d.meterNo,d.address,d.useType,d.mReadDate,
+		(case when d.qh &lt; (select cast(value as numeric) from sm_config where key = 'QMIDN' || d.meterDn) 
+	  then '低流量'
+		when d.qh &gt;= (select cast(value as numeric) from sm_config where key = 'QMADN' || d.meterDn)
+		then '过载'
+		end
+		) as analysisResult,(case when d.fsMeterStatus = 2 then '是' else '否' end) as fsMeterStatus
+		from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,c."CLASS_ID" as fsMeterStatus,max(c.real_num) as qh from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",
+		a."CLASS_ID",b.real_num from rw_fct_ctm a INNER JOIN (
+			select round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num,"CTM_NUM" from rw_fct_cb 
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50') c group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY",c."CLASS_ID") d 
+		where d.qh &lt; (select cast(value as numeric) from sm_config where key = 'QMIDN' || d.meterDn) or d.qh &gt;= (select cast(value as numeric) from sm_config where key = 'QMADN' || d.meterDn)
+		limit #{qaDTO.pageCount} OFFSET #{qaDTO.pageCount}*(#{qaDTO.page}-1)
+	</select>
+	
+	<!-- 小口径低流量过载 -->
+	<select id="countDrqlSDnLHFlowDataList" resultType="java.lang.Integer">
+		select count(*)
+		from (
+		select c."CTM_NUM" as accNo,c."BORE_VALUE" as meterDn,c."CTM_NAME" as accName,c."TBL_NUM" as meterNo,c."CTM_ADDR" as address,c."YS_NAME" as useType ,c."CB_DAY" as mReadDate,c."CLASS_ID" as fsMeterStatus,max(c.real_num) as qh from (
+		select a."CTM_NUM",a."BORE_VALUE",a."CTM_NAME",a."TBL_NUM",a."CTM_ADDR",a."YS_NAME",a."CB_DAY",
+		a."CLASS_ID",b.real_num from rw_fct_ctm a INNER JOIN (
+			select round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num,"CTM_NUM" from rw_fct_cb 
+			where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50') c group by c."CTM_NUM",c."BORE_VALUE",c."CTM_NAME",c."TBL_NUM",c."CTM_ADDR",c."YS_NAME",c."CB_DAY",c."CLASS_ID") d 
+		where d.qh &lt; (select cast(value as numeric) from sm_config where key = 'QMIDN' || d.meterDn) or d.qh &gt;= (select cast(value as numeric) from sm_config where key = 'QMADN' || d.meterDn)
+	</select>
+	
 </mapper> 

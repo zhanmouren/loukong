@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,14 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrFlowMeterData;
 import com.koron.inwlms.bean.VO.apparentLoss.DrMeterAnaDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrMeterManageVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrTotalAnalysisDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrTotalVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnErrFlowDataListVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnLHFlowDataListVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnZeroFlowDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlMeterErrUseData;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlSDnLHFlowDataListVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlSDnZeroFlowDataListVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlSusUseDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.FSMeterData;
 import com.koron.inwlms.bean.VO.apparentLoss.FsMeterReadData;
@@ -50,7 +56,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.MeterQH;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRTimeUnset;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterReadData;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
-import com.koron.inwlms.bean.VO.apparentLoss.MeterUserTimeVO;
+import com.koron.inwlms.bean.VO.apparentLoss.MonthFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.TrendAnalysisData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneDatas;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
@@ -58,6 +64,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.ZoneRankData;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.common.SysConfigVO;
+import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 import com.koron.inwlms.mapper.apparentLoss.ApparentLossMapper;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.service.common.impl.CommonServiceImpl;
@@ -79,7 +86,38 @@ import edu.emory.mathcs.backport.java.util.Collections;
 @Service
 public class ApparentLossServiceImpl implements ApparentLossService {
 
-
+	@TaskAnnotation("queryDrTotalData")
+	@Override
+	public DrTotalVO queryDrTotalData(SessionFactory factory, QueryALDTO queryALDTO) {
+		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		DrTotalVO drTotalVO = new DrTotalVO();
+		//查询所有水表信息
+		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory,"");
+		
+		//查询水表qh信息
+		List<MeterQH> queryMeterQH = mapper.queryMeterQH(queryALDTO, lists);
+		
+		//小口径低流量月水量统计情况
+		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(queryALDTO);
+		
+		//查询总体分析数据
+		DrTotalAnalysisDataVO drTotalAnalysisDataVO = queryDrTotalAnalysisData(factory,queryALDTO,lists);
+		//水表现状数据
+		DrCurrentMeterDataVO drCurrentMeterDataVO = queryDrCurrentMeterData(factory,queryALDTO,lists);
+		//表计管理数据
+		DrMeterManageVO drMeterManageVO = queryDrMeterManageData(factory, queryALDTO,lists);
+		//水表分析数据
+		DrMeterAnaDataVO drMeterAnaDataVO = queryMeterAnaData(factory, queryALDTO,lists,queryMeterMAvgFlow);
+		//报告处理建议
+		DrDealAdviseVO drDealAdviseVO = queryDrDealAdvise(factory, queryALDTO,lists,queryMeterQH,queryMeterMAvgFlow);
+		drTotalVO.setDrTotalAnalysisDataVO(drTotalAnalysisDataVO);
+		drTotalVO.setDrCurrentMeterDataVO(drCurrentMeterDataVO);
+		drTotalVO.setDrMeterManageVO(drMeterManageVO);
+		drTotalVO.setDrMeterAnaDataVO(drMeterAnaDataVO);
+		drTotalVO.setDrDealAdviseVO(drDealAdviseVO);
+		return drTotalVO;
+	}
+	
 	/**
 	 * 表观总览接口
 	 * 
@@ -543,14 +581,12 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	/**
 	 * 总体分析接口
 	 */
-	@TaskAnnotation("queryDrTotalAnalysisData")
-	@Override
-	public DrTotalAnalysisDataVO queryDrTotalAnalysisData(SessionFactory factory, QueryALDTO queryALDTO) {		DrTotalAnalysisDataVO drTotalAnalysisDataVO = new DrTotalAnalysisDataVO();
+	public DrTotalAnalysisDataVO queryDrTotalAnalysisData(SessionFactory factory, QueryALDTO queryALDTO,List<MeterInfo> lists) {		
+		DrTotalAnalysisDataVO drTotalAnalysisDataVO = new DrTotalAnalysisDataVO();
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		GisZoneServiceImpl gisZoneServiceImpl = new GisZoneServiceImpl();
 		String anaRange = "";
 		String zoneNo = "";
-		List<MeterInfo> lists = new ArrayList<MeterInfo>();
 		drTotalAnalysisDataVO.setGroupName("常平水司");
 		if(StringUtil.isEmpty(queryALDTO.getZoneNo()) && queryALDTO.getZoneRank() == null) {
 			anaRange = "全网";
@@ -558,7 +594,6 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			zoneNo = queryALDTO.getZoneNo();
 			anaRange = gisZoneServiceImpl.queryZoneNameByNo(factory, zoneNo);
 		}
-		lists = queryMeterInfoByZoneNo(factory,zoneNo);
 
 		drTotalAnalysisDataVO.setAnalysisRange(anaRange);
 		drTotalAnalysisDataVO.setAnalysisTime(
@@ -576,10 +611,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 					e.printStackTrace();
 				}
 			}
-//			queryALDTO.setStartTime(Integer.parseInt(startTime.toString() + "01"));
-//			queryALDTO.setEndTime(TimeUtil.getMonthByYear(endTime));
 		}
-//		Double mMeterReadFlow = mapper.queryMMeterReadFlow(queryALDTO, lists);
 		Double mMeterReadFlow = mapper.queryWNMMeterReadFlow(queryALDTO, lists);
 		drTotalAnalysisDataVO.setmMeterReadFlow(mMeterReadFlow);
 		// 查询表观漏损指标
@@ -816,10 +848,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	/**
 	 * 查询诊断报告现状水表数据
 	 */
-	@TaskAnnotation("queryDrCurrentMeterData")
-	@Override
-	public DrCurrentMeterDataVO queryDrCurrentMeterData(SessionFactory factory, QueryALDTO queryALDTO) {
-		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory, "");
+	public DrCurrentMeterDataVO queryDrCurrentMeterData(SessionFactory factory, QueryALDTO queryALDTO,List<MeterInfo> lists) {
 		DrCurrentMeterDataVO drCurrentMeterDataVO = new DrCurrentMeterDataVO();
 		List<CurrentMeterData> cmdLists = new ArrayList<>();
 		if (lists.size() == 0)
@@ -842,7 +871,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		int smallDnNum = 0; // 小口径
 		int bigDnNum = 0; // 大口径
 		for (MeterInfo meterInfo : lists) {
-			if (Constant.FS_METER.equals(meterInfo.getMeterType()))
+			if ("2".equals(meterInfo.getMeterType()))
 				fsMeterNum++;
 			switch (meterInfo.getMeterDn()) {
 			case Constant.DN_15:
@@ -1021,19 +1050,13 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	 * @param queryALDTO
 	 * @return
 	 */
-	@TaskAnnotation("queryDrMeterManageData")
-	@Override
-	public DrMeterManageVO queryDrMeterManageData(SessionFactory factory, QueryALDTO queryALDTO) {
+//	@TaskAnnotation("queryDrMeterManageData")
+//	@Override
+	public DrMeterManageVO queryDrMeterManageData(SessionFactory factory, QueryALDTO queryALDTO,List<MeterInfo> lists) {
 		DrMeterManageVO drMeterManageVO = new DrMeterManageVO();
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		Integer startTime = queryALDTO.getStartTime();
 		Integer endTime = queryALDTO.getEndTime();
-		MeterServiceImpl MeterServiceImpl = new MeterServiceImpl();
-		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory, "");
-//		List<String> list = new ArrayList<>();
-//		for (MeterInfo meterInfo : lists) {
-//			list.add(meterInfo.getMeterNo());
-//		}
 		//1、抄表数据完整性
 		int fNum = 0;  //大于5个月没数据的水表个数
 		int tfNum = 0; //2-4个月没数据的水表个数
@@ -1045,7 +1068,6 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			e.printStackTrace();
 		}
 		int monthNum = monthsList.size();
-//		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMFlow(null, startTime,endTime);
 		int lossKaiDateNum = 0; //缺少安装日期的水表数量
 		int lossDnNum = 0; //缺少口径的水表数量
 		int lossMTypeNum = 0;  //缺少水表类型的水表数量
@@ -1069,12 +1091,6 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		for (MeterInfo meterInfo : lists) {
 			int codeNum = 0;
 			List<String> mList = new ArrayList<>();
-//			for (MeterMFlowData meterMFlowData : queryMeterMFlow) {
-//				if(meterMFlowData.getCode().equals(meterInfo.getAccNo())) {
-//					codeNum++;
-//					mList.add(meterMFlowData.getMonth());
-//				}
-//			}
 			if(codeNum == 0 && monthNum >= 5) {
 				fNum++;
 			}else if(codeNum == 0 && monthNum < 5) {
@@ -1161,7 +1177,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		
 		//5、用户用水可疑信息
 //		int currentMonth = Integer.parseInt(TimeUtil.getcurrentDay("yyyyMM",new Date()));
-		Double useFlow = mapper.queryTotalMFlow(useList, startTime,endTime);
+		Double useFlow = mapper.queryTotalMFlow(useList, queryALDTO);
 		drMeterManageVO.setUseBadNum(useBadNum);
 		drMeterManageVO.setUserBadFlow(useFlow);
 		return drMeterManageVO;
@@ -1206,17 +1222,9 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	/**
 	 * 水表分析数据方法
 	 */
-	@TaskAnnotation("queryMeterAnaData")
-	@Override
-	public DrMeterAnaDataVO queryMeterAnaData(SessionFactory factory, QueryALDTO queryALDTO) {
+//	@TaskAnnotation("queryMeterAnaData")
+	public DrMeterAnaDataVO queryMeterAnaData(SessionFactory factory, QueryALDTO queryALDTO,List<MeterInfo> lists,List<MeterMFlowData> queryMeterMAvgFlow) {
 		DrMeterAnaDataVO drMeterAnaDataVO = new DrMeterAnaDataVO();
-		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory, "");
-//		List<String> sDnMeterList = new ArrayList<>();
-//		for (MeterInfo meterInfo : lists) {
-//			if(meterInfo.getMeterDn()<Constant.DN_50) {
-//				sDnMeterList.add(meterInfo.getAccNo());
-//			}
-//		}
 		Integer startTime = queryALDTO.getStartTime();
 		Integer endTime = queryALDTO.getEndTime();
 	
@@ -1230,12 +1238,11 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 
 		// 3、消防水表读数数据
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
-		FsMeterReadData fsMeterReadData = queryFsMeterReadData(mapper, lists, queryALDTO.getStartTime(),
-				queryALDTO.getEndTime());
+		FsMeterReadData fsMeterReadData = queryFsMeterReadData(mapper, lists, queryALDTO);
 		drMeterAnaDataVO.setFsMeterReadData(fsMeterReadData);
 
 		// 4、小口径零用量分析和小口径低流量月水量统计情况
-		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMZeroFlow(startTime,endTime);
+		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMZeroFlow(queryALDTO);
 		int fNum = 0;  //大于5个月没数据的水表个数
 		int tfNum = 0; //2-4个月没数据的水表个数
 		if(queryMeterMFlow != null && queryMeterMFlow.size() != 0) {
@@ -1252,7 +1259,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drMeterAnaDataVO.setDrSmallDnMeterData(drSmallDnMeterData);
 		
 		//小口径低流量月水量统计情况
-		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(startTime, endTime);
+//		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(queryALDTO);
 		DrSmallDnAnaData drSmallDn15AnaData = new DrSmallDnAnaData();
 		DrSmallDnAnaData drSmallDn20AnaData = new DrSmallDnAnaData();
 		DrSmallDnAnaData drSmallDn25AnaData = new DrSmallDnAnaData();
@@ -1348,17 +1355,14 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	/**
 	 * 获取消防水表读数数据
 	 */
-	public FsMeterReadData queryFsMeterReadData(ApparentLossMapper mapper, List<MeterInfo> lists, Integer startTime,
-			Integer endTime) {
+	public FsMeterReadData queryFsMeterReadData(ApparentLossMapper mapper, List<MeterInfo> lists, QueryALDTO queryALDTO) {
 		List<String> list = new ArrayList<>();
 		FsMeterReadData fsMeterReadData = new FsMeterReadData();
 		for (MeterInfo meterInfo : lists) {
-			if (Constant.FS_METER.equals(meterInfo.getMeterType()))
-				list.add(meterInfo.getMeterNo());
+			if ("2".equals(meterInfo.getMeterType())) list.add(meterInfo.getMeterNo());
 		}
-		List<String> queryFsMeterReadData = mapper.queryFsMeterReadData(list, startTime, endTime);
+		int zeroReadNum = mapper.queryFsMeterReadData(list, queryALDTO);
 		int fsMeterNum = list.size();
-		int zeroReadNum = queryFsMeterReadData.size();
 		int normalReadNum = fsMeterNum - zeroReadNum;
 		fsMeterReadData.setFsMeterNum(fsMeterNum);
 		fsMeterReadData.setZeroReadNum(zeroReadNum);
@@ -1372,12 +1376,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	 * @param queryALDTO
 	 * @return
 	 */
-	@TaskAnnotation("queryDrDealAdvise")
-	@Override
-	public DrDealAdviseVO queryDrDealAdvise(SessionFactory factory, QueryALDTO queryALDTO) {
-		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory, "");
-		Integer startTime = queryALDTO.getStartTime();
-		Integer endTime = queryALDTO.getEndTime();
+	public DrDealAdviseVO queryDrDealAdvise(SessionFactory factory, QueryALDTO queryALDTO,List<MeterInfo> lists,List<MeterQH> queryMeterQH,List<MeterMFlowData> queryMeterMAvgFlow) {
 		int meterNum = lists.size();
 		if (meterNum == 0)
 			return null;
@@ -1431,7 +1430,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		// 4、诊断报告过载小口径水表统计数据
 		List<DrFlowMeterData> bdfmList = new ArrayList<>();
 		List<DrFlowMeterData> sdfmList = new ArrayList<>();
-		List<MeterQH> queryMeterQH = mapper.queryMeterQH(queryALDTO, lists);
+//		List<MeterQH> queryMeterQH = mapper.queryMeterQH(queryALDTO, lists);
 		Map<String, Double> qhMaxMinMap = getQhMaxMinMap(factory);
 		try {
 			
@@ -1445,7 +1444,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				//计算最高月流量
 				List<String> maxFlowCodeList = new ArrayList<>();
 				maxFlowCodeList.add(meterQH.getMeterNo());
-				List<Double> maxFList = mapper.queryMeterMMaxFlow(maxFlowCodeList, startTime, endTime);
+				List<Double> maxFList = mapper.queryMeterMMaxFlow(maxFlowCodeList, queryALDTO);
 				//判断是大口径，小口径
 				DrFlowMeterData drFlowMeterData = new DrFlowMeterData();
 				drFlowMeterData.setAddress(meterQH.getAddress());
@@ -1470,7 +1469,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drDealAdviseVO.setSdfmList(sdfmList);
 
 		// 5、其他
-		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(startTime, endTime);
+//		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(queryALDTO);
 		int fNum = 0;
 		int ftNum = 0;
 		int ttNum = 0;
@@ -1584,10 +1583,10 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	@TaskAnnotation("queryDrQuestionList")
 	@Override
 	public DrqlVO queryDrQuestionList(SessionFactory factory, QueryALDTO queryALDTO) {
-//		//1、大口径零流量
-//		//2、大口径低流量、过载
-//		//3、小口径零流量
-//		//4、小口径低流量、过载
+		//1、大口径零流量
+		//2、大口径低流量、过载
+		//3、小口径零流量
+		//4、小口径低流量、过载
 //		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 //		Integer timeType = queryALDTO.getTimeType();
 //		Integer startTime = queryALDTO.getStartTime();
@@ -1635,7 +1634,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 //		// 计算所有水表的QH值,
 //		// 计算流量异常情况，零流量/低流量/正常/过载
 //		List<MeterQH> queryMeterQH = mapper.queryMeterQH(queryALDTO, null);
-//		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMFlow(null, startTime, endTime);
+//		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMFlow(null, queryALDTO);
 //		for (MeterQH meterQH : queryMeterQH) {
 //			double qh = Double.parseDouble(meterQH.getQh());
 //			Map<Object,Object> maps = new HashMap<>();
@@ -1689,7 +1688,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 //			}		
 //		}
 //		//5、大口径用水异常
-//		List<DrqlMeterErrUseData> dmeuList = mapper.queryMeterErrUseData(bDnLists, startTime, endTime);
+//		List<DrqlMeterErrUseData> dmeuList = mapper.queryMeterErrUseData(bDnLists, queryALDTO);
 //		for (MeterInfo meterInfo : bDnLists) {
 //			for (DrqlMeterErrUseData dmeud : dmeuList) {
 //				if(meterInfo.getAccNo().equals(dmeud.getAccNo())) {
@@ -1776,29 +1775,23 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	/**
 	 * 获取月流量集合
 	 */
-	public List<Map<Integer,Double>> getMFlowList(String meterNo,List<MeterMFlowData> queryMeterMFlow,List<Integer> monthsList) {
-		List<MeterMFlowData> noList = new ArrayList<>();
+	public List<Map<Integer,Double>> getMFlowList(List<MonthFlowData> queryMFlowByCtmNum,List<Integer> monthsList) {
 		List<Map<Integer,Double>> datas = new ArrayList<>();
-		for (MeterMFlowData meterMFlowData : queryMeterMFlow) {
-			if(meterNo.equals(meterMFlowData.getCode())) {
-				noList.add(meterMFlowData);
-			}
-		}
 		boolean notNullFlag = false;
 		for(int i = 0; i< monthsList.size(); i++) {
 			Map<Integer,Double> map = new HashMap<>();
-			for (MeterMFlowData meterMFlowData : noList) {
-				if(monthsList.get(i) == Integer.parseInt(meterMFlowData.getMonth())) {
-					map.put(monthsList.get(i), meterMFlowData.getFlux());
+			for (MonthFlowData meterMFlowData : queryMFlowByCtmNum) {
+				if(meterMFlowData.getMonth() != null && monthsList.get(i) == Integer.parseInt(meterMFlowData.getMonth())) {
+					map.put(monthsList.get(i), meterMFlowData.getValue() != null?Double.parseDouble(meterMFlowData.getValue()):null);
 					notNullFlag = true;
 					break;
 				}
 			}
 			if(!notNullFlag) {
 				map.put(monthsList.get(i), null);
-				notNullFlag = false;
 			} 
 			datas.add(map);
+			notNullFlag = false;
 		}
 		return datas;
 	}
@@ -1814,4 +1807,246 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		List<MeterInfo> result = mapper.queryMeterInfoByZoneNo(zoneNo);
 		return result;
 	}
+
+	@TaskAnnotation("queryDrqlBDnZeroFlowDataList")
+	@Override
+	public PageListVO<List<DrqlBDnZeroFlowDataListVO>> queryDrqlBDnZeroFlowDataList(SessionFactory factory, QueryALListDTO qaDTO) {
+		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		// 查询总条数
+		int rowNumber = mapper.countDrqlBDnZeroFlowDataList(qaDTO);
+		//判断分页
+		if(rowNumber<(qaDTO.getPage()-1)*qaDTO.getPageCount()) return null;
+		
+		//数据查询
+		List<DrqlBDnZeroFlowDataListVO> dataLists = mapper.queryDrqlBDnZeroFlowDataList(qaDTO);
+		//获取时间范围的时间集合
+		List<Integer> monthsList = new ArrayList<>();
+		try {
+			monthsList = TimeUtil.getTimeList(qaDTO.getStartTime(),qaDTO.getEndTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}		
+		for (DrqlBDnZeroFlowDataListVO drqlBDnZeroFlowDataListVO : dataLists) {
+			List<MonthFlowData> queryMFlowByCtmNum = mapper.queryMFlowByCtmNum(drqlBDnZeroFlowDataListVO.getAccNo(), qaDTO.getStartTime(), qaDTO.getEndTime());
+			List<Map<Integer,Double>> datas = getMFlowList(queryMFlowByCtmNum,monthsList);
+			drqlBDnZeroFlowDataListVO.setDatas(datas);
+		}
+				
+		// 返回数据结果
+		PageListVO<List<DrqlBDnZeroFlowDataListVO>> result = new PageListVO<>();
+		result.setDataList(dataLists);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(qaDTO.getPage(), qaDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
+	}
+
+	@TaskAnnotation("queryDrqlBDnLHFlowDataList")
+	@Override
+	public PageListVO<List<DrqlBDnLHFlowDataListVO>> queryDrqlBDnLHFlowDataList(SessionFactory factory, QueryALListDTO qaDTO) {
+		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		// 查询总条数
+		int rowNumber = mapper.countDrqlBDnLHFlowDataList(qaDTO);
+		//判断分页
+		if(rowNumber<(qaDTO.getPage()-1)*qaDTO.getPageCount()) return null;
+		
+		//数据查询
+		List<DrqlBDnLHFlowDataListVO> dataLists = mapper.queryDrqlBDnLHFlowDataList(qaDTO);
+		//获取时间范围的时间集合
+		List<Integer> monthsList = new ArrayList<>();
+		try {
+			monthsList = TimeUtil.getTimeList(qaDTO.getStartTime(),qaDTO.getEndTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}		
+		for (DrqlBDnLHFlowDataListVO drqlBDnLHFlowDataListVO : dataLists) {
+			List<MonthFlowData> queryMFlowByCtmNum = mapper.queryMFlowByCtmNum(drqlBDnLHFlowDataListVO.getAccNo(), qaDTO.getStartTime(), qaDTO.getEndTime());
+			List<Map<Integer,Double>> datas = getMFlowList(queryMFlowByCtmNum,monthsList);
+			drqlBDnLHFlowDataListVO.setDatas(datas);
+		}				
+		// 返回数据结果
+		PageListVO<List<DrqlBDnLHFlowDataListVO>> result = new PageListVO<>();
+		result.setDataList(dataLists);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(qaDTO.getPage(), qaDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
+	}
+
+	@TaskAnnotation("querydrqlBDnErrFlowDataList")
+	@Override
+	public PageListVO<List<DrqlBDnErrFlowDataListVO>> queryDrqlBDnErrFlowDataList(SessionFactory factory, QueryALListDTO qaDTO) {
+		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		// 查询总条数
+		int rowNumber = mapper.countDrqlBDnErrFlowDataList(qaDTO);
+		//判断分页
+		if(rowNumber<(qaDTO.getPage()-1)*qaDTO.getPageCount()) return null;
+		
+		//数据查询
+		List<DrqlBDnErrFlowDataListVO> dataLists = mapper.queryDrqlBDnErrFlowDataList(qaDTO);
+		//获取时间范围的时间集合
+		List<Integer> monthsList = new ArrayList<>();
+		try {
+			monthsList = TimeUtil.getTimeList(qaDTO.getStartTime(),qaDTO.getEndTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}		
+		for (DrqlBDnErrFlowDataListVO drqlBDnErrFlowDataListVO : dataLists) {
+			List<MonthFlowData> queryMFlowByCtmNum = mapper.queryMFlowByCtmNum(drqlBDnErrFlowDataListVO.getAccNo(), qaDTO.getStartTime(), qaDTO.getEndTime());
+			List<Map<Integer,Double>> datas = getMFlowList(queryMFlowByCtmNum,monthsList);
+			drqlBDnErrFlowDataListVO.setDatas(datas);
+		}					
+		// 返回数据结果
+		PageListVO<List<DrqlBDnErrFlowDataListVO>> result = new PageListVO<>();
+		result.setDataList(dataLists);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(qaDTO.getPage(), qaDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
+	}
+
+	@TaskAnnotation("queryDrqlSDnZeroFlowDataList")
+	@Override
+	public PageListVO<List<DrqlSDnZeroFlowDataListVO>> queryDrqlSDnZeroFlowDataList(SessionFactory factory, QueryALListDTO qaDTO) {
+		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		// 查询总条数
+		int rowNumber = mapper.countDrqlSDnZeroFlowDataList(qaDTO);
+		//判断分页
+		if(rowNumber<(qaDTO.getPage()-1)*qaDTO.getPageCount()) return null;
+		
+		//数据查询
+		List<DrqlSDnZeroFlowDataListVO> dataLists = mapper.queryDrqlSDnZeroFlowDataList(qaDTO);
+		//获取时间范围的时间集合
+		List<Integer> monthsList = new ArrayList<>();
+		try {
+			monthsList = TimeUtil.getTimeList(qaDTO.getStartTime(),qaDTO.getEndTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}		
+		for (DrqlSDnZeroFlowDataListVO drqlSDnZeroFlowDataListVO : dataLists) {
+			List<MonthFlowData> queryMFlowByCtmNum = mapper.queryMFlowByCtmNum(drqlSDnZeroFlowDataListVO.getAccNo(), qaDTO.getStartTime(), qaDTO.getEndTime());
+			List<Map<Integer,Double>> datas = getMFlowList(queryMFlowByCtmNum,monthsList);
+			drqlSDnZeroFlowDataListVO.setDatas(datas);
+		}					
+		// 返回数据结果
+		PageListVO<List<DrqlSDnZeroFlowDataListVO>> result = new PageListVO<>();
+		result.setDataList(dataLists);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(qaDTO.getPage(), qaDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
+	}
+
+	@TaskAnnotation("queryDrqlSDnLHFlowDataList")
+	@Override
+	public PageListVO<List<DrqlSDnLHFlowDataListVO>> queryDrqlSDnLHFlowDataList(SessionFactory factory, QueryALListDTO qaDTO) {
+		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		// 查询总条数
+		int rowNumber = mapper.countDrqlSDnLHFlowDataList(qaDTO);
+		//判断分页
+		if(rowNumber<(qaDTO.getPage()-1)*qaDTO.getPageCount()) return null;
+		
+		//数据查询
+		List<DrqlSDnLHFlowDataListVO> dataLists = mapper.queryDrqlSDnLHFlowDataList(qaDTO);
+		//获取时间范围的时间集合
+		List<Integer> monthsList = new ArrayList<>();
+		try {
+			monthsList = TimeUtil.getTimeList(qaDTO.getStartTime(),qaDTO.getEndTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}		
+		for (DrqlSDnLHFlowDataListVO drqlSDnLHFlowDataListVO : dataLists) {
+			List<MonthFlowData> queryMFlowByCtmNum = mapper.queryMFlowByCtmNum(drqlSDnLHFlowDataListVO.getAccNo(), qaDTO.getStartTime(), qaDTO.getEndTime());
+			List<Map<Integer,Double>> datas = getMFlowList(queryMFlowByCtmNum,monthsList);
+			drqlSDnLHFlowDataListVO.setDatas(datas);
+		}					
+		// 返回数据结果
+		PageListVO<List<DrqlSDnLHFlowDataListVO>> result = new PageListVO<>();
+		result.setDataList(dataLists);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(qaDTO.getPage(), qaDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
+	}
+
+	@TaskAnnotation("queryDrqlSusUseDataList")
+	@Override
+	public PageListVO<List<DrqlSusUseDataListVO>> queryDrqlSusUseDataList(SessionFactory factory,
+			QueryALListDTO qaDTO) {
+		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		//查询所有水表信息
+		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory,"");
+		List<DrqlSusUseDataListVO> drqlSusUseDataList = new ArrayList<>();		
+		String[] priKeySplit1 = Constant.USE_PRI1.split(",");
+		String[] priKeySplit2 = Constant.USE_PRI2.split(",");
+		int pageCount = 0;
+		//获取时间范围的时间集合
+		List<Integer> monthsList = new ArrayList<>();
+		try {
+			monthsList = TimeUtil.getTimeList(qaDTO.getStartTime(),qaDTO.getEndTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}			
+		for (MeterInfo meterInfo : lists) {
+			String accName = meterInfo.getAccName();
+			String useType = meterInfo.getUseType();
+			boolean susUseFlag = false;
+			for (String string : priKeySplit1) {
+				if(accName != null && accName.contains(string) && Constant.USER_TYPE_PP.equals(useType)) {
+					susUseFlag = true;
+					break;
+				}
+			}
+			for (String string : priKeySplit2) {
+				if(accName != null && accName.contains(string) && !Constant.USER_TYPE_SP.equals(useType)) {
+					susUseFlag = true;
+					break;
+				}
+			}
+			
+			if(susUseFlag) {
+				pageCount ++;
+				if(pageCount < qaDTO.getPageCount()*(qaDTO.getPage() -1)) continue;
+				if(drqlSusUseDataList.size() >= qaDTO.getPageCount()) continue;
+				DrqlSusUseDataListVO drqlSusUseDataListVO = new DrqlSusUseDataListVO();
+				drqlSusUseDataListVO.setAccName(meterInfo.getAccName());
+				drqlSusUseDataListVO.setAccNo(meterInfo.getAccNo());
+				drqlSusUseDataListVO.setAddress(meterInfo.getAddress());
+				drqlSusUseDataListVO.setMeterDn(meterInfo.getMeterDn()+"");
+				drqlSusUseDataListVO.setmReadDate(meterInfo.getmReadDate());
+				drqlSusUseDataListVO.setUseType(meterInfo.getUseType());
+				List<MonthFlowData> queryMFlowByCtmNum = mapper.queryMFlowByCtmNum(meterInfo.getAccNo(), qaDTO.getStartTime(), qaDTO.getEndTime());
+				List<Map<Integer,Double>> datas = getMFlowList(queryMFlowByCtmNum,monthsList);
+				drqlSusUseDataListVO.setDatas(datas);	
+				drqlSusUseDataList.add(drqlSusUseDataListVO);
+				susUseFlag = false;
+			}
+		}
+		// 返回数据结果
+		PageListVO<List<DrqlSusUseDataListVO>> result = new PageListVO<>();
+		result.setDataList(drqlSusUseDataList);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(qaDTO.getPage(), qaDTO.getPageCount(), pageCount);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());		
+		return result;
+	}
+
 }
