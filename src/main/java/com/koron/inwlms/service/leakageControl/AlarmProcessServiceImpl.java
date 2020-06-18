@@ -523,6 +523,15 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		return beforAllFlowList;
 	}
 	
+	@TaskAnnotation("queryAlarmProcessLog")
+	@Override
+	public List<AlarmProcessLog> queryAlarmProcessLog(SessionFactory factory,String taskCode) {
+		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		List<AlarmProcessLog> list = mapper.queryAlarmProcessLog(taskCode);
+		return list;
+	}
+	
+	
 //	@TaskAnnotation("queryTreatmentEffect")
 //	@Override
 //	public String queryZoneTree() {

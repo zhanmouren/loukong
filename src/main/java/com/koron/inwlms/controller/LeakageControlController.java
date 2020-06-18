@@ -58,6 +58,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
@@ -376,6 +377,31 @@ public class LeakageControlController {
 		
 	}
 	
+	@RequestMapping(value = "/queryAlarmProcessLog.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "预警处理任务操作记录查询", notes = "预警处理任务操作记录查询", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryAlarmProcessLog(@RequestBody AlarmProcessVO alarmProcessVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		if(alarmProcessVO.getTaskCode() == null && alarmProcessVO.getTaskCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!任务编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			List<AlarmProcessLog> list = ADOConnection.runTask(user.getEnv(),aps,"queryAlarmProcessLog",List.class,alarmProcessVO.getTaskCode());
+			msg.setData(list);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败");
+		}
+		
+		return msg.toJson();
+	}
+	
 	@RequestMapping(value = "/addAlarmProcess.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加预警信息处理任务接口", notes = "添加预警信息处理任务接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -490,11 +516,17 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmProcessFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息任务附件接口", notes = "查询预警信息任务附件接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmProcessFile(@RequestBody String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryAlarmProcessFile(@RequestBody AlarmProcessVO alarmProcessVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
+		if(alarmProcessVO.getTaskCode() == null && alarmProcessVO.getTaskCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!任务编码为空");
+	        return msg.toJson();
+		}
+		
 		try {
-			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),aps, "queryAlarmProcessFile",List.class,code);
+			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),aps, "queryAlarmProcessFile",List.class,alarmProcessVO.getTaskCode());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 		}catch(Exception e) {
@@ -1651,6 +1683,8 @@ public class LeakageControlController {
 		
 		return msg.toJson();
 	}
+	
+	
 	
 	@RequestMapping(value = "/queryEventWarnRelation.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警处理任务工单查询关联事项", notes = "预警处理任务工单查询关联事项", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
