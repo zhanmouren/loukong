@@ -25,6 +25,7 @@ import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
@@ -45,6 +46,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.util.Constant;
@@ -732,37 +734,8 @@ public class ApparentLossController {
     @ResponseBody
 	public String queryDrqlBDnZeroFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
-		if(queryALListDTO.getTimeType() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("时间粒度为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getTimeType() < Constant.TIME_TYPE_M || queryALListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
-			//传参数值不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("时间粒度数值错误");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("开始时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getEndTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("结束时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() > queryALListDTO.getEndTime()) {
-			//开始时间不能大于结束时间
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("开始时间大于结束时间");
-			return msg.toJson();
-   	 	}else if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("分区等级数值错误");
-			return msg.toJson();
-		}
+		msg = checkDrQuestionListParam(queryALListDTO,msg);
+		if(msg.getCode() != 0) return msg.toJson();
 		try{
 			PageListVO<List<DrqlBDnZeroFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlBDnZeroFlowDataList", PageListVO.class,queryALListDTO);
 			msg.setData(data);
@@ -773,42 +746,42 @@ public class ApparentLossController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downloadDrqlBDnZeroFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载大口径零流量水表数据列表", notes = "下载大口径零流量水表数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downloadDrqlBDnZeroFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryALListDTO queryALListDTO = jsonValue.fromJson(objValue, QueryALListDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryALListDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			//参数校验
+			MessageBean msg = checkDrQuestionListParam(queryALListDTO,MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class));
+			if(msg.getCode() != 0) return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			queryALListDTO.setPage(1);
+			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			PageListVO<List<DrqlBDnZeroFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlBDnZeroFlowDataList", PageListVO.class,queryALListDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			return ExportDataUtil.getExcelDataFileInfoByList(data.getDataList(), jsonArray);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@RequestMapping(value = "/queryDrqlBDnLHFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询大口径低流量过载水表数据", notes = "查询大口径低流量过载水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDrqlBDnLHFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
-		if(queryALListDTO.getTimeType() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("时间粒度为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getTimeType() < Constant.TIME_TYPE_M || queryALListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
-			//传参数值不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("时间粒度数值错误");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("开始时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getEndTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("结束时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() > queryALListDTO.getEndTime()) {
-			//开始时间不能大于结束时间
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("开始时间大于结束时间");
-			return msg.toJson();
-   	 	}else if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("分区等级数值错误");
-			return msg.toJson();
-		}
+		msg = checkDrQuestionListParam(queryALListDTO,msg);
+		if(msg.getCode() != 0) return msg.toJson();
 		try{
 			PageListVO<List<DrqlBDnLHFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlBDnLHFlowDataList", PageListVO.class,queryALListDTO);
 			msg.setData(data);
@@ -819,42 +792,42 @@ public class ApparentLossController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downloadDrqlBDnLHFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载大口径低流量过载水表数据列表", notes = "下载大口径低流量过载水表数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downloadDrqlBDnLHFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryALListDTO queryALListDTO = jsonValue.fromJson(objValue, QueryALListDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryALListDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			//参数校验
+			MessageBean msg = checkDrQuestionListParam(queryALListDTO,MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class));
+			if(msg.getCode() != 0) return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			queryALListDTO.setPage(1);
+			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			PageListVO<List<DrqlBDnZeroFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlBDnLHFlowDataList", PageListVO.class,queryALListDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			return ExportDataUtil.getExcelDataFileInfoByList(data.getDataList(), jsonArray);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@RequestMapping(value = "/queryDrqlBDnErrFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询大口径用水异常数据", notes = "查询大口径用水异常数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDrqlBDnErrFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
-		if(queryALListDTO.getTimeType() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("时间粒度为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getTimeType() < Constant.TIME_TYPE_M || queryALListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
-			//传参数值不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("时间粒度数值错误");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("开始时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getEndTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("结束时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() > queryALListDTO.getEndTime()) {
-			//开始时间不能大于结束时间
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("开始时间大于结束时间");
-			return msg.toJson();
-   	 	}else if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("分区等级数值错误");
-			return msg.toJson();
-		}
+		msg = checkDrQuestionListParam(queryALListDTO,msg);
+		if(msg.getCode() != 0) return msg.toJson();
 		try{
 			PageListVO<List<DrqlBDnErrFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlBDnErrFlowDataList", PageListVO.class,queryALListDTO);
 			msg.setData(data);
@@ -865,42 +838,42 @@ public class ApparentLossController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downloadDrqlBDnErrFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载大口径用水异常数据列表", notes = "下载大口径用水异常数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downloadDrqlBDnErrFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryALListDTO queryALListDTO = jsonValue.fromJson(objValue, QueryALListDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryALListDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			//参数校验
+			MessageBean msg = checkDrQuestionListParam(queryALListDTO,MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class));
+			if(msg.getCode() != 0) return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			queryALListDTO.setPage(1);
+			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			PageListVO<List<DrqlBDnZeroFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlBDnErrFlowDataList", PageListVO.class,queryALListDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			return ExportDataUtil.getExcelDataFileInfoByList(data.getDataList(), jsonArray);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@RequestMapping(value = "/queryDrqlSusUseDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询用水性质可疑数据", notes = "查询用水性质可疑数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDrqlSusUseDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
-		if(queryALListDTO.getTimeType() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("时间粒度为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getTimeType() < Constant.TIME_TYPE_M || queryALListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
-			//传参数值不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("时间粒度数值错误");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("开始时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getEndTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("结束时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() > queryALListDTO.getEndTime()) {
-			//开始时间不能大于结束时间
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("开始时间大于结束时间");
-			return msg.toJson();
-   	 	}else if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("分区等级数值错误");
-			return msg.toJson();
-		}
+		msg = checkDrQuestionListParam(queryALListDTO,msg);
+		if(msg.getCode() != 0) return msg.toJson();
 		try{
 			PageListVO<List<DrqlSusUseDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlSusUseDataList", PageListVO.class,queryALListDTO);
 			msg.setData(data);
@@ -911,42 +884,42 @@ public class ApparentLossController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downloadDrqlSusUseDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载用水性质可疑数据列表", notes = "下载用水性质可疑数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downloadDrqlSusUseDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryALListDTO queryALListDTO = jsonValue.fromJson(objValue, QueryALListDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryALListDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			//参数校验
+			MessageBean msg = checkDrQuestionListParam(queryALListDTO,MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class));
+			if(msg.getCode() != 0) return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			queryALListDTO.setPage(1);
+			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			PageListVO<List<DrqlBDnZeroFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlSusUseDataList", PageListVO.class,queryALListDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			return ExportDataUtil.getExcelDataFileInfoByList(data.getDataList(), jsonArray);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@RequestMapping(value = "/queryDrqlSDnZeroFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询小口径零流量水表数据", notes = "查询小口径零流量水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDrqlSDnZeroFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
-		if(queryALListDTO.getTimeType() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("时间粒度为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getTimeType() < Constant.TIME_TYPE_M || queryALListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
-			//传参数值不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("时间粒度数值错误");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("开始时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getEndTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("结束时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() > queryALListDTO.getEndTime()) {
-			//开始时间不能大于结束时间
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("开始时间大于结束时间");
-			return msg.toJson();
-   	 	}else if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("分区等级数值错误");
-			return msg.toJson();
-		}
+		msg = checkDrQuestionListParam(queryALListDTO,msg);
+		if(msg.getCode() != 0) return msg.toJson();
 		try{
 			PageListVO<List<DrqlSDnZeroFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlSDnZeroFlowDataList", PageListVO.class,queryALListDTO);
 			msg.setData(data);
@@ -957,42 +930,42 @@ public class ApparentLossController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downloadDrqlSDnZeroFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载小口径零流量水表数据列表", notes = "下载小口径零流量水表数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downloadDrqlSDnZeroFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryALListDTO queryALListDTO = jsonValue.fromJson(objValue, QueryALListDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryALListDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			//参数校验
+			MessageBean msg = checkDrQuestionListParam(queryALListDTO,MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class));
+			if(msg.getCode() != 0) return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			queryALListDTO.setPage(1);
+			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			PageListVO<List<DrqlBDnZeroFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlSDnZeroFlowDataList", PageListVO.class,queryALListDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			return ExportDataUtil.getExcelDataFileInfoByList(data.getDataList(), jsonArray);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@RequestMapping(value = "/queryDrqlSDnLHFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询小口径低流量过载水表数据", notes = "查询小口径低流量过载水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryDrqlSDnLHFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
-		if(queryALListDTO.getTimeType() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("时间粒度为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getTimeType() < Constant.TIME_TYPE_M || queryALListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
-			//传参数值不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("时间粒度数值错误");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("开始时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getEndTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("结束时间为空");
-			return msg.toJson();
-		}else if(queryALListDTO.getStartTime() > queryALListDTO.getEndTime()) {
-			//开始时间不能大于结束时间
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("开始时间大于结束时间");
-			return msg.toJson();
-   	 	}else if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("分区等级数值错误");
-			return msg.toJson();
-		}
+		msg = checkDrQuestionListParam(queryALListDTO,msg);
+		if(msg.getCode() != 0) return msg.toJson();
 		try{
 			PageListVO<List<DrqlSDnLHFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlSDnLHFlowDataList", PageListVO.class,queryALListDTO);
 			msg.setData(data);
@@ -1002,4 +975,67 @@ public class ApparentLossController {
     	}
 		return msg.toJson();
 	}
+	
+	@RequestMapping(value = "/downloadDrqlSDnLHFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载小口径低流量过载水表数据", notes = "下载小口径低流量过载水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public HttpEntity<?> downloadDrqlSDnLHFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryALListDTO queryALListDTO = jsonValue.fromJson(objValue, QueryALListDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryALListDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			//参数校验
+			MessageBean msg = checkDrQuestionListParam(queryALListDTO,MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class));
+			if(msg.getCode() != 0) return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			queryALListDTO.setPage(1);
+			queryALListDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			PageListVO<List<DrqlBDnZeroFlowDataListVO>> data = ADOConnection.runTask(user.getEnv(),als, "queryDrqlSDnLHFlowDataList", PageListVO.class,queryALListDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			return ExportDataUtil.getExcelDataFileInfoByList(data.getDataList(), jsonArray);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 校验诊断报告问题清理列表报表参数
+	 * @return
+	 */
+	public MessageBean checkDrQuestionListParam(QueryALListDTO queryALListDTO,MessageBean<PageListVO> msg){
+		if(queryALListDTO.getTimeType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("时间粒度为空");
+		}else if(queryALListDTO.getTimeType() < Constant.TIME_TYPE_M || queryALListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+			//传参数值不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("时间粒度数值错误");
+		}else if(queryALListDTO.getStartTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("开始时间为空");
+		}else if(queryALListDTO.getEndTime() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("结束时间为空");
+		}else if(queryALListDTO.getStartTime() > queryALListDTO.getEndTime()) {
+			//开始时间不能大于结束时间
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("开始时间大于结束时间");
+   	 	}else if(queryALListDTO.getZoneRank() != null && (queryALListDTO.getZoneRank() < Constant.RANK_F || queryALListDTO.getZoneRank() > Constant.RANK_T)) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("分区等级数值错误");
+		}
+		return msg;
+	}	
+	
 }
