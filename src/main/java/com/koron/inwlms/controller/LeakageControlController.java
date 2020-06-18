@@ -470,7 +470,7 @@ public class LeakageControlController {
    		//插入关联表数据
    		FilerelationDTO filerelationDTO = new FilerelationDTO();
    		filerelationDTO.setFileId(fileId);
-   		filerelationDTO.setCode("");
+   		filerelationDTO.setCode(code);
    		Integer num = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFilerelationData", Integer.class, filerelationDTO);
    		
    		if (fileId != null) {
