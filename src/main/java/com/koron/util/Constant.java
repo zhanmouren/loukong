@@ -436,11 +436,11 @@ public class Constant {
 	/**
 	 * 任务状态未处理-数据字典
 	 */
-	public final static String DATADICTIONARY_TASKSTATUSUN = "1";
+	public final static String DATADICTIONARY_TASKSTATUSUN = "L101990001";
 	/**
 	 * 任务状态处理中-数据字典
 	 */
-	public final static String DATADICTIONARY_TASKSTATUSON = "2";
+	public final static String DATADICTIONARY_TASKSTATUSON = "L101990002";
 	/**
 	 * 监测预警工单预计完成时间
 	 */
@@ -448,7 +448,7 @@ public class Constant {
 	/**
 	 * 任务状态处理结束-数据字典
 	 */
-	public final static String DATADICTIONARY_TASKSTATUSOVER = "3";
+	public final static String DATADICTIONARY_TASKSTATUSOVER = "L101990003";
 	/**
 	 * 超限报警数据字典编码
 	 */

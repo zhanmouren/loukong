@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryTreeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
@@ -35,6 +36,8 @@ public interface AlarmProcessService {
 	String getEstimatedTime(SessionFactory factory, String code);
 
 	List<AlarmProcessLog> queryAlarmProcessLog(SessionFactory factory, String taskCode);
+
+	String queryZoneTree(SessionFactory factory, QueryTreeDTO queryTreeDTO);
 
 
 }

@@ -162,4 +162,8 @@ where "schemeCode" = #{schemeCode}
  values(#{schemeCode}, #{type}, #{roleCode}, #{flag}, #{createBy}, Now(), #{updateBy}, Now())
  </insert>
  
+ <select id="queryTree">
+ select * from tbltree  where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and type = #{type} order by seq
+ </select>
+ 
  </mapper>

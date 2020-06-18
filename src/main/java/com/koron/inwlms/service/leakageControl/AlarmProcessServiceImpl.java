@@ -10,14 +10,18 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryTreeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
@@ -30,6 +34,7 @@ import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
+import com.koron.inwlms.mapper.indexData.IndexMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
 import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
@@ -532,11 +537,37 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	}
 	
 	
-//	@TaskAnnotation("queryTreatmentEffect")
-//	@Override
-//	public String queryZoneTree() {
-//		return null;
-//	}
+	@TaskAnnotation("queryZoneTree")
+	@Override
+	public String queryZoneTree(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
+		IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+		LongTreeBean node = mapper.getBeanByForeignIdType(queryTreeDTO.getType(),queryTreeDTO.getForeignKey());
+		List<TreeZoneVO> list = new ArrayList<>();
+		if(node == null) {
+			return null;
+		}
+		else{
+			List<TreeZoneVO> zoneList = indicatorMapper.queryAllZone(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+			if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+				for(TreeZoneVO treeZoneVO : zoneList) {
+					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
+						list.add(treeZoneVO);
+					}
+				}
+				
+			}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
+				for(TreeZoneVO treeZoneVO : zoneList) {
+					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
+						list.add(treeZoneVO);
+					}
+				}
+			}
+		}
+		
+		
+		return null;
+	}
 	
 	
 }
