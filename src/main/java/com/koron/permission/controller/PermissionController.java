@@ -505,7 +505,7 @@ public class PermissionController {
 	    * function:通过此接口添加角色
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/addRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "添加角色接口", notes = "添加角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -551,7 +551,7 @@ public class PermissionController {
 	    * function:通过此接口修改角色属性
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/updateRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "修改角色属性接口", notes = "修改角色属性接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -597,7 +597,7 @@ public class PermissionController {
 	    * function:通过此接口删除角色
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/deleteRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "删除角色接口", notes = "删除角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -661,7 +661,7 @@ public class PermissionController {
 	    * function:通过此接口添加角色-用户关系操作
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/addRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "添加角色-用户接口", notes = "添加角色-用户接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -699,7 +699,7 @@ public class PermissionController {
 	    * function:通过此接口添加角色-操作关系操作
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/addRoleOP.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "添加角色-用户接口", notes = "添加角色-用户接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -736,7 +736,7 @@ public class PermissionController {
 	    * function:通过此接口删除角色-操作关系操作
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/deleteRoleOP.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "删除角色-操作接口", notes = "删除角色-操作接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -773,7 +773,7 @@ public class PermissionController {
 	    * function:通过此接口修改角色-操作关系操作
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/updateRoleOP.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "修改角色-操作接口", notes = "修改角色-操作接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -810,7 +810,7 @@ public class PermissionController {
 	    * function:通过此接口添加角色数据范围操作
 	    * author:xiaozhan
 	    */
-	  // @OPSPIMethod("op001")
+	  //
 	   @RequestMapping(value = "/addRoleRangeValue.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "添加角色数据范围操作接口", notes = "添加角色数据范围操作接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -850,7 +850,7 @@ public class PermissionController {
 	    * function:通过此接口添加域
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/addAppCatalogue.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "添加域接口", notes = "添加域接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -892,7 +892,7 @@ public class PermissionController {
 	    * function:通过此接口修改域
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/updateAppCatalogue.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "修改域接口", notes = "添加域接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -934,7 +934,7 @@ public class PermissionController {
 	    * function:通过此接口修改域
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/deleteAppCatalogue.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "删除域接口", notes = "删除域接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -966,7 +966,7 @@ public class PermissionController {
 	    * function:通过此接口根据角色和目录修改数据范围操作
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/updateRoleRangeValue.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "修改角色数据范围操作接口", notes = "修改角色数据范围操作接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -1004,7 +1004,7 @@ public class PermissionController {
 	    * function:通过此接口添加组织部门关系
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/addRoleOrg.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "添加组织部门关系接口", notes = "添加域接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -1118,7 +1118,7 @@ public class PermissionController {
 	    * author:xiaozhan
 	    */
 	   @DataRangeMethod
-	   @OPSPIMethod("op001")
+	  
 	   @RequestMapping(value = "/queryAppCatalogue.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "查询域接口", notes = "查询域接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
