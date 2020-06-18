@@ -629,14 +629,11 @@ public class PermissionController {
 	    * function:通过此接口查询所有角色
 	    * author:xiaozhan
 	    */
-	   @OPSPIMethod("op001")
+	   //@OPSPIMethod("op001")
 	   @RequestMapping(value = "/queryAllRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "查询所有角色接口", notes = "查询所有角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
 		public String queryAllRole(@RequestBody TblTenantDTO tblTenantDTO, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {				   
-		   if(tblTenantDTO.get_tenantCode()==null || "".equals(tblTenantDTO.get_tenantCode())) {
-				 return  MessageBean.create(MESSAGE_INT_PARAMS, "租户code不能为空", Integer.class).toJson();
-		   } 
 		   if(tblTenantDTO.get_app()==null || "".equals(tblTenantDTO.get_app())) {
 				 return  MessageBean.create(MESSAGE_INT_PARAMS, "应用信息不能为空", Integer.class).toJson();
 		   } 
@@ -1185,7 +1182,7 @@ public class PermissionController {
 		@RequestMapping(value = "/queryRoleMenuByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	    @ApiOperation(value = "加载角色菜单按钮权限接口", notes = "加载角色菜单按钮权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	    @ResponseBody
-		public String queryRoleMenuByRoleId(@RequestBody RoleDTO roleDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+		public String queryRoleMenuByRoleCode(@RequestBody RoleDTO roleDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 			if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
 				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 			}		
