@@ -18,6 +18,7 @@ import com.koron.common.permission.SPIAccountAnno;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.permission.authority.DataInject;
 import com.koron.permission.authority.DataRangeMethod;
@@ -50,7 +51,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "permissionController", description = "权限控制Controller")
-@RequestMapping(value = "/permissionController")
+@RequestMapping(value = "/{tenantID}/permissionController")
 public class PermissionController {
 	
 	@Autowired
@@ -1175,6 +1176,38 @@ public class PermissionController {
 			
 		     return msg.toJson();
 		}	
+	   
+	   /*
+	     * date:2020-04-08
+	     * funtion:通过此接口加载该角色所有菜单以及可查看的权限。
+	     * author:xiaozhan
+	     */
+		@RequestMapping(value = "/queryRoleMenuByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	    @ApiOperation(value = "加载角色菜单按钮权限接口", notes = "加载角色菜单按钮权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	    @ResponseBody
+		public String queryRoleMenuByRoleId(@RequestBody RoleDTO roleDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+			if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
+			}		
+			 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+			  try{				
+				  List<RoleMenusVO> menuList=ADOConnection.runTask(user.getEnv(),permissionService, "queryRoleMenuByRoleCode", List.class,roleDTO);	
+				  if(menuList.size()>0) {			 
+					    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+						msg.setDescription("查询角色菜单查看权限成功"); 
+						msg.setData(menuList);
+			      }else {
+				        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				        msg.setDescription("没有查询到角色查看菜单权限"); 
+				 }		  
+		        }catch(Exception e){
+		        	//查询失败
+		        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+		            msg.setDescription("查询失败");
+		        }
+			
+		     return msg.toJson();
+		}
 	   
 
 }
