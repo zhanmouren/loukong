@@ -1,6 +1,10 @@
 package com.koron.indicator.task;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.context.annotation.Lazy;
@@ -9,8 +13,14 @@ import org.springframework.stereotype.Component;
 
 import com.koron.indicator.bean.CalZoneInfos;
 import com.koron.indicator.service.ZoneLossIndicatorService;
+import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
+import com.koron.inwlms.service.common.impl.PointHistoryDataServiceImpl;
+import com.koron.inwlms.service.leakageControl.AlarmMessageServiceImpl;
+import com.koron.inwlms.service.leakageControl.WarningMessageProduceService;
+import com.koron.inwlms.service.leakageControl.WarningMessageProduceServiceImpl;
 import com.koron.inwlms.util.TimeUtil;
 
 /**
@@ -170,4 +180,66 @@ public class TimeTask {
 		//表观漏损指标
 		//爆管/渗漏指标				
 	}
+	
+	@Scheduled(cron = "0 30 * * * ?")// 整点5分执行
+	public void calPointAlarmTask() {
+		AlarmMessageServiceImpl ams = new AlarmMessageServiceImpl();
+		WarningMessageProduceService wmps = new WarningMessageProduceServiceImpl();
+		PointHistoryDataServiceImpl phds = new PointHistoryDataServiceImpl();
+		
+		//获取当前时间-整点数
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
+		Date nowDate = new Date();
+		String nowDateStr = format.format(nowDate);
+		try {
+			nowDate = format.parse(nowDateStr);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		Integer type = 0;
+		List<WarningTask> warningTaskList = ADOConnection.runTask(ams, "queryWarningTask", List.class,type);
+		if(warningTaskList != null && warningTaskList.size() != 0) {
+			//补充历史缺失数据
+			for(WarningTask WarningTask : warningTaskList) {
+				List<MinMonitorPoint> minMonitorPointList = ADOConnection.runTask(phds, "queryPointHourData", List.class,WarningTask.getTime());
+				ADOConnection.runTask(wmps, "startPointWarning", Void.class,minMonitorPointList);
+				//更新任务表
+				Integer state = 1;
+				Date updateTime = new Date();
+				ADOConnection.runTask(ams, "updateWarningTask", Void.class,state,updateTime);
+			}	
+		}
+		List<MinMonitorPoint> minMonitorPointList = ADOConnection.runTask(phds, "queryPointHourData", List.class,nowDate);
+		if(minMonitorPointList != null && minMonitorPointList.size() != 0) {
+			ADOConnection.runTask(wmps, "startPointWarning", Void.class,minMonitorPointList);
+			WarningTask warningTask = new WarningTask();
+			warningTask.setState(1);
+			warningTask.setType(type);
+			warningTask.setTime(nowDate);
+			ADOConnection.runTask(ams, "addWarningTask", Void.class,minMonitorPointList);
+		}else {
+			WarningTask warningTask = new WarningTask();
+			warningTask.setState(0);
+			warningTask.setType(type);
+			warningTask.setTime(nowDate);
+			ADOConnection.runTask(ams, "addWarningTask", Void.class,minMonitorPointList);
+		}
+	}
+	
+	@Scheduled(cron = "0 30 0  * * ?")// 整点5分执行
+	public void calZoneAlarmTask() {
+		
+		AlarmMessageServiceImpl ams = new AlarmMessageServiceImpl();
+		Integer type = 1;
+		List<WarningTask> warningTaskList = ADOConnection.runTask(ams, "queryWarningTask", List.class,type);
+		if(warningTaskList != null && warningTaskList.size() != 0) {
+			//获取分区日数据
+			
+			//报警
+		}
+		
+		
+	}
+	
 }

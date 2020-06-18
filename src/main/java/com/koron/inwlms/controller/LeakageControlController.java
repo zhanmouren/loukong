@@ -1744,5 +1744,13 @@ public class LeakageControlController {
         if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
     }
 	
+	@RequestMapping(value = "/queryZoneTree.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "获取预警方案分区树", notes = "获取预警方案分区树", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZoneTree() {
+		
+		return null;
+	}
+	
 	
 }

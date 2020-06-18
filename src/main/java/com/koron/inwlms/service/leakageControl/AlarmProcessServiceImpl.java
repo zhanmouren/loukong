@@ -141,6 +141,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			}
 			alarmProcessLog.setOperation("确认任务");
 			alarmProcessLog.setCreateBy(user.getCode());
+			mapper.addAlarmProcessLog(alarmProcessLog);
 		}else if(alarmProcessVO.getState().equals(Constant.DATADICTIONARY_TASKSTATUSOVER)) {
 			//添加流程日志
 			AlarmProcessLog alarmProcessLog = new AlarmProcessLog();
@@ -151,6 +152,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			}
 			alarmProcessLog.setOperation("完成任务");
 			alarmProcessLog.setCreateBy(user.getCode());
+			mapper.addAlarmProcessLog(alarmProcessLog);
 		}
 		
 		return num;
@@ -187,7 +189,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		}
 		alarmProcessLog.setOperation("创建任务");
 		alarmProcessLog.setCreateBy(user.getCode());
-		
+		mapper.addAlarmProcessLog(alarmProcessLog);
 		return num;
 	}
 	
@@ -520,5 +522,12 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		}
 		return beforAllFlowList;
 	}
+	
+//	@TaskAnnotation("queryTreatmentEffect")
+//	@Override
+//	public String queryZoneTree() {
+//		return null;
+//	}
+	
 	
 }

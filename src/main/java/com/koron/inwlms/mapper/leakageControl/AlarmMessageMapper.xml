@@ -64,6 +64,11 @@
    <if test="objectCode != null and objectCode != '' ">and a.objectCode = #{objectCode}</if>
   </trim> 
   </select>
+  
+  <insert id="addWarningTask" parameterType="com.koron.inwlms.bean.VO.leakageControl.WarningTask">
+  insert into app_warningtask(type, time, state, "createTime", "updateTime")
+  values(#{type}, #{time}, #{state}, Now(), Now())
+  </insert>
 
   
 </mapper>
