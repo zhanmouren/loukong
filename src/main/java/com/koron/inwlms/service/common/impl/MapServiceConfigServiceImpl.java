@@ -30,8 +30,8 @@ public class MapServiceConfigServiceImpl implements MapServiceConfigService{
 	
 	@TaskAnnotation("queryMapServiceConfig")
 	@Override
-	public MapServiceData queryMapServiceConfig(SessionFactory factory) {
-		String gisPath = "http://10.13.1.11:8888/sysService/getAll";
+	public MapServiceData queryMapServiceConfig(SessionFactory factory,String tenantID) {
+		String gisPath = "http://10.13.1.11:8888/"+tenantID+"/sysService/getAll.htm";
 		String gisJsonData = "{}";
 		JsonObject gisResultData = InterfaceUtil.interfaceOfPostUtil(gisPath, gisJsonData);
 		JsonArray gisdata = gisResultData.getAsJsonArray("data");

@@ -32,12 +32,14 @@ import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
+import com.koron.inwlms.bean.VO.leakageControl.TreeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.indexData.IndexMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
 import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
+import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
 
@@ -540,24 +542,24 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	@TaskAnnotation("queryZoneTree")
 	@Override
 	public String queryZoneTree(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
-		IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
+		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);	
 		LongTreeBean node = mapper.getBeanByForeignIdType(queryTreeDTO.getType(),queryTreeDTO.getForeignKey());
-		List<TreeZoneVO> list = new ArrayList<>();
-		if(node == null) {
+		List<TreeVO> list = new ArrayList<>();
+		if(node == null) {  
 			return null;
 		}
 		else{
-			List<TreeZoneVO> zoneList = indicatorMapper.queryAllZone(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+			List<TreeVO> zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
 			if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
-				for(TreeZoneVO treeZoneVO : zoneList) {
+				for(TreeVO treeZoneVO : zoneList) {
 					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
 						list.add(treeZoneVO);
 					}
 				}
 				
 			}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
-				for(TreeZoneVO treeZoneVO : zoneList) {
+				for(TreeVO treeZoneVO : zoneList) {
 					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
 						list.add(treeZoneVO);
 					}

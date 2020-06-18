@@ -161,9 +161,6 @@ where "schemeCode" = #{schemeCode}
  insert into app_alertnoticescheme("schemeCode", type, "roleCode", flag, "createBy", "createTime", "updateBy", "updateTime")
  values(#{schemeCode}, #{type}, #{roleCode}, #{flag}, #{createBy}, Now(), #{updateBy}, Now())
  </insert>
- 
- <select id="queryTree">
- select * from tbltree  where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and type = #{type} order by seq
- </select>
+
  
  </mapper>

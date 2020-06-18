@@ -187,6 +187,8 @@ public class TimeTask {
 		WarningMessageProduceService wmps = new WarningMessageProduceServiceImpl();
 		PointHistoryDataServiceImpl phds = new PointHistoryDataServiceImpl();
 		
+		String en = "4a1e7e2df9134cd297d03bbbc26df7f4_default";
+		
 		//获取当前时间-整点数
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
 		Date nowDate = new Date();
@@ -198,32 +200,32 @@ public class TimeTask {
 		}
 		
 		Integer type = 0;
-		List<WarningTask> warningTaskList = ADOConnection.runTask(ams, "queryWarningTask", List.class,type);
+		List<WarningTask> warningTaskList = ADOConnection.runTask(en,ams, "queryWarningTask", List.class,type);
 		if(warningTaskList != null && warningTaskList.size() != 0) {
 			//补充历史缺失数据
 			for(WarningTask WarningTask : warningTaskList) {
-				List<MinMonitorPoint> minMonitorPointList = ADOConnection.runTask(phds, "queryPointHourData", List.class,WarningTask.getTime());
-				ADOConnection.runTask(wmps, "startPointWarning", Void.class,minMonitorPointList);
+				List<MinMonitorPoint> minMonitorPointList = ADOConnection.runTask(en,phds, "queryPointHourData", List.class,WarningTask.getTime());
+				ADOConnection.runTask(en,wmps, "startPointWarning", Void.class,minMonitorPointList);
 				//更新任务表
 				Integer state = 1;
 				Date updateTime = new Date();
-				ADOConnection.runTask(ams, "updateWarningTask", Void.class,state,updateTime);
+				ADOConnection.runTask(en,ams, "updateWarningTask", Void.class,state,updateTime);
 			}	
 		}
-		List<MinMonitorPoint> minMonitorPointList = ADOConnection.runTask(phds, "queryPointHourData", List.class,nowDate);
+		List<MinMonitorPoint> minMonitorPointList = ADOConnection.runTask(en,phds, "queryPointHourData", List.class,nowDate);
 		if(minMonitorPointList != null && minMonitorPointList.size() != 0) {
-			ADOConnection.runTask(wmps, "startPointWarning", Void.class,minMonitorPointList);
+			ADOConnection.runTask(en,wmps, "startPointWarning", Void.class,minMonitorPointList);
 			WarningTask warningTask = new WarningTask();
 			warningTask.setState(1);
 			warningTask.setType(type);
 			warningTask.setTime(nowDate);
-			ADOConnection.runTask(ams, "addWarningTask", Void.class,minMonitorPointList);
+			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,minMonitorPointList);
 		}else {
 			WarningTask warningTask = new WarningTask();
 			warningTask.setState(0);
 			warningTask.setType(type);
 			warningTask.setTime(nowDate);
-			ADOConnection.runTask(ams, "addWarningTask", Void.class,minMonitorPointList);
+			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,minMonitorPointList);
 		}
 	}
 	

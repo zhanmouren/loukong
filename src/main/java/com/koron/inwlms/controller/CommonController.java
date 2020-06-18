@@ -24,6 +24,7 @@ import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -312,10 +313,10 @@ public class CommonController {
 	@RequestMapping(value = "/queryMapService.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询地图服务配置", notes = "查询地图服务配置", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMapService(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryMapService(@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
 		MessageBean<MapServiceData> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MapServiceData.class);	
 		try {
-			MapServiceData mapServiceData = ADOConnection.runTask(user.getEnv(),new MapServiceConfigServiceImpl(), "queryMapServiceConfig", MapServiceData.class);
+			MapServiceData mapServiceData = ADOConnection.runTask(user.getEnv(),new MapServiceConfigServiceImpl(), "queryMapServiceConfig", MapServiceData.class,tenantID);
 			msg.setData(mapServiceData);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 		}catch(Exception e) {
