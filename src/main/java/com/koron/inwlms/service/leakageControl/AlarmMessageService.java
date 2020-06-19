@@ -30,7 +30,7 @@ public interface AlarmMessageService {
 	List<AlarmMessageVO> queryWarningCodeList(SessionFactory factory, WarningInfDTO warningInfDTO);
 
 
-	List<WarningTask> queryWarningTask(SessionFactory factory, String type);
+	List<WarningTask> queryWarningTask(SessionFactory factory, Integer type);
 
 
 	Integer addWarningTask(SessionFactory factory, WarningTask warningTask);

@@ -68,8 +68,11 @@ public class MapServiceConfigServiceImpl implements MapServiceConfigService{
 				projInfo.setKey(key);
 				String value = gisValue.substring(gisValue.indexOf(",")+1);
 				projInfo.setValue(value);
+				String bounds = gisMapServiceData.getBounds();
+				List<List<Double>> boundsList = gson.fromJson(bounds, new TypeToken<List<List<Double>>>(){}.getType());
+				projInfo.setBounds(boundsList);
 				mapOpTion.setProjInfo(projInfo);	
-				mapServiceData.setMapOpTion(mapOpTion);
+				mapServiceData.setMapOption(mapOpTion);
 			}else if(gisMapServiceData.getId_service().equals("BaseMap")) {
 				
 			}

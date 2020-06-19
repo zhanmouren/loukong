@@ -34,7 +34,7 @@ public interface AlarmMessageMapper {
 	List<AlarmMessageVO> queryWarningCodeList(WarningInfDTO warningInfDTO);
 
 	@Select("select * from app_warningtask where state = 0 and type = #{type}") 
-	List<WarningTask> queryWarningTask(@Param("type") String type);
+	List<WarningTask> queryWarningTask(@Param("type") Integer type);
 	
 	Integer addWarningTask(WarningTask warningTask);
 	

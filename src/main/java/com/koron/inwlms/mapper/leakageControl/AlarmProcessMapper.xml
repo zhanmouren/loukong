@@ -115,7 +115,7 @@
  
  <insert id="addAlarmProcessLog" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog">
  insert into app_warningprocessinglog(content, operation, "taskCode", "createBy", "createTime")
- values(#{content}, #{operation}, #{taskCode}, #{createBy}, #{createTime})
+ values(#{content}, #{operation}, #{taskCode}, #{createBy}, Now())
  </insert>
 
 

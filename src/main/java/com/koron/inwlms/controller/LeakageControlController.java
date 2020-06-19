@@ -45,6 +45,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.PolicyDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
@@ -490,6 +491,7 @@ public class LeakageControlController {
    		uploadFileDTO.setStoreName(storeName);
    		uploadFileDTO.setStorageTime(new java.util.Date());
    		uploadFileDTO.setCreateBy(createAccount);
+   		uploadFileDTO.setCreateTime(new Date());
    		uploadFileDTO.setFileType(fileType);
    		// 上传文件记录入库
    		Integer fileId = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFileDataReturnId", Integer.class, uploadFileDTO);
@@ -1313,6 +1315,74 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downloadEventFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项文件上传", notes = "事项文件上传", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String downloadEventFile(@RequestParam("file") MultipartFile file, @RequestParam("code") String code, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		String fileModule = "act";
+		Integer tId = 123;
+		MessageBean<UploadFileVO> msg = new MessageBean<>();
+		// 获取上传文件名,包含后缀
+   		String originalFilename = file.getOriginalFilename();
+   		// 获取后缀
+   		String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
+   	    // 获取当前月份，时间格式:201910
+   		SimpleDateFormat dataFormate = new SimpleDateFormat("yyyyMM");
+   		String time = dataFormate.format(new Date());
+   		// 保存目录
+   		String path = fileConfigInfo.getPath() + File.separator + fileModule + File.separator + time ;
+   		// 生成保存文件
+   		File dirPath = new File(path);
+   		if (!dirPath.exists()) {
+   			dirPath.mkdirs();
+   		}
+   		
+   		//用时间戳作为文件名称存储
+   		String storeName = System.currentTimeMillis()+fileType;
+   		File uploadFile = new File(path+ File.separator + storeName);
+   		double size = file.getSize() / 1014;
+
+   		// 将上传文件保存到路径
+   		try {
+   			file.transferTo(uploadFile);
+   		} catch (IOException e) {
+   			e.printStackTrace();
+   		}
+
+   		String createAccount = user.getLoginName();
+   		UploadFileDTO uploadFileDTO = new UploadFileDTO();
+   		uploadFileDTO.settId(tId);
+   		uploadFileDTO.setFileName(originalFilename);
+   		uploadFileDTO.setFilePath(path);
+   		uploadFileDTO.setFileSize(size);
+   		uploadFileDTO.setModuleType(fileModule);
+   		uploadFileDTO.setStoreName(storeName);
+   		uploadFileDTO.setStorageTime(new java.util.Date());
+   		uploadFileDTO.setCreateBy(createAccount);
+   		uploadFileDTO.setCreateTime(new Date());
+   		uploadFileDTO.setFileType(fileType);
+   		// 上传文件记录入库
+   		Integer fileId = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFileDataReturnId", Integer.class, uploadFileDTO);
+   		//插入关联表数据
+   		FilerelationDTO filerelationDTO = new FilerelationDTO();
+   		filerelationDTO.setFileId(fileId);
+   		filerelationDTO.setCode(code);
+   		Integer num = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFilerelationData", Integer.class, filerelationDTO);
+   		
+   		if (fileId != null) {
+   			UploadFileVO uploadFileVO = new UploadFileVO();
+   			uploadFileVO.setFileId(uploadFileDTO.getId());
+   			uploadFileVO.setFileName(originalFilename);
+   			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+   			msg.setDescription(Constant.MESSAGE_STRING_SUCCESS);
+   			msg.setData(uploadFileVO);
+   		} else {
+   			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+   			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
+   		}
+		return msg.toJson();
+	}
+	
 	@RequestMapping(value = "/queryPolicyScheme.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "控漏损策略方案查询接口", notes = "控漏损策略方案查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1786,5 +1856,42 @@ public class LeakageControlController {
 		return null;
 	}
 	
+	/**
+	 * 工单和事项下载
+	 * @param response
+	 * @param request
+	 * @param user
+	 */
+	@RequestMapping(value = "/downloadFileById.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
+    @ResponseBody
+    public void downloadFileByCode(@RequestParam("id") Integer id,HttpServletResponse response, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		//
+        UploadFileDTO data = ADOConnection.runTask(user.getEnv(),eis, "queryFileDataById", UploadFileDTO.class, id); 
+        //调用文件工具类下载文件
+        if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
+    }
+	
+	@RequestMapping(value = "/queryEventInfoFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询事项信息文件接口", notes = "查询事项信息文件接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryEventInfoFile(@RequestBody QueryEventFileDTO queryEventFileDTO, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(queryEventFileDTO.getCode() == null || queryEventFileDTO.getCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", List.class, queryEventFileDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
+	}
 	
 }

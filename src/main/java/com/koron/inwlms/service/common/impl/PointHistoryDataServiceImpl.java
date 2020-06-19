@@ -50,7 +50,7 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 			pointTypeVO.setStype(pointSensor.getStype());
 			pointTypeVO.setSname(pointSensor.getName());
 			List<PointDataVO> pointDataList = new ArrayList<>();
-			List<GdhRaw> gdhRawList = mapper.queryPointHistoryData(code, start, end);
+			List<GdhRaw> gdhRawList = mapper.queryPointHistoryData(pointSensor.getCode(), start, end);
 			for(GdhRaw gdhRaw : gdhRawList) {
 				PointDataVO pointDataVO = new PointDataVO();
 				pointDataVO.setValue(Double.valueOf(gdhRaw.getValue()));

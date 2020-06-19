@@ -23,11 +23,13 @@ import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
+import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.EventInfoMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.util.Constant;
@@ -187,6 +189,14 @@ public class EventInfoServiceImpl implements EventInfoService{
 		return uploadFileDTO;
 	}
 	
+	@TaskAnnotation("queryEventFile")
+	@Override
+	public List<UploadFileDTO> queryEventFile(SessionFactory factory,QueryEventFileDTO queryEventFileDTO){
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		List<UploadFileDTO> list = mapper.queryEventFile(queryEventFileDTO);
+		return list;
+	}
+	
 	
 	
 	public static List<EventInfo> readEvetInfo(File file) throws IOException, ParseException {
@@ -280,5 +290,7 @@ public class EventInfoServiceImpl implements EventInfoService{
             return String.valueOf(hssfCell.getStringCellValue());
         }
     }
+    
+    
 
 }

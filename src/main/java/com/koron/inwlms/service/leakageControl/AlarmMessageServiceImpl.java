@@ -218,7 +218,7 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 	
 	@TaskAnnotation("queryWarningTask")
 	@Override
-	public List<WarningTask> queryWarningTask(SessionFactory factory,String type){
+	public List<WarningTask> queryWarningTask(SessionFactory factory,Integer type){
 		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
 		List<WarningTask> list = mapper.queryWarningTask(type);
 		return list;
