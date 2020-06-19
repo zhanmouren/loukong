@@ -63,5 +63,6 @@ public interface EventInfoMapper {
 	UploadFileDTO queryFileById(@Param("id") Integer id);
 	
 	List<UploadFileDTO> queryEventFile(QueryEventFileDTO queryEventFileDTO);
+	Integer deleteFileRelation(QueryEventFileDTO queryEventFileDTO);
 	
 }

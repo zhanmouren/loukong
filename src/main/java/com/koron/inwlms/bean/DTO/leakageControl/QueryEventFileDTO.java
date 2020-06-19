@@ -6,7 +6,7 @@ public class QueryEventFileDTO {
 	
 	private String code;
 	
-	private Integer integer;
+	private Integer fileId;
 	
 	private String startTime;
 	
@@ -46,13 +46,15 @@ public class QueryEventFileDTO {
 		this.code = code;
 	}
 
-	public Integer getInteger() {
-		return integer;
+	public Integer getFileId() {
+		return fileId;
 	}
 
-	public void setInteger(Integer integer) {
-		this.integer = integer;
+	public void setFileId(Integer fileId) {
+		this.fileId = fileId;
 	}
+
+	
 	
 	
 

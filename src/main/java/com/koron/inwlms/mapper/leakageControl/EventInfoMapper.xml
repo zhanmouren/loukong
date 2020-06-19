@@ -84,4 +84,8 @@
  <if test="startTime != null and endTime != null"> and a."storageTime" between '${startTime}' and '${endTime}'</if>
  </select>
  
+ <delete id="deleteFileRelation" parameterType="com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO">
+ delete from app_filerelation where "fileId" = #{fileId}
+ </delete>
+ 
 </mapper>

@@ -45,6 +45,8 @@ public interface EventInfoService {
 	UploadFileDTO queryFileDataById(SessionFactory factory, Integer id);
 
 	List<UploadFileDTO> queryEventFile(SessionFactory factory, QueryEventFileDTO queryEventFileDTO);
+
+	Integer deleteFileRelation(SessionFactory factory, QueryEventFileDTO queryEventFileDTO);
 	
 	
 
