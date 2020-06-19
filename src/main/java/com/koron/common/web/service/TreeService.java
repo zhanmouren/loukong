@@ -61,7 +61,7 @@ public class TreeService {
 	 * @param child 子节点
 	 */
 	@TaskAnnotation("addNode")
-	public static LongTreeBean add(SessionFactory factory, LongTreeBean parent, LongTreeBean child) {
+	public static synchronized LongTreeBean add(SessionFactory factory, LongTreeBean parent, LongTreeBean child) {
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
 		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
 		if (parent == null) {
