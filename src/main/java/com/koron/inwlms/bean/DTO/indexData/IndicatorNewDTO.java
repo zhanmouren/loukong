@@ -10,6 +10,8 @@ import java.util.List;
 public class IndicatorNewDTO {
 	//代表类型
 	private Integer type;
+	//分区类型（全网、一级、二级、DMA)
+	private Integer areaType;
 	
     private List<String> codes;
 	
@@ -71,4 +73,13 @@ public class IndicatorNewDTO {
 	public void setZoneCodes(List<String> zoneCodes) {
 		this.zoneCodes = zoneCodes;
 	}
+
+	public Integer getAreaType() {
+		return areaType;
+	}
+
+	public void setAreaType(Integer areaType) {
+		this.areaType = areaType;
+	}
+	
 }

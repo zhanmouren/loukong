@@ -52,6 +52,22 @@ public class GisZonePipeData {
 	 */
 	private Integer pip_river;
 	/**
+	 * 管线是否经过铁路
+	 */
+	private Integer railway;
+	/**
+	 * 管线是否经过行政区域
+	 */
+	private Integer administration;
+	
+	private Integer layerOne;
+	
+	private Integer layerTwo;
+	
+	private Integer layerThree;
+	
+	private Integer layerFour;
+	/**
 	 * 管径大小
 	 */
 	private Integer pip_d;
@@ -62,7 +78,54 @@ public class GisZonePipeData {
 	
 	private Integer is_border;
 	
-	
+
+	public Integer getRailway() {
+		return railway;
+	}
+
+	public void setRailway(Integer railway) {
+		this.railway = railway;
+	}
+
+	public Integer getAdministration() {
+		return administration;
+	}
+
+	public void setAdministration(Integer administration) {
+		this.administration = administration;
+	}
+
+	public Integer getLayerOne() {
+		return layerOne;
+	}
+
+	public void setLayerOne(Integer layerOne) {
+		this.layerOne = layerOne;
+	}
+
+	public Integer getLayerTwo() {
+		return layerTwo;
+	}
+
+	public void setLayerTwo(Integer layerTwo) {
+		this.layerTwo = layerTwo;
+	}
+
+	public Integer getLayerThree() {
+		return layerThree;
+	}
+
+	public void setLayerThree(Integer layerThree) {
+		this.layerThree = layerThree;
+	}
+
+	public Integer getLayerFour() {
+		return layerFour;
+	}
+
+	public void setLayerFour(Integer layerFour) {
+		this.layerFour = layerFour;
+	}
 
 	public Integer getIs_border() {
 		return is_border;

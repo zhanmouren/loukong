@@ -2,16 +2,303 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.permission.mapper.PermissionMapper">
       
-    <!--根据登录的用户名查询权限 -->
-    <select id="getUserOPList"  parameterType="com.koron.permission.bean.DTO.TblRoleDTO"  resultType="com.koron.permission.bean.VO.userOperationVO">
-       select roleuser.user as usercode,op.code as opCode,op.status as opStatus,op.weight as opWeight,
-       op.flag as opFlag,tree.seq as seq,tree.parentmask as parentmask,tree.mask as mask,tree.childmask as childmask,tree.type as type
-       from tblrole_op as roleop  
-       left join tbloperation as op on  roleop.operation=op.code
-       left join tblrole as role on role.code=roleop.role
-       left join tblrole_user as roleuser on roleuser.role=role.code
-       left join tbltree as tree on tree.foreignkey=op.code
-       where userCode=#{userCode}
-       order by tree.seq
+     <!-- 添加应用信息 -->
+   <insert id="addApp" parameterType="com.koron.permission.bean.DTO.TblAppDTO" >  
+        insert into tblapp(code,status,weight,name,creator,create_time,modifier,modify_time)
+        values(#{appCode},#{appStatus},#{appWeight},#{appName},#{creator},Now(),#{modifier},Now())   
+    </insert>
+    
+    <!-- 修改应用信息 -->
+    <update id="updateApp" parameterType="com.koron.permission.bean.DTO.TblAppDTO">   
+		update tblapp 
+		<set>	    
+             <if test="appStatus != null" > status = #{appStatus},  </if>                       
+             <if test="appWeight != null" > weight= #{appWeight},</if>                                 
+             <if test="appName != null" >name = #{appName}, </if>                                       
+             <if test="modifier != null" >  modifier = #{modifier},</if>                        
+             <if test="modifier != null" > modify_time = Now(),</if>                       
+		</set>
+		where code=#{appCode}
+     </update>
+     
+       <!-- 删除应用信息 -->
+    <delete id="deleteApp"  parameterType="com.koron.permission.bean.DTO.TblAppDTO">
+        delete from tblapp where code =#{appCode}      
+    </delete>
+    
+     <!--查询应用信息列表-->
+     <select id="queryApp"  parameterType="com.koron.permission.bean.DTO.TblAppDTO" resultType="com.koron.permission.bean.VO.TblAppVO">
+         select id as appId,code as appCode,status as appCode,weight as appWeight,name as appName,creator,create_time,modifier,modify_time
+         from tblapp
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="appName != null"> and name like '%'||#{appName}||'%'</if>  
+		 <if test="appWeight != null"> and weight=${appWeight}</if>  
+		 <if test="appStatus != null"> and status=${appStatus}</if>
+		 <if test="appCode != null"> and code=#{appCode}</if>        
+	    </trim>	
+	    order by create_time desc
+      </select>
+      
+       <!-- 批量删除操作节点-->
+	    <delete id="deleteOperate" parameterType="String">
+	        delete  from tbloperation	      
+	        where  code in
+	        <foreach item="item" collection="list" open="(" separator="," close=")">
+	            #{item}
+	        </foreach>
+	        
+	    </delete>
+	    
+	     <!-- 批量删除操作树形节点-->
+	    <delete id="deleteOperateTree" parameterType="String">
+	        delete  from tbltree	      
+	        where type=10 and foreignkey in
+	        <foreach item="item" collection="list" open="(" separator="," close=")">
+	            #{item}
+	        </foreach>
+	    </delete>
+	    
+	  <!-- 生成操作节点 -->
+      <insert id="addOperate" parameterType="com.koron.permission.bean.DTO.TblOperationDTO" >  
+        insert into tbloperation(code,status,weight,name,flag,creator,create_time,modifier,modify_time)
+        values(#{opCode},#{opStatus},#{opWeight},#{opName},#{opFlag},#{creator},Now(),#{modifier},Now())   
+      </insert>
+       
+       <!-- 修改节点信息接口-->
+      <update id="updateOperate" parameterType="com.koron.permission.bean.DTO.TblOperationDTO">   
+		update tbloperation 
+		<set>	    
+             <if test="opStatus != null" > status = #{opStatus},  </if>                       
+             <if test="opWeight != null" > weight = #{opWeight},</if>                                 
+             <if test="opName != null" >name = #{opName}, </if>                        
+             <if test="opFlag != null" > flag= #{opFlag}, </if>               
+             <if test="modifier != null" >  modifier = #{modifier},</if>                        
+             <if test="modifier != null" > modify_time = Now(),</if>            
+		</set>
+		where code=#{opCode}
+      </update>
+      
+        <!--查询操作节点列表-->
+     <select id="queryOpCode"   resultType="com.koron.permission.bean.VO.TblOpCodeVO">
+         select code as opCode
+         from tbloperation
+         where code =#{opCode}     
+      </select>
+      
+     <!-- 查询应用-操作列表记录-->
+      <select id="queryAppOp"  parameterType="com.koron.permission.bean.DTO.TblAppOPDTO" resultType="com.koron.permission.bean.VO.TblAppOPVO">
+         select id as id,app as appCode,operation as opCode
+         from tblapp_op
+         where operation =#{opCode}  and app=#{appCode}    
+      </select>
+      
+       <!--遍历插入(一)应用-操作(多)的关系 -->
+    <insert id="addAppOP" parameterType="java.util.List">  
+        insert into tblapp_op (app,operation)values
+		<foreach collection="list" item="appop"  index="index" separator=",">
+			(#{appop.appCode}, #{appop.opCode})
+		</foreach>
+    </insert>
+      
+     <!-- 批量删除(一)应用-操作(多)的关系 -->
+    <delete id="deleteAppOp">
+        delete from tblapp_op where app=#{appCode} 
+        and operation in
+        <foreach item="op" collection="list" open="(" separator="," close=")">
+            #{op}
+        </foreach>
+    </delete>
+    
+     <!-- 添加角色信息 -->
+   <insert id="addRole" parameterType="com.koron.permission.bean.DTO.TblRoleDTO" >  
+        insert into tblrole(code,status,weight,name,app,creator,create_time,modifier,modify_time)
+        values(#{roleCode},#{roleStatus},#{roleWeight},#{roleName},#{app},#{creator},Now(),#{modifier},Now())   
+    </insert>
+      
+       <!-- 修改角色信息-->
+      <update id="updateRole" parameterType="com.koron.permission.bean.DTO.TblRoleDTO">   
+		update tblrole 
+		<set>	    
+             <if test="roleStatus != null" > status = #{roleStatus},  </if>                       
+             <if test="roleWeight != null" > weight = #{roleWeight},</if>                                 
+             <if test="roleName != null" >name = #{roleName}, </if>                                 
+             <if test="modifier != null" >  modifier = #{modifier},</if>                        
+             <if test="modifier != null" > modify_time = Now(),</if>            
+		</set>
+		where code=#{roleCode}
+      </update>
+      
+     <!-- 删除角色-用户中关于该角色的关系 -->
+    <delete id="deleteRoleUser">
+        delete from tblrole_user where role=#{roleCode} 
+    </delete>
+    
+    
+    <!-- 删除角色-操作中关于该角色 -->
+    <delete id="deleteRoleOp">
+        delete from tblrole_op where role=#{roleCode} 
+    </delete>
+    
+    <!-- 删除角色-数据范围关于该角色 -->
+    <delete id="deleteRoleRange">
+        delete from tblrole_range_value where role=#{roleCode} 
+    </delete>
+    
+    <!-- 删除角色-组织中关于该角色的 -->
+    <delete id="deleteRoleOrg">
+        delete from tblrole_org_range where role=#{roleCode} 
+    </delete>
+    
+     <!-- 删除角色 -->
+    <delete id="deleteRole">
+        delete from tblrole where code=#{roleCode} 
+    </delete>
+    
+    <!-- 查询所有角色-->
+      <select id="queryAllRole"  parameterType="com.koron.permission.bean.DTO.TblTenantDTO" resultType="com.koron.permission.bean.VO.TblRoleVO">
+         select id as roleId,code as roleCode,status as roleStatus,weight as roleWeight,name as roleName,app,creator,create_time,modifier,modify_time
+         from tblRole
+         where app=#{_app}
+         order by create_time desc
+      </select>
+      
+      <!--遍历插入用户与角色的关系 -->
+    <insert id="addRoleUser" parameterType="java.util.List">  
+        insert into tblrole_user  ("user",role)values
+		<foreach collection="list" item="roleuser"  index="index" separator=",">
+			(#{roleuser.userCode}, #{roleuser.roleCode})
+		</foreach>
+    </insert>
+    
+     <!--插入(一)角色与操作(多)的关系 -->
+    <insert id="addRoleOP" parameterType="java.util.List">  
+        insert into tblrole_op  (operation,role)values
+		<foreach collection="list" item="roleop"  index="index" separator=",">
+			(#{roleop.opCode}, #{roleop.roleCode})
+		</foreach>
+    </insert>
+    
+     <!-- 删除角色-操作关系信息 -->
+    <delete id="deleteRoleOP">
+        delete from tblrole_op where role=#{roleCode} 
+        and operation in
+        <foreach item="op" collection="list" open="(" separator="," close=")">
+            #{op}
+        </foreach>
+    </delete>
+    
+    <!--添加角色数据范围操作 -->
+    <insert id="addRoleRangeValue" parameterType="com.koron.permission.bean.DTO.TblRoleRangeValueDTO">  
+        insert into tblrole_range_value  (role,catalogue,value)values
+		<foreach collection="list" index="index" separator="," item="item">
+          (#{item.roleCode},#{item.catalogue},#{item.value})  
+        </foreach> 
+    </insert>
+    
+     <!--添加 域-->
+    <insert id="addAppCatalogue" parameterType="com.koron.permission.bean.DTO.TblAppCatalogueDTO">  
+        insert into tblapp_catalogue  (code,name,app,weight,status,creator,create_time,modifier,modify_time)values
+		(#{code},#{name},#{appCode},#{weight},#{status},#{creator},Now(),#{modifier},Now())
+    </insert>
+    
+    
+    <!-- 修改域-->
+      <update id="updateAppCatalogue" parameterType="com.koron.permission.bean.DTO.TblAppCatalogueDTO">   
+		update tblapp_catalogue 
+		<set>	    
+             <if test="status != null" > status = #{status},  </if>                       
+             <if test="weight != null" > weight = #{weight},</if>                                 
+             <if test="name != null" >name = #{name}, </if>                                  
+             <if test="modifier != null" >  modifier = #{modifier},</if>                        
+             <if test="modifier != null" > modify_time = Now(),</if>            
+		</set>
+		where code=#{code}
+      </update>
+      
+      <!-- 删除域-->
+      <delete id="deleteAppCatalogue">   
+		delete from tblapp_catalogue
+		where code=#{code} and app=#{appCode}
+      </delete>
+      
+      <!--修改角色数据范围操作 -->
+    <update id="updateRoleRangeValue"  parameterType="com.koron.permission.bean.DTO.TblRoleRangeValueDTO">  
+        update tblrole_range_value
+        <set>	                                     
+             <if test="value != null" >value = #{value}, </if>                                  
+             <if test="modifier != null" >  modifier = #{modifier},</if>                        
+             <if test="modifier != null" > modify_time = Now(),</if>            
+		</set>
+		where role=#{roleCode} and catalogue=#{catalogue}
+    </update>   
+    
+    <!--添加组织角色关系-->
+    <insert id="addRoleOrg" parameterType="com.koron.permission.bean.DTO.TblOrgRoleDTO">  
+        insert into tblrole_org  (role,org_node)values
+        <foreach collection="list" index="index" separator="," item="item">
+          (#{item.roleCode},#{item.orgCode})  
+        </foreach> 
+    </insert>   
+    
+    <!--删除组织角色关系-->
+    <delete id="deleteManyRoleOrg"  parameterType="java.util.List">  
+        delete from  tblrole_org where (role,org_node) in
+         <foreach item="item" index="index" collection="list" separator="," open="(" close=")">
+	            (#{item.roleCode},#{item.orgCode})  
+	      </foreach>
+    </delete>   
+     
+    <!-- 删除角色数据范围操作-->
+    <delete id="deleteRoleRangeValue">
+         delete from tblrole_range_value 
+         where role=#{roleCode} and catalogue=#{catalogue}
+     </delete>
+     
+      <!-- 查询域-->
+       <select id="queryAppCatalogue"  parameterType="com.koron.permission.bean.DTO.TblAppCatalogueDTO" resultType="com.koron.permission.bean.VO.TblAppCatalogueVO">
+         select code,app as appCode,name,status,weight,creator,create_time,modifier,modify_time
+         from tblapp_catalogue
+        <trim prefix="where" prefixOverrides="and|or">
+		 <if test="code != null"> and code =#{code}</if>  
+		 <if test="weight != null"> and weight=${weight}</if>  
+		 <if test="status != null"> and status=${status}</if>
+		 <if test="appCode != null"> and app=#{appCode}</if>
+		 <if test="name != null"> and name like '%'||#{name}||'%'</if>          
+	    </trim>	
+	    order by create_time desc
+      </select>
+      
+      <!-- 系统内接口-->
+      <!--根据角色Code加载角色人员列表接口 -->
+     <select id="queryUserByRoleCode"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,
+       "pos".name as position,case when "dic".value is null then '' else "dic".value end,"user".photo,"user"."openID","user".status,"user"."workNo",
+	  "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
+       else string_agg(distinct("dept".name),';') end as "depname","user".code  as code ,"user".code as code
+       from tblrole_user  as "userRela"
+       left join sm_user as "user" on "userRela".user="user".code
+       left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
+	   left join sm_datadictionary as "dic" on "user".sex="dic".key
+	   left join sm_position as "pos" on "pos".code="user".position
+       where "userRela".role=#{roleCode} and "user"."whetUse"=0
+       group by "user".id ,"user"."loginName","user".phone,"user"."email",
+		"user".name,"pos".name,"dic".value,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
+		"user"."createBy","user"."createTime" 
+       order by "user"."createTime" desc
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
+    
+     <!--根据角色Code加载角色人员总条数 -->
+     <select id="getRoleUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleDTO"  resultType="java.lang.Integer">
+       select count(distinct("user"."loginName")) 
+       from tblrole_user  as "userRela"
+       left join sm_user as "user" on "userRela".user="user".code
+       left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
+	   left join sm_datadictionary as "dic" on "user".sex="dic".key
+	   left join sm_position as "pos" on "pos".code="user".position
+       where "userRela".role=#{roleCode}     
+    </select>
+    
 </mapper>

@@ -5,9 +5,11 @@ import java.util.List;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
@@ -39,6 +41,10 @@ public interface EventInfoService {
 	List<EventWarnRelation> queryEventWarnRelation(SessionFactory factory, String processCode);
 
 	Integer deleteEventWarnRelation(SessionFactory factory, String processCode, String eventCode);
+
+	UploadFileDTO queryFileDataById(SessionFactory factory, Integer id);
+
+	List<UploadFileDTO> queryEventFile(SessionFactory factory, QueryEventFileDTO queryEventFileDTO);
 	
 	
 

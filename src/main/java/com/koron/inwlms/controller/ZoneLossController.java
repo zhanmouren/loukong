@@ -19,6 +19,7 @@ import org.swan.excel.ExportExcel;
 import com.github.pagehelper.util.StringUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddVCZoneDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO;
@@ -41,6 +42,7 @@ import com.koron.inwlms.bean.DTO.zoneLoss.ZoneThematicValueDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneHstDataVO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.bean.VO.zoneLoss.AnalysisIndicatorVO;
 import com.koron.inwlms.bean.VO.zoneLoss.DmaZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
@@ -77,7 +79,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Controller
 @Api(value = "zoneLossController", description = "分区漏损Controller")
-@RequestMapping(value = "/zoneLossController")
+@RequestMapping(value = "/{tenantID}/zoneLossController")
 public class ZoneLossController {
 
 	@Autowired
@@ -97,7 +99,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryZoneWBLossData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区水平衡漏损数据", notes = "查询分区水平衡漏损数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZoneWBLossData(@RequestBody QueryZoneWBLossDTO queryZoneWBLossDTO) {
+	public String queryZoneWBLossData(@RequestBody QueryZoneWBLossDTO queryZoneWBLossDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ZoneWBLossVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, ZoneWBLossVO.class);
 		if(queryZoneWBLossDTO.getTimeType() == null) {
 			//参数不正确
@@ -131,7 +133,7 @@ public class ZoneLossController {
 			return msg.toJson();
 		}
 		try{
-			ZoneWBLossVO data = ADOConnection.runTask(wbas, "queryZoneWBLossData", ZoneWBLossVO.class,queryZoneWBLossDTO);
+			ZoneWBLossVO data = ADOConnection.runTask(user.getEnv(),wbas, "queryZoneWBLossData", ZoneWBLossVO.class,queryZoneWBLossDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -144,13 +146,13 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryWNWBReportList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询全网水平衡报表列表", notes = "查询全网水平衡报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryWNWBReportList(@RequestBody QueryWNWBReportListDTO queryWNWBReportListDTO) {
+	public String queryWNWBReportList(@RequestBody QueryWNWBReportListDTO queryWNWBReportListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		//参数校验
 		msg = checkWNWBReportListParam(queryWNWBReportListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
 		try{
-			PageListVO data = ADOConnection.runTask(wbas, "queryWNWBReportList", PageListVO.class,queryWNWBReportListDTO);
+			PageListVO data = ADOConnection.runTask(user.getEnv(),wbas, "queryWNWBReportList", PageListVO.class,queryWNWBReportListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -164,23 +166,17 @@ public class ZoneLossController {
 	 * @return
 	 */
 	public MessageBean checkWNWBReportListParam(QueryWNWBReportListDTO queryWNWBReportListDTO,MessageBean<PageListVO> msg){
-		if(queryWNWBReportListDTO.getTimeType() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("时间粒度为空");
-		}else if(queryWNWBReportListDTO.getTimeType() < Constant.TIME_TYPE_M || queryWNWBReportListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+		if(queryWNWBReportListDTO.getStartTime() != null || queryWNWBReportListDTO.getEndTime() != null ) {
+			if(queryWNWBReportListDTO.getTimeType() == null) {
+				//参数不正确
+				msg.setCode(Constant.MESSAGE_INT_NULL);
+				msg.setDescription("时间粒度为空");
+			}
+		}else if(queryWNWBReportListDTO.getTimeType() != null && (queryWNWBReportListDTO.getTimeType() < Constant.TIME_TYPE_M || queryWNWBReportListDTO.getTimeType() > Constant.TIME_TYPE_Y)) {
 			//传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("时间粒度数值错误");
-		}else if(queryWNWBReportListDTO.getStartTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("开始时间为空");
-		}else if(queryWNWBReportListDTO.getEndTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("结束时间为空");
-		}else if(queryWNWBReportListDTO.getStartTime() > queryWNWBReportListDTO.getEndTime()) {
+		}else if((queryWNWBReportListDTO.getStartTime() != null && queryWNWBReportListDTO.getEndTime() != null) && (queryWNWBReportListDTO.getStartTime() > queryWNWBReportListDTO.getEndTime())) {
 			//开始时间不能大于结束时间
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
@@ -199,15 +195,15 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadWNWBReport.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载全网水平衡报表信息", notes = "下载全网水平衡报表信息", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadWNWBReport(Integer id) {
+	public HttpEntity<?> downloadWNWBReport(Integer id,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(id == null) return null;
 		HttpEntity<?> entity = null;
 		try{
 			//查询报表
-			WNWBReportDetailVO report = ADOConnection.runTask(wbas,"queryWNWBReportDetail",WNWBReportDetailVO.class,id);
+			WNWBReportDetailVO report = ADOConnection.runTask(user.getEnv(),wbas,"queryWNWBReportDetail",WNWBReportDetailVO.class,id);
 			if(report == null) return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
 			//查询模板
-			WNWBTReportDetailVO tReport = ADOConnection.runTask(wbas,"queryWNWBTReportDetail",WNWBTReportDetailVO.class,report.getTemplateId());
+			WNWBTReportDetailVO tReport = ADOConnection.runTask(user.getEnv(),wbas,"queryWNWBTReportDetail",WNWBTReportDetailVO.class,report.getTemplateId());
 			Map<String,Double> indicatorValue = new HashMap<>();
 			List<WNWBReportIndicator> reportIndic = report.getIndicators();
 			List<WNWBTReportIndicator> tReportIndic = tReport.getIndicators();
@@ -240,11 +236,11 @@ public class ZoneLossController {
 	@RequestMapping(value = "/deleteWNWBReport.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除全网水平衡报表", notes = "删除全网水平衡报表", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteWNWBReport(Integer id) {
+	public String deleteWNWBReport(Integer id,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Void.class);
 		try{
 			if(id != null){
-				ADOConnection.runTask(wbas,"deleteWNWBReport",Void.class,id);	
+				ADOConnection.runTask(user.getEnv(),wbas,"deleteWNWBReport",Void.class,id);	
 			}else{
 				msg.setCode(Constant.MESSAGE_INT_NULL);
 				msg.setDescription(Constant.MESSAGE_STRING_NULL);
@@ -265,7 +261,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadWNWBReportList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载全网水平衡报表列表", notes = "下载全网水平衡报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadWNWBReportList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadWNWBReportList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -280,7 +276,7 @@ public class ZoneLossController {
 			qwnwbr.setPage(1);
 			qwnwbr.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<WNWBReportListVO>> data = ADOConnection.runTask(wbas, "queryWNWBReportList", PageListVO.class,qwnwbr);
+			PageListVO<List<WNWBReportListVO>> data = ADOConnection.runTask(user.getEnv(),wbas, "queryWNWBReportList", PageListVO.class,qwnwbr);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -296,7 +292,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/addWNWBReport.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加全网水平衡报表", notes = "添加全网水平衡报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addWNWBReport(@RequestBody AddWNWBReportDTO addWNWBReportDTO) {
+	public String addWNWBReport(@RequestBody AddWNWBReportDTO addWNWBReportDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AddWNWBReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBReportDTO.class);
 		if(addWNWBReportDTO.getReportName() == null) {
 			//参数不正确
@@ -320,7 +316,7 @@ public class ZoneLossController {
 			msg.setDescription("模板报表id为空");
 		}
 		try{
-			ADOConnection.runTask(wbas,"addWNWBReport",Integer.class,addWNWBReportDTO);
+			ADOConnection.runTask(user.getEnv(),wbas,"addWNWBReport",Integer.class,addWNWBReportDTO);
 			msg.setData(addWNWBReportDTO);
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
@@ -332,7 +328,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/updateWNWBReport.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "编辑全网水平衡报表", notes = "编辑全网水平衡报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateWNWBReport(@RequestBody AddWNWBReportDTO editWNWBReportDTO) {
+	public String updateWNWBReport(@RequestBody AddWNWBReportDTO editWNWBReportDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AddWNWBReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBReportDTO.class);
 		if(editWNWBReportDTO.getId() == null) {
 			//参数不正确
@@ -360,7 +356,7 @@ public class ZoneLossController {
 			msg.setDescription("模板报表id为空");
 		}
 		try{
-			ADOConnection.runTask(wbas,"updateWNWBReport",Integer.class,editWNWBReportDTO);
+			ADOConnection.runTask(user.getEnv(),wbas,"updateWNWBReport",Integer.class,editWNWBReportDTO);
 			msg.setData(editWNWBReportDTO);
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_EDITERROR);
@@ -372,11 +368,11 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryWNWBReportDetail.htm", method=RequestMethod.GET,produces={"application/json;charset=UTF-8"})
 	@ApiOperation(value = "查询全网水平衡报表详情",notes = "查询全网水平衡报表详情",httpMethod = "GET",consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryWNWBReportDetail(Integer id){
+	public String queryWNWBReportDetail(Integer id,@StaffAttribute(Constant.LOGIN_USER) UserVO user){
 		MessageBean<WNWBReportDetailVO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, WNWBReportDetailVO.class);
 		try{
 			if(id != null){ //判断查看详情时，id是否为空
-				WNWBReportDetailVO report = ADOConnection.runTask(wbas,"queryWNWBReportDetail",WNWBReportDetailVO.class,id);
+				WNWBReportDetailVO report = ADOConnection.runTask(user.getEnv(),wbas,"queryWNWBReportDetail",WNWBReportDetailVO.class,id);
 				data.setData(report);
 			}else{
 				data.setCode(Constant.MESSAGE_INT_NULL);
@@ -392,11 +388,11 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryWNWBReporFileList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询全网水平衡报表附件列表", notes = "查查询全网水平衡报表附件列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryWNWBReporFileList(@RequestBody WNWBReportFileDTO wNWBReportFileDTO) {
+	public String queryWNWBReporFileList(@RequestBody WNWBReportFileDTO wNWBReportFileDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		try{
 			@SuppressWarnings("unchecked")
-			List<WNWBReporFileListVO> lists = ADOConnection.runTask(wbas,"queryWNWBReporFileList",List.class,wNWBReportFileDTO);
+			List<WNWBReporFileListVO> lists = ADOConnection.runTask(user.getEnv(),wbas,"queryWNWBReporFileList",List.class,wNWBReportFileDTO);
 			data.setData(lists);
 		}catch(Exception e){
 			data.setCode(Constant.MESSAGE_INT_ERROR);
@@ -408,11 +404,11 @@ public class ZoneLossController {
 	@RequestMapping(value = "/deleteWNWBReporFile.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除全网水平衡报表附件", notes = "删除全网水平衡报表附件", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteWNWBReporFile(Integer fileId) {
+	public String deleteWNWBReporFile(Integer fileId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Void.class);
 		try{
 			if(fileId != null){
-				ADOConnection.runTask(wbas,"deleteReportFileById",Void.class,fileId);	
+				ADOConnection.runTask(user.getEnv(),wbas,"deleteReportFileById",Void.class,fileId);	
 			}else{
 				msg.setCode(Constant.MESSAGE_INT_NULL);
 				msg.setDescription(Constant.MESSAGE_STRING_NULL);
@@ -427,11 +423,11 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryWNWBIndicatorData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询全网水平衡报表指标值", notes = "查询全网水平衡报表指标值", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryWNWBIndicatorData(@RequestBody IndicatorDTO indicatorDTO) {
+	public String queryWNWBIndicatorData(@RequestBody IndicatorDTO indicatorDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		try{
 			@SuppressWarnings("unchecked")
-			List<IndicatorVO> lists = ADOConnection.runTask(wbas,"queryWNWBIndicatorData",List.class,indicatorDTO);
+			List<IndicatorVO> lists = ADOConnection.runTask(user.getEnv(),wbas,"queryWNWBIndicatorData",List.class,indicatorDTO);
 			data.setData(lists);
 		}catch(Exception e){
 			data.setCode(Constant.MESSAGE_INT_ERROR);
@@ -443,12 +439,12 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryWNWBTReportList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询全网水平衡模板报表列表", notes = "查询全网水平衡模板报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryWNWBTReportList(@RequestBody QueryWNWBTReportListDTO queryWNWBTReportListDTO) {
+	public String queryWNWBTReportList(@RequestBody QueryWNWBTReportListDTO queryWNWBTReportListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkWNWBTReportListParam(queryWNWBTReportListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
 		try{
-			PageListVO data = ADOConnection.runTask(wbas, "queryWNWBTReportList", PageListVO.class,queryWNWBTReportListDTO);
+			PageListVO data = ADOConnection.runTask(user.getEnv(),wbas, "queryWNWBTReportList", PageListVO.class,queryWNWBTReportListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -483,7 +479,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadWNWBReporTemplate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载全网水平衡模板报表列表", notes = "下载全网水平衡模板报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadWNWBReporTemplate(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadWNWBReporTemplate(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -497,7 +493,7 @@ public class ZoneLossController {
 			qwnwbtr.setPage(1);
 			qwnwbtr.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<WNWBTReportListVO>> data = ADOConnection.runTask(wbas, "queryWNWBTReportList", PageListVO.class,qwnwbtr);
+			PageListVO<List<WNWBTReportListVO>> data = ADOConnection.runTask(user.getEnv(),wbas, "queryWNWBTReportList", PageListVO.class,qwnwbtr);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -513,11 +509,11 @@ public class ZoneLossController {
 	@RequestMapping(value = "/deleteWNWBReporTemplate.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除全网水平衡模板报表", notes = "删除全网水平衡模板报表", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteWNWBReporTemplate(Integer tId) {
+	public String deleteWNWBReporTemplate(Integer tId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Void.class);
 		try{
 			if(tId != null){
-				ADOConnection.runTask(wbas,"deleteWNWBTReport",Void.class,tId);	
+				ADOConnection.runTask(user.getEnv(),wbas,"deleteWNWBTReport",Void.class,tId);	
 			}else{
 				msg.setCode(Constant.MESSAGE_INT_NULL);
 				msg.setDescription(Constant.MESSAGE_STRING_NULL);
@@ -532,7 +528,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/addWNWBReporTemplate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加全网水平衡模板报表", notes = "添加全网水平衡模板报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addWNWBReporTemplate(@RequestBody AddWNWBTReportDTO addWNWBTReportDTO) {
+	public String addWNWBReporTemplate(@RequestBody AddWNWBTReportDTO addWNWBTReportDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AddWNWBTReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBTReportDTO.class);
 		if(addWNWBTReportDTO.getReportName() == null) {
 			//参数不正确
@@ -544,7 +540,7 @@ public class ZoneLossController {
 			msg.setDescription("模板报表指标为空");
 		}
 		try{
-			ADOConnection.runTask(wbas,"addWNWBTReport",Integer.class,addWNWBTReportDTO);
+			ADOConnection.runTask(user.getEnv(),wbas,"addWNWBTReport",Integer.class,addWNWBTReportDTO);
 			msg.setData(addWNWBTReportDTO);
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
@@ -556,7 +552,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/updateWNWBReporTemplate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "编辑全网水平衡模板报表", notes = "编辑全网水平衡模板报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateWNWBReporTemplate(@RequestBody AddWNWBTReportDTO editWNWBTReportDTO) {
+	public String updateWNWBReporTemplate(@RequestBody AddWNWBTReportDTO editWNWBTReportDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AddWNWBTReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AddWNWBTReportDTO.class);
 		if(editWNWBTReportDTO.getId() == null) {
 			//参数不正确
@@ -572,7 +568,7 @@ public class ZoneLossController {
 			msg.setDescription("模板报表指标为空");
 		}
 		try{
-			ADOConnection.runTask(wbas,"updateWNWBTReport",Integer.class,editWNWBTReportDTO);
+			ADOConnection.runTask(user.getEnv(),wbas,"updateWNWBTReport",Integer.class,editWNWBTReportDTO);
 			msg.setData(editWNWBTReportDTO);
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_EDITERROR);
@@ -584,11 +580,11 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryWNWBTReportDetail.htm", method=RequestMethod.GET,produces={"application/json;charset=UTF-8"})
 	@ApiOperation(value = "查询全网水平衡模板报表详情",notes = "查询全网水平衡报表详情",httpMethod = "GET",consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryWNWBTReportDetail(Integer id){
+	public String queryWNWBTReportDetail(Integer id,@StaffAttribute(Constant.LOGIN_USER) UserVO user){
 		MessageBean<WNWBTReportDetailVO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, WNWBTReportDetailVO.class);
 		try{
 			if(id != null){ //判断查看详情时，id是否为空
-				WNWBTReportDetailVO report = ADOConnection.runTask(wbas,"queryWNWBTReportDetail",WNWBTReportDetailVO.class,id);
+				WNWBTReportDetailVO report = ADOConnection.runTask(user.getEnv(),wbas,"queryWNWBTReportDetail",WNWBTReportDetailVO.class,id);
 				data.setData(report);
 			}else{
 				data.setCode(Constant.MESSAGE_INT_NULL);
@@ -604,12 +600,12 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryFZoneLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询一级分区漏损分析列表", notes = "查询一级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryFZoneLossList(@RequestBody QueryFZoneLossListDTO queryFZoneLossListDTO) {
+	public String queryFZoneLossList(@RequestBody QueryFZoneLossListDTO queryFZoneLossListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkFZoneLossListParam(queryFZoneLossListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
 		try{
-			PageListVO data = ADOConnection.runTask(zlas, "queryFZoneLossList", PageListVO.class,queryFZoneLossListDTO);
+			PageListVO data = ADOConnection.runTask(user.getEnv(),zlas, "queryFZoneLossList", PageListVO.class,queryFZoneLossListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -677,7 +673,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadFZoneLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载一级分区漏损分析列表", notes = "下载一级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadFZoneLossList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadFZoneLossList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -691,7 +687,7 @@ public class ZoneLossController {
 			qfzlDTO.setPage(1);
 			qfzlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<FZoneLossListVO>> data = ADOConnection.runTask(zlas, "queryFZoneLossList", PageListVO.class,qfzlDTO);
+			PageListVO<List<FZoneLossListVO>> data = ADOConnection.runTask(user.getEnv(),zlas, "queryFZoneLossList", PageListVO.class,qfzlDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -707,12 +703,12 @@ public class ZoneLossController {
 	@RequestMapping(value = "/querySZoneLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询二级分区漏损分析列表", notes = "查询二级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String querySZoneLossList(@RequestBody QuerySZoneLossListDTO querySZoneLossListDTO) {
+	public String querySZoneLossList(@RequestBody QuerySZoneLossListDTO querySZoneLossListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkSZoneLossListParam(querySZoneLossListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
 		try{
-			PageListVO data = ADOConnection.runTask(zlas, "querySZoneLossList", PageListVO.class,querySZoneLossListDTO);
+			PageListVO data = ADOConnection.runTask(user.getEnv(),zlas, "querySZoneLossList", PageListVO.class,querySZoneLossListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -781,7 +777,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadSZoneLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载二级分区漏损分析列表", notes = "下载二级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadSZoneLossList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadSZoneLossList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -795,7 +791,7 @@ public class ZoneLossController {
 			qszlDTO.setPage(1);
 			qszlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<SZoneLossListVO>> data = ADOConnection.runTask(zlas, "querySZoneLossList", PageListVO.class,qszlDTO);
+			PageListVO<List<SZoneLossListVO>> data = ADOConnection.runTask(user.getEnv(),zlas, "querySZoneLossList", PageListVO.class,qszlDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -811,12 +807,12 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryDmaZoneLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询DMA漏损分析列表", notes = "查询DMA漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDmaZoneLossList(@RequestBody QueryDmaZoneLossListDTO QueryDmaZoneLossListDTO) {
+	public String queryDmaZoneLossList(@RequestBody QueryDmaZoneLossListDTO QueryDmaZoneLossListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkDmaZoneLossListParam(QueryDmaZoneLossListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
 		try{
-			PageListVO data = ADOConnection.runTask(zlas, "queryDmaZoneLossList", PageListVO.class,QueryDmaZoneLossListDTO);
+			PageListVO data = ADOConnection.runTask(user.getEnv(),zlas, "queryDmaZoneLossList", PageListVO.class,QueryDmaZoneLossListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -884,7 +880,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadDmaZoneLossList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载DMA漏损分析列表", notes = "下载DMA漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDmaZoneLossList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadDmaZoneLossList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -898,7 +894,7 @@ public class ZoneLossController {
 			qdzlDTO.setPage(1);
 			qdzlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<DmaZoneLossListVO>> data = ADOConnection.runTask(zlas, "queryDmaZoneLossList", PageListVO.class,qdzlDTO);
+			PageListVO<List<DmaZoneLossListVO>> data = ADOConnection.runTask(user.getEnv(),zlas, "queryDmaZoneLossList", PageListVO.class,qdzlDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -914,7 +910,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryZonelocation.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区地图定位信息", notes = "查询分区地图定位信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZonelocation(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO) {
+	public String queryZonelocation(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PositionInfoVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PositionInfoVO.class);
 		if(StringUtil.isEmpty(queryZoneInfoDTO.getZoneNo())) {
 			//参数不正确
@@ -933,7 +929,7 @@ public class ZoneLossController {
 			return msg.toJson();
 		}
 		try{
-			PositionInfoVO data = ADOConnection.runTask(new GisZoneServiceImpl(), "queryZonePositionInfo", PositionInfoVO.class,queryZoneInfoDTO);
+			PositionInfoVO data = ADOConnection.runTask(user.getEnv(),new GisZoneServiceImpl(), "queryZonePositionInfo", PositionInfoVO.class,queryZoneInfoDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -945,7 +941,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryZonedetail.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区详情", notes = "查询分区详情", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZonedetail(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO) {
+	public String queryZonedetail(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ZoneDetailInfoVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, ZoneDetailInfoVO.class);
 		if(StringUtil.isEmpty(queryZoneInfoDTO.getZoneNo())) {
 			//参数不正确
@@ -964,7 +960,7 @@ public class ZoneLossController {
 			return msg.toJson();
 		}
 		try{
-			ZoneDetailInfoVO data = ADOConnection.runTask(new GisZoneServiceImpl(), "queryZoneDetailInfo", ZoneDetailInfoVO.class,queryZoneInfoDTO);
+			ZoneDetailInfoVO data = ADOConnection.runTask(user.getEnv(),new GisZoneServiceImpl(), "queryZoneDetailInfo", ZoneDetailInfoVO.class,queryZoneInfoDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -976,7 +972,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryZoneHstData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区漏损历史数据", notes = "查询分区漏损历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZoneHstData(@RequestBody QueryZoneHstDataDTO queryZoneHstDataDTO) {
+	public String queryZoneHstData(@RequestBody QueryZoneHstDataDTO queryZoneHstDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ZoneHstDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, ZoneHstDataVO.class);
 		if(queryZoneHstDataDTO.getTimeType() == null) {
 			//参数不正确
@@ -1015,7 +1011,7 @@ public class ZoneLossController {
 			return msg.toJson();
    	 	}
 		try{
-			ZoneHstDataVO data = ADOConnection.runTask(zlas, "queryZoneHstData", ZoneHstDataVO.class,queryZoneHstDataDTO);
+			ZoneHstDataVO data = ADOConnection.runTask(user.getEnv(),zlas, "queryZoneHstData", ZoneHstDataVO.class,queryZoneHstDataDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -1027,12 +1023,12 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryVSZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询虚拟分区（相减）列表", notes = "查询虚拟分区（相减）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryVSZoneList(@RequestBody QueryVSZoneListDTO queryVSZoneListDTO) {
+	public String queryVSZoneList(@RequestBody QueryVSZoneListDTO queryVSZoneListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkVSZoneListParam(queryVSZoneListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
 //		try{
-			PageListVO<List<VSZoneListVO>> data = ADOConnection.runTask(vzlas, "queryVSZoneList", PageListVO.class,queryVSZoneListDTO);
+			PageListVO<List<VSZoneListVO>> data = ADOConnection.runTask(user.getEnv(),vzlas, "queryVSZoneList", PageListVO.class,queryVSZoneListDTO);
 			msg.setData(data);
 //    	}catch(Exception e){
 //    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -1100,7 +1096,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadVSZoneHstList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载虚拟分区（相减）列表", notes = "下载虚拟分区（相减）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadVSZoneHstList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadVSZoneHstList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -1114,7 +1110,7 @@ public class ZoneLossController {
 			qvszlDTO.setPage(1);
 			qvszlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<VSZoneListVO>> data = ADOConnection.runTask(vzlas, "queryVSZoneList", PageListVO.class,qvszlDTO);
+			PageListVO<List<VSZoneListVO>> data = ADOConnection.runTask(user.getEnv(),vzlas, "queryVSZoneList", PageListVO.class,qvszlDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -1130,12 +1126,12 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryVCZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询拟分区（合并）列表", notes = "查询拟分区（合并）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryVCZoneList(@RequestBody QueryVCZoneListDTO queryVCZoneListDTO) {
+	public String queryVCZoneList(@RequestBody QueryVCZoneListDTO queryVCZoneListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkVCZoneListParam(queryVCZoneListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
 		try{
-			PageListVO<List<VCZoneListVO>> data = ADOConnection.runTask(vzlas, "queryVCZoneList", PageListVO.class,queryVCZoneListDTO);
+			PageListVO<List<VCZoneListVO>> data = ADOConnection.runTask(user.getEnv(),vzlas, "queryVCZoneList", PageListVO.class,queryVCZoneListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -1203,7 +1199,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadVCZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载拟分区（合并）列表", notes = "下载拟分区（合并）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadVCZoneList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadVCZoneList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -1217,7 +1213,7 @@ public class ZoneLossController {
 			qvczlDTO.setPage(1);
 			qvczlDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<VCZoneListVO>> data = ADOConnection.runTask(vzlas, "queryVCZoneList", PageListVO.class,qvczlDTO);
+			PageListVO<List<VCZoneListVO>> data = ADOConnection.runTask(user.getEnv(),vzlas, "queryVCZoneList", PageListVO.class,qvczlDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -1233,7 +1229,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/addVCZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加虚拟分区（合并）", notes = "添加虚拟分区（合并）", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addVCZone(@RequestBody AddVCZoneDTO addVCZoneDTO) {
+	public String addVCZone(@RequestBody AddVCZoneDTO addVCZoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Void.class);
 		if(StringUtil.isEmpty(addVCZoneDTO.getsZoneNos())) {
 			//参数不正确
@@ -1243,7 +1239,7 @@ public class ZoneLossController {
 		}
 		//TODO 判断合并分区是否存在
 		try{
-			ADOConnection.runTask(vzlas,"addVCZone",Void.class,addVCZoneDTO);
+			ADOConnection.runTask(user.getEnv(),vzlas,"addVCZone",Void.class,addVCZoneDTO);
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_DELERROR);
 			msg.setDescription(Constant.MESSAGE_STRING_DELERROR);
@@ -1254,7 +1250,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/deleteVCZone.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除虚拟分区（合并）", notes = "删除虚拟分区（合并）", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteVCZone(String vZoneNo) {
+	public String deleteVCZone(String vZoneNo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Void.class);
 		if(StringUtil.isEmpty(vZoneNo)) {
 			//参数不正确
@@ -1263,7 +1259,7 @@ public class ZoneLossController {
 			return msg.toJson();
 		}
 		try{
-			ADOConnection.runTask(vzlas,"deleteVCZone",Void.class,vZoneNo);
+			ADOConnection.runTask(user.getEnv(),vzlas,"deleteVCZone",Void.class,vZoneNo);
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_DELERROR);
 			msg.setDescription(Constant.MESSAGE_STRING_DELERROR);
@@ -1297,7 +1293,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryZoneIndicatorDic.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区指标数据字典", notes = "查询分区指标数据字典", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZoneIndicatorDic(Integer zoneType) {
+	public String queryZoneIndicatorDic(Integer zoneType,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		if(zoneType == null) {
 			//参数不正确
@@ -1311,7 +1307,7 @@ public class ZoneLossController {
 			return msg.toJson();
 		}
 		try{
-			List<ZoneIndicatorDicVO> lists = ADOConnection.runTask(zlas,"queryZoneIndicatorDic",List.class,zoneType);
+			List<ZoneIndicatorDicVO> lists = ADOConnection.runTask(user.getEnv(),zlas,"queryZoneIndicatorDic",List.class,zoneType);
 			msg.setData(lists);
 		}catch(Exception e){
 			msg.setCode(Constant.MESSAGE_INT_DELERROR);
@@ -1324,8 +1320,8 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryZoneThematicValue.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区专题图指标数据", notes = "查询分区专题图指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZoneThematicValue(@RequestBody ZoneThematicValueDTO zoneThematicValueDTO) {
-		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+	public String queryZoneThematicValue(@RequestBody ZoneThematicValueDTO zoneThematicValueDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<Map> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, Map.class);
 		if(zoneThematicValueDTO.getItemCode() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
@@ -1363,7 +1359,7 @@ public class ZoneLossController {
 			return msg.toJson();
 		}
 		try{
-			List<Map<Object, Object>> data = ADOConnection.runTask(zlas, "queryZoneThematicValue", List.class,zoneThematicValueDTO);
+			Map<String,Map<Object, Object>> data = ADOConnection.runTask(user.getEnv(),zlas, "queryZoneThematicValue", Map.class,zoneThematicValueDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -1376,12 +1372,12 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryZoneIndicatorList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区指标数据", notes = "查询分区指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryZoneIndicatorList(@RequestBody QueryZoneIndicatorListDTO queryZoneIndicatorListDTO) {
+	public String queryZoneIndicatorList(@RequestBody QueryZoneIndicatorListDTO queryZoneIndicatorListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkZoneIndicatorListParam(queryZoneIndicatorListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
 		try{
-			PageListVO<List<Map<Object,Object>>> data = ADOConnection.runTask(zlas, "queryZoneIndicatorList", PageListVO.class,queryZoneIndicatorListDTO);
+			PageListVO<List<Map<Object,Object>>> data = ADOConnection.runTask(user.getEnv(),zlas, "queryZoneIndicatorList", PageListVO.class,queryZoneIndicatorListDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -1439,7 +1435,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadZoneIndicatorList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载分区指标数据", notes = "下载分区指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadZoneIndicatorList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadZoneIndicatorList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -1453,7 +1449,7 @@ public class ZoneLossController {
 			qzilDTO.setPage(1);
 			qzilDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<Map<Object,Object>>> data = ADOConnection.runTask(zlas, "queryZoneIndicatorList", PageListVO.class,qzilDTO);
+			PageListVO<List<Map<Object,Object>>> data = ADOConnection.runTask(user.getEnv(),zlas, "queryZoneIndicatorList", PageListVO.class,qzilDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -1469,7 +1465,7 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryWBIndicatorData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询水平衡指标数据", notes = "查询水平衡指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryWBIndicatorData(@RequestBody IndicatorDTO indicatorDTO) {
+	public String queryWBIndicatorData(@RequestBody IndicatorDTO indicatorDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
 		if(indicatorDTO.getTimeType() == null) {
 			//参数不正确
@@ -1498,7 +1494,7 @@ public class ZoneLossController {
 			return msg.toJson();
    	 	}
 		try{
-			List<IndicatorVO> data = ADOConnection.runTask(wbas, "queryWBIndicatorData", List.class,indicatorDTO);
+			List<IndicatorVO> data = ADOConnection.runTask(user.getEnv(),wbas, "queryWBIndicatorData", List.class,indicatorDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -1525,7 +1521,7 @@ public class ZoneLossController {
 	 @ApiOperation(value = "更新漏损量指标值", notes = "更新漏损量指标值", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	 @RequestMapping(value = "/updateLeakageExponent.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8"})
 	 @ResponseBody
-	 public String updateLeakageExponent(String value) {
+	 public String updateLeakageExponent(String value,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 	     MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 	     if(StringUtil.isEmpty(value)) {
 	    	 msg.setCode(Constant.MESSAGE_INT_NULL);
@@ -1533,7 +1529,7 @@ public class ZoneLossController {
 			 return msg.toJson();
 	     }
 	     try {
-	         ADOConnection.runTask(lpss, "updateLeakageExponent", Void.class,value);
+	         ADOConnection.runTask(user.getEnv(),lpss, "updateLeakageExponent", Void.class,value);
 	     } catch (Exception e) {
 	         msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 	         msg.setDescription(Constant.MESSAGE_STRING_EDITERROR);
@@ -1550,12 +1546,12 @@ public class ZoneLossController {
 	    @ApiOperation(value = "分页查询合理夜晚使用量列表", notes = "分页查询合理夜晚使用量列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	    @RequestMapping(value = "/queryLegitimateNightUseList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	    @ResponseBody
-	    public String queryLegitimateNightUseList(@RequestBody LegitimateNightUseDTO lnuDTO) {
+	    public String queryLegitimateNightUseList(@RequestBody LegitimateNightUseDTO lnuDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 	    	MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 	    	msg = checkLegitimateNightUseListParam(lnuDTO,msg);
 	    	if(msg.getCode() != 0) return msg.toJson();
 	    	try{
-				PageListVO data = ADOConnection.runTask(lpss, "queryLegitimateNightUseList", PageListVO.class,lnuDTO);
+				PageListVO data = ADOConnection.runTask(user.getEnv(),lpss, "queryLegitimateNightUseList", PageListVO.class,lnuDTO);
 				msg.setData(data);
 	    	}catch(Exception e){
 	    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -1589,7 +1585,7 @@ public class ZoneLossController {
 	    @ApiOperation(value = "导出合理夜晚使用量信息", notes = "导出合理夜晚使用量信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	    @RequestMapping(value = "/downloadLegitimateNightUseList.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
 	    @ResponseBody
-	    public HttpEntity<?> downloadLegitimateNightUseList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	    public HttpEntity<?> downloadLegitimateNightUseList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 	    	try{
 				Gson jsonValue = new Gson();
 				// 查询条件字符串转对象，查询数据结果
@@ -1603,7 +1599,7 @@ public class ZoneLossController {
 				lnuDTO.setPage(1);
 				lnuDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 				// 查询到导出数据结果
-				PageListVO<List<LegitimateNightUseVO>> data = ADOConnection.runTask(lpss, "queryLegitimateNightUseList", PageListVO.class,lnuDTO);
+				PageListVO<List<LegitimateNightUseVO>> data = ADOConnection.runTask(user.getEnv(),lpss, "queryLegitimateNightUseList", PageListVO.class,lnuDTO);
 				List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 						}.getType());
 				// 导出excel文件
@@ -1626,7 +1622,7 @@ public class ZoneLossController {
 	    @ApiOperation(value = "更新合理夜晚使用量信息", notes = "更新合理夜晚使用量信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	    @RequestMapping(value = "/updateLegitimateNightUse.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
 	    @ResponseBody
-	    public String updateLegitimateNightUse(@RequestBody LegitimateNightUseEditDTO legitimateNightUseEditDTO) {
+	    public String updateLegitimateNightUse(@RequestBody LegitimateNightUseEditDTO legitimateNightUseEditDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 	    	MessageBean msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, Void.class);
 			if(legitimateNightUseEditDTO.getId() == null) {
 				//参数不正确
@@ -1645,7 +1641,7 @@ public class ZoneLossController {
 				return msg.toJson();
 			}
 			try{
-				ADOConnection.runTask(lpss, "updateLegitimateNightUse", Void.class,legitimateNightUseEditDTO);
+				ADOConnection.runTask(user.getEnv(),lpss, "updateLegitimateNightUse", Void.class,legitimateNightUseEditDTO);
 	    	}catch(Exception e){
 	    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
 	    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
@@ -1653,4 +1649,30 @@ public class ZoneLossController {
 			return msg.toJson();
 	    }
 	  
+	    @RequestMapping(value = "/queryZoneHstIndicatorDic.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+	    @ApiOperation(value = "分区历史指标数据字典", notes = "分区历史指标数据字典", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	    @ResponseBody
+		public String queryZoneHstIndicatorDic(Integer zoneType,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+			if(zoneType == null) {
+				//参数不正确
+				msg.setCode(Constant.MESSAGE_INT_NULL);
+				msg.setDescription("分区类型为空");
+				return msg.toJson();
+			}else if(zoneType < 1 || zoneType > 4) {
+				//传参数值不正确
+				msg.setCode(Constant.MESSAGE_INT_PARAMS);
+				msg.setDescription("分区类型数值错误");
+				return msg.toJson();
+			}
+			try{
+				List<ZoneIndicatorDicVO> lists = ADOConnection.runTask(user.getEnv(),zlas,"queryZoneHstIndicatorDic",List.class,zoneType);
+				msg.setData(lists);
+			}catch(Exception e){
+				msg.setCode(Constant.MESSAGE_INT_DELERROR);
+				msg.setDescription(Constant.MESSAGE_STRING_DELERROR);
+			}
+			return msg.toJson();
+			
+		}
 }

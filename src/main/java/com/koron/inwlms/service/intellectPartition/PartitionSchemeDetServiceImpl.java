@@ -1,4 +1,4 @@
-package com.koron.inwlms.service.intellectPartition;
+ package com.koron.inwlms.service.intellectPartition;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -53,9 +53,9 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	 */
 	@TaskAnnotation("querySchemeDet")
 	@Override
-	public List<SchemeDet> querySchemeDet(SessionFactory factory,String totalSchemeCode) {
+	public List<SchemeDet> querySchemeDet(SessionFactory factory,TotalSchemeDetDTO totalSchemeDetDTO) {
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
-		List<SchemeDet> list = mapper.querySchemeDet(totalSchemeCode);
+		List<SchemeDet> list = mapper.querySchemeDet(totalSchemeDetDTO);
 		return list;
 	}
 
@@ -252,6 +252,14 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	public String test(SessionFactory factory,AutomaticPartitionDTO automaticPartitionDTO,TotalSchemeDet totalSchemeDet) {
 		Gson gson = new Gson();
 		List<GisZonePipeData> pipeinfo = readText();
+		for(GisZonePipeData gisZonePipeData : pipeinfo) {
+			gisZonePipeData.setRailway(0);
+			gisZonePipeData.setLayerOne(0);
+			gisZonePipeData.setLayerTwo(0);
+			gisZonePipeData.setLayerThree(0);
+			gisZonePipeData.setLayerFour(0);
+			gisZonePipeData.setAdministration(0);
+		}
 		
 		
 //		//分区评估
@@ -270,9 +278,9 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		gisZoneData.setPip_info(pipeinfo);
 		gisZoneData.setNum_up(automaticPartitionDTO.getMaxZone());
 		gisZoneData.setNum_down(automaticPartitionDTO.getMinZone());
-		gisZoneData.setNum_up(67);
-		gisZoneData.setNum_down(50);
-		gisZoneData.setTotal_plan_code("123");
+		gisZoneData.setNum_up(20);
+		gisZoneData.setNum_down(5);
+		gisZoneData.setTotal_plan_code("888");
 		String data101 = gson.toJson(gisZoneData);
 		String mlPath = "http://10.13.1.11:7500/partition/partitionParamVerify";
 		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
@@ -292,7 +300,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	}
 	
 	public List<GisZonePipeData> readText() {
-		File file = new File("D:/智能分区-1000.txt");
+		File file = new File("D:/智能分区-10000.txt");
 		StringBuilder result = new StringBuilder();
         try{
             BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件

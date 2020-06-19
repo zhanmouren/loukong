@@ -1,79 +1,34 @@
 package com.koron.inwlms.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.koron.ebs.mybatis.ADOConnection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.swan.bean.MessageBean;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.koron.authority.ValidatePermission;
 import com.koron.common.StaffAttribute;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
-import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
-import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
-import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
-import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
-import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
-import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
-import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
-import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
-import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
-import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
-import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
-import com.koron.inwlms.bean.DTO.sysManager.TitleInfoDTO;
-import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
-import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
-import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
+import com.koron.inwlms.bean.DTO.sysManager.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
-import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
-import com.koron.inwlms.bean.VO.sysManager.ImportUserResVO;
-import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
-import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
-import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
-import com.koron.inwlms.bean.VO.sysManager.RoleVO;
-import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
-import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
-import com.koron.inwlms.bean.VO.sysManager.UploadFileNewVO;
-import com.koron.inwlms.bean.VO.sysManager.UserVO;
-import com.koron.inwlms.service.common.impl.FileServiceImpl;
+import com.koron.inwlms.bean.VO.sysManager.*;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.ImportExcelUtil;
-import com.koron.permission.authority.PermissionAOP;
 import com.koron.util.Constant;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
+import org.koron.ebs.mybatis.ADOConnection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.swan.bean.MessageBean;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 系统管理Controller层
@@ -83,7 +38,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "systemManager", description = "系统管理Controller")
-@RequestMapping(value = "/systemManager")
+@RequestMapping(value = "/{tenantID}/systemManager")
 public class SystemManagerController {
 	
 	@Autowired
@@ -99,7 +54,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "管理员添加新职员接口", notes = "管理员添加新职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addUser(@RequestBody UserDTO userDTO) {
+	public String addUser(@RequestBody UserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(userDTO.getName()==null || StringUtils.isBlank(userDTO.getName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员名不能为空", Integer.class).toJson();
 		}
@@ -112,7 +67,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行插入职员的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addUser", Integer.class, userDTO);		 
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addUser", Integer.class, userDTO);		 
 				  if(insertRes==1) {
 					//添加用户成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -147,15 +102,49 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询职员接口", notes = "查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryUser(@RequestBody QueryUserDTO userDTO) {
+	public String queryUser(@RequestBody QueryUserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
-			 PageListVO user=ADOConnection.runTask(userService, "queryUser", PageListVO.class, userDTO);
-			 if(user!=null  && user.getRowNumber()>0) {
+			 PageListVO result=ADOConnection.runTask(user.getEnv(),userService, "queryUser", PageListVO.class, userDTO);
+			 if(result!=null  && result.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关职员的信息"); 
-			     msg.setData(user);
+			     msg.setData(result);
+			 }else {
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("没有查询到相关职员的信息"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询职员失败");
+	     }
+		 return msg.toJson();
+		 
+	}
+	
+	/*
+     * date:2020-06-17
+     * funtion:查询职员详情信息接口
+     * author:lzy
+     */
+	@RequestMapping(value = "/queryUserDetail.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询职员接口", notes = "查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryUserDetail(@RequestBody QueryUserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+		 if(userDTO.getCode() == null || StringUtils.isBlank(userDTO.getCode())) {
+			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员code不能为空", Integer.class).toJson();
+		 }
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	 
+		 //执行查询职员
+		 try {
+			 List<UserVO> result=ADOConnection.runTask(user.getEnv(),userService, "queryUserDetail", List.class,userDTO);	
+			 if(result!=null  && result.size() > 0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到相关职员的信息"); 
+			     msg.setData(result);
 			 }else {
 			   //没查询到数据
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -178,9 +167,12 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改职员信息接口", notes = "修改职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateUser(@RequestBody UserDTO userDTO) {
-		if(userDTO.getCode()==null) {
+	public String updateUser(@RequestBody UserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+		if(userDTO.getCode()==null || StringUtils.isBlank(userDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员编码不能为空", Integer.class).toJson();
+		}
+		if(userDTO.getWorkNo()==null || StringUtils.isBlank(userDTO.getWorkNo())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员工号不能为空", Integer.class).toJson();
 		}
 		if(userDTO.getName()==null || StringUtils.isBlank(userDTO.getName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员名不能为空", Integer.class).toJson();
@@ -188,22 +180,29 @@ public class SystemManagerController {
 		if(userDTO.getLoginName()==null || StringUtils.isBlank(userDTO.getLoginName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "登录名称不能为空", Integer.class).toJson();
 		}
-		if(userDTO.getSex()==null) {
+		if(userDTO.getSex()==null || StringUtils.isBlank(userDTO.getSex())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "性别不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行修改职员的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(userService, "updateUser", Integer.class, userDTO);		 
+			  userDTO.setUpdateBy(user.getLoginName());
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateUser", Integer.class, userDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
 					//修改用户成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("修改用户成功");
-				  }else {
-				    //修改用户失败
-			        msg.setCode(Constant.MESSAGE_INT_EDITERROR);
-			        msg.setDescription("修改用户失败");
+				  }else if(updateRes== -1){
+					  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					  msg.setDescription("loginName 重复");
+				  }else if(updateRes== -2){
+					  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					  msg.setDescription("workNo 重复");
+				  }else{
+					  //修改用户失败
+				      msg.setCode(Constant.MESSAGE_INT_EDITERROR);
+				      msg.setDescription("修改用户失败");
 				  }
 			  }
 	        }catch(Exception e){
@@ -223,7 +222,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateUserPassword.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量重置职员密码接口", notes = "批量重置职员密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateUserPassword(@RequestBody UserDTO userDTO) {
+	public String updateUserPassword(@RequestBody UserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(userDTO.getUserCodeList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员编码列表参数不能为空", Integer.class).toJson();
 		}
@@ -233,7 +232,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行批量重置密码的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(userService, "updateUserPassword", Integer.class, userDTO);		 
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateUserPassword", Integer.class, userDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {					
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -259,14 +258,14 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除职员信息接口", notes = "删除职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String  deleteUser(@RequestBody UserDTO userDTO) {
+	public String  deleteUser(@RequestBody UserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(userDTO.getCode()==null || "".equals(userDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除职员的操作
 		  try{
-			  Integer delRes=ADOConnection.runTask(userService, "deleteUser", Integer.class, userDTO);		 
+			  Integer delRes=ADOConnection.runTask(user.getEnv(),userService, "deleteUser", Integer.class, userDTO);		 
 			  if(delRes!=null) {
 				  if(delRes==1) {
 					//删除用户成功
@@ -295,14 +294,14 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addNewRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加新角色接口", notes = "添加新角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addNewRole(@RequestBody RoleDTO roleDTO) {
+	public String addNewRole(@RequestBody RoleDTO roleDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(roleDTO.getRoleName()==null || StringUtils.isBlank(roleDTO.getRoleName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色名称不能为空", Integer.class).toJson();
 		}	
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行插入角色的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addNewRole", Integer.class, roleDTO);		 
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addNewRole", Integer.class, roleDTO);		 
 				  if(insertRes==1) {
 					//添加角色成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -335,7 +334,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改角色属性接口", notes = "修改角色属性接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateRoleAttr(@RequestBody RoleDTO roleDTO) {
+	public String updateRoleAttr(@RequestBody RoleDTO roleDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
@@ -345,7 +344,7 @@ public class SystemManagerController {
 		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer updateRes=ADOConnection.runTask(userService, "updateRoleAttr", Integer.class, roleDTO);		 
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateRoleAttr", Integer.class, roleDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==1) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -371,7 +370,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteRoleAttr.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量删除角色接口", notes = "批量删除角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteRoleAttr(@RequestBody RoleDTO roleDTO) {
+	public String deleteRoleAttr(@RequestBody RoleDTO roleDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(roleDTO.getRoleCodeList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色列表code参数不能为空", Integer.class).toJson();
 		}	
@@ -381,7 +380,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色的操作
 		  try{
-			  RoleMsgVO roleMsgVO=ADOConnection.runTask(userService, "deleteRoleAttr", RoleMsgVO.class, roleDTO);		 
+			  RoleMsgVO roleMsgVO=ADOConnection.runTask(user.getEnv(),userService, "deleteRoleAttr", RoleMsgVO.class, roleDTO);		 
 			  if(roleMsgVO!=null) {
 				  if(roleMsgVO.getResult()==-1) {
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
@@ -409,14 +408,14 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryUserByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据角色code加载角色人员接口", notes = "根据角色ID加载角色人员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryUserByRoleId(@RequestBody RoleDTO roleDTO) {
+	public String queryUserByRoleId(@RequestBody RoleDTO roleDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		 }
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		//执行删除角色的操作
 		  try{
-			  PageListVO userVO=ADOConnection.runTask(userService, "queryUserByRoleCode", PageListVO.class, roleDTO);		 
+			  PageListVO userVO=ADOConnection.runTask(user.getEnv(),userService, "queryUserByRoleCode", PageListVO.class, roleDTO);		 
 			  if(userVO!=null && userVO.getRowNumber()>0) {				 
 					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 					 msg.setDescription("根据角色code查询到相关职员信息列表"); 
@@ -442,10 +441,10 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryAllRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询所有角色接口", notes = "查询所有角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryAllRole() {		
+	public String queryAllRole(@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
-			  List<RoleVO> roleList=ADOConnection.runTask(userService, "queryAllRole", List.class);		 
+			  List<RoleVO> roleList=ADOConnection.runTask(user.getEnv(),userService, "queryAllRole", List.class);		 
 			  if(roleList.size()>0) {				 
 					 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 					 msg.setDescription("查询到所有角色列表"); 
@@ -470,7 +469,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "插入职员(批量)和角色的关系", notes = "插入职员(批量)和角色的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
+	public String addRoleUser(@RequestBody RoleAndUserDTO roleUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(roleUserDTO.getRoleCode()==null || "".equals(roleUserDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
@@ -483,7 +482,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加用户和角色关系的操作
 		  try{
-			  Integer addResult=ADOConnection.runTask(userService, "addRoleUser", Integer.class, roleUserDTO);		 
+			  Integer addResult=ADOConnection.runTask(user.getEnv(),userService, "addRoleUser", Integer.class, roleUserDTO);		 
 			  if(addResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 					 msg.setDescription("插入职员和角色的关系失败"); 					
@@ -518,7 +517,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除角色中职员接口", notes = "删除角色中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {	
+	public String deleteRoleUser(@RequestBody RoleAndUserDTO roleUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(roleUserDTO.getRoleCode()==null || "".equals(roleUserDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
@@ -531,7 +530,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除角色中职员(批量)操作
 		  try{
-			  Integer delResult=ADOConnection.runTask(userService, "deleteRoleUser", Integer.class, roleUserDTO);		 
+			  Integer delResult=ADOConnection.runTask(user.getEnv(),userService, "deleteRoleUser", Integer.class, roleUserDTO);		 
 			  if(delResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
 					 msg.setDescription("删除角色中职员(批量)失败"); 
@@ -557,14 +556,14 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryExceptRoleUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询角色其他职员接口", notes = "查询角色其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryExceptRoleUser(@RequestBody RoleAndUserDTO roleUserDTO) {
+	public String queryExceptRoleUser(@RequestBody RoleAndUserDTO roleUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(roleUserDTO.getRoleCode()==null || "".equals(roleUserDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
-			 PageListVO userVO=ADOConnection.runTask(userService, "queryExceptRoleUser", PageListVO.class, roleUserDTO);
+			 PageListVO userVO=ADOConnection.runTask(user.getEnv(),userService, "queryExceptRoleUser", PageListVO.class, roleUserDTO);
 			 if(userVO!=null && userVO.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("该角色查询到其他相关职员的信息"); 
@@ -591,14 +590,14 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryExceptDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询部门其他职员接口", notes = "查询部门其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryExceptDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {
+	public String queryExceptDeptUser(@RequestBody DeptAndUserDTO deptUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(deptUserDTO.getDepCode()==null || "".equals(deptUserDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
-			 PageListVO userVO=ADOConnection.runTask(userService, "queryExceptDeptUser", PageListVO.class, deptUserDTO);
+			 PageListVO userVO=ADOConnection.runTask(user.getEnv(),userService, "queryExceptDeptUser", PageListVO.class, deptUserDTO);
 			 if(userVO!=null && userVO.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("该部门查询到其他相关职员的信息"); 
@@ -625,7 +624,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "插入职员(批量)和部门的关系", notes = "插入职员(批量)和部门的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
+	public String addDeptUser(@RequestBody DeptAndUserDTO deptUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(deptUserDTO.getDepCode()==null  || "".equals(deptUserDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
@@ -638,7 +637,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加用户和部门关系的操作
 		  try{
-			  Integer addResult=ADOConnection.runTask(userService, "addDeptUser", Integer.class, deptUserDTO);		 
+			  Integer addResult=ADOConnection.runTask(user.getEnv(),userService, "addDeptUser", Integer.class, deptUserDTO);		 
 			  if(addResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 					 msg.setDescription("插入职员和部门的关系失败"); 					
@@ -672,7 +671,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除部门中职员接口", notes = "删除部门中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDeptUser(@RequestBody DeptAndUserDTO deptUserDTO) {	
+	public String deleteDeptUser(@RequestBody DeptAndUserDTO deptUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(deptUserDTO.getDepCode()==null || "".equals(deptUserDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
@@ -685,7 +684,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行删除部门中职员(批量)操作
 		  try{
-			  Integer delResult=ADOConnection.runTask(userService, "deleteDeptUser", Integer.class, deptUserDTO);		 
+			  Integer delResult=ADOConnection.runTask(user.getEnv(),userService, "deleteDeptUser", Integer.class, deptUserDTO);		 
 			  if(delResult==-1) {				 
 					 msg.setCode(Constant.MESSAGE_INT_DELERROR);
 					 msg.setDescription("删除部门中职员(批量)失败"); 
@@ -716,7 +715,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addIntegration.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "插入集成配置功能接口", notes = "插入集成配置功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addIntegration(@RequestBody IntegrationConfDTO integrationConfDTO) {
+	public String addIntegration(@RequestBody IntegrationConfDTO integrationConfDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(integrationConfDTO.getOtherJDBC()==null || StringUtils.isBlank(integrationConfDTO.getOtherJDBC())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方JDBC不能为空", Integer.class).toJson();
 		}
@@ -730,7 +729,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行集成配置添加功能的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addIntegration", Integer.class, integrationConfDTO);		 		  
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addIntegration", Integer.class, integrationConfDTO);		 		  
 				  if(insertRes==1) {
 					//添加集成配置功能成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -757,7 +756,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加表格映射功能接口", notes = "添加表格映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {		
+	public String addTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(tableMapperDTO.getConfigCode()==null || "".equals(tableMapperDTO.getConfigCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置编码不能为空", Integer.class).toJson();
 		}
@@ -775,7 +774,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addTableMapper", Integer.class, tableMapperDTO);		 		  
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addTableMapper", Integer.class, tableMapperDTO);		 		  
 				  if(insertRes==1) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("添加表格映射成功");
@@ -799,7 +798,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加表格字段映射功能接口", notes = "添加表格字段映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {		
+	public String addFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(fieldMapperDTO.getTableCode()==null || "".equals(fieldMapperDTO.getTableCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
 		}	
@@ -826,7 +825,7 @@ public class SystemManagerController {
 		}				
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addFieldMapper", Integer.class, fieldMapperDTO);		 		  
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addFieldMapper", Integer.class, fieldMapperDTO);		 		  
 				  if(insertRes==1) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("添加表格字段映射成功");
@@ -850,7 +849,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加枚举值映射明细接口", notes = "添加枚举值映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {		
+	public String addEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(enumMapperDTO.getConfCode()==null || "".equals(enumMapperDTO.getConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置编码不能为空", Integer.class).toJson();
 		}
@@ -865,7 +864,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addEnumMapper", Integer.class, enumMapperDTO);		 		  
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addEnumMapper", Integer.class, enumMapperDTO);		 		  
 				  if(insertRes==1) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("添加枚举值映射明细成功");
@@ -889,10 +888,10 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryIntegration.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询集成配置列表信息接口", notes = "查询集成配置列表信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryIntegration(@RequestBody IntegrationConfDTO integrationConfDTO) {		
+	public String queryIntegration(@RequestBody IntegrationConfDTO integrationConfDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{
-			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryIntegration", PageListVO.class,integrationConfDTO);		 		  
+			  PageListVO pageListVO=ADOConnection.runTask(user.getEnv(),userService, "queryIntegration", PageListVO.class,integrationConfDTO);		 		  
 				  if(pageListVO!=null &&  pageListVO.getRowNumber()>0) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("查询集成配置列表信息成功");
@@ -917,13 +916,13 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryIntegrationByCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据code查询集成配置信息接口", notes = "根据code查询集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryIntegrationByCode(@RequestBody IntegrationConfDTO integrationConfDTO) {
+	public String queryIntegrationByCode(@RequestBody IntegrationConfDTO integrationConfDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(integrationConfDTO.getInteConfCode()==null || "".equals(integrationConfDTO.getInteConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{
-			  List<IntegrationConfVO> integrationConfVOList=ADOConnection.runTask(userService, "queryIntegrationByCode", List.class,integrationConfDTO);		 		  
+			  List<IntegrationConfVO> integrationConfVOList=ADOConnection.runTask(user.getEnv(),userService, "queryIntegrationByCode", List.class,integrationConfDTO);		 		  
 				  if(integrationConfVOList.size()>0) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("查询集成配置详情信息成功");
@@ -948,13 +947,13 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据配置主表Code查询表格映射明细列表接口", notes = "根据配置主表Code查询表格映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {
+	public String queryTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(tableMapperDTO.getConfigCode()==null || "".equals(tableMapperDTO.getConfigCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{
-			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryTableMapper", PageListVO.class,tableMapperDTO);		 		  
+			  PageListVO pageListVO=ADOConnection.runTask(user.getEnv(),userService, "queryTableMapper", PageListVO.class,tableMapperDTO);		 		  
 				  if(pageListVO!=null &&  pageListVO.getRowNumber()>0) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("查询表格映射列表明细成功");
@@ -979,13 +978,13 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据配置主表Code查询枚举值映射明细列表接口", notes = "根据配置主表Code查询枚举值映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {
+	public String queryEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(enumMapperDTO.getConfCode()==null || "".equals(enumMapperDTO.getConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{
-			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryEnumMapper", PageListVO.class,enumMapperDTO);		 		  
+			  PageListVO pageListVO=ADOConnection.runTask(user.getEnv(),userService, "queryEnumMapper", PageListVO.class,enumMapperDTO);		 		  
 				  if(pageListVO!=null &&  pageListVO.getRowNumber()>0) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("查询枚举值映射明细列表成功");
@@ -1010,13 +1009,13 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据表格Code查询表格字段映射明细列表接口", notes = "根据表格Code查询表格字段映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {
+	public String queryFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(fieldMapperDTO.getTableCode()==null || "".equals(fieldMapperDTO.getTableCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细code不能为空", Integer.class).toJson();
 		}
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{
-			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryFieldMapper", PageListVO.class,fieldMapperDTO);		 		  
+			  PageListVO pageListVO=ADOConnection.runTask(user.getEnv(),userService, "queryFieldMapper", PageListVO.class,fieldMapperDTO);		 		  
 				  if(pageListVO!=null &&  pageListVO.getRowNumber()>0) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("查询表格Code查询表格字段映射明细列表成功");
@@ -1041,7 +1040,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateConf.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据code修改集成配置信息接口", notes = "根据code修改集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateConf(@RequestBody IntegrationConfDTO integrationConfDTO) {
+	public String updateConf(@RequestBody IntegrationConfDTO integrationConfDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(integrationConfDTO.getInteConfCode()==null || "".equals(integrationConfDTO.getInteConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "配置编码不能为空", Integer.class).toJson();
 		}
@@ -1056,7 +1055,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer updateRes=ADOConnection.runTask(userService, "updateConf", Integer.class,integrationConfDTO);		 		  
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateConf", Integer.class,integrationConfDTO);		 		  
 				  if(updateRes==-1) {
 					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 				    msg.setDescription("修改集成配置信息失败");			   				    
@@ -1079,7 +1078,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据code修改表格映射明细信息接口", notes = "根据code修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {
+	public String updateTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
         if(tableMapperDTO.getTableMapperCode()==null || "".equals(tableMapperDTO.getTableMapperCode())) {
         	return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
         }	
@@ -1097,7 +1096,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer updateRes=ADOConnection.runTask(userService, "updateTableMapper", Integer.class,tableMapperDTO);		 		  
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateTableMapper", Integer.class,tableMapperDTO);		 		  
 				  if(updateRes==-1) {
 					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 				    msg.setDescription("修改表格映射明细信息失败");			   				    
@@ -1120,7 +1119,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据id修改表格映射明细信息接口", notes = "根据id修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {
+	public String updateEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(enumMapperDTO.getId()==null || "".equals(enumMapperDTO.getId())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "id不能为空", Integer.class).toJson();
 		}
@@ -1135,7 +1134,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer updateRes=ADOConnection.runTask(userService, "updateEnumMapper", Integer.class,enumMapperDTO);		 		  
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateEnumMapper", Integer.class,enumMapperDTO);		 		  
 				  if(updateRes==-1) {
 					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 				    msg.setDescription("修改枚举明细映射失败");			   				    
@@ -1159,7 +1158,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据Code修改表格字段映射明细接口", notes = "根据Code修改表格字段映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {
+	public String updateFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(fieldMapperDTO.getFieldMapperCode()==null || "".equals(fieldMapperDTO.getFieldMapperCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段映射明细编码不能为空", Integer.class).toJson();
 		}	
@@ -1186,7 +1185,7 @@ public class SystemManagerController {
 		}	
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer updateRes=ADOConnection.runTask(userService, "updateFieldMapper", Integer.class,fieldMapperDTO);		 		  
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateFieldMapper", Integer.class,fieldMapperDTO);		 		  
 				  if(updateRes==-1) {
 					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 				    msg.setDescription("修改表格字段映射明细失败");			   				    
@@ -1210,7 +1209,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据Code删除表格映射接口", notes = "根据Code删除表格映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteTableMapper(@RequestBody TableMapperDTO tableMapperDTO) {
+	public String deleteTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(tableMapperDTO.getCodeList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
 		}
@@ -1219,7 +1218,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer delRes=ADOConnection.runTask(userService, "deleteTableMapper", Integer.class,tableMapperDTO);		 		  
+			  Integer delRes=ADOConnection.runTask(user.getEnv(),userService, "deleteTableMapper", Integer.class,tableMapperDTO);		 		  
 				  if(delRes==-1) {
 					msg.setCode(Constant.MESSAGE_INT_DELERROR);
 				    msg.setDescription("删除表格映射失败");			   				    
@@ -1243,7 +1242,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据Code删除表格映字段射接口", notes = "根据Code删除表格字段映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO) {
+	public String deleteFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(fieldMapperDTO.getCodeList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格字段明细编码不能为空", Integer.class).toJson();
 		}
@@ -1252,7 +1251,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer delRes=ADOConnection.runTask(userService, "deleteFieldMapper", Integer.class,fieldMapperDTO);		 		  
+			  Integer delRes=ADOConnection.runTask(user.getEnv(),userService, "deleteFieldMapper", Integer.class,fieldMapperDTO);		 		  
 				  if(delRes==-1) {
 					msg.setCode(Constant.MESSAGE_INT_DELERROR);
 				    msg.setDescription("删除表格字段映射失败");			   				    
@@ -1276,7 +1275,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据id删除枚举值映射明细接口", notes = "根据id删除枚举值映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO) {
+	public String deleteEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(enumMapperDTO.getIdList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "枚举值映射id不能为空", Integer.class).toJson();
 		}
@@ -1285,7 +1284,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
-			  Integer delRes=ADOConnection.runTask(userService, "deleteEnumMapper", Integer.class,enumMapperDTO);		 		  
+			  Integer delRes=ADOConnection.runTask(user.getEnv(),userService, "deleteEnumMapper", Integer.class,enumMapperDTO);		 		  
 				  if(delRes==-1) {
 					msg.setCode(Constant.MESSAGE_INT_DELERROR);
 				    msg.setDescription("删除枚举值映射明细失败");			   				    
@@ -1309,7 +1308,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典接口", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addDataDic(@RequestBody DataDicDTO dataDicDTO) {
+	public String addDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicCn()==null || StringUtils.isBlank(dataDicDTO.getDicCn())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表中文名称不能为空", Integer.class).toJson();
 		}
@@ -1346,7 +1345,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addDataDic", Integer.class, dataDicDTO);		 
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addDataDic", Integer.class, dataDicDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
 					//添加数据字典功能失败
@@ -1379,7 +1378,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典接口(主表)", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addMainDataDic(@RequestBody DataDicDTO dataDicDTO) {
+	public String addMainDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicCn()==null || StringUtils.isBlank(dataDicDTO.getDicCn())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表中文名称不能为空", Integer.class).toJson();
 		}
@@ -1395,7 +1394,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addMainDataDic", Integer.class, dataDicDTO);		 
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addMainDataDic", Integer.class, dataDicDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
 					//添加数据字典功能失败
@@ -1428,14 +1427,14 @@ public class SystemManagerController {
 	@RequestMapping(value = "/createDataKey.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典接口(主表)", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String createDataKey(@RequestBody DataDicDTO dataDicDTO) {	
+	public String createDataKey(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
 		}			
 		 MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);	       
 		//执行新数据字典功能的操作
 		  try{
-			  String finalKey=ADOConnection.runTask(userService, "createDataKey", String.class, dataDicDTO);		 
+			  String finalKey=ADOConnection.runTask(user.getEnv(),userService, "createDataKey", String.class, dataDicDTO);		 
 			  if(!"".equals(finalKey)) {
 				  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			      msg.setDescription("生成数据字典key成功");
@@ -1463,7 +1462,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addDetDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典明细接口", notes = "新建数据字典明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addDetDataDic(@RequestBody DataDicDTO dataDicDTO) {
+	public String addDetDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
 		}
@@ -1483,7 +1482,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addDetDataDic", Integer.class, dataDicDTO);		 
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addDetDataDic", Integer.class, dataDicDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
 					//添加数据字典功能失败
@@ -1516,7 +1515,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询数据字典接口(明细信息)", notes = "查询数据字典接口(明细信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDataDic(@RequestBody DataDicDTO dataDicDTO) {
+	public String queryDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	 
 		 if(dataDicDTO.getDicParent()==null || "".equals(dataDicDTO.getDicParent())) {
 			 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1526,7 +1525,7 @@ public class SystemManagerController {
 		 }
 		 //执行查询数据字典
 		 try {
-			 List<DataDicVO> dicList=ADOConnection.runTask(userService, "queryDataDic", List.class, dataDicDTO);
+			 List<DataDicVO> dicList=ADOConnection.runTask(user.getEnv(),userService, "queryDataDic", List.class, dataDicDTO);
 			 if(dicList.size()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关数据字典键值的信息"); 
@@ -1554,11 +1553,11 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
    @ApiOperation(value = "查询数据字典接口(主表信息)", notes = "查询数据字典接口(主表信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
    @ResponseBody
-	public String queryMainDataDic(@RequestBody DataDicDTO dataDicDTO) {
+	public String queryMainDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询数据字典
 		 try {
-			 PageListVO dicVO=ADOConnection.runTask(userService, "queryMainDataDic", PageListVO.class, dataDicDTO);
+			 PageListVO dicVO=ADOConnection.runTask(user.getEnv(),userService, "queryMainDataDic", PageListVO.class, dataDicDTO);
 			 if(dicVO!=null && dicVO.getRowNumber()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关数据字典的信息"); 
@@ -1585,7 +1584,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "通过字典主表parent修改数据字典接口(主表信息))接口", notes = "通过字典主表parent修改数据字典接口(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateDic(@RequestBody DataDicDTO dataDicDTO) {		
+	public String updateDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(dataDicDTO.getDicParent()==null || "".equals(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
 		}
@@ -1601,7 +1600,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行查询数据字典
 		 try {
-			 Integer updateRes=ADOConnection.runTask(userService, "updateDic", Integer.class, dataDicDTO);
+			 Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateDic", Integer.class, dataDicDTO);
 			 if(updateRes!=null) {
 				  if(updateRes==-1) {
 					//修改数据字典失败
@@ -1630,7 +1629,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteDicByParent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "主表parent删除数据字典详情(主表信息)接口", notes = "主表parent删除数据字典详情(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDicByParent(@RequestBody DataDicDTO dataDicDTO) {	
+	public String deleteDicByParent(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(dataDicDTO.getDicParentList()==null) {
 			  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域参数不能为空", Integer.class).toJson();
 			}	
@@ -1640,7 +1639,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行删除数据字典
 		 try {
-			 Integer delRes=ADOConnection.runTask(userService, "deleteDicByParent", Integer.class, dataDicDTO);
+			 Integer delRes=ADOConnection.runTask(user.getEnv(),userService, "deleteDicByParent", Integer.class, dataDicDTO);
 			 if(delRes!=null) {
 				  if(delRes==-1) {
 					//删除数据字典失败
@@ -1669,7 +1668,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateDicDetById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "通过字典主表id修改数据字典接口(明细信息))接口", notes = "通过字典主表id修改数据字典接口(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateDicDetById(@RequestBody DataDicDTO dataDicDTO) {
+	public String updateDicDetById(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
 		}
@@ -1689,17 +1688,13 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行修改数据字典明细
 		 try {
-			 Integer updateRes=ADOConnection.runTask(userService, "updateDicDetById", Integer.class, dataDicDTO);
+			 Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateDicDetById", Integer.class, dataDicDTO);
 			 if(updateRes!=null) {
 				  if(updateRes==-1) {
 					//修改数据字典失败
 				    msg.setCode(Constant.MESSAGE_INT_EDITERROR);
 				    msg.setDescription("修改数据字典失败");
-				  }else if(updateRes==-2) {
-					//修改数据字典失败
-					msg.setCode(Constant.MESSAGE_INT_EDITERROR);
-					msg.setDescription("修改数据字典键重复");  
-				  } else {
+				  }else {
 				    //修改数据字典成功
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("修改数据字典成功");
@@ -1722,7 +1717,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteDetDicByKey.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "主表key删除数据字典详情(明细信息)接口", notes = "主表key删除数据字典详情(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDetDicByKey(@RequestBody DataDicDTO dataDicDTO) {
+	public String deleteDetDicByKey(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicKeyList()==null) {
 			  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表key参数不能为空", Integer.class).toJson();
 			}	
@@ -1732,7 +1727,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行删除数据字典
 		 try {
-			 Integer delRes=ADOConnection.runTask(userService, "deleteDetDicByKey", Integer.class, dataDicDTO);
+			 Integer delRes=ADOConnection.runTask(user.getEnv(),userService, "deleteDetDicByKey", Integer.class, dataDicDTO);
 			 if(delRes!=null) {
 				  if(delRes==-1) {
 					//删除数据字典失败
@@ -1760,7 +1755,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建特征日接口", notes = "新建特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+	public String addSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getSpName()==null || StringUtils.isBlank(specialDayDTO.getSpName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
 		}
@@ -1771,7 +1766,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加特征日的操作
 		  try{
-			  Integer insertRes=ADOConnection.runTask(userService, "addSpecialDate", Integer.class, specialDayDTO);		 
+			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addSpecialDate", Integer.class, specialDayDTO);		 
 			  if(insertRes!=null) {
 				  if(insertRes==-1) {
 					//添加特征日失败
@@ -1807,7 +1802,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/querySpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询某年某月特征日接口", notes = "查询某年某月特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String querySpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+	public String querySpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getSelectYear()==null || StringUtils.isBlank(specialDayDTO.getSelectYear())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日年份不能为空", Integer.class).toJson();
 		}
@@ -1817,7 +1812,7 @@ public class SystemManagerController {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		//执行查询一个月特征日的操作
 		  try{
-			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(userService, "querySpecialDate", List.class, specialDayDTO);		 
+			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(user.getEnv(),userService, "querySpecialDate", List.class, specialDayDTO);		 
 			  if(specialDayDTOList.size()>0) {			 
 					//查询特征日成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1846,14 +1841,14 @@ public class SystemManagerController {
 	@RequestMapping(value = "/querySpecialDateByDay.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据日期查询特征日接口", notes = "根据日期查询特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String querySpecialDateByDay(@RequestBody SpecialDayDTO specialDayDTO) {
+	public String querySpecialDateByDay(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		//执行查询某个特征日的操作
 		  try{
-			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(userService, "querySpecialDateByDay", List.class, specialDayDTO);		 
+			  List<SpecialDayDTO> specialDayDTOList=ADOConnection.runTask(user.getEnv(),userService, "querySpecialDateByDay", List.class, specialDayDTO);		 
 			  if(specialDayDTOList.size()>0) {			 
 					//查询特征日成功
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1881,14 +1876,14 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除特征日接口", notes = "删除特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+	public String deleteSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}			
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//根据日期执行删除特征日的操作
 		  try{
-			  Integer deleteRes=ADOConnection.runTask(userService, "deleteSpecialDate", Integer.class, specialDayDTO);		 
+			  Integer deleteRes=ADOConnection.runTask(user.getEnv(),userService, "deleteSpecialDate", Integer.class, specialDayDTO);		 
 			  if(deleteRes!=null) {
 				  if(deleteRes==-1) {
 					//删除特征日失败
@@ -1922,7 +1917,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改特征日接口", notes = "修改特征日接口接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateSpecialDate(@RequestBody SpecialDayDTO specialDayDTO) {
+	public String updateSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}	
@@ -1932,7 +1927,7 @@ public class SystemManagerController {
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//根据id执行修改特征日的操作
 		  try{
-			  Integer updateRes=ADOConnection.runTask(userService, "updateSpecialDate", Integer.class, specialDayDTO);		 
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateSpecialDate", Integer.class, specialDayDTO);		 
 			  if(updateRes!=null) {
 				  if(updateRes==-1) {
 					//修改特征日失败
@@ -1967,7 +1962,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addOrgParent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "生成父节点接口", notes = "生成父节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addOrgParent(@RequestBody  LongTreeBean child) {
+	public String addOrgParent(@RequestBody  LongTreeBean child,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		Integer type=new Integer(child.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "树的类型不能为空", Integer.class).toJson();
@@ -1978,7 +1973,7 @@ public class SystemManagerController {
 		 MessageBean<LongTreeBean> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LongTreeBean.class);	       
 		//生成组织的父节点
 		  try{
-			  LongTreeBean longTreeBean=ADOConnection.runTask(new TreeService(), "addNode", LongTreeBean.class, null,child);
+			  LongTreeBean longTreeBean=ADOConnection.runTask(user.getEnv(),new TreeService(), "addNode", LongTreeBean.class, null,child);
 			  if(longTreeBean!=null) {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("生成父节点成功");
@@ -2000,7 +1995,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加部门接口", notes = "添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addTreeDept(@RequestBody  TreeDTO parentBean) {	
+	public String addTreeDept(@RequestBody  TreeDTO parentBean,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(parentBean.getDepName()==null || "".equals(parentBean.getDepName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}
@@ -2022,9 +2017,9 @@ public class SystemManagerController {
 			      orgDeptDTO.setDepName(parentBean.getDepName());	
 			      Integer finalRes=null;
 			      if(parentBean.getAddType()==0) {
-			    	finalRes=ADOConnection.runTask(userService, "addTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());
+			    	finalRes=ADOConnection.runTask(user.getEnv(),userService, "addTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());
 			      }else {
-			    	finalRes=ADOConnection.runTask(userService, "deptAddTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());  
+			    	finalRes=ADOConnection.runTask(user.getEnv(),userService, "deptAddTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());  
 			      }				  
 			      if(finalRes!=null) {
 			    	  if (finalRes==1){
@@ -2057,7 +2052,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/deleteTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除树结构的部门接口", notes = "删除树结构的部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteTreeDept(@RequestBody  TreeDTO longTreeBean) {
+	public String deleteTreeDept(@RequestBody  TreeDTO longTreeBean,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		Integer type=Integer.valueOf(longTreeBean.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson();
@@ -2075,7 +2070,7 @@ public class SystemManagerController {
 			  DeptAndUserDTO deptAndUserDTO=new DeptAndUserDTO();
 			  deptAndUserDTO.setDepCode(longTreeBean.getForeignKey());
 			  //删除树结构部门的时候，判断该节点下的是否存在职员,存在的情况下不能删除，根据外键Code
-			  Integer res=ADOConnection.runTask(userService, "judgeExistUser", Integer.class, deptAndUserDTO,longTreeBean.getType(),longTreeBean.getForeignKey(),false,longTreeBean.getDeleteType().intValue());			  
+			  Integer res=ADOConnection.runTask(user.getEnv(),userService, "judgeExistUser", Integer.class, deptAndUserDTO,longTreeBean.getType(),longTreeBean.getForeignKey(),false,longTreeBean.getDeleteType().intValue());			  
 				if(res==0){
 					   msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					   msg.setDescription("删除部门成功"); 
@@ -2106,7 +2101,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改树结构的部门接口", notes = "修改树结构的部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateTreeDept(@RequestBody DeptDTO deptDTO) {
+	public String updateTreeDept(@RequestBody DeptDTO deptDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		//修改的只有部门名称
 		if(deptDTO.getDepCode()==null || "".equals(deptDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
@@ -2116,7 +2111,7 @@ public class SystemManagerController {
 		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{				
-			  Integer updateRes=ADOConnection.runTask(userService, "updateTreeDept", Integer.class, deptDTO);	
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateTreeDept", Integer.class, deptDTO);	
 			  if(updateRes!=null) {
 				  if(updateRes!=-1) {
 					  msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
@@ -2143,7 +2138,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryTreeOrg.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看组织树接口", notes = "查看组织树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryTreeOrg(@RequestBody TreeDTO treeDTO) {
+	public String queryTreeOrg(@RequestBody TreeDTO treeDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		Integer type=Integer.valueOf(treeDTO.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
@@ -2154,7 +2149,7 @@ public class SystemManagerController {
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<TreeDeptVO> treeBeanList=ADOConnection.runTask(new TreeService(), "descendantByCode", List.class,treeDTO.getType(),treeDTO.getForeignKey());	
+			  List<TreeDeptVO> treeBeanList=ADOConnection.runTask(user.getEnv(),new TreeService(), "descendantByCode", List.class,treeDTO.getType(),treeDTO.getForeignKey());	
 			  if(treeBeanList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询组织树成功"); 
@@ -2176,17 +2171,16 @@ public class SystemManagerController {
      * funtion:根据部门Code查询部门职员 分页
      * author:xiaozhan
      */
-	@PermissionAOP("dddddddd")
 	@RequestMapping(value = "/queryDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据部门Code查询职员接口", notes = "根据部门Code查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDeptUser(@RequestBody DeptDTO deptDTO) {		
+	public String queryDeptUser(@RequestBody DeptDTO deptDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(deptDTO.getDepCode()==null || "".equals(deptDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{				
-			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryDeptUser", PageListVO.class,deptDTO);	
+			  PageListVO pageListVO=ADOConnection.runTask(user.getEnv(),userService, "queryDeptUser", PageListVO.class,deptDTO);	
 			  if(pageListVO!=null && pageListVO.getRowNumber()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询职员成功"); 
@@ -2212,7 +2206,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "生成菜单模块接口", notes = "生成菜单模块接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addMenu(@RequestBody MenuTreeDTO menuTreeDTO) {		
+	public String addMenu(@RequestBody MenuTreeDTO menuTreeDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(menuTreeDTO.getForeignKey()==null || "".equals(menuTreeDTO.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "父部门外键不能为空", Integer.class).toJson();
 		}
@@ -2240,7 +2234,7 @@ public class SystemManagerController {
 		 }
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  Integer addRes=ADOConnection.runTask(userService, "addMenu", Integer.class,menuTreeDTO);	
+			  Integer addRes=ADOConnection.runTask(user.getEnv(),userService, "addMenu", Integer.class,menuTreeDTO);	
 			  if(addRes==1) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("添加菜单成功"); 				
@@ -2264,7 +2258,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryTreeMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看菜单树接口", notes = "查看菜单树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryTreeMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
+	public String queryTreeMenu(@RequestBody MenuTreeDTO menuTreeDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		Integer type=Integer.valueOf(menuTreeDTO.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
@@ -2275,7 +2269,7 @@ public class SystemManagerController {
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<TreeDeptVO> treeBeanList=ADOConnection.runTask(new TreeService(), "descendantMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  List<TreeDeptVO> treeBeanList=ADOConnection.runTask(user.getEnv(),new TreeService(), "descendantMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
 			  if(treeBeanList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询目录树成功"); 
@@ -2301,7 +2295,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryChildTreeMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看下级菜单树接口", notes = "查看下级菜单树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryChildTreeMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
+	public String queryChildTreeMenu(@RequestBody MenuTreeDTO menuTreeDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		Integer type=Integer.valueOf(menuTreeDTO.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
@@ -2312,7 +2306,7 @@ public class SystemManagerController {
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(new TreeService(), "childMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(user.getEnv(),new TreeService(), "childMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
 			  if(treeBeanList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询下级目录树成功"); 
@@ -2338,13 +2332,13 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryRoleMenuByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "加载角色菜单查看权限接口", notes = "加载角色菜单查看权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryRoleMenuByRoleId(@RequestBody RoleDTO roleDTO) {		
+	public String queryRoleMenuByRoleId(@RequestBody RoleDTO roleDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<RoleMenusVO> menuList=ADOConnection.runTask(userService, "queryRoleMenuByRoleCode", List.class,roleDTO);	
+			  List<RoleMenusVO> menuList=ADOConnection.runTask(user.getEnv(),userService, "queryRoleMenuByRoleCode", List.class,roleDTO);	
 			  if(menuList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询角色菜单查看权限成功"); 
@@ -2370,7 +2364,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryRoleMenuByRoleMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "加载角色菜单操作权限接口", notes = "加载角色菜单操作权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryRoleMenuByRoleMenu(@RequestBody RoleMenuDTO roleMenuDTO) {		
+	public String queryRoleMenuByRoleMenu(@RequestBody RoleMenuDTO roleMenuDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(roleMenuDTO.getRoleCode()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
 		}
@@ -2384,7 +2378,7 @@ public class SystemManagerController {
 				return  msg.toJson();
 	     }
 		  try{				
-			  List<RoleMenusVO> menuCDUList=ADOConnection.runTask(userService, "queryRoleMenuByRoleMenu", List.class,roleMenuDTO);	
+			  List<RoleMenusVO> menuCDUList=ADOConnection.runTask(user.getEnv(),userService, "queryRoleMenuByRoleMenu", List.class,roleMenuDTO);	
 			  if(menuCDUList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询角色菜单操作权限成功"); 
@@ -2409,7 +2403,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateRoleMenuByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改角色菜单权限接口", notes = "修改角色菜单权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateRoleMenuByRoleCode(@RequestBody RoleMenuDTO roleMenuDTO) {
+	public String updateRoleMenuByRoleCode(@RequestBody RoleMenuDTO roleMenuDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(roleMenuDTO.getRoleMenuList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "传参不能为空", Integer.class).toJson();
 		}
@@ -2430,7 +2424,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{				
-			  Integer updateRes=ADOConnection.runTask(userService, "updateRoleMenuByRoleCode", Integer.class,roleMenuDTO);	
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateRoleMenuByRoleCode", Integer.class,roleMenuDTO);	
 			  if(updateRes!=-1) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("修改角色菜单权限成功"); 					
@@ -2451,19 +2445,17 @@ public class SystemManagerController {
      * funtion:模糊查询部门接口
      * author:xiaozhan
      */	
-	//@ValidatePermission("首页下的-query")
-	
 	@RequestMapping(value = "/queryDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDept(@RequestBody DeptDTO deptDTO) {		
-		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
+	public String queryDept(@RequestBody DeptDTO deptDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  PageListVO pageListVO=ADOConnection.runTask(userService, "queryDept", PageListVO.class,deptDTO);	
-			  if(pageListVO!=null && pageListVO.getRowNumber()>0) {			 
+			  List<DeptVO> deptList=ADOConnection.runTask(user.getEnv(),userService, "queryDept", List.class,deptDTO);	
+			  if(deptList!=null && deptList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询部门成功"); 
-					msg.setData(pageListVO);
+					msg.setData(deptList);
 				  }else {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("没有查询到相关部门"); 
@@ -2476,6 +2468,37 @@ public class SystemManagerController {
 		
 	     return msg.toJson();
 	}
+	
+	
+	/*
+     * date:2020-04-09
+     * funtion:查询职位接口
+     * author:xiaozhan
+     */	
+	@RequestMapping(value = "/queryPosition.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询职位接口", notes = "查询职位接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<PositionVO> positionList=ADOConnection.runTask(user.getEnv(),userService, "queryPosition", List.class,positionDTO);	
+			  if(positionList!=null && positionList.size()>0) {			 
+				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+					msg.setDescription("查询职位成功"); 
+					msg.setData(positionList);
+				  }else {
+			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			        msg.setDescription("没有查询到相关职位"); 
+			 }		  
+	        }catch(Exception e){
+	        	//查询失败
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
 	/*
      * date:2020-04-08
      * funtion:根据userCode可查看菜单目录结构(查看下级的菜单)加入菜单权限,类似查询一级菜单
@@ -2484,7 +2507,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryChildOneMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看一级菜单树接口", notes = "查看一级菜单树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryChildOneMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
+	public String queryChildOneMenu(@RequestBody MenuTreeDTO menuTreeDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		Integer type=Integer.valueOf(menuTreeDTO.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
@@ -2496,7 +2519,7 @@ public class SystemManagerController {
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(new TreeService(), "queryChildOneMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(user.getEnv(),new TreeService(), "queryChildOneMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
 			  if(treeBeanList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询一级目录树成功"); 
@@ -2522,7 +2545,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryChildAllMenu.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看一级菜单下可查看所有下级树接口", notes = "查看一级菜单下可查看所有下级树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryChildAllMenu(@RequestBody MenuTreeDTO menuTreeDTO) {
+	public String queryChildAllMenu(@RequestBody MenuTreeDTO menuTreeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		Integer type=Integer.valueOf(menuTreeDTO.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
@@ -2534,7 +2557,7 @@ public class SystemManagerController {
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(new TreeService(), "queryChildAllMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());	
+			  List<TreeMenuVO> treeBeanList=ADOConnection.runTask(user.getEnv(),new TreeService(), "queryChildAllMenu", List.class,menuTreeDTO.getType(),menuTreeDTO.getForeignKey());
 			  if(treeBeanList.size()>0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询所有下级树成功"); 
@@ -2559,7 +2582,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/downUserDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载部门职员数据导出到Excel", notes = "下载部门职员数据导出到Excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -2568,12 +2591,12 @@ public class SystemManagerController {
 			userDTO.setPage(1);
 			userDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-		    PageListVO<List<UserVO>> user=ADOConnection.runTask(userService, "queryUser", PageListVO.class, userDTO); 		   
+		    PageListVO<List<UserVO>> result=ADOConnection.runTask(user.getEnv(),userService, "queryUser", PageListVO.class, userDTO); 		   
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
 			//导出list
-			return ExportDataUtil.getExcelDataFileInfoByList(user.getDataList(), jsonArray);
+			return ExportDataUtil.getExcelDataFileInfoByList(result.getDataList(), jsonArray);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2588,7 +2611,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/downRoleUserDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载角色职员数据导出到Excel", notes = "下载角色职员数据导出到Excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downRoleUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downRoleUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -2597,12 +2620,12 @@ public class SystemManagerController {
 			userDTO.setPage(1);
 			userDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-		    PageListVO<List<UserVO>> user=ADOConnection.runTask(userService, "queryUserByRoleCode", PageListVO.class, userDTO); 		   
+		    PageListVO<List<UserVO>> result=ADOConnection.runTask(user.getEnv(),userService, "queryUserByRoleCode", PageListVO.class, userDTO); 		   
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
 			//导出list
-			return ExportDataUtil.getExcelDataFileInfoByList(user.getDataList(), jsonArray);
+			return ExportDataUtil.getExcelDataFileInfoByList(result.getDataList(), jsonArray);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2619,11 +2642,11 @@ public class SystemManagerController {
 	@RequestMapping(value = "/downRoleDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载角色数据导出到Excel", notes = "下载角色数据导出到Excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downRoleDataExcel(@RequestParam String titleInfos) {
+	public HttpEntity<?> downRoleDataExcel(@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询到导出数据结果
-		    List<RoleVO> roleList=ADOConnection.runTask(userService, "queryAllRole", List.class); 		   
+		    List<RoleVO> roleList=ADOConnection.runTask(user.getEnv(),userService, "queryAllRole", List.class); 		   
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -2677,7 +2700,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addImportUserDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加excel导入用户数据接口", notes = "添加excel导入数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addImportUserDataExcel(MultipartFile file) {
+	public String addImportUserDataExcel(MultipartFile file,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<ImportUserResVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ImportUserResVO.class);	       
 		  try{		
 			  List<UserExcelDTO> userList=ImportExcelUtil.readExcel(file,UserExcelDTO.class);
@@ -2698,7 +2721,7 @@ public class SystemManagerController {
 						return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "工号不能为空", Integer.class).toJson();
 					}					
 			  }
-			  ImportUserResVO importUserRes=ADOConnection.runTask(userService, "addImportUserDataExcel", ImportUserResVO.class,userList);	
+			  ImportUserResVO importUserRes=ADOConnection.runTask(user.getEnv(),userService, "addImportUserDataExcel", ImportUserResVO.class,userList);	
 			  if(importUserRes.getResult()==0) {			 
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("批量导入用户数据成功");
@@ -2737,21 +2760,21 @@ public class SystemManagerController {
      * author:xiaozhan
      */  	
 	@RequestMapping(value = "/updateMyPassword.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "重置职员密码接口", notes = "重置职员密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "个人修改密码接口", notes = "个人修改密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateMyPassword(@RequestBody UpdateWordDTO updateWordDTO) {
+	public String updateMyPassword(@RequestBody UpdateWordDTO updateWordDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(updateWordDTO.getOldPassWord()==null || "".equals(updateWordDTO.getOldPassWord())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "旧密码不能为空", Integer.class).toJson();
 		}
 		if(updateWordDTO.getNewPassWord()==null || "".equals(updateWordDTO.getNewPassWord())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "旧密码不能为空", Integer.class).toJson();
 		}
 		if(updateWordDTO.getSurePassWord()==null || "".equals(updateWordDTO.getSurePassWord())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "老密码不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "旧密码不能为空", Integer.class).toJson();
 		}		
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       		
 		  try{
-			  Integer updateRes=ADOConnection.runTask(userService, "updateMyPassword", Integer.class, updateWordDTO);		 
+			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateMyPassword", Integer.class, updateWordDTO);		 
 			 
 				  if(updateRes==1) {					
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -2784,20 +2807,19 @@ public class SystemManagerController {
 	
 	 /**
    	 * 上传头像
-   	 * 
-   	 * @param type
-   	 *            上传头像的模块类型
+   	 *
+   	 * 上传头像的模块类型
    	 * @param file
    	 */
    	@RequestMapping(value = "/uploadHeadPortrait.htm", method = RequestMethod.POST, produces = { "text/html;charset=UTF-8" })
    	@ResponseBody
-   	public String uploadFile(@RequestParam("file") MultipartFile file) {
+   	public String uploadFile(@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
    	if(file.isEmpty()) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "头像不能为空", Integer.class).toJson();
 	} 		
    	 MessageBean<UploadFileVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, UploadFileVO.class);	         	
 	 try {
-		 Integer addRes=ADOConnection.runTask(userService, "uploadHeadPortrait", Integer.class, file);
+		 Integer addRes=ADOConnection.runTask(user.getEnv(),userService, "uploadHeadPortrait", Integer.class, file);
 		 if(addRes==-2) {
 			 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 		     msg.setDescription("删除之前头像失败"); 
@@ -2826,10 +2848,10 @@ public class SystemManagerController {
    	@RequestMapping(value = "/queryHeadPortrait.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询头像接口", notes = "查询头像接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryHeadPortrait() {
+	public String queryHeadPortrait(@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		 try {
-			 List<UploadFileNewVO> fileList=ADOConnection.runTask(userService, "queryHeadPortrait", List.class);
+			 List<UploadFileNewVO> fileList=ADOConnection.runTask(user.getEnv(),userService, "queryHeadPortrait", List.class);
 			 if(fileList!=null && fileList.size()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关头像信息"); 
@@ -2854,7 +2876,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateMenuPeersSeq.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "更新菜单平级顺序接口", notes = "更新菜单平级顺序接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateMenuPeersSeq(@RequestBody MenuSeqDTO menuSeqDTO) {
+	public String updateMenuPeersSeq(@RequestBody MenuSeqDTO menuSeqDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(menuSeqDTO.getForeignkey()==null || "".equals(menuSeqDTO.getForeignkey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "菜单编码不能为空", Integer.class).toJson();
 		}
@@ -2866,7 +2888,7 @@ public class SystemManagerController {
 		}
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 try {
-			 Integer updateRes=ADOConnection.runTask(new TreeService(), "updateMenuPeersSeq", Integer.class, menuSeqDTO);
+			 Integer updateRes=ADOConnection.runTask(user.getEnv(),new TreeService(), "updateMenuPeersSeq", Integer.class, menuSeqDTO);
 			 if(updateRes>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("更新该菜单平级顺序成功"); 

@@ -9,14 +9,15 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
  */
 public class LegitimateNightUseDTO extends BaseDTO {
 
-	private String code;
-
-	public String getCode() {
-		return code;
+	private String name;
+	
+	public String getName() {
+		return name;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setName(String name) {
+		this.name = name;
 	}
+
 	
 }

@@ -12,10 +12,10 @@
     
     <select id="queryLegitimateNightUseList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.LegitimateNightUseDTO"
             resultType="com.koron.inwlms.bean.VO.zoneLoss.LegitimateNightUseVO">
-        select id,code,flow from sm_param_setting
+        select id,code,name,flow from sm_param_setting
         where 1 = 1
-        <if test="code != null and code != ''">
-            and upper(code) like '%' || upper(#{code}) || '%'
+        <if test="name != null and name != ''">
+            and name like '%' || #{name} || '%'
         </if>
         limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
     </select>
@@ -24,8 +24,8 @@
             resultType="java.lang.Integer">
         select count(1) from sm_param_setting
         where 1 = 1
-        <if test="code != null and code != ''">
-            and upper(code) like '%' || upper(#{code}) || '%'
+        <if test="name != null and name != ''">
+            and name like '%' || #{name} || '%'
         </if>
     </select>
     

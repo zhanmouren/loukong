@@ -10,38 +10,44 @@ import java.util.List;
 public class LeakageMessageListVO<T> {
 
 	//预警信息列表
-	private List<AlarmMessageVO> AlarmMessageList;
+	private List<AlarmMessageVO> alarmMessageList;
 	//漏损待办/已办列表
-	private T LeakageProcessingList;
+	private T leakageProcessingList;
 	//监测待办/已办列表
-	private T MonitorProcessingList;
+	private T monitorProcessingList;
 	//所有的消息条数
 	private Integer totals;
 	//待办条数
 	private Integer number;
-	public List<AlarmMessageVO> getAlarmMessageList() {
-		return AlarmMessageList;
+	//漏损待办条数
+	private Integer leakageProcessingNumber;
+	//监测待办条数
+	private Integer monitorProcessingNumber;
+	
+	
+	public Integer getMonitorProcessingNumber() {
+		return monitorProcessingNumber;
 	}
-	public void setAlarmMessageList(List<AlarmMessageVO> leakageMessageList) {
-		AlarmMessageList = leakageMessageList;
+	public void setMonitorProcessingNumber(Integer monitorProcessingNumber) {
+		this.monitorProcessingNumber = monitorProcessingNumber;
+	}
+	public List<AlarmMessageVO> getAlarmMessageList() {
+		return alarmMessageList;
+	}
+	public void setAlarmMessageList(List<AlarmMessageVO> alarmMessageList) {
+		this.alarmMessageList = alarmMessageList;
 	}
 	public T getLeakageProcessingList() {
-		return LeakageProcessingList;
+		return leakageProcessingList;
 	}
 	public void setLeakageProcessingList(T leakageProcessingList) {
-		LeakageProcessingList = leakageProcessingList;
+		this.leakageProcessingList = leakageProcessingList;
 	}
 	public T getMonitorProcessingList() {
-		return MonitorProcessingList;
+		return monitorProcessingList;
 	}
 	public void setMonitorProcessingList(T monitorProcessingList) {
-		MonitorProcessingList = monitorProcessingList;
-	}
-	public Integer getNumber() {
-		return number;
-	}
-	public void setNumber(Integer number) {
-		this.number = number;
+		this.monitorProcessingList = monitorProcessingList;
 	}
 	public Integer getTotals() {
 		return totals;
@@ -49,4 +55,18 @@ public class LeakageMessageListVO<T> {
 	public void setTotals(Integer totals) {
 		this.totals = totals;
 	}
+	public Integer getNumber() {
+		return number;
+	}
+	public void setNumber(Integer number) {
+		this.number = number;
+	}
+	public Integer getLeakageProcessingNumber() {
+		return leakageProcessingNumber;
+	}
+	public void setLeakageProcessingNumber(Integer leakageProcessingNumber) {
+		this.leakageProcessingNumber = leakageProcessingNumber;
+	}
+	
+	
 }

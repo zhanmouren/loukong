@@ -457,4 +457,5 @@ public class GisZoneServiceImpl implements GisZoneService {
 		calZoneInfos.setvZoneLists(vZoneLists);
 		return calZoneInfos;
 	}
+	
 }

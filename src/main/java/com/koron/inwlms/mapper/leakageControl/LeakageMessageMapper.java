@@ -2,8 +2,8 @@ package com.koron.inwlms.mapper.leakageControl;
 
 import java.util.List;
 
-import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
-import com.koron.inwlms.bean.DTO.sysManager.LabelDTO;
+import org.springframework.stereotype.Repository;
+
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 
@@ -12,7 +12,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
  * @Date 2020/05/09
  */
 
-
+@Repository
 public interface LeakageMessageMapper {
 
 	public List<AlarmMessageVO> queryAlarmMessage(String loginName);
@@ -23,7 +23,9 @@ public interface LeakageMessageMapper {
 	
 	public Integer getMessageNumber(String loginName);
 
-	public Integer getProcessingNumber(String loginName);
+	public Integer getLeakageProcessingNumber(String loginName);
+	
+	public Integer getMonitorProcessingNumber(String loginName);
 	
   	public Integer updateAlarmMessageStatus(List<String> codeList);
 }

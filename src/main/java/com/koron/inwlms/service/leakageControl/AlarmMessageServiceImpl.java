@@ -1,6 +1,7 @@
 package com.koron.inwlms.service.leakageControl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
@@ -14,6 +15,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
+import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
@@ -26,6 +28,13 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 	@Override
 	public AlarmMessageReturnVO queryAlarmMessage(SessionFactory factory, WarningInfDTO warningInfDTO){
 		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
+		//TODO 查询分区编码
+		if(warningInfDTO.getFirstPartion() != null && !warningInfDTO.getFirstPartion().equals("")) {
+			if(warningInfDTO.getSecondPartition() != null && !warningInfDTO.getSecondPartition().equals("")) {
+				 
+			}
+		}
+		
 		List<AlarmMessageVO> list = mapper.queryAlarmMessage(warningInfDTO);
 		Integer totalNumber = mapper.queryAlarmMessageTotalNumber(warningInfDTO);
 		AlarmMessageReturnVO alarmMessageReturnVO = new AlarmMessageReturnVO();
@@ -205,6 +214,31 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
 		List<AlarmMessageVO> list = mapper.queryAlarmMessageByPointCode(code);
 		return list;
+	}
+	
+	@TaskAnnotation("queryWarningTask")
+	@Override
+	public List<WarningTask> queryWarningTask(SessionFactory factory,Integer type){
+		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
+		List<WarningTask> list = mapper.queryWarningTask(type);
+		return list;
+	}
+	
+	@TaskAnnotation("addWarningTask")
+	@Override
+	public Integer addWarningTask(SessionFactory factory,WarningTask warningTask) {
+		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
+		Integer num = mapper.addWarningTask(warningTask);
+		return num;
+		
+	}
+	
+	@TaskAnnotation("updateWarningTask")
+	@Override
+	public Integer updateWarningTask(SessionFactory factory,Integer state,Date updateTime) {
+		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
+		Integer num = mapper.updateWarningTask(state, updateTime);
+		return num;
 	}
 	
 }

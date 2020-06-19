@@ -25,9 +25,9 @@
     </select>
    
    <select id="queryLeakageProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
-	select * 
+	select * ,"warningProcessing".code as "taskCode"
 	from app_warningProcessing as "warningProcessing"
-	where type = 0 and "warningCode" in
+	where type = 0 and state = 'L101990001' and "warningCode" in
 	(
 		select "warningInf".code
 		from app_warningInf as "warningInf"
@@ -52,9 +52,9 @@
     </select>
     
     <select id="queryMonitorProcessing" parameterType="String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO">
-	select * 
+	select * ,"warningProcessing".code as "taskCode"
 	from app_warningProcessing as "warningProcessing"
-	where type = 1 and "warningCode" in
+	where type = 1 and state = 'L101990001' and "warningCode" in
 	(
 		select "warningInf".code
 		from app_warningInf as "warningInf"
@@ -78,10 +78,36 @@
 	ORDER BY "warningProcessing".state ASC, "warningProcessing"."expectFinishTime" ASC
     </select>
     
-    <select id="getProcessingNumber" parameterType="String" resultType="java.lang.Integer">
+    <select id="getLeakageProcessingNumber" parameterType="String" resultType="java.lang.Integer">
     select count(*)
 	from app_warningProcessing as "warningProcessing"
-	where state = '未完成' and "warningCode" in
+	where type = 0 and state = 'L101990001' and "warningCode" in
+	(
+		select "warningInf".code
+		from app_warningInf as "warningInf"
+		where "warningInf"."schemeCode" in
+		(
+			select "Scheme"."schemeCode"
+			from app_alertNoticeScheme as "Scheme"
+			where "Scheme"."roleCode"  in
+			(
+				select "relation"."roleCode"
+				from sm_userRoleRelation as "relation"
+				where "relation"."userCode" in
+				(
+					select "user".code
+					from sm_user as "user"
+					where "user"."loginName" = #{loginName}
+				)
+			)
+		)
+	)
+	</select> 
+	
+	<select id="getMonitorProcessingNumber" parameterType="String" resultType="java.lang.Integer">
+    select count(*)
+	from app_warningProcessing as "warningProcessing"
+	where type = 1 and state = 'L101990001' and "warningCode" in
 	(
 		select "warningInf".code
 		from app_warningInf as "warningInf"

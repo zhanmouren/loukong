@@ -3,18 +3,27 @@ package com.koron.inwlms.mapper.apparentLoss;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnErrFlowDataListVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnLHFlowDataListVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnZeroFlowDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlMeterErrUseData;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlSDnLHFlowDataListVO;
+import com.koron.inwlms.bean.VO.apparentLoss.DrqlSDnZeroFlowDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterQH;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterRTimeUnset;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterReadData;
+import com.koron.inwlms.bean.VO.apparentLoss.MonthFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 
@@ -111,20 +120,20 @@ public interface ApparentLossMapper {
 	 * 查询抄表数据异常信息
 	 * @param queryALDTO
 	 */
-	MeterReadData queryMeterReadLoss(@Param("lists") List<MeterInfo> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+//	MeterReadData queryMeterReadLoss(@Param("lists") List<MeterInfo> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
 
 	/**
 	 * 查询消防水表读表数据
 	 * @param lists
 	 * @return
 	 */
-	List<String> queryFsMeterReadData(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	Integer queryFsMeterReadData(@Param("lists") List<String> lists,@Param("qaDTO") QueryALDTO queryALDTO);
 
 	/**
 	 * 查询月总水量
 	 * @return
 	 */
-	Double queryTotalMFlow(@Param("lists") List<String> lists,@Param("time") Integer time);
+	Double queryTotalMFlow(@Param("lists") List<String> lists,@Param("qaDTO") QueryALDTO queryALDTO);
 	
 	/**
 	 * 查询水表月水量
@@ -132,7 +141,7 @@ public interface ApparentLossMapper {
 	 * @param time
 	 * @return
 	 */
-	List<MeterMFlowData> queryMeterMFlow(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	List<MeterMFlowData> queryMeterMFlow(@Param("lists") List<MeterInfo> lists,@Param("qaDTO") QueryALDTO queryALDTO);
 
 	/**
 	 * 查询水表零月水量数据
@@ -140,15 +149,15 @@ public interface ApparentLossMapper {
 	 * @param time
 	 * @return
 	 */
-	List<MeterMFlowData> queryMeterMZeroFlow(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	List<MeterMFlowData> queryMeterMZeroFlow(@Param("qaDTO") QueryALDTO queryALDTO);
 
 	/**
-	 * 查询水表平均月水量
+	 * 查询小口径水表平均月水量
 	 * @param lists
 	 * @param time
 	 * @return
 	 */
-	List<MeterMFlowData> queryMeterMAvgFlow(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	List<MeterMFlowData> queryMeterMAvgFlow(@Param("qaDTO") QueryALDTO queryALDTO);
 	
 	/**
 	 * 查询水表月最高用水量
@@ -156,10 +165,121 @@ public interface ApparentLossMapper {
 	 * @param time
 	 * @return
 	 */
-	List<Double> queryMeterMMaxFlow(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	List<Double> queryMeterMMaxFlow(@Param("lists") List<String> lists,@Param("qaDTO") QueryALDTO queryALDTO);
 
 	/**
 	 * 查询用水异常水表数据
 	 */
-	List<DrqlMeterErrUseData> queryMeterErrUseData(@Param("lists") List<String> lists,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	List<DrqlMeterErrUseData> queryMeterErrUseData(@Param("lists") List<MeterInfo> lists,@Param("qaDTO") QueryALDTO queryALDTO);
+
+	/**
+	 * 查询水表信息
+	 * @param zoneNo
+	 * @return
+	 */
+	List<MeterInfo> queryMeterInfoByZoneNo(@Param("zoneNo") String zoneNo);
+	
+	/**
+	 * 查询全网水表月抄表水量
+	 * @return
+	 */
+	Double queryWNMMeterReadFlow(@Param("qaDTO") QueryALDTO queryALDTO,@Param("lists") List<MeterInfo> lists);
+
+	/**
+	 * 查询抄表不固定时间信息
+	 * @param queryALDTO
+	 * @return
+	 */
+	MeterRTimeUnset queryRTimeUnset(@Param("qaDTO") QueryALDTO queryALDTO);
+	
+	/**
+	 * 查询大口径月总水量
+	 * @return
+	 */
+	Double queryBigDnTotalMFlow(@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	
+	/**
+	 * 查询小口径月总水量
+	 * @return
+	 */
+	Double querySmallDnTotalMFlow(@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+	
+	/**
+	 * 根据用户编号查询月流量集合
+	 * @param ctmNum
+	 * @return
+	 */
+	List<MonthFlowData> queryMFlowByCtmNum(@Param("ctmNum") String ctmNum,@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+
+	/**
+	 * 查询大口径零流量水表数据
+	 * @param qaDTO
+	 * @return
+	 */
+	List<DrqlBDnZeroFlowDataListVO> queryDrqlBDnZeroFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+
+	/**
+	 * 查询大口径零流量水表数据总条数
+	 * @param qaDTO
+	 * @return
+	 */
+	Integer countDrqlBDnZeroFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+
+	/**
+	 * 查询大口径低流量过载水表数据
+	 * @param qaDTO
+	 * @return
+	 */
+	List<DrqlBDnLHFlowDataListVO> queryDrqlBDnLHFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+
+	/**
+	 * 查询大口径低流量过载水表数据总条数
+	 * @param qaDTO
+	 * @return
+	 */
+	Integer countDrqlBDnLHFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+	
+	/**
+	 * 查询大口径用水异常
+	 * @param qaDTO
+	 * @return
+	 */
+	List<DrqlBDnErrFlowDataListVO> queryDrqlBDnErrFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+
+	/**
+	 * 查询大口径用水异常总条数
+	 * @param qaDTO
+	 * @return
+	 */
+	Integer countDrqlBDnErrFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+
+	
+	/**
+	 * 查询小口径零流量水表数据
+	 * @param qaDTO
+	 * @return
+	 */
+	List<DrqlSDnZeroFlowDataListVO> queryDrqlSDnZeroFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+	
+	/**
+	 * 查询小口径零流量水表数据总条数
+	 * @param qaDTO
+	 * @return
+	 */
+	Integer countDrqlSDnZeroFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+
+	/**
+	 * 查询小口径低流量过载水表数据
+	 * @param qaDTO
+	 * @return
+	 */
+	List<DrqlSDnLHFlowDataListVO> queryDrqlSDnLHFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+	
+	/**
+	 * 查询小口径低流量过载水表数据总条数
+	 * @param qaDTO
+	 * @return
+	 */
+	Integer countDrqlSDnLHFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
+	
 }

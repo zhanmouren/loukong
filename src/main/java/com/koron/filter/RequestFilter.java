@@ -64,7 +64,10 @@ public class RequestFilter implements Filter {
 		HttpServletRequest hsRequest = (HttpServletRequest)request;
 		HttpServletResponse hsResponse = (HttpServletResponse)response;
 		// 获取请求url
+		
 		String servletPath = hsRequest.getServletPath();
+		String tenantID = servletPath.split("/")[1];
+		
 		//获取用户的session缓存
 		Object attribute = hsRequest.getSession().getAttribute(Constant.LOGIN_USER);
 		// 如果是生产环境
@@ -83,7 +86,9 @@ public class RequestFilter implements Filter {
 				} else {
 					if (servletPath.endsWith(".html")) {
 						// 如果是页面,则重定向到登录界面
-						hsResponse.sendRedirect(hsRequest.getContextPath() + "/dist/views/login.html");
+						System.out.println(hsRequest.getContextPath());
+						hsResponse.sendRedirect(hsRequest.getContextPath() + "/"+tenantID+"/dist/views/login.html");
+						
 					} else {
 						// 如果是controller下的api,返回未登录信息,让前端处理
 						hsResponse.setContentType("application/json; charset=utf-8");

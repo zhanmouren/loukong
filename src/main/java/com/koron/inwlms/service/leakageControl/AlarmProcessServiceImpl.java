@@ -10,28 +10,36 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryTreeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisZonePointVO;
+import com.koron.inwlms.bean.VO.leakageControl.PointHourData;
 import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
+import com.koron.inwlms.bean.VO.leakageControl.TreeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
+import com.koron.inwlms.mapper.indexData.IndexMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
 import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
+import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
 
@@ -49,30 +57,41 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		//查询报警信息
 		for(AlarmProcessVO alarmProcessVO : list) {
 			if(alarmProcessVO.getWarningCode() != null && !alarmProcessVO.getWarningCode().equals("")) {
-				AlarmProcessVO alarmProcessVO1 = mapper.queryAlarmMessageByCode(alarmProcessVO.getWarningCode());
-				if(alarmProcessVO1 != null) {
-					if(alarmProcessVO1.getAlarmType() != null && !alarmProcessVO1.getAlarmType().equals("")) {
-						alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
-					}
-					if(alarmProcessVO1.getAlarmContent() != null) {
-						alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
-					}
-					if(alarmProcessVO1.getObjectType() != null ) {
-						alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
-					}
-					if(alarmProcessVO1.getObjectCode() != null) {
-						alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
-					}
-					//若有预警类型筛选条件，则展示相应数据
-					if(alarmProcessDTO.getAlarmType() != null) {
-						if(alarmProcessVO1.getAlarmType().equals(alarmProcessDTO.getAlarmType())) {
-							reList.add(alarmProcessVO);
+				List<AlarmProcessVO> alarmProcessVO1List = mapper.queryAlarmMessageByP(alarmProcessDTO);
+				if(alarmProcessVO1List != null && alarmProcessVO1List.size() != 0) {
+					for(AlarmProcessVO alarmProcessVO1 : alarmProcessVO1List) {
+						if(alarmProcessVO1.getWarningCode().equals(alarmProcessVO.getWarningCode())) {
+							if(alarmProcessVO1 != null) {
+								if(alarmProcessVO1.getAlarmType() != null && !alarmProcessVO1.getAlarmType().equals("")) {
+									alarmProcessVO.setAlarmType(alarmProcessVO1.getAlarmType());
+								}
+								if(alarmProcessVO1.getAlarmContent() != null) {
+									alarmProcessVO.setAlarmContent(alarmProcessVO1.getAlarmContent());
+								}
+								if(alarmProcessVO1.getObjectType() != null ) {
+									alarmProcessVO.setObjectType(alarmProcessVO1.getObjectType());
+								}
+								if(alarmProcessVO1.getObjectCode() != null) {
+									alarmProcessVO.setObjectCode(alarmProcessVO1.getObjectCode());
+								}
+								//若有预警类型筛选条件，则展示相应数据
+								if(alarmProcessDTO.getAlarmType() != null) {
+									if(alarmProcessVO1.getAlarmType().equals(alarmProcessDTO.getAlarmType())) {
+										reList.add(alarmProcessVO);
+									}
+								}
+							
+							}
 						}
 					}
-				}	
+				}		
 			}
 			if(alarmProcessDTO.getAlarmType() == null || alarmProcessDTO.getAlarmType().equals("")) {
-				reList.add(alarmProcessVO);
+				if(alarmProcessDTO.getDmaCode() == null || alarmProcessDTO.getDmaCode().equals("")) {
+					if(alarmProcessDTO.getAreaCode() == null || alarmProcessDTO.getAreaCode().equals("")) {
+						reList.add(alarmProcessVO);
+					}
+				}
 			}
 		}
 		
@@ -119,7 +138,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	public Integer updateAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO,UserVO user) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		Integer num = mapper.updateAlarmProcess(alarmProcessVO);
-		if(alarmProcessVO.getState().equals("2")) {
+		if(alarmProcessVO.getState().equals(Constant.DATADICTIONARY_TASKSTATUSON)) {
 			//添加流程日志
 			AlarmProcessLog alarmProcessLog = new AlarmProcessLog();
 			alarmProcessLog.setTaskCode(alarmProcessVO.getTaskCode());
@@ -129,7 +148,8 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			}
 			alarmProcessLog.setOperation("确认任务");
 			alarmProcessLog.setCreateBy(user.getCode());
-		}else if(alarmProcessVO.getState().equals("3")) {
+			mapper.addAlarmProcessLog(alarmProcessLog);
+		}else if(alarmProcessVO.getState().equals(Constant.DATADICTIONARY_TASKSTATUSOVER)) {
 			//添加流程日志
 			AlarmProcessLog alarmProcessLog = new AlarmProcessLog();
 			alarmProcessLog.setTaskCode(alarmProcessVO.getTaskCode());
@@ -139,6 +159,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			}
 			alarmProcessLog.setOperation("完成任务");
 			alarmProcessLog.setCreateBy(user.getCode());
+			mapper.addAlarmProcessLog(alarmProcessLog);
 		}
 		
 		return num;
@@ -175,7 +196,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		}
 		alarmProcessLog.setOperation("创建任务");
 		alarmProcessLog.setCreateBy(user.getCode());
-		
+		mapper.addAlarmProcessLog(alarmProcessLog);
 		return num;
 	}
 	
@@ -266,10 +287,18 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	 */
 	@TaskAnnotation("queryAlarmProcessFile")
 	@Override
-	public List<UploadFileDTO> queryAlarmProcessFile(SessionFactory factory,String type) {
+	public List<UploadFileDTO> queryAlarmProcessFile(SessionFactory factory,String code) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
-		List<UploadFileDTO> list = mapper.queryAlarmProcessFile(type);
-		return list;
+		List<UploadFileDTO> uploadList = new ArrayList<>();
+		List<Integer> list = mapper.queryAlarmProcessFileRelation(code);
+		if(list != null && list.size() != 0) {
+			for(Integer id : list) {
+				UploadFileDTO upload = mapper.queryAlarmProcessFile(id);
+				uploadList.add(upload);
+			}
+			
+		}
+		return uploadList;
 	}
 	
 	/**
@@ -446,24 +475,97 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			treatmentEffectVO.setLossFlowAfther(lossFlow7); 
 		}
 		
-		//TODO 供水量统计 
+		//供水量统计 
 		//查询分区下的监测点
 		//工单发起前一日时间
-		Date beforfDay = TimeUtil.addDay(list.get(0).getCreateTime(), -1);
-		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
-		String beforfDayStr = sf.format(beforfDay);
-		beforfDay = sf.parse(beforfDayStr);
-		Date beforfDayEnd = TimeUtil.addDay(list.get(0).getCreateTime(), 1);
-		Date avgDay = TimeUtil.addDay(list.get(0).getCreateTime(), -1);
+		Date createDate = list.get(0).getCreateTime();
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+		String createDateStr = sf.format(createDate);
+		createDate = sf.parse(createDateStr);
+		Date beforfDay = TimeUtil.addDay(createDate, -1);
 		BasicDataMapper basDataMapper = factory.getMapper(BasicDataMapper.class);
 		List<GisZonePointVO> pointList = basDataMapper.queryZonePoint(zoneCode);
-		for(GisZonePointVO gisZonePointVO : pointList) {
-			BasicDataParam basicDataParam = new BasicDataParam();
-			basicDataParam.setCode("MOHFLOW");
-			basicDataParam.setStationCode(gisZonePointVO.getPointNo());
-			 
+		//工单前一日供水量
+		List<TimeAndFlowData> beforAllFlowList = getZoneHourData(pointList,beforfDay,basDataMapper);
+		treatmentEffectVO.setAllFlowBList(beforAllFlowList);
+		//工单开始至结束中间日的供水量
+		long avgLong = Math.round((list.get(0).getCreateTime().getTime() + list.get(0).getUpdateTime().getTime())/2);
+		Date avgDate = new Date(avgLong);
+		String avgDateStr = sf.format(avgDate);
+		avgDate = sf.parse(avgDateStr);
+		List<TimeAndFlowData> avgAllFlowList = getZoneHourData(pointList,avgDate,basDataMapper);
+		treatmentEffectVO.setAllFlowRList(avgAllFlowList);
+		//工单结束日的供水量
+		Date endFDate = list.get(0).getUpdateTime();
+		String endFDateStr = sf.format(endFDate);
+		endFDate = sf.parse(endFDateStr);
+		List<TimeAndFlowData> endAllFlowList = getZoneHourData(pointList,endFDate,basDataMapper);
+		treatmentEffectVO.setAllFlowAList(endAllFlowList);
+		List<TimeAndFlowData> nowAllFlowList = getZoneHourData(pointList,nowDate,basDataMapper);
+		treatmentEffectVO.setAllFlowNList(nowAllFlowList);
+		return treatmentEffectVO;
+	}
+	
+	
+	public List<TimeAndFlowData> getZoneHourData(List<GisZonePointVO> pointList,Date date,BasicDataMapper basDataMapper){
+		List<TimeAndFlowData> beforAllFlowList = new ArrayList<>();
+		for(int i = 0; i < 24; i++ ) {
+			double flow = 0.0;
+			for(GisZonePointVO gisZonePointVO : pointList) {
+				BasicDataParam basicDataParam = new BasicDataParam();
+				basicDataParam.setCode("MOHFLOW");
+				basicDataParam.setStationCode(gisZonePointVO.getPointNo()); 
+				basicDataParam.setStartTime(date);
+				PointHourData pointHourData = basDataMapper.queryPointHourData(basicDataParam);
+				if(pointHourData != null) {
+					flow = flow + pointHourData.getValue();
+				}
+			}
+			TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
+			timeAndFlowData.setTimeDate(date);
+			timeAndFlowData.setFlow(flow);
+			beforAllFlowList.add(timeAndFlowData);
+			date = TimeUtil.addHour(date, 1);
 		}
-		
+		return beforAllFlowList;
+	}
+	
+	@TaskAnnotation("queryAlarmProcessLog")
+	@Override
+	public List<AlarmProcessLog> queryAlarmProcessLog(SessionFactory factory,String taskCode) {
+		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		List<AlarmProcessLog> list = mapper.queryAlarmProcessLog(taskCode);
+		return list;
+	}
+	
+	
+	@TaskAnnotation("queryZoneTree")
+	@Override
+	public String queryZoneTree(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
+		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+		LongTreeBean node = mapper.getBeanByForeignIdType(queryTreeDTO.getType(),queryTreeDTO.getForeignKey());
+		List<TreeVO> list = new ArrayList<>();
+		if(node == null) {  
+			return null;
+		}
+		else{
+			List<TreeVO> zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+			if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+				for(TreeVO treeZoneVO : zoneList) {
+					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
+						list.add(treeZoneVO);
+					}
+				}
+				
+			}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
+				for(TreeVO treeZoneVO : zoneList) {
+					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
+						list.add(treeZoneVO);
+					}
+				}
+			}
+		}
 		
 		
 		return null;

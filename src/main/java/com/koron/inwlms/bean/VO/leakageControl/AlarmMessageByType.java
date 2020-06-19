@@ -6,16 +6,18 @@ package com.koron.inwlms.bean.VO.leakageControl;
  * @Date 2020-03-27
  */
 public class AlarmMessageByType {
-	private String ObjectType;
+	private String objectType;
 	
 	private Integer number;
 
+	
+
 	public String getObjectType() {
-		return ObjectType;
+		return objectType;
 	}
 
 	public void setObjectType(String objectType) {
-		ObjectType = objectType;
+		this.objectType = objectType;
 	}
 
 	public Integer getNumber() {

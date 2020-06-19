@@ -30,9 +30,13 @@
   (select * from app_warninginf where "alarmTime" between '${startTime}' and '${endTime}' 
   <if test="alarmType != null and alarmType != '' "> and "alarmType" = #{alarmType} </if>
   <if test="areaCode != null and areaCode != '' "> and "areaCode" = #{areaCode}</if>
-  <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
-  <if test="objectCode != null and objectCode != '' "> and "objectCode" = #{objectCode}</if>
-  <if test="orderby != null and orderby != '' "> order by ${orderby}</if>) a inner join app_warningscheme b on a."schemeCode" = b.code) c inner join app_warningprocessing d on c.code = d."warningCode"
+  <if test="objectCode != null and objectCode != '' "> and "objectCode" like '%'||#{objectCode}||'%'</if>
+  <if test="orderby != null and orderby != '' "> order by ${orderby}</if>) a inner join (select * from app_warningscheme
+  <trim prefix="where" prefixOverrides="and|or">
+   <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
+  </trim>
+  ) b on a."schemeCode" = b.code 
+  ) c inner join app_warningprocessing d on c.code = d."warningCode"
   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
   </select>
   
@@ -42,9 +46,10 @@
   a."updateTime" as "updateTime" from (select * from app_warninginf where "alarmTime" between '${startTime}' and '${endTime}' 
   <if test="alarmType != null and alarmType != '' "> and "alarmType" = #{alarmType} </if>
   <if test="areaCode != null and areaCode != '' "> and "areaCode" = #{areaCode}</if>
-  <if test="objectType != null and objectType != '' "> and "objectType" = #{objectType}</if>
-  <if test="objectCode != null and objectCode != '' "> and "objectCode" = #{objectCode}</if>
-  ) a inner join app_warningscheme b on a."schemeCode" = b.code) c inner join app_warningprocessing d on c.code = d."warningCode"
+  <if test="objectCode != null and objectCode != '' "> and "objectCode" like '%'||#{objectCode}||'%'</if>
+  ) a inner join app_warningscheme b on a."schemeCode" = b.code
+  <if test="objectType != null and objectType != '' "> and b."objectType" = #{objectType}</if>
+  ) c inner join app_warningprocessing d on c.code = d."warningCode"
   </select>
   
   <insert id="addWarningInf" parameterType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
@@ -55,10 +60,15 @@
   <select id="queryWarningCodeList" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
   select a.code as code, b."alarmType" as "alarmType", a."alarmTime" as "alarmTime" from app_warninginf a inner join app_warningscheme b on a."schemeCode" = b.code
   <trim prefix="where" prefixOverrides="and|or">
-   <if test="objectType != null and objectType != '' "> b."objectType" = #{objectType} and</if> 
-   <if test="objectCode != null and objectCode != '' "> a.objectCode = #{objectCode}</if>
+   <if test="objectType != null and objectType != '' ">and b."objectType" = #{objectType}</if> 
+   <if test="objectCode != null and objectCode != '' ">and a.objectCode = #{objectCode}</if>
   </trim> 
   </select>
+  
+  <insert id="addWarningTask" parameterType="com.koron.inwlms.bean.VO.leakageControl.WarningTask">
+  insert into app_warningtask(type, time, state, "createTime", "updateTime")
+  values(#{type}, #{time}, #{state}, Now(), Now())
+  </insert>
 
   
 </mapper>

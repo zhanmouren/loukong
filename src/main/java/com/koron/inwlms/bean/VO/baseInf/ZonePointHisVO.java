@@ -8,6 +8,11 @@ package com.koron.inwlms.bean.VO.baseInf;
 public class ZonePointHisVO {
 
     /**
+     * 总行数
+     */
+    private Integer rows;
+
+    /**
      * id
      */
     private Integer id;
@@ -76,6 +81,14 @@ public class ZonePointHisVO {
      * 修改时间
      */
     private String updateTime;
+
+    public Integer getRows() {
+        return rows;
+    }
+
+    public void setRows(Integer rows) {
+        this.rows = rows;
+    }
 
     public Integer getId() {
         return id;

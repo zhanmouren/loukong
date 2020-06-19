@@ -6,9 +6,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfoLossData;
-import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterUserTimeVO;
-import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 
 /**
  * 户表接口（临时）
@@ -24,7 +22,7 @@ public interface MeterService {
 	 * @param zoneNo
 	 * @return
 	 */
-	MeterInfoLossData queryMeterInfoLossData(SessionFactory factory,List<String> lists);
+	MeterInfoLossData queryMeterInfoLossData(SessionFactory factory,List<MeterInfo> lists);
 
 	/**
 	 * 查询水表使用时间信息
@@ -32,6 +30,6 @@ public interface MeterService {
 	 * @param zoneNo
 	 * @return
 	 */
-	List<MeterUserTimeVO> queryMeterUserTimeInfo(SessionFactory factory,List<String> lists);
+	List<MeterUserTimeVO> queryMeterUserTimeInfo(SessionFactory factory,List<MeterInfo> lists);
 
 }

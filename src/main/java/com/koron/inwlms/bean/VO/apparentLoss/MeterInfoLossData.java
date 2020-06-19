@@ -8,9 +8,9 @@ package com.koron.inwlms.bean.VO.apparentLoss;
 public class MeterInfoLossData {
 
 	/**
-	 * 缺少安装日期的水表数量
+	 * 缺少开户日期的水表数量
 	 */
-	private Integer lossInDateNum;
+	private Integer lossKaiDateNum;
 	
 	/**
 	 * 缺少口径的水表数量
@@ -27,9 +27,6 @@ public class MeterInfoLossData {
 	 */
 	private Integer lossUTypeNum;
 
-	public Integer getLossInDateNum() {
-		return lossInDateNum;
-	}
 
 	public Integer getLossDnNum() {
 		return lossDnNum;
@@ -43,9 +40,6 @@ public class MeterInfoLossData {
 		return lossUTypeNum;
 	}
 
-	public void setLossInDateNum(Integer lossInDateNum) {
-		this.lossInDateNum = lossInDateNum;
-	}
 
 	public void setLossDnNum(Integer lossDnNum) {
 		this.lossDnNum = lossDnNum;
@@ -57,6 +51,14 @@ public class MeterInfoLossData {
 
 	public void setLossUTypeNum(Integer lossUTypeNum) {
 		this.lossUTypeNum = lossUTypeNum;
+	}
+
+	public Integer getLossKaiDateNum() {
+		return lossKaiDateNum;
+	}
+
+	public void setLossKaiDateNum(Integer lossKaiDateNum) {
+		this.lossKaiDateNum = lossKaiDateNum;
 	}
 	
 }

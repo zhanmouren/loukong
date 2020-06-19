@@ -2,14 +2,19 @@ package com.koron.inwlms.mapper.indexData;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
+import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.indexData.InfoCompleteRateVO;
 import com.koron.inwlms.bean.VO.indexData.TaskMsgVO;
+import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 
 /*
  * date:2020-04-23
@@ -22,42 +27,42 @@ public interface IndexMapper {
 	 * @param indicatorDTO
 	 * @return
 	 */
-	List<IndicatorVO> queryBaseIndicData(IndicatorDTO indicatorDTO);
+	List<IndicatorVO> queryBaseIndicData(IndicatorNewDTO indicatorDTO);
 	
 	/**
 	 * 查询水平衡基础指标数据
 	 * @param indicatorDTO
 	 * @return
 	 */
-	List<IndicatorVO> queryWBBaseIndicData(IndicatorDTO indicatorDTO);
+	List<IndicatorVO> queryWBBaseIndicData(IndicatorNewDTO indicatorDTO);
 	
 	/**
 	 * 查询分区漏损指标数据
 	 * @param indicatorDTO
 	 * @return
 	 */
-	List<IndicatorVO> queryZoneLossIndicData(IndicatorDTO indicatorDTO);
+	List<IndicatorVO> queryZoneLossIndicData(IndicatorNewDTO indicatorDTO);
 	
 	/**
 	 * 查询分区监测指标数据
 	 * @param indicatorDTO
 	 * @return
 	 */
-	List<IndicatorVO> queryZoneMoniIndicData(IndicatorDTO indicatorDTO);
+	List<IndicatorVO> queryZoneMoniIndicData(IndicatorNewDTO indicatorDTO);
 	
 	/**
 	 * 查询分区渗漏指标数据
 	 * @param indicatorDTO
 	 * @return
 	 */
-	List<IndicatorVO> queryLeakIndicData(IndicatorDTO indicatorDTO);
+	List<IndicatorVO> queryLeakIndicData(IndicatorNewDTO indicatorDTO);
 	
 	/**
 	 * 查询全网指标数据
 	 * @param indicatorDTO
 	 * @return
 	 */
-	List<IndicatorVO> queryCompanyIndicData(IndicatorDTO indicatorDTO);
+	List<IndicatorVO> queryCompanyIndicData(IndicatorNewDTO indicatorDTO);
 	
 	/**
 	 * 查询任务列表
@@ -72,7 +77,7 @@ public interface IndexMapper {
 	/**
 	 *  查询完成数量,未完成数量,进行中
 	 */
-	List<InfoCompleteRateVO> queryComRateNum(WarningInfoDTO warningInfoDTO);
+	Integer queryComRateNum(WarningInfoDTO warningInfoDTO);
 	
 	/**
 	 *  查询预计完成时间大于实际完成时间的条数
@@ -102,5 +107,16 @@ public interface IndexMapper {
 	  * 计算监测点的任务总个数
 	 */
 	 Integer queryProTaskListNum(WarningInfoDTO warningInfoDTO);
+	 
+	 
+	 /**
+	  * 获取节点之下所有节点和节点名称(树形目录)
+	  *
+	  * @param bean 节点
+	  * @return 节点集合
+	  */
+	 @Select("select tbltree.*,gis_exist_zone.p_code as code,gis_exist_zone.name,gis_exist_zone.rank,gis_exist_zone.smid from tbltree left join gis_exist_zone on  gis_exist_zone.p_code=tbltree.foreignkey where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and tbltree.type = #{type} order by tbltree.seq")
+	 public List<TreeZoneVO> queryAllZone(@Param("seq") long seq, @Param("type") int type, @Param("mask") int mask, @Param("parentMask") int parentMask);
+
 
 }

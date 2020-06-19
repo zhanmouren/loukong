@@ -17,6 +17,7 @@ import org.swan.bean.MessageBean;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.intellectPartition.AutomaticPartitionDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.GisZoneData;
 import com.koron.inwlms.bean.DTO.intellectPartition.GisZonePipeData;
@@ -27,6 +28,7 @@ import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.intellectPartition.PartitionSchemeDetService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.InterfaceUtil;
@@ -42,7 +44,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Controller
 @Api(value = "intellectPartitionController", description = "智能分区Controller")
-@RequestMapping(value = "/intellectPartitionController")
+@RequestMapping(value = "/{tenantID}/intellectPartitionController")
 public class IntellectPartitionController {
 	@Autowired
 	private PartitionSchemeDetService psds;
@@ -53,7 +55,7 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/automaticPartition.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "智能自动分区接口", notes = "智能自动分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String automaticPartition(@RequestBody AutomaticPartitionDTO automaticPartitionDTO) {
+    public String automaticPartition(@RequestBody AutomaticPartitionDTO automaticPartitionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ModelReturn> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ModelReturn.class);
 		
 		
@@ -67,7 +69,7 @@ public class IntellectPartitionController {
 		totalSchemeDet.setZoneType(automaticPartitionDTO.getZoneType());
 		totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
 		try {
-			ModelReturn data = ADOConnection.runTask(psds, "test", ModelReturn.class, automaticPartitionDTO, totalSchemeDet);
+			ModelReturn data = ADOConnection.runTask(user.getEnv(),psds, "test", ModelReturn.class, automaticPartitionDTO, totalSchemeDet);
 			msg.setData(data);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
@@ -83,7 +85,7 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/queryTotalSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询方案总表数据", notes = "查询方案总表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryTotalSchemeDet(@RequestBody TotalSchemeDetDTO totalSchemeDetDTO) {
+    public String queryTotalSchemeDet(@RequestBody TotalSchemeDetDTO totalSchemeDetDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(totalSchemeDetDTO.getStartTime() == null || totalSchemeDetDTO.getStartTime().equals("")) {
@@ -98,7 +100,7 @@ public class IntellectPartitionController {
 		}
 		
 		try {
-			List<TotalSchemeDet> list = ADOConnection.runTask(psds, "queryTotalSchemeDet", List.class,totalSchemeDetDTO);
+			List<TotalSchemeDet> list = ADOConnection.runTask(user.getEnv(),psds, "queryTotalSchemeDet", List.class,totalSchemeDetDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 			
@@ -113,7 +115,7 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/downTotalSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载分区总方案列表数据", notes = "下载分区总方案列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downTotalSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos) {
+    public HttpEntity<?> downTotalSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -125,7 +127,7 @@ public class IntellectPartitionController {
 			totalSchemeDetDTO.setPage(1);
 			totalSchemeDetDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
 			// 查询到导出数据结果
-			List<TotalSchemeDet> list = ADOConnection.runTask(psds, "queryTotalSchemeDet", List.class,totalSchemeDetDTO);
+			List<TotalSchemeDet> list = ADOConnection.runTask(user.getEnv(),psds, "queryTotalSchemeDet", List.class,totalSchemeDetDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -145,7 +147,7 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/querySchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区方案数据", notes = "查询分区方案数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String querySchemeDet(@RequestBody TotalSchemeDetDTO totalSchemeDetDTO) {
+    public String querySchemeDet(@RequestBody TotalSchemeDetDTO totalSchemeDetDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(totalSchemeDetDTO.getCode() == null || totalSchemeDetDTO.getCode().equals("")) {
@@ -155,7 +157,7 @@ public class IntellectPartitionController {
 		}
 		
 		try {
-			List<SchemeDet> list = ADOConnection.runTask(psds, "querySchemeDet", List.class,totalSchemeDetDTO.getCode());
+			List<SchemeDet> list = ADOConnection.runTask(user.getEnv(),psds, "querySchemeDet", List.class,totalSchemeDetDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 			
@@ -170,7 +172,7 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/downSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载分区总方案列表数据", notes = "下载分区总方案列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos) {
+    public HttpEntity<?> downSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -182,7 +184,7 @@ public class IntellectPartitionController {
 			totalSchemeDetDTO.setPage(1);
 			totalSchemeDetDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
 			// 查询到导出数据结果
-			List<SchemeDet> list = ADOConnection.runTask(psds, "querySchemeDet", List.class,totalSchemeDetDTO.getCode());
+			List<SchemeDet> list = ADOConnection.runTask(user.getEnv(),psds, "querySchemeDet", List.class,totalSchemeDetDTO.getCode());
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -198,11 +200,11 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/deleteSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除分区方案数据", notes = "删除分区方案数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteSchemeDet(@RequestBody SchemeParamDTO schemeParamDto) {
+    public String deleteSchemeDet(@RequestBody SchemeParamDTO schemeParamDto,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		try {
-			Integer num = ADOConnection.runTask(psds, "deleteSchemeDetByCode", Integer.class,schemeParamDto.getIds());
+			Integer num = ADOConnection.runTask(user.getEnv(),psds, "deleteSchemeDetByCode", Integer.class,schemeParamDto.getIds());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -215,7 +217,7 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/deleteTotalSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "方案删除接口", notes = "方案删除接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteTotalSchemeDet(@RequestBody SchemeParamDTO schemeParamDto) {
+    public String deleteTotalSchemeDet(@RequestBody SchemeParamDTO schemeParamDto,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(schemeParamDto.getCodes() == null || schemeParamDto.getCodes().size() == 0) {
@@ -225,7 +227,7 @@ public class IntellectPartitionController {
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(psds, "deleteTotalSchemeDet", Integer.class,  schemeParamDto.getCodes());
+			Integer num = ADOConnection.runTask(user.getEnv(),psds, "deleteTotalSchemeDet", Integer.class,  schemeParamDto.getCodes());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e){
@@ -238,7 +240,7 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/changeTotalSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "自动智能分区方案保存接口", notes = "自动智能分区方案保存接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String changeTotalSchemeDet(@RequestBody SchemeParamDTO schemeParamDto) {
+    public String changeTotalSchemeDet(@RequestBody SchemeParamDTO schemeParamDto,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(schemeParamDto.getCodes() == null || schemeParamDto.getCodes().size() == 0) {
@@ -248,7 +250,7 @@ public class IntellectPartitionController {
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(psds, "changeSchemeDet", Integer.class,  schemeParamDto.getCodes());
+			Integer num = ADOConnection.runTask(user.getEnv(),psds, "changeSchemeDet", Integer.class,  schemeParamDto.getCodes());
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("方案保存成功");

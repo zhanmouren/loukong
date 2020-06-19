@@ -112,7 +112,9 @@ public class AlarmProcessVO {
 	private Integer type;
 	
 	private String objectCode;
-	
+	/**
+	 * 步骤描述
+	 */
 	private String remarks;
 	
 	

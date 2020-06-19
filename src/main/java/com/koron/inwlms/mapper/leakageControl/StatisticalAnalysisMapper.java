@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-@EnvSource("_default")
 public interface StatisticalAnalysisMapper {
 	
 	

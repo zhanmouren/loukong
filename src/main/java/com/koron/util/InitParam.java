@@ -12,5 +12,6 @@ public class InitParam {
 		ADOSession session = service.invokeObject("org.koron.mybatis", ADOSession.class);
 		//session.registeJndiMap("_default", "java:comp/env/jndi/common");
 		session.registeJndiMap("_default", "java:comp/env/jdbc/postgres");
+		session.registeJndiMap("_mz", "java:comp/env/jdbc/postgres");
 	}
 }

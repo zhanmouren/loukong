@@ -13,6 +13,7 @@ public class TreatmentEffectVO {
 	private Double lossFlowAfther;
 	
 	private List<TimeAndFlowData> lossFlow;
+	
 	/**
 	 * 工单开始前一日供水量
 	 */

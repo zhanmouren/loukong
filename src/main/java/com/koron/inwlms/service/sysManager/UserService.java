@@ -17,6 +17,7 @@ import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
+import com.koron.inwlms.bean.DTO.sysManager.PositionDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
@@ -35,6 +36,7 @@ import com.koron.inwlms.bean.VO.sysManager.FieldMapperVO;
 import com.koron.inwlms.bean.VO.sysManager.ImportUserResVO;
 import com.koron.inwlms.bean.VO.sysManager.IntegrationConfVO;
 import com.koron.inwlms.bean.VO.sysManager.ModuleMenuVO;
+import com.koron.inwlms.bean.VO.sysManager.PositionVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleAndUserVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMsgVO;
@@ -51,6 +53,8 @@ public interface UserService {
 	Integer addUser(SessionFactory factory, UserDTO userDTO);
 	//查询职员（名称或部门）
 	PageListVO<List<UserVO>> queryUser(SessionFactory factory, QueryUserDTO userDTO);
+	//查询职员详情
+	List<UserVO> queryUserDetail(SessionFactory factory,QueryUserDTO userDTO);
 	//修改职员
     Integer  updateUser(SessionFactory factory, UserDTO userDTO);
     //批量重置职员密码
@@ -155,7 +159,11 @@ public interface UserService {
 	     Integer updateRoleMenuByRoleCode(SessionFactory factory,RoleMenuDTO roleMenuDTO);
 	     
         //模糊查询部门接口
-	     PageListVO<List<DeptVO>> queryDept(SessionFactory factory,DeptDTO deptDTO);
+	     List<DeptVO> queryDept(SessionFactory factory,DeptDTO deptDTO);
+	     
+	     
+	    //查询职位接口
+	     List<PositionVO> queryPosition(SessionFactory factory,PositionDTO positionDTO);
 		 
 		 //通过模块菜单Code和角色加载该角色所有选中菜单以及可操作的权限。
 		 List<RoleMenusVO> queryRoleMenuByRoleMenu(SessionFactory factory,RoleMenuDTO roleMenuDTO);	

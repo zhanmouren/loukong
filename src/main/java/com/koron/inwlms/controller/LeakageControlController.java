@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
+import com.koron.inwlms.bean.DTO.common.FilerelationDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
@@ -43,18 +45,21 @@ import com.koron.inwlms.bean.DTO.leakageControl.PolicyDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.common.PointTypeVO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
@@ -78,18 +83,20 @@ import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.ZoneSaveWaterData;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.inwlms.service.common.PointHistoryDataService;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
 import com.koron.inwlms.service.leakageControl.AlarmMessageService;
 import com.koron.inwlms.service.leakageControl.AlarmProcessService;
 import com.koron.inwlms.service.leakageControl.EconomicIndicatorServiceImpl;
 import com.koron.inwlms.service.leakageControl.EventInfoService;
+import com.koron.inwlms.service.leakageControl.EventInfoServiceImpl;
 import com.koron.inwlms.service.leakageControl.PolicyService;
 import com.koron.inwlms.service.leakageControl.StatisticalAnalysisService;
 import com.koron.inwlms.service.leakageControl.WarningSchemeService;
 import com.koron.inwlms.service.sysManager.impl.UserServiceImpl;
-import com.koron.inwlms.util.ExportDataUtil;
-import com.koron.inwlms.util.UnitUtil;
-import com.koron.util.Constant;
+import com.koron.inwlms.util.ExportDataUtil; 
+import com.koron.inwlms.util.FileUtil;
+import com.koron.util.Constant; 
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -102,7 +109,7 @@ import io.swagger.annotations.ApiOperation;
 
 @Controller
 @Api(value = "leakageControlController", description = "漏损控制Controller")
-@RequestMapping(value = "/leakageControlController")
+@RequestMapping(value = "/{tenantID}/leakageControlController")
 public class LeakageControlController {
 	
 	@Autowired
@@ -119,11 +126,13 @@ public class LeakageControlController {
 	private PolicyService ps;
 	@Autowired
     private FileConfigInfo fileConfigInfo;
+	@Autowired
+	private PointHistoryDataService phds;
 
 	@RequestMapping(value = "/queryAlarmMessage.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息接口", notes = "查询预警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmMessage(@RequestBody WarningInfDTO warningInfDTO) {
+    public String queryAlarmMessage(@RequestBody WarningInfDTO warningInfDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AlarmMessageReturnVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AlarmMessageReturnVO.class);
 		
 		if(warningInfDTO.getStartTime() == null) {
@@ -140,7 +149,7 @@ public class LeakageControlController {
 		//TODO 通过分区编码查询出所属的所有0级分区编码，将参数分区编码设置为0级分区编码
 		
 		try {
-			AlarmMessageReturnVO alarmMessageReturnVO = ADOConnection.runTask(ams, "queryAlarmMessage", AlarmMessageReturnVO.class, warningInfDTO);
+			AlarmMessageReturnVO alarmMessageReturnVO = ADOConnection.runTask(user.getEnv(),ams, "queryAlarmMessage", AlarmMessageReturnVO.class, warningInfDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(alarmMessageReturnVO);
 		}catch(Exception e){
@@ -152,10 +161,28 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/queryPointHistoryData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询监测点历史数据", notes = "查询监测点历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPointHistoryData(@RequestBody AlarmMessageVO alarmMessageVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		try {
+			List<PointTypeVO> list = ADOConnection.runTask(user.getEnv(),phds, "queryPointHistoryData", List.class, alarmMessageVO.getCode(),alarmMessageVO.getAlarmTime());
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败");
+		}
+		
+		return msg.toJson();
+	}
+	
 	@RequestMapping(value = "/downAlarmMessage.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载预警信息列表数据", notes = "下载预警信息列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downAlarmMessage(@RequestParam String objValue,@RequestParam String titleInfos) {
+    public HttpEntity<?> downAlarmMessage(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -167,7 +194,7 @@ public class LeakageControlController {
 			warningInfDTO.setPage(1);
 			warningInfDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			AlarmMessageReturnVO alarmMessageReturnVO = ADOConnection.runTask(ams, "queryAlarmMessage", AlarmMessageReturnVO.class, warningInfDTO);
+			AlarmMessageReturnVO alarmMessageReturnVO = ADOConnection.runTask(user.getEnv(),ams, "queryAlarmMessage", AlarmMessageReturnVO.class, warningInfDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType()); 
 			// 导出excel文件
@@ -183,7 +210,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmMessageByPointCode.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询主报警ID下的预警信息接口", notes = "查询主报警ID下的预警信息接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmMessageByPointCode(String code) {
+    public String queryAlarmMessageByPointCode(String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(code == null || code.equals("")) {
@@ -193,7 +220,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			List<AlarmMessageVO> alarmMessageList = ADOConnection.runTask(ams, "queryAlarmMessageByPointCode", List.class, code);
+			List<AlarmMessageVO> alarmMessageList = ADOConnection.runTask(user.getEnv(),ams, "queryAlarmMessageByPointCode", List.class, code);
 			if(alarmMessageList != null && alarmMessageList.size() != 0) {
 				msg.setData(alarmMessageList);
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -213,7 +240,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmProcess.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息处理任务接口", notes = "查询预警信息处理任务接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmProcess(@RequestBody AlarmProcessDTO alarmProcessDTO) {
+    public String queryAlarmProcess(@RequestBody AlarmProcessDTO alarmProcessDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AlarmProcessReturnVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AlarmProcessReturnVO.class);
 		
 		if(alarmProcessDTO.getStartTime() == null || alarmProcessDTO.getStartTime().equals("")) {
@@ -232,9 +259,17 @@ public class LeakageControlController {
 	        return msg.toJson();
 		}
 		
+		if(alarmProcessDTO.getFirstPartion() != null && !alarmProcessDTO.getFirstPartion().equals("")) {
+			if(alarmProcessDTO.getSecondPartition() != null && !alarmProcessDTO.getSecondPartition().equals("")) {
+				alarmProcessDTO.setAreaCode(alarmProcessDTO.getSecondPartition());
+			}else {
+				alarmProcessDTO.setAreaCode(alarmProcessDTO.getFirstPartion());
+			}
+		}
+		
 		//查询参数设置调整
 		try {
-			AlarmProcessReturnVO alarmProcessReturnVO = ADOConnection.runTask(aps,"queryAlarmProcess",AlarmProcessReturnVO.class,alarmProcessDTO);
+			AlarmProcessReturnVO alarmProcessReturnVO = ADOConnection.runTask(user.getEnv(),aps,"queryAlarmProcess",AlarmProcessReturnVO.class,alarmProcessDTO);
 			if(alarmProcessReturnVO != null) {	
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(alarmProcessReturnVO);
@@ -254,7 +289,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/downAlarmProcess.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ApiOperation(value = "下载预警信息处理任务列表数据", notes = "下载预警信息处理任务列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downAlarmProcess(@RequestParam String objValue,@RequestParam String titleInfos) {
+    public HttpEntity<?> downAlarmProcess(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -266,7 +301,7 @@ public class LeakageControlController {
 			alarmProcessDTO.setPage(1);
 			alarmProcessDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			AlarmProcessReturnVO alarmProcessReturnVO = ADOConnection.runTask(aps,"queryAlarmProcess",AlarmProcessReturnVO.class,alarmProcessDTO);
+			AlarmProcessReturnVO alarmProcessReturnVO = ADOConnection.runTask(user.getEnv(),aps,"queryAlarmProcess",AlarmProcessReturnVO.class,alarmProcessDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -282,7 +317,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmProcessByTaskCode.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "通过code查询预警信息处理任务接口", notes = "通过code查询预警信息处理任务接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmProcessByTaskCode(String taskCode) {
+    public String queryAlarmProcessByTaskCode(String taskCode,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(taskCode == null || taskCode.equals("")) {
@@ -294,7 +329,7 @@ public class LeakageControlController {
 		
 		//查询参数设置调整
 		try {
-			List<AlarmProcessVO> alarmProcessList = ADOConnection.runTask(aps,"queryAlarmProcessByTaskCode",List.class,taskCode);
+			List<AlarmProcessVO> alarmProcessList = ADOConnection.runTask(user.getEnv(),aps,"queryAlarmProcessByTaskCode",List.class,taskCode);
 			if(alarmProcessList != null && alarmProcessList.size() != 0) {
 				
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -325,7 +360,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(aps,"updateAlarmProcess",Integer.class,alarmProcessVO,user);
+			Integer num = ADOConnection.runTask(user.getEnv(),aps,"updateAlarmProcess",Integer.class,alarmProcessVO,user);
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			}else {
@@ -341,6 +376,31 @@ public class LeakageControlController {
 		
 		return msg.toJson();
 		
+	}
+	
+	@RequestMapping(value = "/queryAlarmProcessLog.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "预警处理任务操作记录查询", notes = "预警处理任务操作记录查询", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryAlarmProcessLog(@RequestBody AlarmProcessVO alarmProcessVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		if(alarmProcessVO.getTaskCode() == null && alarmProcessVO.getTaskCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!任务编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			List<AlarmProcessLog> list = ADOConnection.runTask(user.getEnv(),aps,"queryAlarmProcessLog",List.class,alarmProcessVO.getTaskCode());
+			msg.setData(list);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败");
+		}
+		
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/addAlarmProcess.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -364,7 +424,7 @@ public class LeakageControlController {
 		//添加预警信息处理任务
 		try {
 			
-			String num = ADOConnection.runTask(aps, "addAlarmProcess",String.class,alarmProcessVO,user);
+			String num = ADOConnection.runTask(user.getEnv(),aps, "addAlarmProcess",String.class,alarmProcessVO,user);
 			
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(num);
@@ -390,13 +450,15 @@ public class LeakageControlController {
 	 */
 	@RequestMapping(value = "/uploadAlarmProcessFile.htm", method = RequestMethod.POST, produces = { "text/html;charset=UTF-8" })
     @ResponseBody
-    public String uploadAlarmProcessFile(@RequestParam("file") MultipartFile file, @RequestParam("tId") Integer tId,@RequestParam("fileModule") String fileModule, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String uploadAlarmProcessFile(@RequestParam("file") MultipartFile file, @RequestParam("code") String code, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		String fileModule = "act";
+		Integer tId = 123;
 		MessageBean<UploadFileVO> msg = new MessageBean<>();
 		// 获取上传文件名,包含后缀
    		String originalFilename = file.getOriginalFilename();
    		// 获取后缀
    		String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
-   	// 获取当前月份，时间格式:201910
+   	    // 获取当前月份，时间格式:201910
    		SimpleDateFormat dataFormate = new SimpleDateFormat("yyyyMM");
    		String time = dataFormate.format(new Date());
    		// 保存目录
@@ -429,10 +491,17 @@ public class LeakageControlController {
    		uploadFileDTO.setStoreName(storeName);
    		uploadFileDTO.setStorageTime(new java.util.Date());
    		uploadFileDTO.setCreateBy(createAccount);
+   		uploadFileDTO.setCreateTime(new Date());
    		uploadFileDTO.setFileType(fileType);
    		// 上传文件记录入库
-   		int result = ADOConnection.runTask(new FileServiceImpl(), "insertFileData", Integer.class, uploadFileDTO);
-   		if (result == 1) {
+   		Integer fileId = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFileDataReturnId", Integer.class, uploadFileDTO);
+   		//插入关联表数据
+   		FilerelationDTO filerelationDTO = new FilerelationDTO();
+   		filerelationDTO.setFileId(fileId);
+   		filerelationDTO.setCode(code);
+   		Integer num = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFilerelationData", Integer.class, filerelationDTO);
+   		
+   		if (fileId != null) {
    			UploadFileVO uploadFileVO = new UploadFileVO();
    			uploadFileVO.setFileId(uploadFileDTO.getId());
    			uploadFileVO.setFileName(originalFilename);
@@ -443,17 +512,23 @@ public class LeakageControlController {
    			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
    			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
    		}
-		return null;
+		return msg.toJson();
 	}
 	
 	@RequestMapping(value = "/queryAlarmProcessFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息任务附件接口", notes = "查询预警信息任务附件接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmProcessFile(@RequestBody String type) {
+    public String queryAlarmProcessFile(@RequestBody AlarmProcessVO alarmProcessVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
+		if(alarmProcessVO.getTaskCode() == null && alarmProcessVO.getTaskCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!任务编码为空");
+	        return msg.toJson();
+		}
+		
 		try {
-			List<UploadFileDTO> list = ADOConnection.runTask(aps, "queryAlarmProcessFile",List.class,type);
+			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),aps, "queryAlarmProcessFile",List.class,alarmProcessVO.getTaskCode());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 		}catch(Exception e) {
@@ -469,7 +544,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/deleteAlarmProcess.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除预警信息处理任务接口", notes = "删除预警信息处理任务接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteAlarmProcess(String taskCode) {
+    public String deleteAlarmProcess(String taskCode,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(taskCode == null || taskCode.equals("")) {
@@ -479,7 +554,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(aps, "deleteAlarmProcess",Integer.class,taskCode);
+			Integer num = ADOConnection.runTask(user.getEnv(),aps, "deleteAlarmProcess",Integer.class,taskCode);
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			}else {
@@ -499,14 +574,14 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryWarningSchemeList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警方案列表查询接口", notes = "预警方案列表查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryWarningSchemeList(@RequestBody WarningSchemeDTO warningSchemeDTO) {
+    public String queryWarningSchemeList(@RequestBody WarningSchemeDTO warningSchemeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		
 		MessageBean<AlertSchemeListReturnVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AlertSchemeListReturnVO.class);
 		
 		
 		//查询预警方案表信息
 		try {
-			AlertSchemeListReturnVO alertSchemeListReturnVO = ADOConnection.runTask(wss, "queryWarningSchemeList", AlertSchemeListReturnVO.class,warningSchemeDTO);
+			AlertSchemeListReturnVO alertSchemeListReturnVO = ADOConnection.runTask(user.getEnv(),wss, "queryWarningSchemeList", AlertSchemeListReturnVO.class,warningSchemeDTO);
 			if(alertSchemeListReturnVO == null) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("该条件下未查询到数据");
@@ -529,7 +604,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/downWarningScheme.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载预警方案列表数据", notes = "下载预警方案列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downWarningScheme(@RequestParam String objValue,@RequestParam String titleInfos) {
+    public HttpEntity<?> downWarningScheme(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -541,7 +616,7 @@ public class LeakageControlController {
 			warningSchemeDTO.setPage(1);
 			warningSchemeDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
 			// 查询到导出数据结果
-			AlertSchemeListReturnVO alertSchemeListReturnVO = ADOConnection.runTask(wss, "queryWarningSchemeList", AlertSchemeListReturnVO.class,warningSchemeDTO);
+			AlertSchemeListReturnVO alertSchemeListReturnVO = ADOConnection.runTask(user.getEnv(),wss, "queryWarningSchemeList", AlertSchemeListReturnVO.class,warningSchemeDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -557,7 +632,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryWarningScheme.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警方案查询接口", notes = "预警方案查询接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryWarningScheme(String code) {
+    public String queryWarningScheme(String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<WarningSchemeDateVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, WarningSchemeDateVO.class);
 		if(code == null || code.equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -568,7 +643,7 @@ public class LeakageControlController {
 		warningSchemeDTO.setCode(code);
 		try {
 			//查询预警方案信息
-			WarningSchemeDateVO warningSchemeDateVO = ADOConnection.runTask(wss, "queryWarningSchemeByCode", WarningSchemeDateVO.class,warningSchemeDTO);
+			WarningSchemeDateVO warningSchemeDateVO = ADOConnection.runTask(user.getEnv(),wss, "queryWarningSchemeByCode", WarningSchemeDateVO.class,warningSchemeDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(warningSchemeDateVO);	
 		}catch(Exception e) {
@@ -582,7 +657,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/addWarningScheme.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警方案添加接口", notes = "预警方案添加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String addWarningScheme(@RequestBody WarningSchemeDTO warningSchemeDTO) {
+    public String addWarningScheme(@RequestBody WarningSchemeDTO warningSchemeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		//判断参数是否为空
 		if(warningSchemeDTO.getName() == null  || warningSchemeDTO.getName().equals("")) {
@@ -613,7 +688,7 @@ public class LeakageControlController {
 		
 		List<AlarmRuleDTO> alarmRuleList = warningSchemeDTO.getAlarmRuleList();
 		try {
-			ADOConnection.runTask(wss, "addWarningScheme", String.class,warningSchemeDTO,alarmRuleList);
+			ADOConnection.runTask(user.getEnv(),wss, "addWarningScheme", String.class,warningSchemeDTO,alarmRuleList);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {
@@ -626,7 +701,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/updateWarningScheme.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警方案修改接口", notes = "预警方案修改接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateWarningScheme(@RequestBody WarningSchemeDTO warningSchemeDTO) {
+	public String updateWarningScheme(@RequestBody WarningSchemeDTO warningSchemeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(warningSchemeDTO.getCode() == null || warningSchemeDTO.getCode().equals("")) {
@@ -636,7 +711,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(wss, "updateWarningScheme", Integer.class,warningSchemeDTO);
+			Integer num = ADOConnection.runTask(user.getEnv(),wss, "updateWarningScheme", Integer.class,warningSchemeDTO);
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			}else {
@@ -655,7 +730,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/deleteWarningScheme.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警方案删除接口", notes = "预警方案删除接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteWarningScheme(String code) {
+	public String deleteWarningScheme(String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(code == null || code.equals("")) {
@@ -665,7 +740,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(wss, "deleteWarningScheme", Integer.class,code);
+			Integer num = ADOConnection.runTask(user.getEnv(),wss, "deleteWarningScheme", Integer.class,code);
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			}else {
@@ -689,7 +764,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryNoticeSchemeByWarningCode.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "通知方案查询接口", notes = "通知方案查询接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryNoticeScheme(String code) {
+    public String queryNoticeScheme(String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(code == null || code.equals("")) {
@@ -699,7 +774,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			List<AlertNoticeSchemeVO> alertNoticeSchemeList = ADOConnection.runTask(wss, "queryNoticeSchemeByWarningCode", List.class,code);
+			List<AlertNoticeSchemeVO> alertNoticeSchemeList = ADOConnection.runTask(user.getEnv(),wss, "queryNoticeSchemeByWarningCode", List.class,code);
 			if(alertNoticeSchemeList != null && alertNoticeSchemeList.size() != 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(alertNoticeSchemeList);
@@ -723,14 +798,14 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmMessageByObjectType.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警信息对象类型统计接口", notes = "预警信息对象类型统计接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmMessageByObjectType(@RequestBody WarningInfDTO warningInfDTO) {
+    public String queryAlarmMessageByObjectType(@RequestBody WarningInfDTO warningInfDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AlarmMessageByTypeVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AlarmMessageByTypeVO.class);
 		
 		//TODO 通过分区编码查询出所属的所有0级分区编码，将参数分区编码设置为0级分区编码
 		
 		try {			
 			//统计监测预警不同对象的数据
-			AlarmMessageByTypeVO alarmMessageByObjectType = ADOConnection.runTask(ams, "queryAlarmMessageByObjectType",AlarmMessageByTypeVO.class, warningInfDTO);
+			AlarmMessageByTypeVO alarmMessageByObjectType = ADOConnection.runTask(user.getEnv(),ams, "queryAlarmMessageByObjectType",AlarmMessageByTypeVO.class, warningInfDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(alarmMessageByObjectType);
 		}catch(Exception e){
@@ -750,7 +825,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmMessageByAlarmType.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警信息报警类型统计接口", notes = "预警信息报警类型统计接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmMessageByAlarmType(@RequestBody WarningInfDTO warningInfDTO) {
+    public String queryAlarmMessageByAlarmType(@RequestBody WarningInfDTO warningInfDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AlarmMessageByTypeVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AlarmMessageByTypeVO.class);
 		
 		
@@ -758,7 +833,7 @@ public class LeakageControlController {
 		//TODO 通过分区编码查询出所属的所有0级分区编码，将参数分区编码设置为0级分区编码
 		
 		try {
-			AlarmMessageByTypeVO alarmMessageByObjectType = ADOConnection.runTask(ams, "queryAlarmMessageByAlarmType", AlarmMessageByTypeVO.class, warningInfDTO);
+			AlarmMessageByTypeVO alarmMessageByObjectType = ADOConnection.runTask(user.getEnv(),ams, "queryAlarmMessageByAlarmType", AlarmMessageByTypeVO.class, warningInfDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(alarmMessageByObjectType);
 			
@@ -774,7 +849,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryTreatmentEffect.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "报警任务处理效果接口", notes = "报警任务处理效果接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryTreatmentEffect(@RequestBody TreatmentEffectDTO treatmentEffectDTO) {
+    public String queryTreatmentEffect(@RequestBody TreatmentEffectDTO treatmentEffectDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<TreatmentEffectVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, TreatmentEffectVO.class);
 		
 		if(treatmentEffectDTO.getProcessCode() == null || treatmentEffectDTO.getProcessCode().equals("")) {
@@ -794,7 +869,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			TreatmentEffectVO treatmentEffectVO = ADOConnection.runTask(aps, "queryTreatmentEffect", TreatmentEffectVO.class,treatmentEffectDTO);
+			TreatmentEffectVO treatmentEffectVO = ADOConnection.runTask(user.getEnv(),aps, "queryTreatmentEffect", TreatmentEffectVO.class,treatmentEffectDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(treatmentEffectVO);
 			
@@ -808,7 +883,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryProcessingStatistics.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "漏控处理统计接口", notes = "漏控处理统计接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryProcessingStatistics(@RequestBody ProcessingStatisticsDTO processingStatisticsDTO) {
+    public String queryProcessingStatistics(@RequestBody ProcessingStatisticsDTO processingStatisticsDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ProcessingStatisticsAllDataVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ProcessingStatisticsAllDataVO.class);
 		
 		if(processingStatisticsDTO.getStartTime() == null || processingStatisticsDTO.getEndTime().equals("")) {
@@ -943,7 +1018,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryPartitionInvest.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "分区投资曲线查询接口", notes = "分区投资曲线查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryPartitionInvest(@RequestBody PartitionInvestDTO partitionInvestDTO) {
+    public String queryPartitionInvest(@RequestBody PartitionInvestDTO partitionInvestDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		if(partitionInvestDTO.getType() == null || partitionInvestDTO.getType().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -952,7 +1027,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			List<PartitionInvestVO> List = ADOConnection.runTask(new EconomicIndicatorServiceImpl(), "queryPartitionInvest",List.class, partitionInvestDTO.getType());
+			List<PartitionInvestVO> List = ADOConnection.runTask(user.getEnv(),new EconomicIndicatorServiceImpl(), "queryPartitionInvest",List.class, partitionInvestDTO.getType());
 			if(List != null && List.size() != 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(List);
@@ -965,10 +1040,37 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downPartitionInvest.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载分区投资曲线数据", notes = "下载分区投资曲线数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downPartitionInvest(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			PartitionInvestDTO partitionInvestDTO = jsonValue.fromJson(objValue, PartitionInvestDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (partitionInvestDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+
+			// 查询到导出数据结果
+			List<PartitionInvestVO> List = ADOConnection.runTask(user.getEnv(),new EconomicIndicatorServiceImpl(), "queryPartitionInvest",List.class, partitionInvestDTO.getType());
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(List, jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	@RequestMapping(value = "/updatePartitionInvest.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "分区投资曲线修改接口", notes = "分区投资曲线修改接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updatePartitionInvest(@RequestBody List<PartitionInvestDTO> partitionInvestDTOList) {
+    public String updatePartitionInvest(@RequestBody List<PartitionInvestDTO> partitionInvestDTOList,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		if(partitionInvestDTOList == null || partitionInvestDTOList.size() == 0) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -977,7 +1079,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			ADOConnection.runTask(new EconomicIndicatorServiceImpl(), "updatePartitionInvest",Integer.class,partitionInvestDTOList);
+			ADOConnection.runTask(user.getEnv(),new EconomicIndicatorServiceImpl(), "updatePartitionInvest",Integer.class,partitionInvestDTOList);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setDescription("分区投资曲线修改成功");
 			
@@ -992,7 +1094,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项列表查询接口", notes = "事项列表查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryEventInfo(@RequestBody EventInfoDTO eventInfoDTO) {
+    public String queryEventInfo(@RequestBody EventInfoDTO eventInfoDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<EventInfoListReturnVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventInfoListReturnVO.class);
 		
 		if(eventInfoDTO.getStartTime() == null || eventInfoDTO.getStartTime().equals("")) {
@@ -1003,11 +1105,11 @@ public class LeakageControlController {
 		if(eventInfoDTO.getEndTime() == null || eventInfoDTO.getEndTime().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("结束时间为空");
-	        return msg.toJson();
+	        return msg.toJson(); 
 		}
 		
 		try { 
-			EventInfoListReturnVO eventInfoList = ADOConnection.runTask(eis, "queryEventInfo",EventInfoListReturnVO.class,eventInfoDTO);
+			EventInfoListReturnVO eventInfoList = ADOConnection.runTask(user.getEnv(),eis, "queryEventInfo",EventInfoListReturnVO.class,eventInfoDTO);
 			if(eventInfoList != null ) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(eventInfoList);
@@ -1027,7 +1129,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/downEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载事项列表数据", notes = "下载事项列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos) {
+    public HttpEntity<?> downSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -1039,7 +1141,7 @@ public class LeakageControlController {
 			eventInfoDTO.setPage(1);
 			eventInfoDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
 			// 查询到导出数据结果
-			EventInfoListReturnVO eventInfoList = ADOConnection.runTask(eis, "queryEventInfo",EventInfoListReturnVO.class,eventInfoDTO);
+			EventInfoListReturnVO eventInfoList = ADOConnection.runTask(user.getEnv(),eis, "queryEventInfo",EventInfoListReturnVO.class,eventInfoDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
@@ -1055,7 +1157,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryEventInfoByCode.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项信息查询接口", notes = "事项信息查询接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryEventInfoByCode(String code) {
+    public String queryEventInfoByCode(String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<EventInfo> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventInfo.class);
 		
 		if(code == null || code.equals("")) {
@@ -1066,7 +1168,7 @@ public class LeakageControlController {
 		
 		try {
 			
-			EventInfo even = ADOConnection.runTask(eis, "queryEventInfoByCode",EventInfo.class,code);
+			EventInfo even = ADOConnection.runTask(user.getEnv(),eis, "queryEventInfoByCode",EventInfo.class,code);
 			msg.setData(even);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
@@ -1083,7 +1185,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/deleteEventInfo.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项信息删除接口", notes = "事项信息删除接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteEventInfo(String code) {
+    public String deleteEventInfo(String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		if(code == null || code.equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -1092,7 +1194,7 @@ public class LeakageControlController {
 		
 		try {
 			//删除事项表的数据
-			Integer num = ADOConnection.runTask(eis, "deleteEventInfo",Integer.class,code);
+			Integer num = ADOConnection.runTask(user.getEnv(),eis, "deleteEventInfo",Integer.class,code);
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("事项信息删除成功");
@@ -1112,7 +1214,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/updateEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项信息修改接口", notes = "事项信息修改接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateEventInfo(@RequestBody EventInfo eventInfo) {
+    public String updateEventInfo(@RequestBody EventInfo eventInfo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(eventInfo.getCode() == null || eventInfo.getCode().equals("")) {
@@ -1122,7 +1224,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(eis, "updateEventInfo",Integer.class,eventInfo);
+			Integer num = ADOConnection.runTask(user.getEnv(),eis, "updateEventInfo",Integer.class,eventInfo);
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("事项信息修改成功");
@@ -1142,14 +1244,14 @@ public class LeakageControlController {
 	@RequestMapping(value = "/addEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项信息添加接口", notes = "事项信息添加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String addEventInfo(@RequestBody EventInfo eventInfo) {
+    public String addEventInfo(@RequestBody EventInfo eventInfo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		//TODO 产生一个编码
 		String code = UUID.randomUUID().toString();
 		eventInfo.setCode(code);
 		try {
-			Integer num = ADOConnection.runTask(eis, "addEventInfo",Integer.class,eventInfo);
+			Integer num = ADOConnection.runTask(user.getEnv(),eis, "addEventInfo",Integer.class,eventInfo);
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("事项信息添加成功");
@@ -1165,15 +1267,131 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/importEventInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项信息导入接口", notes = "事项信息导入接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String importEventInfo(HttpServletRequest request,@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		
+		try {
+			// 如果文件不为空，写入上传路径
+			if (!file.isEmpty()) {
+				// 上传文件路径
+				String path = request.getServletContext().getRealPath("/xlsx");	
+				System.out.println("path:" + path);
+				// 上传文件名
+				String filename = file.getOriginalFilename();
+				path = path + File.separator + filename;
+				File filepath = new File(path);
+				// 判断路径是否存在，如果不存在就创建一个
+				if (!filepath.getParentFile().exists()) {
+					filepath.getParentFile().mkdirs();
+				}
+				// 判断文件是否存在
+				if (!filepath.exists()) {
+					// 将上传文件保存到一个目标文件当中
+					try {
+						file.transferTo(filepath);
+					} catch (IllegalStateException | IOException e) {
+						
+					}
+				}
+				
+				List<EventInfo> list = EventInfoServiceImpl.readEvetInfo(filepath);
+				for(EventInfo eventInfo : list) {
+					ADOConnection.runTask(user.getEnv(),eis, "addEventInfo",Integer.class,eventInfo);
+				}
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);	
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("文件为空！");
+			}
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项信息导入失败！");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/downloadEventFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项文件上传", notes = "事项文件上传", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String downloadEventFile(@RequestParam("file") MultipartFile file, @RequestParam("code") String code, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		String fileModule = "act";
+		Integer tId = 123;
+		MessageBean<UploadFileVO> msg = new MessageBean<>();
+		// 获取上传文件名,包含后缀
+   		String originalFilename = file.getOriginalFilename();
+   		// 获取后缀
+   		String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
+   	    // 获取当前月份，时间格式:201910
+   		SimpleDateFormat dataFormate = new SimpleDateFormat("yyyyMM");
+   		String time = dataFormate.format(new Date());
+   		// 保存目录
+   		String path = fileConfigInfo.getPath() + File.separator + fileModule + File.separator + time ;
+   		// 生成保存文件
+   		File dirPath = new File(path);
+   		if (!dirPath.exists()) {
+   			dirPath.mkdirs();
+   		}
+   		
+   		//用时间戳作为文件名称存储
+   		String storeName = System.currentTimeMillis()+fileType;
+   		File uploadFile = new File(path+ File.separator + storeName);
+   		double size = file.getSize() / 1014;
+
+   		// 将上传文件保存到路径
+   		try {
+   			file.transferTo(uploadFile);
+   		} catch (IOException e) {
+   			e.printStackTrace();
+   		}
+
+   		String createAccount = user.getLoginName();
+   		UploadFileDTO uploadFileDTO = new UploadFileDTO();
+   		uploadFileDTO.settId(tId);
+   		uploadFileDTO.setFileName(originalFilename);
+   		uploadFileDTO.setFilePath(path);
+   		uploadFileDTO.setFileSize(size);
+   		uploadFileDTO.setModuleType(fileModule);
+   		uploadFileDTO.setStoreName(storeName);
+   		uploadFileDTO.setStorageTime(new java.util.Date());
+   		uploadFileDTO.setCreateBy(createAccount);
+   		uploadFileDTO.setCreateTime(new Date());
+   		uploadFileDTO.setFileType(fileType);
+   		// 上传文件记录入库
+   		Integer fileId = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFileDataReturnId", Integer.class, uploadFileDTO);
+   		//插入关联表数据
+   		FilerelationDTO filerelationDTO = new FilerelationDTO();
+   		filerelationDTO.setFileId(fileId);
+   		filerelationDTO.setCode(code);
+   		Integer num = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFilerelationData", Integer.class, filerelationDTO);
+   		
+   		if (fileId != null) {
+   			UploadFileVO uploadFileVO = new UploadFileVO();
+   			uploadFileVO.setFileId(uploadFileDTO.getId());
+   			uploadFileVO.setFileName(originalFilename);
+   			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+   			msg.setDescription(Constant.MESSAGE_STRING_SUCCESS);
+   			msg.setData(uploadFileVO);
+   		} else {
+   			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+   			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
+   		}
+		return msg.toJson();
+	}
+	
 	@RequestMapping(value = "/queryPolicyScheme.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "控漏损策略方案查询接口", notes = "控漏损策略方案查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryPolicyScheme(@RequestBody PolicySchemeDTO policySchemeDTO) {
+    public String queryPolicyScheme(@RequestBody PolicySchemeDTO policySchemeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		try {
-			List<PolicySchemeVO> policySchemeList = ADOConnection.runTask(ps, "queryPolicyScheme",List.class,policySchemeDTO);
+			List<PolicySchemeVO> policySchemeList = ADOConnection.runTask(user.getEnv(),ps, "queryPolicyScheme",List.class,policySchemeDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 			msg.setData(policySchemeList);
 		}catch(Exception e) {
@@ -1187,7 +1405,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryPolicy.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "控漏损策略设置查询接口", notes = "控漏损策略设置查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryPolicy(@RequestBody PolicySchemeDTO policySchemeDTO) {
+    public String queryPolicy(@RequestBody PolicySchemeDTO policySchemeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(policySchemeDTO.getCode() == null || policySchemeDTO.getCode().equals("")) {
@@ -1199,9 +1417,9 @@ public class LeakageControlController {
 		}
 
 		try {
-			List<PolicySchemeVO> policySchemeList = ADOConnection.runTask(ps, "queryPolicyScheme",List.class,policySchemeDTO);
+			List<PolicySchemeVO> policySchemeList = ADOConnection.runTask(user.getEnv(),ps, "queryPolicyScheme",List.class,policySchemeDTO);
 			if(policySchemeList != null && policySchemeList.size() != 0) {
-				List<Policy> policyList = ADOConnection.runTask(ps, "queryPolicySetting",List.class,policySchemeList.get(0).getCode());
+				List<Policy> policyList = ADOConnection.runTask(user.getEnv(),ps, "queryPolicySetting",List.class,policySchemeList.get(0).getCode());
 				if(policyList != null && policyList.size() != 0) {
 					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 					msg.setData(policyList);
@@ -1226,7 +1444,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/addPolicy.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "控漏损策略设置增加接口", notes = "控漏损策略增加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String addPolicy(@RequestBody PolicyDTO policyDTO) {
+    public String addPolicy(@RequestBody PolicyDTO policyDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		PolicySchemeDTO policySchemeDTO = policyDTO.getPolicySchemeDTO();
 		List<PolicySettingDTO> policySettingDTOList = policyDTO.getPolicySettingDTOList();
@@ -1245,11 +1463,11 @@ public class LeakageControlController {
 			//产生编码 
 			String code = UUID.randomUUID().toString();
 			policySchemeDTO.setCode(code);
-			Integer schemeNum = ADOConnection.runTask(ps, "addPolicyScheme",Integer.class,policySchemeDTO);
+			Integer schemeNum = ADOConnection.runTask(user.getEnv(),ps, "addPolicyScheme",Integer.class,policySchemeDTO);
 			if(schemeNum > 0) {
 				for(PolicySettingDTO policySettingDTO : policySettingDTOList) {
 					policySettingDTO.setPolicyCode(code);
-					Integer settingNum = ADOConnection.runTask(ps, "addPolicySetting",Integer.class,policySettingDTO);
+					Integer settingNum = ADOConnection.runTask(user.getEnv(),ps, "addPolicySetting",Integer.class,policySettingDTO);
 					if(settingNum > 0) {
 						msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 						msg.setDescription("添加成功");
@@ -1275,7 +1493,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/deletePolicy.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "控漏损策略删除接口", notes = "控漏损策略删除接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deletePolicy(String code) {
+    public String deletePolicy(String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		if(code == null || code.equals("")) {
@@ -1286,9 +1504,9 @@ public class LeakageControlController {
 		
 		try {
 			//删除方案表
-			Integer schemeNum = ADOConnection.runTask(ps, "deletePolicyScheme",Integer.class,code);
+			Integer schemeNum = ADOConnection.runTask(user.getEnv(),ps, "deletePolicyScheme",Integer.class,code);
 			if(schemeNum > 0) {
-				Integer settingNum = ADOConnection.runTask(ps, "deletePolicySetting",Integer.class,code);
+				Integer settingNum = ADOConnection.runTask(user.getEnv(),ps, "deletePolicySetting",Integer.class,code);
 				if(settingNum > 0) {
 					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 					msg.setDescription("删除成功");
@@ -1313,7 +1531,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/updatePolicyScheme.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "控漏损策略方案修改接口", notes = "控漏损策略方案修改接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updatePolicyScheme(@RequestBody PolicySchemeDTO policySchemeDTO) {
+    public String updatePolicyScheme(@RequestBody PolicySchemeDTO policySchemeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		if(policySchemeDTO.getCode() == null || policySchemeDTO.getCode().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -1337,25 +1555,24 @@ public class LeakageControlController {
 	@RequestMapping(value = "/updatePolicy.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "控漏损策略修改接口", notes = "控漏损策略修改接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updatePolicy(@RequestBody List<PolicySettingDTO> policySettingDTOList) {
+    public String updatePolicy(@RequestBody PolicyDTO policyDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		try {
-			for(PolicySettingDTO policySettingDTO : policySettingDTOList) {
-				if(policySettingDTO.getPolicyCode() != null || policySettingDTO.getPolicyCode().equals("")) {
+			for(PolicySettingDTO policySettingDTO : policyDTO.getPolicySettingDTOList()) {
+				if(policySettingDTO.getPolicyCode() == null || policySettingDTO.getPolicyCode().equals("")) {
 					msg.setCode(Constant.MESSAGE_INT_ERROR);
 			        msg.setDescription("方案编码为空"); 
 			        return msg.toJson();
 				}
-				
-				Integer num = ADOConnection.runTask(ps, "updatePolicySetting",Integer.class,policySettingDTO);
-				if(num > 0) {
-					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					msg.setDescription("修改成功");
-				}else {
-					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					msg.setDescription("无数据修改");
-				}
+			}
+			Integer num = ADOConnection.runTask(user.getEnv(),ps, "updatePolicySetting",Integer.class,policyDTO.getPolicySettingDTOList());
+			if(num > 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("修改成功");
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无数据修改");
 			}
 			
 			
@@ -1370,14 +1587,14 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryEventType.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项类型查询接口", notes = "事项类型查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryEventType() {
+    public String queryEventType(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		try {
 			//通过值域查询出所有事项类型
 			DataDicDTO dataDicDTO = new DataDicDTO();
 			dataDicDTO.setDicParent("10207"); 
-			List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
+			List<DataDicVO> dataDicVoList = ADOConnection.runTask(user.getEnv(),new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
 			if(dataDicVoList != null && dataDicVoList.size() != 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setData(dataDicVoList);
@@ -1398,7 +1615,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryEventSubtype.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项子类型查询接口", notes = "事项子类型查询接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryEventSubtype(@RequestBody EventTypeDTO eventTypeDTO) {
+    public String queryEventSubtype(@RequestBody EventTypeDTO eventTypeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<EventSubtypeVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventSubtypeVO.class);
 		if(eventTypeDTO.getCode() == null || eventTypeDTO.getCode().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1409,26 +1626,37 @@ public class LeakageControlController {
 		
 		try {
 			//查询关联的子级key
-			List<DataDicRelationVO> dataDicRelationVoList = ADOConnection.runTask(eis, "querychildKey",List.class,eventTypeDTO);
+			List<DataDicRelationVO> dataDicRelationVoList = ADOConnection.runTask(user.getEnv(),eis, "querychildKey",List.class,eventTypeDTO);
 			PageInfo pageInfo = new PageInfo();
 			pageInfo.setPage(eventTypeDTO.getPage());
 			pageInfo.setSize(eventTypeDTO.getPageCount());
-			pageInfo.setTotalNumber(dataDicRelationVoList.get(0).getTotalNum());
-			List<DataDicVO> dataEventSubtype = new ArrayList<>();
-			for(DataDicRelationVO dataDicRelationVO : dataDicRelationVoList) {
-				//查询子级key的value
-				DataDicDTO dataDicDTO = new DataDicDTO();
-				dataDicDTO.setDicKey(dataDicRelationVO.getChildKey());
-				
-				List<DataDicVO> dataDicVoList = ADOConnection.runTask(new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
-				if(dataDicVoList != null && dataDicVoList.size() != 0) {
-					dataEventSubtype.add(dataDicVoList.get(0));	
+			if(dataDicRelationVoList != null && dataDicRelationVoList.size() != 0) {
+				pageInfo.setTotalNumber(dataDicRelationVoList.get(0).getTotalNum());
+				List<DataDicVO> dataEventSubtype = new ArrayList<>();
+				if(dataDicRelationVoList != null && dataDicRelationVoList.size() != 0) {
+					for(DataDicRelationVO dataDicRelationVO : dataDicRelationVoList) {
+						//查询子级key的value
+						DataDicDTO dataDicDTO = new DataDicDTO();
+						dataDicDTO.setDicKey(dataDicRelationVO.getChildKey());
+						
+						List<DataDicVO> dataDicVoList = ADOConnection.runTask(user.getEnv(),new UserServiceImpl(), "queryDataDic",List.class,dataDicDTO);
+						if(dataDicVoList != null && dataDicVoList.size() != 0) {
+							dataEventSubtype.add(dataDicVoList.get(0));	
+						}
+					}
 				}
+				EventSubtypeVO eventSubtypeVO = new EventSubtypeVO();
+				eventSubtypeVO.setEventSubtypeList(dataEventSubtype);
+				eventSubtypeVO.setQuery(pageInfo);
+				msg.setData(eventSubtypeVO);
+			}else {
+				pageInfo.setTotalNumber(0);
+				EventSubtypeVO eventSubtypeVO = new EventSubtypeVO();
+				List<DataDicVO> dataEventSubtype = new ArrayList<>();
+				eventSubtypeVO.setEventSubtypeList(dataEventSubtype);
+				eventSubtypeVO.setQuery(pageInfo);
+				msg.setData(eventSubtypeVO);
 			}
-			EventSubtypeVO eventSubtypeVO = new EventSubtypeVO();
-			eventSubtypeVO.setEventSubtypeList(dataEventSubtype);
-			eventSubtypeVO.setQuery(pageInfo);
-			msg.setData(eventSubtypeVO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {
@@ -1442,12 +1670,12 @@ public class LeakageControlController {
 	@RequestMapping(value = "/addEventSubtype.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项子类型添加接口", notes = "事项子类型添加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String addEventSubtype(@RequestBody EventSubTypeDTO eventSubTypeDTO) {
+    public String addEventSubtype(@RequestBody EventSubTypeDTO eventSubTypeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		try {
 			//添加子类型
-			Integer num = ADOConnection.runTask(eis, "addEventSubType", Integer.class, eventSubTypeDTO);
+			Integer num = ADOConnection.runTask(user.getEnv(),eis, "addEventSubType", Integer.class, eventSubTypeDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {
@@ -1461,7 +1689,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/deleteEventSubtype.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "事项子类型删除接口", notes = "事项子类型删除接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteEventSubtype(String key) {
+    public String deleteEventSubtype(String key,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		if(key == null || key.equals("")) {
@@ -1471,7 +1699,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(eis, "deleteEventSubType", Integer.class, key);
+			Integer num = ADOConnection.runTask(user.getEnv(),eis, "deleteEventSubType", Integer.class, key);
 			if(num > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("事项子类型删除成功");
@@ -1492,11 +1720,11 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryWarningCodeList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询报警编码列表接口", notes = "查询报警编码列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryWarningCodeList(@RequestBody WarningInfDTO warningInfDTO) {
+    public String queryWarningCodeList(@RequestBody WarningInfDTO warningInfDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		try {
-			List<AlarmMessageVO> list = ADOConnection.runTask(ams, "queryWarningCodeList", List.class, warningInfDTO);
+			List<AlarmMessageVO> list = ADOConnection.runTask(user.getEnv(),ams, "queryWarningCodeList", List.class, warningInfDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 			
@@ -1511,11 +1739,11 @@ public class LeakageControlController {
 	@RequestMapping(value = "/addEventWarnRelation.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警处理任务工单添加事项关联", notes = "预警处理任务工单添加事项关联", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String addEventWarnRelation(@RequestBody EventWarnRelationDTO eventWarnRelationDTO) {
+    public String addEventWarnRelation(@RequestBody EventWarnRelationDTO eventWarnRelationDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		try {
-			Integer num = ADOConnection.runTask(eis, "addEventWarnRelation", Integer.class, eventWarnRelationDTO.getEventWarnRelationList());
+			Integer num = ADOConnection.runTask(user.getEnv(),eis, "addEventWarnRelation", Integer.class, eventWarnRelationDTO.getEventWarnRelationList());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {
@@ -1526,20 +1754,22 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	
+	
 	@RequestMapping(value = "/queryEventWarnRelation.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警处理任务工单查询关联事项", notes = "预警处理任务工单查询关联事项", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryEventWarnRelation(@RequestBody EventWarnRelation eventWarnRelation) {
+    public String queryEventWarnRelation(@RequestBody EventWarnRelation eventWarnRelation,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		if(eventWarnRelation.getProcessCode() == null || eventWarnRelation.getProcessCode().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("预警处理任务编码为空");
-	        return msg.toJson();
+	        return msg.toJson(); 
 		}
 		
 		try {
-			List<EventWarnRelation> list = ADOConnection.runTask(eis, "queryEventWarnRelation", List.class, eventWarnRelation.getProcessCode());
+			List<EventWarnRelation> list = ADOConnection.runTask(user.getEnv(),eis, "queryEventWarnRelation", List.class, eventWarnRelation.getProcessCode());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 			
@@ -1554,7 +1784,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/deleteEventWarnRelation.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警处理任务工单删除关联事项", notes = "预警处理任务工单删除关联事项", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteEventWarnRelation(@RequestBody EventWarnRelation eventWarnRelation) {
+    public String deleteEventWarnRelation(@RequestBody EventWarnRelation eventWarnRelation,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		if(eventWarnRelation.getProcessCode() == null || eventWarnRelation.getProcessCode().equals("")) {
@@ -1569,7 +1799,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			Integer num = ADOConnection.runTask(eis, "deleteEventWarnRelation", Integer.class, eventWarnRelation.getProcessCode(),eventWarnRelation.getEventCode());
+			Integer num = ADOConnection.runTask(user.getEnv(),eis, "deleteEventWarnRelation", Integer.class, eventWarnRelation.getProcessCode(),eventWarnRelation.getEventCode());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -1582,7 +1812,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryRecommendStrategy.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "获取推荐策略信息", notes = "获取推荐策略信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryRecommendStrategy(@RequestBody AlarmProcessDTO alarmProcessDTO) {
+    public String queryRecommendStrategy(@RequestBody AlarmProcessDTO alarmProcessDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		if(alarmProcessDTO.getRecommendStrategy() == null || alarmProcessDTO.getRecommendStrategy().equals("")) {
@@ -1592,7 +1822,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			String num = ADOConnection.runTask(eis, "getEstimatedTime", String.class, alarmProcessDTO.getRecommendStrategy());
+			String num = ADOConnection.runTask(user.getEnv(),eis, "getEstimatedTime", String.class, alarmProcessDTO.getRecommendStrategy());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(num);
 			
@@ -1604,7 +1834,64 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	/**
+	 * 下载事项模板 
+	 * @param fileId
+	 * @param response
+	 * @param request
+	 */
+	@RequestMapping(value = "/downloadFileByFileId.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
+    @ResponseBody
+    public void downloadFileByFileId(HttpServletResponse response, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        UploadFileDTO data = ADOConnection.runTask(user.getEnv(),eis, "queryFileDataById", UploadFileDTO.class, 56); 
+        //调用文件工具类下载文件
+        if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
+    }
 	
+	@RequestMapping(value = "/queryZoneTree.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "获取预警方案分区树", notes = "获取预警方案分区树", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZoneTree() {
+		
+		return null;
+	}
 	
+	/**
+	 * 工单和事项下载
+	 * @param response
+	 * @param request
+	 * @param user
+	 */
+	@RequestMapping(value = "/downloadFileById.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
+    @ResponseBody
+    public void downloadFileByCode(@RequestParam("id") Integer id,HttpServletResponse response, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		//
+        UploadFileDTO data = ADOConnection.runTask(user.getEnv(),eis, "queryFileDataById", UploadFileDTO.class, id); 
+        //调用文件工具类下载文件
+        if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
+    }
+	
+	@RequestMapping(value = "/queryEventInfoFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询事项信息文件接口", notes = "查询事项信息文件接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryEventInfoFile(@RequestBody QueryEventFileDTO queryEventFileDTO, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(queryEventFileDTO.getCode() == null || queryEventFileDTO.getCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", List.class, queryEventFileDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
+	}
 	
 }

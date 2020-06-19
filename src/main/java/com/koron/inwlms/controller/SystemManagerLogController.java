@@ -20,6 +20,7 @@ import org.swan.bean.MessageBean;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.sysManager.LoginLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryIntegrationLogDTO;
@@ -32,6 +33,7 @@ import com.koron.inwlms.bean.VO.sysManager.OperateLogVO;
 import com.koron.inwlms.bean.VO.sysManager.PageIntegrationLogListVO;
 import com.koron.inwlms.bean.VO.sysManager.PageLoginLogListVO;
 import com.koron.inwlms.bean.VO.sysManager.PageOperateLogListVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.sysManager.LogService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.util.Constant;
@@ -47,10 +49,9 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "systemManagerLog",description = "日志管理Controller")
-@RequestMapping(value = "/systemManagerLog")
+@RequestMapping(value = "/{tenantID}/systemManagerLog")
 public class SystemManagerLogController {
 
-	//TODO 权限
 	@Autowired
 	private LogService logService;
 	
@@ -62,7 +63,7 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/querySysLoginLog.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询登录日志接口", notes = "查询登录日志接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryLoginLog(@RequestBody QueryLoginLogDTO 	queryLoginLogDTO) {
+    public String queryLoginLog(@RequestBody QueryLoginLogDTO queryLoginLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(queryLoginLogDTO.getPage() == null || queryLoginLogDTO.getPage() <0 || queryLoginLogDTO.getPage() == 0) {
 			queryLoginLogDTO.setPage(1);
 		}
@@ -94,7 +95,7 @@ public class SystemManagerLogController {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间大于结束时间", Integer.class).toJson();
 		}
 		
-		if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType())||queryLoginLogDTO.getType().equals("L102110001")) {
+		if(queryLoginLogDTO.getType()==null || StringUtils.isBlank(queryLoginLogDTO.getType()) || queryLoginLogDTO.getType().equals("L102110001")) {
 			queryLoginLogDTO.setType(null);
 		}else if(!queryLoginLogDTO.getType().equals("L102110002") && !queryLoginLogDTO.getType().equals("L102110003")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“全部、登入或登出”", Integer.class).toJson();
@@ -102,7 +103,7 @@ public class SystemManagerLogController {
 		MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		//执行查询登录日志 
 		try {
-			PageListVO loginLogList=ADOConnection.runTask(logService, "queryLoginLog", PageListVO.class, queryLoginLogDTO);
+			PageListVO loginLogList=ADOConnection.runTask(user.getEnv(),logService, "queryLoginLog", PageListVO.class, queryLoginLogDTO);
 			if(loginLogList != null && loginLogList.getRowNumber() > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("查询到相关日志的信息"); 
@@ -127,10 +128,10 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/addSysLoginLog.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "添加登录日志接口",notes = "添加登录日志接口", httpMethod = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String addLoginLog(@RequestBody LoginLogDTO loginLogDTO) {
+	public String addLoginLog(@RequestBody LoginLogDTO loginLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);
 		try {
-			Integer addRes = ADOConnection.runTask(logService, "addLoginLog",Integer.class,loginLogDTO);
+			Integer addRes = ADOConnection.runTask(user.getEnv(),logService, "addLoginLog",Integer.class,loginLogDTO);
 			if(addRes!=null) {
 				if(addRes==1) {
 					//添加登录日志成功
@@ -157,7 +158,7 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/downloadLoginLogList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载登录日志列表数据", notes = "下载登录日志列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadLoginLogList(@RequestParam(value = "objValue") String objValue,@RequestParam(value = "titleInfos") String titleInfos) {
+	public HttpEntity<?> downloadLoginLogList(@RequestParam(value = "objValue") String objValue,@RequestParam(value = "titleInfos") String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -196,7 +197,7 @@ public class SystemManagerLogController {
 			queryLoginLogDTO.setPage(1);
 			queryLoginLogDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<LoginLogVO>> pageBean = ADOConnection.runTask(logService, "queryLoginLog", PageListVO.class,queryLoginLogDTO);
+			PageListVO<List<LoginLogVO>> pageBean = ADOConnection.runTask(user.getEnv(),logService, "queryLoginLog", PageListVO.class,queryLoginLogDTO);
 			if(pageBean.getRowNumber() == 0) {
 				return new HttpEntity<String>("无数据可下载");
 			}
@@ -219,7 +220,7 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/querySysOperateLog.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询操作日志接口", notes = "查询操作日志接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryOperateLog(@RequestBody QueryOperateLogDTO queryOperateLogDTO) {
+    public String queryOperateLog(@RequestBody QueryOperateLogDTO queryOperateLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(queryOperateLogDTO.getPage() == null || queryOperateLogDTO.getPage() <0 || queryOperateLogDTO.getPage() == 0) {
 			queryOperateLogDTO.setPage(1);
 		}
@@ -251,17 +252,17 @@ public class SystemManagerLogController {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!开始时间大于结束时间", Integer.class).toJson();
 		}
 		
-		if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType()) || queryOperateLogDTO.getOperateType().equals("L102100001")) {
+		if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType()) || queryOperateLogDTO.getOperateType().equals("L102120001")) {
 			queryOperateLogDTO.setOperateType(null);
-		}else if(!queryOperateLogDTO.getOperateType().equals("L102100002") && !queryOperateLogDTO.getOperateType().equals("L102100003") && 
-				!queryOperateLogDTO.getOperateType().equals("L102100004")) {
+		}else if(!queryOperateLogDTO.getOperateType().equals("L102120002") && !queryOperateLogDTO.getOperateType().equals("L102120003") && 
+				!queryOperateLogDTO.getOperateType().equals("L102120004")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“全部、新增、删除或修改”", Integer.class).toJson();
 		} 
 		
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询操作日志
 		 try {
-			 PageListVO operateLogList=ADOConnection.runTask(logService, "queryOperateLog", PageListVO.class, queryOperateLogDTO);
+			 PageListVO operateLogList=ADOConnection.runTask(user.getEnv(),logService, "queryOperateLog", PageListVO.class, queryOperateLogDTO);
 			 if(operateLogList != null && operateLogList.getRowNumber() > 0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关日志的信息"); 
@@ -287,22 +288,19 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/addSysOperateLog.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "添加操作日志接口",notes = "添加操作日志接口", httpMethod = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String addOperateLog(@RequestBody OperateLogDTO operateLogDTO) {
+	public String addOperateLog(@RequestBody OperateLogDTO operateLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(operateLogDTO.getOperateModuleNo()==null || StringUtils.isBlank(operateLogDTO.getOperateModuleNo())) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作对象不能为空", Integer.class).toJson();
 		}
-		
 		if(operateLogDTO.getOperateType()==null || StringUtils.isBlank(operateLogDTO.getOperateType())) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型不能为空", Integer.class).toJson();
-		}else if(!operateLogDTO.getOperateType().equals("L102100002") && !operateLogDTO.getOperateType().equals("L102100003") && 
-				!operateLogDTO.getOperateType().equals("L102100004") && !operateLogDTO.getOperateType().equals("查询")) {
+		}else if(!operateLogDTO.getOperateType().equals("L102120002") && !operateLogDTO.getOperateType().equals("L102120003") && 
+				!operateLogDTO.getOperateType().equals("L102120004") && !operateLogDTO.getOperateType().equals("查询")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“增加、删除、修改”", Integer.class).toJson();
 		} 
-		
-		
 		MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);
 		try {
-			Integer insertRes = ADOConnection.runTask(logService, "addOperateLog",Integer.class,operateLogDTO);
+			Integer insertRes = ADOConnection.runTask(user.getEnv(),logService, "addOperateLog",Integer.class,operateLogDTO);
 			if(insertRes!=null) {
 				if(insertRes==1) {
 					//添加操作日志成功
@@ -330,7 +328,7 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/downloadOperateLogList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载操作日志列表数据", notes = "下载操作日志列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadOperateLogList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadOperateLogList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -361,15 +359,15 @@ public class SystemManagerLogController {
 			}
 			if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType()) || queryOperateLogDTO.getOperateType().equals("L102100001")) {
 				queryOperateLogDTO.setOperateType(null);
-			}else if(!queryOperateLogDTO.getOperateType().equals("L102100002") && !queryOperateLogDTO.getOperateType().equals("L102100003") && 
-					!queryOperateLogDTO.getOperateType().equals("L102100004")) {
+			}else if(!queryOperateLogDTO.getOperateType().equals("L102120002") && !queryOperateLogDTO.getOperateType().equals("L102120003") && 
+					!queryOperateLogDTO.getOperateType().equals("L102120004")) {
 				return new HttpEntity<String>("参数错误!操作类型必须是“全部、增加、删除或修改”");
 			} 
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			queryOperateLogDTO.setPage(1);
 			queryOperateLogDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageOperateLogListVO pageBean = ADOConnection.runTask(logService, "downloadOperateLogList", PageOperateLogListVO.class,queryOperateLogDTO);
+			PageOperateLogListVO pageBean = ADOConnection.runTask(user.getEnv(),logService, "downloadOperateLogList", PageOperateLogListVO.class,queryOperateLogDTO);
 			if(pageBean.getRowNumber() == 0) {
 				return new HttpEntity<String>("无数据可下载");
 			}
@@ -392,7 +390,7 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/querySysIntegrationLog.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询集成日志接口", notes = "查询集成日志接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryIntegrationLog(@RequestBody QueryIntegrationLogDTO queryIntegrationLogDTO) {
+    public String queryIntegrationLog(@RequestBody QueryIntegrationLogDTO queryIntegrationLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		
 		if(queryIntegrationLogDTO.getPage() == null || queryIntegrationLogDTO.getPage() <0 || queryIntegrationLogDTO.getPage() == 0) {
 			queryIntegrationLogDTO.setPage(1);
@@ -433,7 +431,7 @@ public class SystemManagerLogController {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询集成日志
 		 try {
-			 PageListVO integrationLogList=ADOConnection.runTask(logService, "queryIntegrationLog", PageListVO.class, queryIntegrationLogDTO);
+			 PageListVO integrationLogList=ADOConnection.runTask(user.getEnv(),logService, "queryIntegrationLog", PageListVO.class, queryIntegrationLogDTO);
 			 if(integrationLogList != null && integrationLogList.getRowNumber() > 0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关日志的信息"); 
@@ -459,7 +457,7 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/downloadIntegrationLogList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载集成日志列表数据", notes = "下载集成日志列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadIntegrationLogList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadIntegrationLogList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -501,7 +499,7 @@ public class SystemManagerLogController {
 			queryIntegrationLogDTO.setPage(1);
 			queryIntegrationLogDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageIntegrationLogListVO pageBean = ADOConnection.runTask(logService, "downloadIntegrationLogList", PageIntegrationLogListVO.class,queryIntegrationLogDTO);
+			PageIntegrationLogListVO pageBean = ADOConnection.runTask(user.getEnv(),logService, "downloadIntegrationLogList", PageIntegrationLogListVO.class,queryIntegrationLogDTO);
 			if (pageBean.getRowNumber() == 0 ) {
 				return new HttpEntity<String>("无数据可下载");
 			}

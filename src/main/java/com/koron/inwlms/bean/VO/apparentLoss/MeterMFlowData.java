@@ -12,6 +12,8 @@ public class MeterMFlowData {
 	private String month;
 	
 	private Double flux;
+	
+	private Integer meterDn;
 
 	public String getCode() {
 		return code;
@@ -35,6 +37,14 @@ public class MeterMFlowData {
 
 	public void setFlux(Double flux) {
 		this.flux = flux;
+	}
+
+	public Integer getMeterDn() {
+		return meterDn;
+	}
+
+	public void setMeterDn(Integer meterDn) {
+		this.meterDn = meterDn;
 	}
 	
 }

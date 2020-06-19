@@ -8,12 +8,13 @@
     </insert>
      <!-- 查询相关职员信息 -->
     <select id="queryUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-      select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,"user".position,case when "user".sex is null then -1 else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
+      select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,case when "user"."email" is null then '' else "user"."email" end,"user".name,"position".name as position, "user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
 	  "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
        else string_agg(distinct("dept".name),';') end as "depname","user".code  as code    
 	   from sm_user as "user"       
 	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
-	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"      
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
+	   left join sm_position as "position" on "user".position = "position".code      
        <trim prefix="where" prefixOverrides="and|or">
 		<if test="name != null  and name !='' "> and "user".name like '%'||#{name}||'%'</if>  
    	    <if test="depName != null  and depName !='' "> and "dept".name like '%'||#{depName}||'%'</if>
@@ -26,11 +27,42 @@
    	    <if test="code != null"> and "user"."code" = #{code}</if>         
 	  </trim>
 	   group by "user".id ,"user"."loginName","user".phone,"user"."email",
-		"user".name,"user".position,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
+		"user".name,"position".name,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
 		"user"."createBy","user"."createTime"
 	   order by "user"."createTime" desc
 	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
+    
+    <select id="queryUserDetail"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+      select 
+      <if test="mainDeptFlag != null">
+      "user".id as "userId","user"."loginName","user".phone,"user"."email","user".name,"dept".name as "depName","dept".code as "depCode",
+	   "user".sex,"user".photo,"user"."openID","user"."workNo","position".name as position,"position".code as "positionCode","user".code
+	   from sm_user as "user"
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
+	   left join sm_position as "position" on "user".position = "position".code
+	   where "user".code = #{code} and "userdept"."mainDeptFlag" = 0
+	   </if> 
+	   <if test="mainDeptFlag == null">
+      	"user".id as "userId","user"."loginName","user".phone,"user"."email","user".name,
+	   	"user".sex,"user".photo,"user"."openID","user"."workNo","position".name as position,"position".code as "positionCode","user".code
+	   	from sm_user as "user"
+	   	left join sm_position as "position" on "user".position = "position".code
+	   	where "user".code = #{code} 
+	   </if> 
+    </select>
+    
+    <!-- 查询职员是否有主职部门 -->
+    <select id="queryUserMainDept"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO"  resultType="java.lang.Integer">
+       select count(*)
+	   from sm_user as "user"
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
+	   where "userdept"."mainDeptFlag" = 0   and "user"."code" = #{code}
+    </select>
+    
+    
     
     <!-- 查询相关职员信息总条数 -->
     <select id="getUserCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO" resultType="java.lang.Integer">
@@ -55,11 +87,12 @@
 		<set>	    
              <if test="name != null  and name !=''" > name = #{name},  </if>                       
              <if test="loginName != null and loginName !=''" > "loginName" = #{loginName},</if>                                 
-             <if test="sex != null" >sex = #{sex,jdbcType=INTEGER}, </if>                        
-             <if test="email != null and email != ''" > "email" = #{email}, </if>               
+             <if test="sex != null" >sex = #{sex}, </if>                        
+             <if test="email != null " > "email" = #{email}, </if>               
              <if test="updateBy != null and updateBy!=''" >  "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if>  
-             <if test="status != null" > status = #{status},  </if>               
+             <if test="status != null" > status = #{status},  </if>  
+             <if test="position != null" > position = #{position},  </if>             
 		</set>
 		where code=#{code}
      </update>
@@ -621,8 +654,18 @@
 		 <if test="depName != null"> and "dept".name like '%'||#{depName}||'%'</if>  
 		 <if test="status != null"> and "dept".status=#{status}</if>         
 	   </trim>
-	    limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
       </select>
+      
+       <!--查询职位接口-->
+     <select id="queryPosition"  parameterType="com.koron.inwlms.bean.DTO.sysManager.PositionDTO" resultType="com.koron.inwlms.bean.VO.sysManager.PositionVO">
+         select *
+         from sm_position
+         where sm_position.status = 'L102130001'
+      </select>
+      
+      
+      
+      
        <!--模糊查询部门接口部门总数量-->
       <select id="getDeptCount"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="java.lang.Integer">
          select count(*)

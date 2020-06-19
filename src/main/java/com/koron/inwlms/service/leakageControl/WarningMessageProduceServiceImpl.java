@@ -16,6 +16,7 @@ import com.koron.inwlms.bean.DTO.common.Indicator;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.RecommendStrategy;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
@@ -25,6 +26,8 @@ import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
+import com.koron.inwlms.bean.VO.leakageControl.PointHourData;
 import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
@@ -33,6 +36,8 @@ import com.koron.inwlms.mapper.common.CommonMapper;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
+import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
+import com.koron.inwlms.mapper.leakageControl.EconomicIndicatorMapper;
 import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
 import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
@@ -57,20 +62,21 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 	}
 	
 	 /**
-	  * 监测点类型报警（实时）
+	  * 监测点类型报警（实时）(压力流量)
 	  */
+	@TaskAnnotation("startPointWarning")
+	@Override
 	public String startPointWarning(SessionFactory factory,List<MinMonitorPoint> minMonitorPointList) {
-		//TODO 获取测点数据的精度
+		//获取测点数据的精度
 		CommonMapper commonMapper = factory.getMapper(CommonMapper.class);
 		Indicator forwardSpeed = commonMapper.queryIndicatorByCode(Constant.INDICATOR_FORWARDSPEED);
 		BigInteger precision = new BigInteger(forwardSpeed.getPrecision().toString());
 		
-		//TODO 对象类型为压力/流量监测点的预警方案
+		//对象类型为压力/流量监测点的预警方案
 		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
 		WarningSchemeDTO warningSchemeDTO = new WarningSchemeDTO();
 		warningSchemeDTO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
 		List<WarningSchemeVO> warningSchemeList = mapper.queryWarningScheme(warningSchemeDTO);
-		Boolean warningFlag = true;
 		String dataCode = "";
 		for(WarningSchemeVO warningScheme : warningSchemeList) {
 			
@@ -96,6 +102,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			double max = 0.0;
 			double min = 0.0;	
 			List<AlarmRuleDTO> alarmRuleList = mapper.queryAlarmRuleByAlarmCode(warningScheme.getCode());
+			List<AlertNoticeSchemeVO> alertNoticeSchemeList = mapper.queryNoticeSchemeByWarningCode(warningScheme.getCode());
 			//超限报警
 			if(warningScheme.getAlarmType().equals(Constant.DATADICTIONARY_OVERRUN)) {
 				//固定限值
@@ -117,39 +124,25 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 							if(monitorPointData < min || monitorPointData > max) {
 								//产生预警信息
 								String warningCode = "PCX" + new Date().getTime();
-								AlarmMessageVO alarmMessageVO = new AlarmMessageVO();
-								alarmMessageVO.setSchemeCode(warningScheme.getCode());
-								alarmMessageVO.setAlarmSchemeName(warningScheme.getName());
-								alarmMessageVO.setAlarmType(warningScheme.getAlarmType());
-								alarmMessageVO.setObjectType(warningScheme.getObjectType());
-								alarmMessageVO.setAlarmTime(new Date());
-								alarmMessageVO.setCode(warningCode);
-								//产生主报警编码
-								String pointCode = warningScheme.getCode() + minMonitorPoint.getCode(); 
-								alarmMessageVO.setPointCode(pointCode);
-								//TODO 填入监测点信息(缺失分区编码)
-								alarmMessageVO.setObjectCode(minMonitorPoint.getStationCode());
-								//TODO 查询监测点的检测用途（若是表不加这个字段则无需该步骤）
+								addwarningMessage(factory,warningScheme,minMonitorPoint,warningCode);
 								
-								//预警信息入库
-								AlarmMessageMapper alarmMessageMapper = factory.getMapper(AlarmMessageMapper.class);
-								alarmMessageMapper.addWarningInf(alarmMessageVO);
+								//判断是否需要产生预警信息处理任务
 								
-								//TODO 判断是否需要产生预警信息处理任务
-								List<AlertNoticeSchemeVO> alertNoticeSchemeList = mapper.queryNoticeSchemeByWarningCode(warningScheme.getCode());
 								if(alertNoticeSchemeList != null || alertNoticeSchemeList.size() != 0) {
-									//TODO 产生预警信息处理任务编码
-									
+									//产生预警信息处理任务编码
 									AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
 									alarmProcessVO.setWarningCode(warningCode);
 									alarmProcessVO.setAlarmType(warningScheme.getAlarmType());
 									alarmProcessVO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
 									alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
 									alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
-									
+								    //计算预计完成时间
+									Date expectFinishTime = TimeUtil.addDay(new Date(), Constant.POINTWARNINGPROCESS_FINSHTIME);
+									alarmProcessVO.setExpectFinishTime(expectFinishTime);
+									alarmProcessVO.setType(1);
+									alarmProcessVO.setExecutorCode(alertNoticeSchemeList.get(0).getUserName());
 									AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
-									alarmProcessMapper.addAlarmProcess(alarmProcessVO);
-									
+									alarmProcessMapper.addAlarmProcessOfPCX(alarmProcessVO);
 								}
 								
 							}
@@ -166,24 +159,93 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			//离线报警
 			if(warningScheme.getAlarmType().equals(Constant.DATADICTIONARY_OFFLINE)) {
 				//数据连续缺失时间
-				//TODO 判断数据连续缺失时间过大
-				warningFlag = false;
+				for(AlarmRuleDTO alarmRule : alarmRuleList) {
+					max = alarmRule.getConstant();
+				}
+				int time = (int) max;
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
+				Date nowDate = new Date();
+				String nowDateStr = format.format(nowDate);
+				try {
+					nowDate = format.parse(nowDateStr);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				//产生报警的范围
+				Date startDate = TimeUtil.addHour(nowDate, -time);
+				// 判断数据连续缺失时间过大
+				//查询报警范围内监测点数据
+				BasicDataMapper basicDataMapper = factory.getMapper(BasicDataMapper.class);
+				for(MinMonitorPoint minMonitorPoint : minMonitorPointList) {
+					String stationCode = minMonitorPoint.getStationCode();
+					BasicDataParam basicDataParam = new BasicDataParam();
+					basicDataParam.setStationCode(stationCode);
+					basicDataParam.setStartTime(startDate);
+					basicDataParam.setEndTime(nowDate);
+					List<PointHourData> pointHourDataList = basicDataMapper.queryPointHourDataByTime(basicDataParam);
+					if(pointHourDataList != null && pointHourDataList.size() != 0) {
+						continue;
+					}else {
+						//报警
+						//产生预警信息
+						String warningCode = "PLX" + new Date().getTime();
+						addwarningMessage(factory,warningScheme,minMonitorPoint,warningCode);
+						
+						if(alertNoticeSchemeList != null || alertNoticeSchemeList.size() != 0) {
+							//产生预警信息处理任务编码
+							AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
+							alarmProcessVO.setWarningCode(warningCode);
+							alarmProcessVO.setAlarmType(warningScheme.getAlarmType());
+							alarmProcessVO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
+							alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
+							alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
+						    //计算预计完成时间
+							Date expectFinishTime = TimeUtil.addDay(new Date(), Constant.POINTWARNINGPROCESS_FINSHTIME);
+							alarmProcessVO.setExpectFinishTime(expectFinishTime);
+							alarmProcessVO.setType(1);
+							alarmProcessVO.setExecutorCode(alertNoticeSchemeList.get(0).getUserName());
+							AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
+							alarmProcessMapper.addAlarmProcessOfPLX(alarmProcessVO);
+						}
+					}
+				}
 			}
 		}
 		
 		return null;
 	}
 	
+	public void addwarningMessage(SessionFactory factory,WarningSchemeVO warningScheme,MinMonitorPoint minMonitorPoint,String warningCode) {
+		AlarmMessageVO alarmMessageVO = new AlarmMessageVO();
+		alarmMessageVO.setSchemeCode(warningScheme.getCode());
+		alarmMessageVO.setAlarmSchemeName(warningScheme.getName());
+		alarmMessageVO.setAlarmType(warningScheme.getAlarmType());
+		alarmMessageVO.setObjectType(warningScheme.getObjectType());
+		alarmMessageVO.setAlarmTime(new Date());
+		alarmMessageVO.setCode(warningCode);
+		//产生主报警编码
+		String pointCode = warningScheme.getCode() + minMonitorPoint.getCode(); 
+		alarmMessageVO.setPointCode(pointCode);
+		//填入监测点信息(缺失分区编码)
+		alarmMessageVO.setObjectCode(minMonitorPoint.getStationCode());
+		//TODO 查询监测点的检测用途（若是表不加这个字段则无需该步骤）
+		
+		//预警信息入库
+		AlarmMessageMapper alarmMessageMapper = factory.getMapper(AlarmMessageMapper.class);
+		alarmMessageMapper.addWarningInf(alarmMessageVO);
+	}
+	
 	/**
 	 * 漏损报警
+	 * @throws ParseException 
 	 */
-	public String startZoneWarning(SessionFactory factory,ZoneDayData zoneDayData) {
+	public String startZoneWarning(SessionFactory factory,ZoneDayData zoneDayData) throws ParseException {
 		//获取分区数据
 		double zoneFlow = 0.0;
 		//
 		WarningSchemeMapper mapper = factory.getMapper(WarningSchemeMapper.class);
 		WarningSchemeDTO warningSchemeDTO = new WarningSchemeDTO();
-		warningSchemeDTO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
+		warningSchemeDTO.setObjectType(Constant.DATADICTIONARY_DPZONE);
 		List<WarningSchemeVO> warningSchemeList = mapper.queryWarningScheme(warningSchemeDTO);
 		for(WarningSchemeVO warningScheme : warningSchemeList) {
 			//数据指标编码
@@ -192,14 +254,26 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			//通过报警指标获取数据源数据
 			if(warningScheme.getAlarmIndex().equals(Constant.DATADICTIONARY_DAYFLOW)) {
 				zoneFlow = zoneDayData.getAllFlow();
-				dataCode = "";
+				if(zoneDayData.getZoneIndex().equals("1")) {
+					dataCode = "FLDFLOW";
+				}else if(zoneDayData.getZoneIndex().equals("2")) {
+					dataCode = "SLDFLOW";
+				}else {
+					dataCode = "DMDFLOW";
+				}
 				alarmIndexFlag = 1;
 			}else if(warningScheme.getAlarmIndex().equals(Constant.DATADICTIONARY_MINNIGFLOW)) {
 				zoneFlow = zoneDayData.getMinNigFlow();
-				dataCode = "";
+				if(zoneDayData.getZoneIndex().equals("1")) {
+					dataCode = "FLDMNF";
+				}else if(zoneDayData.getZoneIndex().equals("2")) {
+					dataCode = "SLDMNF";
+				}else {
+					dataCode = "DMDMNF"; 
+				}
+				
 				alarmIndexFlag = 2;
 			}
-			Boolean warningFlag = true;
 			//查询预警规则
 			List<AlarmRuleDTO> alarmRuleList = mapper.queryAlarmRuleByAlarmCode(warningScheme.getCode());
 			//趋势变化报警
@@ -238,28 +312,50 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 					alarmMessageVO.setCode(warningCode);
 					String pointCode = warningScheme.getCode() + zoneDayData.getZoneCode(); 
 					alarmMessageVO.setPointCode(pointCode);
-					//TODO 填入分区信息
+					// 填入分区信息
 					alarmMessageVO.setAreaCode(zoneDayData.getZoneCode());
 					
 					//TODO 判断是否需要产生预警信息处理任务
 					List<AlertNoticeSchemeVO> alertNoticeSchemeList = mapper.queryNoticeSchemeByWarningCode(warningScheme.getCode());
 					if(alertNoticeSchemeList != null || alertNoticeSchemeList.size() != 0) {
-						//TODO 产生预警信息处理任务
+						// 产生预警信息处理任务
 						AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
 						alarmProcessVO.setWarningCode(warningCode);
 						alarmProcessVO.setAlarmType(Constant.DATADICTIONARY_TRENDCHANGE);
-						alarmProcessVO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
+						alarmProcessVO.setObjectType(warningScheme.getObjectType());
 						alarmProcessVO.setAlarmContent(alarmMessageVO.getContent());
 						alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
 						alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
+						//获取推荐策略
+						//查询分区是否为DMA
 						
+						//查询投资曲线数据
+						EconomicIndicatorMapper eimapper = factory.getMapper(EconomicIndicatorMapper.class);
+						List<PartitionInvestVO> list = eimapper.queryPartitionInvest(zoneDayData.getZoneType());
+						RecommendStrategy recommendStrategy = new RecommendStrategy();
+						recommendStrategy.setK3(list.get(0).getOtherInvest());
+						recommendStrategy.setK4(list.get(0).getProjectCost());
+						//获取推荐策略
+						PolicyMapper policymapper = factory.getMapper(PolicyMapper.class);
+						recommendStrategy = policymapper.queryRecommendstrategy();
+						int zoneNum = 0;
+						if(zoneDayData.getZoneType().equals("dma")) {
+							zoneNum = 1;
+						}
+						String recomCode = getRecommendStrategy(factory, recommendStrategy, zoneDayData.getMinNigFlow(), zoneNum);
+						alarmProcessVO.setRecommendStrategy(recomCode);
+						//获取预计完成时间
+						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+						AlarmProcessServiceImpl apsi = new AlarmProcessServiceImpl();
+						String finshdate = apsi.getEstimatedTime(factory, recomCode);
+						Date finishDate = format.parse(finshdate);
+						alarmProcessVO.setExpectFinishTime(finishDate);
 						AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
-						alarmProcessMapper.addAlarmProcess(alarmProcessVO);
+						alarmProcessMapper.addAlarmProcessOfZQS(alarmProcessVO);
 					}
 					//预警信息入库
 					AlarmMessageMapper alarmMessageMapper = factory.getMapper(AlarmMessageMapper.class);
 					alarmMessageMapper.addWarningInf(alarmMessageVO);
-					warningFlag = false;
 				}
 				
 				
@@ -293,23 +389,46 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 						alarmMessageVO.setCode(warningCode);
 						String pointCode = warningScheme.getCode() + zoneDayData.getZoneCode(); 
 						alarmMessageVO.setPointCode(pointCode);
-						//TODO 填入分区信息
+						//填入分区信息
 						alarmMessageVO.setAreaCode(zoneDayData.getZoneCode());
 						
-						//TODO 判断是否需要产生预警信息处理任务
+						//判断是否需要产生预警信息处理任务
 						List<AlertNoticeSchemeVO> alertNoticeSchemeList = mapper.queryNoticeSchemeByWarningCode(warningScheme.getCode());
 						if(alertNoticeSchemeList != null || alertNoticeSchemeList.size() != 0) {
-							//TODO 产生预警信息处理任务
+							//产生预警信息处理任务
 							AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
 							alarmProcessVO.setWarningCode(warningCode);
 							alarmProcessVO.setAlarmType(Constant.DATADICTIONARY_TRENDCHANGE);
-							alarmProcessVO.setObjectType(Constant.DATADICTIONARY_OBJECTTYPE);
+							alarmProcessVO.setObjectType(warningScheme.getObjectType());
 							alarmProcessVO.setAlarmContent(alarmMessageVO.getContent());
 							alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
 							alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
+							//获取推荐策略
+							
+							//查询投资曲线数据
+							EconomicIndicatorMapper eimapper = factory.getMapper(EconomicIndicatorMapper.class);
+							List<PartitionInvestVO> list = eimapper.queryPartitionInvest(zoneDayData.getZoneType());
+							RecommendStrategy recommendStrategy = new RecommendStrategy();
+							recommendStrategy.setK3(list.get(0).getOtherInvest());
+							recommendStrategy.setK4(list.get(0).getProjectCost());
+							//获取推荐策略
+							PolicyMapper policymapper = factory.getMapper(PolicyMapper.class);
+							recommendStrategy = policymapper.queryRecommendstrategy();
+							int zoneNum = 0;
+							if(zoneDayData.getZoneType().equals("dma")) {
+								zoneNum = 1;
+							}
+							String recomCode = getRecommendStrategy(factory, recommendStrategy, zoneDayData.getMinNigFlow(), zoneNum);
+							alarmProcessVO.setRecommendStrategy(recomCode);
+							//获取预计完成时间
+							SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+							AlarmProcessServiceImpl apsi = new AlarmProcessServiceImpl();
+							String finshdate = apsi.getEstimatedTime(factory, recomCode);
+							Date finishDate = format.parse(finshdate);
+							alarmProcessVO.setExpectFinishTime(finishDate);
 							
 							AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
-							alarmProcessMapper.addAlarmProcess(alarmProcessVO);
+							alarmProcessMapper.addAlarmProcessOfZCX(alarmProcessVO);
 						}
 						//预警信息入库
 						AlarmMessageMapper alarmMessageMapper = factory.getMapper(AlarmMessageMapper.class);
@@ -325,12 +444,65 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			
 			//TODO AI报警
 			if(warningScheme.getAlarmType().equals(Constant.DATADICTIONARY_AI)) {
-				
-			}
-			
-			if(warningFlag == false) {
-				//产生预警信息
-				
+				Integer endFlag = aiWarning(factory, zoneDayData.getZoneIndex(), zoneDayData.getZoneCode());
+				if(endFlag != 0) {
+					//TODO 产生预警信息 
+					String warningCode = "ZAI" + new Date().getTime();
+					AlarmMessageVO alarmMessageVO = new AlarmMessageVO();
+					alarmMessageVO.setSchemeCode(warningScheme.getCode());
+					alarmMessageVO.setAlarmSchemeName(warningScheme.getName());
+					alarmMessageVO.setAlarmType(warningScheme.getAlarmType());
+					alarmMessageVO.setObjectType(warningScheme.getObjectType());
+					alarmMessageVO.setAlarmTime(new Date());
+					alarmMessageVO.setCode(warningCode);
+					String pointCode = warningScheme.getCode() + zoneDayData.getZoneCode (); 
+					alarmMessageVO.setPointCode(pointCode);
+					//TODO 填入分区信息
+					alarmMessageVO.setAreaCode(zoneDayData.getZoneCode());
+					
+					//TODO 判断是否需要产生预警信息处理任务
+					List<AlertNoticeSchemeVO> alertNoticeSchemeList = mapper.queryNoticeSchemeByWarningCode(warningScheme.getCode());
+					if(alertNoticeSchemeList != null || alertNoticeSchemeList.size() != 0) {
+						//TODO 产生预警信息处理任务
+						AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
+						alarmProcessVO.setWarningCode(warningCode);
+						alarmProcessVO.setAlarmType(Constant.DATADICTIONARY_TRENDCHANGE);
+						alarmProcessVO.setObjectType(warningScheme.getObjectType());
+						alarmProcessVO.setAlarmContent(alarmMessageVO.getContent());
+						alarmProcessVO.setState(Constant.DATADICTIONARY_TASKSTATUSUN);
+						alarmProcessVO.setLeadingCadre(alertNoticeSchemeList.get(0).getUserName());
+						//获取推荐策略
+						//查询分区是否为DMA
+						
+						//查询投资曲线数据
+						EconomicIndicatorMapper eimapper = factory.getMapper(EconomicIndicatorMapper.class);
+						List<PartitionInvestVO> list = eimapper.queryPartitionInvest(zoneDayData.getZoneType());
+						RecommendStrategy recommendStrategy = new RecommendStrategy();
+						recommendStrategy.setK3(list.get(0).getOtherInvest());
+						recommendStrategy.setK4(list.get(0).getProjectCost());
+						//获取推荐策略
+						PolicyMapper policymapper = factory.getMapper(PolicyMapper.class);
+						recommendStrategy = policymapper.queryRecommendstrategy();
+						int zoneNum = 0;
+						if(zoneDayData.getZoneType().equals("dma")) {
+							zoneNum = 1;
+						}
+						String recomCode = getRecommendStrategy(factory, recommendStrategy, zoneDayData.getMinNigFlow(), zoneNum);
+						alarmProcessVO.setRecommendStrategy(recomCode);
+						//获取预计完成时间
+						SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+						AlarmProcessServiceImpl apsi = new AlarmProcessServiceImpl();
+						String finshdate = apsi.getEstimatedTime(factory, recomCode);
+						Date finishDate = format.parse(finshdate);
+						alarmProcessVO.setExpectFinishTime(finishDate);
+						
+						AlarmProcessMapper alarmProcessMapper = factory.getMapper(AlarmProcessMapper.class);
+						alarmProcessMapper.addAlarmProcess(alarmProcessVO);
+					}
+					//预警信息入库
+					AlarmMessageMapper alarmMessageMapper = factory.getMapper(AlarmMessageMapper.class);
+					alarmMessageMapper.addWarningInf(alarmMessageVO);
+				}
 			}
 			
 			
@@ -386,6 +558,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 	
 	
 	public String getRecommendStrategy(SessionFactory factory,RecommendStrategy recommendStrategy, double mnf,int flag) {
+		
 		
 		String strategyCode = "";
 		
@@ -547,7 +720,10 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		
 	}
 	
-	public String aiWarning(SessionFactory factory,double maxMNF,double midMNF,double minMNF,double maxFlow,double midFlow,double minFlow) throws ParseException {
+	public Integer aiWarning(SessionFactory factory,String zoneindex,String zoneCode) throws ParseException {
+		//获取参数
+		PolicyMapper policymapper = factory.getMapper(PolicyMapper.class);
+		RecommendStrategy recommend = policymapper.queryRecommendstrategy();
 		//获取时间
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		  Date nowDate = new Date();
@@ -565,13 +741,26 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		  
 		//获取前7日的平均流量和最小夜间流量
 		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
-		//TODO 获取分区供水量的指标编码
+		//获取分区供水量的指标编码
 		String allFlowCode = "";
 		String mnfFlowCode = "";
+		if(zoneindex.equals("1")) {
+			mnfFlowCode = "FLDMNF";
+			allFlowCode = "FLDFLOW";
+		}else if(zoneindex.equals("2")) {
+			mnfFlowCode = "SLDMNF";
+			allFlowCode = "SLDFLOW";
+		}else {
+			mnfFlowCode = "DMDMNF";
+			allFlowCode = "DMDFLOW";
+		}
 		List<String> codes = new ArrayList<>();
 		codes.add(allFlowCode);
 		codes.add(mnfFlowCode);
 		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		List<String> zoneCodeList = new ArrayList<>();
+		zoneCodeList.add(zoneCode);
+		indicatorDTO.setZoneCodes(zoneCodeList);
 		indicatorDTO.setTimeType(2);
 		indicatorDTO.setCodes(codes);
 		indicatorDTO.setStartTime(start);
@@ -603,21 +792,21 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		//最小夜间流量判断标志，1为小，2为中，3为大
 		int mnfFlag = 0;
 		int flowFlag = 0;
-		if((avgMNF - avgOldMNF) >= maxMNF) {
+		if((avgMNF - avgOldMNF) >= recommend.getMaxMNF()) {
 			mnfFlag = 3;
-		}else if((avgMNF - avgOldMNF) >= midMNF) {
+		}else if((avgMNF - avgOldMNF) >= recommend.getMidMNF()) {
 			mnfFlag = 2;
-		}else if((avgMNF - avgOldMNF) >= minMNF) {
+		}else if((avgMNF - avgOldMNF) >= recommend.getMinMNF()) {
 			mnfFlag = 1;
 		}else {
 			mnfFlag = 0;
 		}
 		
-		if((avgFlow - avgOldFlow) >= maxFlow) {
+		if((avgFlow - avgOldFlow) >= recommend.getMaxFlow()) {
 			flowFlag = 3;
-		}else if((avgFlow - avgOldFlow) >= midFlow) {
+		}else if((avgFlow - avgOldFlow) >= recommend.getMidFlow()) {
 			flowFlag = 2;
-		}else if((avgFlow - avgOldFlow) >= minFlow) {
+		}else if((avgFlow - avgOldFlow) >= recommend.getMinFlow()) {
 			flowFlag = 1;
 		}else {
 			flowFlag = 0;
@@ -633,15 +822,13 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 			endFlag = mnfFlag;
 		}
 		
-		
-		return null;
+		return endFlag;
 	}
 	
 	public Double getHisAvgData(String code,int flag,IndicatorMapper indicMapper,int day) {
 		//计算时间
 		Date start = new Date();
 		Date end = TimeUtil.addDay(start, -day);
-		
 		
 		List<String> codes = new ArrayList<>();
 		codes.add(code);
@@ -651,6 +838,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		
 		if(flag == 1) {
 			List<IndicatorVO> dataList = indicMapper.queryWBBaseIndicData(indicatorDTO);
+			
 		}
 		
 		

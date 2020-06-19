@@ -16,12 +16,14 @@ import org.swan.bean.MessageBean;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.sysManager.PositionDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.PageLabelListVO;
 import com.koron.inwlms.bean.VO.sysManager.PagePositionListVO;
 import com.koron.inwlms.bean.VO.sysManager.PositionVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.sysManager.PositionService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.util.Constant;
@@ -37,7 +39,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @Api(value = "systemManagerPosition",description = "职位管理Controller层")
-@RequestMapping(value = "/systemManagerPosition")
+@RequestMapping(value = "/{tenantID}/systemManagerPosition")
 public class SystemManagerPositionController {
 	
 	@Autowired
@@ -46,7 +48,7 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/queryPosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "查询职位接口",notes = "查询职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryPosition(@RequestBody PositionDTO positionDTO) {
+	public String queryPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(positionDTO.getPage() == null || positionDTO.getPage() <0 || positionDTO.getPage() == 0) {
 			positionDTO.setPage(1);
 		}
@@ -55,7 +57,7 @@ public class SystemManagerPositionController {
 		}
 		MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		try {
-			PageListVO positionList=ADOConnection.runTask(positionService, "queryPosition", PageListVO.class, positionDTO);
+			PageListVO positionList=ADOConnection.runTask(user.getEnv(),positionService, "queryPosition", PageListVO.class, positionDTO);
 			if(positionList != null && positionList.getRowNumber() > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("查询到相关职位的信息"); 
@@ -76,13 +78,13 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/queryPositionDetail.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "查询职位详情接口",notes = "查询职位详情接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryPositionDetail(@RequestBody PositionDTO positionDTO) {
+	public String queryPositionDetail(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
 		}
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		try {
-			List<PositionVO> positionList=ADOConnection.runTask(positionService, "queryPositionDetail", List.class, positionDTO);
+			List<PositionVO> positionList=ADOConnection.runTask(user.getEnv(),positionService, "queryPositionDetail", List.class, positionDTO);
 			if(positionList.size() > 0) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				msg.setDescription("查询到相关职位的信息"); 
@@ -103,13 +105,13 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/deletePosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "删除职位接口",notes = "删除职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String deletePosition(@RequestBody PositionDTO positionDTO) {
+	public String deletePosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
 		}
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		try {
-			Integer delResult = ADOConnection.runTask(positionService, "deletePosition", Integer.class, positionDTO);
+			Integer delResult = ADOConnection.runTask(user.getEnv(),positionService, "deletePosition", Integer.class, positionDTO);
 			if(delResult != null) {
 				if(delResult == 1) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -132,19 +134,22 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/addPosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "添加职位接口",notes = "添加职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String addPosition(@RequestBody PositionDTO positionDTO) {
-		MessageBean<?>  insertRes = ADOConnection.runTask(positionService, "addPosition",MessageBean.class,positionDTO);
+	public String addPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		positionDTO.setCreateBy(user.getLoginName());
+		positionDTO.setUpdateBy(user.getLoginName());
+		MessageBean<?>  insertRes = ADOConnection.runTask(user.getEnv(),positionService, "addPosition",MessageBean.class,positionDTO);
 		return insertRes.toJson();
 	}
 	
 	@RequestMapping(value = "/updatePosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "修改职位接口",notes = "修改职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String updatePosition(@RequestBody PositionDTO positionDTO) {
+	public String updatePosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
 		}
-		MessageBean<?>  insertRes = ADOConnection.runTask(positionService, "updatePosition",MessageBean.class,positionDTO);
+		positionDTO.setUpdateBy(user.getLoginName());
+		MessageBean<?>  insertRes = ADOConnection.runTask(user.getEnv(),positionService, "updatePosition",MessageBean.class,positionDTO);
 		return insertRes.toJson();
 	}
 	
@@ -152,7 +157,7 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/downloadAllList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载职位列表数据", notes = "下载职位列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadAllList(@RequestParam String objValue,@RequestParam String titleInfos) {
+	public HttpEntity<?> downloadAllList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -164,7 +169,7 @@ public class SystemManagerPositionController {
 			positionDTO.setPage(1);
 			positionDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			PageListVO<List<PositionVO>> pageBean = ADOConnection.runTask(positionService, "queryPosition", PageListVO.class,positionDTO);
+			PageListVO<List<PositionVO>> pageBean = ADOConnection.runTask(user.getEnv(),positionService, "queryPosition", PageListVO.class,positionDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件

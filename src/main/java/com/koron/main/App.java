@@ -1,6 +1,6 @@
 package com.koron.main;
 
-import com.koron.common.PersonResolver;
+import com.koron.common.UserResolver;
 import com.koron.common.stub.ConfigCenter;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
@@ -14,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -30,6 +31,7 @@ import java.util.List;
 /**
  * 该注解指定项目为springboot，由此类当作程序入口 自动装配 web 依赖的环境
  **/
+@EnableScheduling
 @SpringBootApplication
 @ComponentScan(value = {"org.swan", "com.koron", "com.koron.main"})
 public class App extends WebMvcConfigurationSupport {
@@ -76,7 +78,8 @@ public class App extends WebMvcConfigurationSupport {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         super.addArgumentResolvers(argumentResolvers);
-        argumentResolvers.add(new PersonResolver());
+        argumentResolvers.add(new UserResolver());
+        //argumentResolvers.add(new PersonResolver());
     }
 
 
@@ -113,7 +116,8 @@ public class App extends WebMvcConfigurationSupport {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/{^[A-Za-z0-9]+$}/**").addResourceLocations("classpath:/static/");
+        //registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         super.addResourceHandlers(registry);

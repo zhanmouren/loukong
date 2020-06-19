@@ -26,7 +26,7 @@ public interface PolicyService {
 
 	Integer deletePolicySetting(SessionFactory factory, String code);
 
-	Integer updatePolicySetting(SessionFactory factory, PolicySettingDTO policyDTO);
+	Integer updatePolicySetting(SessionFactory factory, List<PolicySettingDTO> policyDTOList);
 
 	Integer addPolicyScheme(SessionFactory factory, PolicySchemeDTO policySchemeDTO);
 

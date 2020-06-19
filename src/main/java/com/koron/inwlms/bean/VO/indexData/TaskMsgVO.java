@@ -5,15 +5,16 @@ package com.koron.inwlms.bean.VO.indexData;
  *
  */
 public class TaskMsgVO {
-    //对象名称
-	public String objectName;
+    //对象编码
+	public String objectCode;
 	//报警类型
 	public String alarmType;
 	//报警详情
 	public String content;
 	//任务状态
 	public String state;
-	
+	//是否发起
+	public String initiate;
 	public String getAlarmType() {
 		return alarmType;
 	}
@@ -24,11 +25,12 @@ public class TaskMsgVO {
 		return state;
 	}
 	
-	public String getObjectName() {
-		return objectName;
+	
+	public String getObjectCode() {
+		return objectCode;
 	}
-	public void setObjectName(String objectName) {
-		this.objectName = objectName;
+	public void setObjectCode(String objectCode) {
+		this.objectCode = objectCode;
 	}
 	public void setAlarmType(String alarmType) {
 		this.alarmType = alarmType;
@@ -38,6 +40,12 @@ public class TaskMsgVO {
 	}
 	public void setState(String state) {
 		this.state = state;
+	}
+	public String getInitiate() {
+		return initiate;
+	}
+	public void setInitiate(String initiate) {
+		this.initiate = initiate;
 	}
 	
 }

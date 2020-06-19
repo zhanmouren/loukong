@@ -1,9 +1,6 @@
 package com.koron.inwlms.service.baseData.impl;
 
-import com.koron.inwlms.bean.DTO.baseInf.ZoneDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZonePointDTO;
-import com.koron.inwlms.bean.DTO.baseInf.ZonePointExcelBean;
+import com.koron.inwlms.bean.DTO.baseInf.*;
 import com.koron.inwlms.bean.VO.baseInf.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
@@ -94,15 +91,25 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
      * 分区与监测点导入历史列表数据
      *
      * @param factory
-     * @param zonePoinDTO
+     * @param zonePointDTO
      * @return
      */
     @TaskAnnotation("queryZonePointHistory")
     @Override
-    public List<ZonePointHisVO> queryZonePointHistory(SessionFactory factory,ZonePointDTO zonePoinDTO) {
+    public PageListVO<List<ZonePointHisVO>> queryZonePointHistory(SessionFactory factory,ZonePointDTO zonePointDTO) {
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
-        List<ZonePointHisVO> result = mapper.queryZonePointHistory(zonePoinDTO);
-        return result;
+        List<ZonePointHisVO> result = mapper.queryZonePointHistory(zonePointDTO);
+        PageListVO<List<ZonePointHisVO>> plv = new PageListVO<>();
+        ZonePointHisVO r = result.get(result.size()-1);
+        result.remove(result.size()-1);
+        plv.setDataList(result);
+        PageVO pageVO = PageUtil.getPageBean(zonePointDTO.getPage(), zonePointDTO.getPageCount(), r.getRows());
+        plv.setTotalPage(pageVO.getTotalPage());
+        plv.setRowNumber(pageVO.getRowNumber());
+        plv.setPageCount(pageVO.getPageCount());
+        plv.setPage(pageVO.getPage());
+
+        return plv;
     }
 
     /**
@@ -151,6 +158,17 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
     }
 
     /**
+     * 导入分区户表数据
+     */
+    @TaskAnnotation("addBatchZoneMeter")
+    @Override
+    public Integer addBatchZoneMeter(SessionFactory factory,List<ZoneMeterExcelBean> excelBeans){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer result = mapper.addBatchZoneMeter(excelBeans);
+        return result;
+    }
+
+    /**
      * 查询分区户表列表数据
      * @param factory
      * @param zoneMeterDTO
@@ -181,24 +199,33 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
      */
     @TaskAnnotation("queryZoneMeterHistory")
     @Override
-    public List<ZoneMeterHisVO> queryZoneMeterHistory(SessionFactory factory, ZoneMeterDTO zoneMeterDTO){
+    public PageListVO<List<ZoneMeterHisVO>> queryZoneMeterHistory(SessionFactory factory, ZoneMeterDTO zoneMeterDTO){
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
         List<ZoneMeterHisVO> result = mapper.queryZoneMeterHistory(zoneMeterDTO);
-        return result;
+        PageListVO<List<ZoneMeterHisVO>> plv = new PageListVO<>();
+        ZoneMeterHisVO r = result.get(result.size()-1);
+        result.remove(result.size()-1);
+        plv.setDataList(result);
+        PageVO pageVO = PageUtil.getPageBean(zoneMeterDTO.getPage(), zoneMeterDTO.getPageCount(), r.getRows());
+        plv.setTotalPage(pageVO.getTotalPage());
+        plv.setRowNumber(pageVO.getRowNumber());
+        plv.setPageCount(pageVO.getPageCount());
+        plv.setPage(pageVO.getPage());
+        return plv;
     }
 
     /**
      * 分区与户表详情数据
      *
      * @param factory
-     * @param r_code
+     * @param refID
      * @return
      */
     @TaskAnnotation("queryZoneMeterDet")
     @Override
-    public ZoneMeterVO queryZoneMeterDet(SessionFactory factory, String r_code) {
+    public ZoneMeterVO queryZoneMeterDet(SessionFactory factory, Integer refID) {
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
-        ZoneMeterVO result = mapper.queryZoneMeterDet(r_code);
+        ZoneMeterVO result = mapper.queryZoneMeterDet(refID);
         return result;
     }
 

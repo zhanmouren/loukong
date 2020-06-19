@@ -24,15 +24,13 @@ public class DataSourceConfig {
 	  ADOSessionImpl(); //开启/关闭-自动转换驼峰标识
 	  SessionFactory.setMapUnderscoreToCamelCase(true);
 	  session.registeDataSourceMap("_default", ds); return ds; }
-	  
-	 
-	 @Bean(name = "secodnaryDataSource")
-	 @Qualifier("secodnaryDataSource")
-	 @ConfigurationProperties(prefix="spring.datasource.secodnary") public
-	 DataSource secodnaryDataSource() { DataSource ds =
+
+	 @Bean(name = "mzDataSource")
+	 @Qualifier("mzDataSource")
+	 @ConfigurationProperties(prefix="spring.datasource.mz") public
+	 DataSource mzDataSource() { DataSource ds =
 	 DataSourceBuilder.create().build(); ADOSessionImpl session = new
 	 ADOSessionImpl(); //开启/关闭-自动转换驼峰标识
 	 SessionFactory.setMapUnderscoreToCamelCase(true);
-	 session.registeDataSourceMap("SEC", ds); return ds; }
-
+	 session.registeDataSourceMap("_mz", ds); return ds; }
 }

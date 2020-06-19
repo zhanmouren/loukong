@@ -432,18 +432,23 @@ public class Constant {
 	 * 对象类型数据字典编码-压力流量
 	 */
 	public final static String DATADICTIONARY_OBJECTTYPE = "L101170001";
+	
 	/**
 	 * 任务状态未处理-数据字典
 	 */
-	public final static String DATADICTIONARY_TASKSTATUSUN = "1";
+	public final static String DATADICTIONARY_TASKSTATUSUN = "L101990001";
 	/**
 	 * 任务状态处理中-数据字典
 	 */
-	public final static String DATADICTIONARY_TASKSTATUSON = "2";
+	public final static String DATADICTIONARY_TASKSTATUSON = "L101990002";
+	/**
+	 * 监测预警工单预计完成时间
+	 */
+	public final static Integer POINTWARNINGPROCESS_FINSHTIME = 7;
 	/**
 	 * 任务状态处理结束-数据字典
 	 */
-	public final static String DATADICTIONARY_TASKSTATUSOVER = "3";
+	public final static String DATADICTIONARY_TASKSTATUSOVER = "L101990003";
 	/**
 	 * 超限报警数据字典编码
 	 */
@@ -479,7 +484,7 @@ public class Constant {
 	/**
 	 * DMA/PMA分区 数据字典编码
 	 */
-	public final static String DATADICTIONARY_DPZONE = "L101940003";
+	public final static String DATADICTIONARY_DPZONE = "L101940003"; 
 	/**
 	 * 一级分区 数据字典编码
 	 */
@@ -568,11 +573,11 @@ public class Constant {
 	/**
 	 * 正向瞬时流速-指标编码
 	 */
-	public final static String INDICATOR_FORWARDSPEED = "1";
+	public final static String INDICATOR_FORWARDSPEED = "MOHV";
 	/**
 	 * 反向瞬时流速-指标编码
 	 */
-	public final static String INDICATOR_REVERSESPEED = "2";
+	public final static String INDICATOR_REVERSESPEED = "MOHV";
 	/**
 	 * 压力1-指标编码
 	 */
@@ -1129,5 +1134,20 @@ public class Constant {
 	 */
 	public final static String ZONEMETER_IMPORT_TEMPLATE = "Template_zoneMeter.xlsx";
 	//************************end****************************//
+
+	/**
+	 * 应用标识
+	 */
+	public final static String APPID = "7c8222aa-9cc5-46b1-9bd7-743d24d01b0a";
+
+	/**
+	 *
+	 */
+	public final static String APPVersion = "1.0.1";
+
+	/**
+	 * 分区等级4（虚拟分区）
+	 */
+	public final static Integer RANK_VZ = 4;
 	
 }

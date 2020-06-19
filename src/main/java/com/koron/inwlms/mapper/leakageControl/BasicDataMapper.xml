@@ -5,11 +5,16 @@
 <mapper namespace="com.koron.inwlms.mapper.leakageControl.BasicDataMapper">
 
   <select id="queryPointHourData" parameterType="com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam" resultType="com.koron.inwlms.bean.VO.leakageControl.PointHourData">
-  select a."stationCode" as "stationCode", a.code as code, a."stationCode" as stationCode, round( a.value/b.precision :: NUMERIC, 2 ) as value,
+  select a."stationCode" as "stationCode", a.code as code, a."analysisDate" as "analysisDate", round( a.value/b.precision :: NUMERIC, 2 ) as value,
   a.method as method from nw_monitorpoint_hour a left join lc_app_dim_indicator b on a.code = b.code where a."stationCode" = #{stationCode} and
-  a.code = #{code} and a."analysisDate" between '${startTime}' and '${endTime}'
+  a.code = #{code} and a."analysisDate"  = #{startTime}
   </select>
   
+  <select id="queryPointHourDataByTime" parameterType="com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam" resultType="com.koron.inwlms.bean.VO.leakageControl.PointHourData">
+  select a."stationCode" as "stationCode", a.code as code, a."analysisDate" as "analysisDate", round( a.value/b.precision :: NUMERIC, 2 ) as value,
+  a.method as method from nw_monitorpoint_hour a left join lc_app_dim_indicator b on a.code = b.code where a."stationCode" = #{stationCode} and 
+  a."analysisDate"  between '${startTime}' and '${endTime}'
+  </select>
   
 
 </mapper>

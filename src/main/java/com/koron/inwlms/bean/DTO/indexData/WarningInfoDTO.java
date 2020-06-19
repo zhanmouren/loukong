@@ -10,7 +10,7 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
  * @author 小詹
  * @Date 2020/04/27
  */
-public class WarningInfoDTO extends BaseDTO{
+public class WarningInfoDTO {
   //组装多个分区编号的List
 	private List<String> areaZoneList;
 	//预警信息编码
@@ -27,19 +27,14 @@ public class WarningInfoDTO extends BaseDTO{
    private String areaCode;
    //报警时间
    private String alarmTime;
-   //创建时间
-   private Timestamp createTime;
-   //修改时间
-   private Timestamp updateTime;
-   //创建人
-   private String createBy;
-   //修改人
-   private String updateBy;
    //任务创建时间
    private String taskCreateTime;
+   //查找的结束时间
+   private String searchTaskEndTime;
    //状态
    private String state;
-   
+   //分区类型
+   private Integer areaType;
 public String getState() {
 	return state;
 }
@@ -100,29 +95,19 @@ public String getAlarmTime() {
 public void setAlarmTime(String alarmTime) {
 	this.alarmTime = alarmTime;
 }
-public Timestamp getCreateTime() {
-	return createTime;
+public Integer getAreaType() {
+	return areaType;
 }
-public void setCreateTime(Timestamp createTime) {
-	this.createTime = createTime;
+public void setAreaType(Integer areaType) {
+	this.areaType = areaType;
 }
-public Timestamp getUpdateTime() {
-	return updateTime;
+public String getSearchTaskEndTime() {
+	return searchTaskEndTime;
 }
-public void setUpdateTime(Timestamp updateTime) {
-	this.updateTime = updateTime;
+public void setSearchTaskEndTime(String searchTaskEndTime) {
+	this.searchTaskEndTime = searchTaskEndTime;
 }
-public String getCreateBy() {
-	return createBy;
-}
-public void setCreateBy(String createBy) {
-	this.createBy = createBy;
-}
-public String getUpdateBy() {
-	return updateBy;
-}
-public void setUpdateBy(String updateBy) {
-	this.updateBy = updateBy;
-}
+
+
    
 }

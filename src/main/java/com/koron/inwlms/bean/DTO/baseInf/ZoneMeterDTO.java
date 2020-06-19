@@ -10,6 +10,11 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 public class ZoneMeterDTO  extends BaseDTO {
 
     /**
+     * 批号
+     */
+    private String batchNo;
+
+    /**
      * 编号
      */
     private Integer refID;
@@ -46,6 +51,14 @@ public class ZoneMeterDTO  extends BaseDTO {
      * @return
      */
     private String updateBy;
+
+    public String getBatchNo() {
+        return batchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        this.batchNo = batchNo;
+    }
 
     public String getUpdateBy() {
         return updateBy;

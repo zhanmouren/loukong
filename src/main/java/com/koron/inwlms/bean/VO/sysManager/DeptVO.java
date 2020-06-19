@@ -17,14 +17,7 @@ public class DeptVO {
 		private String depCode;
 		//部门状态
 		private Integer status;
-	        	//创建人
-				private String createBy;
-				//创建时间
-				private Timestamp createTime;
-				//修改人
-				private String updateBy;
-				//修改时间
-				private Timestamp updateTime;
+	        	
 				public Integer getDepId() {
 					return depId;
 				}
@@ -49,28 +42,5 @@ public class DeptVO {
 				public void setStatus(Integer status) {
 					this.status = status;
 				}
-				public String getCreateBy() {
-					return createBy;
-				}
-				public void setCreateBy(String createBy) {
-					this.createBy = createBy;
-				}
-				public Timestamp getCreateTime() {
-					return createTime;
-				}
-				public void setCreateTime(Timestamp createTime) {
-					this.createTime = createTime;
-				}
-				public String getUpdateBy() {
-					return updateBy;
-				}
-				public void setUpdateBy(String updateBy) {
-					this.updateBy = updateBy;
-				}
-				public Timestamp getUpdateTime() {
-					return updateTime;
-				}
-				public void setUpdateTime(Timestamp updateTime) {
-					this.updateTime = updateTime;
-				}
+				
 }
