@@ -30,7 +30,7 @@ public class ZoneVO {
     /**
      * 一级分区
      */
-    private String first;
+    private String firstZoon;
 
     /**
      * 分区类型
@@ -45,7 +45,12 @@ public class ZoneVO {
     /**
      * 父级分区编号
      */
-    private String parent;
+    private String parentCode;
+
+    /**
+     * 父级分区名称
+     */
+    private String parentName;
 
     /**
      * 父级供水区编号
@@ -76,6 +81,34 @@ public class ZoneVO {
      * 已废弃
      */
     private String discard;
+
+    public void setRows(Integer rows) {
+        this.rows = rows;
+    }
+
+    public String getFirstZoon() {
+        return firstZoon;
+    }
+
+    public void setFirstZoon(String firstZoon) {
+        this.firstZoon = firstZoon;
+    }
+
+    public String getParentCode() {
+        return parentCode;
+    }
+
+    public void setParentCode(String parentCode) {
+        this.parentCode = parentCode;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
+    }
 
     public Integer getRows() {
         return rows;
@@ -109,13 +142,6 @@ public class ZoneVO {
         this.position = position;
     }
 
-    public String getFirst() {
-        return first;
-    }
-
-    public void setFirst(String first) {
-        this.first = first;
-    }
 
     public String getType() {
         return type;
@@ -131,14 +157,6 @@ public class ZoneVO {
 
     public void setRank(String rank) {
         this.rank = rank;
-    }
-
-    public String getParent() {
-        return parent;
-    }
-
-    public void setParent(String parent) {
-        this.parent = parent;
     }
 
     public String getParentSupportNo() {

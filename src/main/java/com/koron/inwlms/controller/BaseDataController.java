@@ -952,11 +952,11 @@ public class BaseDataController {
         //TODO:权限校验是否有查询权限
 
         //TODO:校验参数格式
-        List<MeterDataVO> md = ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataList", List.class, meterDataDTO);
+        PageListVO<List<MeterDataVO>> md = ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataList", PageListVO.class, meterDataDTO);
 
         msg.setCode(0);
         msg.setData(md);
-        return msg.toString();
+        return msg.toJson();
     }
 
     @RequestMapping(value = "/queryReadMeterDataByBatchNo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -988,7 +988,7 @@ public class BaseDataController {
 
         //TODO:校验参数
 
-        List<MeterDataHisVO>  md= ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataHistoryList", List.class,meterDataDTO);
+        PageListVO<List<MeterDataHisVO>>  md= ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataHistoryList", PageListVO.class,meterDataDTO);
         msg.setCode(0);
         msg.setData(md);
         return msg.toString();

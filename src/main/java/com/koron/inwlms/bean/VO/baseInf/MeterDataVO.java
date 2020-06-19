@@ -8,6 +8,11 @@ package com.koron.inwlms.bean.VO.baseInf;
 public class MeterDataVO {
 
     /**
+     * 行数
+     */
+    private Integer rows;
+
+    /**
      * 抄表流水号
      */
     private String serialNo;
@@ -76,6 +81,14 @@ public class MeterDataVO {
      * 抄表方式
      */
     private String readType;
+
+    public Integer getRows() {
+        return rows;
+    }
+
+    public void setRows(Integer rows) {
+        this.rows = rows;
+    }
 
     public String getSerialNo() {
         return serialNo;

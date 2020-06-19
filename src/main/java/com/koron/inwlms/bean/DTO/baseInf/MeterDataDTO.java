@@ -1,11 +1,13 @@
 package com.koron.inwlms.bean.DTO.baseInf;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * @auother:zhongweibin
  * @date:2020-05-12
  * @description:
  */
-public class MeterDataDTO {
+public class MeterDataDTO extends BaseDTO {
 
     private String[]  dma;
 
