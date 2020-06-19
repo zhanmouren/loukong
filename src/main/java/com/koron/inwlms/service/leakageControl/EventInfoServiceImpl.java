@@ -29,6 +29,7 @@ import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
+import com.koron.inwlms.mapper.common.FileMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.EventInfoMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
@@ -197,6 +198,18 @@ public class EventInfoServiceImpl implements EventInfoService{
 		return list;
 	}
 	
+	
+	@TaskAnnotation("deleteFileRelation")
+	@Override
+	public Integer deleteFileRelation(SessionFactory factory,QueryEventFileDTO queryEventFileDTO){
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		Integer num = mapper.deleteFileRelation(queryEventFileDTO);
+		if(num != 0) {
+			FileMapper filemapper = factory.getMapper(FileMapper.class);
+			int result = filemapper.deleteFileById(queryEventFileDTO.getFileId());
+		}
+		return num;
+	}
 	
 	
 	public static List<EventInfo> readEvetInfo(File file) throws IOException, ParseException {
