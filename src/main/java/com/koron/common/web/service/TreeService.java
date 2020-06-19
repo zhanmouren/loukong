@@ -62,6 +62,7 @@ public class TreeService {
 	 */
 	@TaskAnnotation("addNode")
 	public static synchronized LongTreeBean add(SessionFactory factory, LongTreeBean parent, LongTreeBean child) {
+		System.out.println("11111111111111111111111111111111");
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
 		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
 		if (parent == null) {
@@ -80,6 +81,7 @@ public class TreeService {
 			}
 		long seq = occupySeq(mapper, parent, child);
 		child.setSeq(seq);
+		System.out.println("2222222222222222222222222222");
 		return child;
 	}
 	/**

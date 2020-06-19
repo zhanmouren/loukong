@@ -2232,12 +2232,13 @@ public class SystemManagerController {
 		if (!number.matches()) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块菜单顺序只能填入数字", Integer.class).toJson();
 		 }
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
-		  try{				
-			  Integer addRes=ADOConnection.runTask(user.getEnv(),userService, "addMenu", Integer.class,menuTreeDTO);	
-			  if(addRes==1) {			 
+		 MessageBean<MenuDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MenuDTO.class);
+		  try{
+			  MenuDTO addRes=ADOConnection.runTask(user.getEnv(),userService, "addMenu", MenuDTO.class,menuTreeDTO);
+			  if(addRes!=null) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
-					msg.setDescription("添加菜单成功"); 				
+					msg.setDescription("添加菜单成功");
+					msg.setData(addRes);
 			   }else {
 			        msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
 			        msg.setDescription("添加菜单失败"); 
