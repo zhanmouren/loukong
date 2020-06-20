@@ -81,10 +81,10 @@ public class EventInfoServiceImpl implements EventInfoService{
 	
 	@TaskAnnotation("addEventInfo")
 	@Override
-	public Integer addEventInfo(SessionFactory factory, EventInfo eventInfo) {
+	public String addEventInfo(SessionFactory factory, EventInfo eventInfo) {
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
-		Integer num = mapper.addEventInfo(eventInfo);
-		return num;
+		String code = mapper.addEventInfo(eventInfo);
+		return code;
 		
 	}
 	

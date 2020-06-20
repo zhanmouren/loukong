@@ -24,7 +24,7 @@ public interface EventInfoService {
 
 	Integer updateEventInfo(SessionFactory factory, EventInfo eventInfo);
 
-	Integer addEventInfo(SessionFactory factory, EventInfo eventInfo);
+	String addEventInfo(SessionFactory factory, EventInfo eventInfo);
 
 	List<DataDicRelationVO> querychildKey(SessionFactory factory, EventTypeDTO eventTypeDTO);
 

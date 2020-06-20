@@ -28,12 +28,12 @@
  delete from app_eventinfo where code = #{code}
  </delete>
  
- <insert id="addEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
+ <select id="addEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo" resultType="java.lang.String">
  insert into app_eventinfo(code, name, type, subtype, "objectCode", "firstPartition", "secondPartition", "dmaCode", "objectType", "happenTime", 
  "content", "createBy", "createTime", "updateBy", "updateTime")
  values(#{code}, #{name}, #{type}, #{subtype}, #{objectCode}, #{firstPartition}, #{secondPartition}, #{dmaCode}, #{objectType}, #{happenTime},
- #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime})
- </insert>
+ #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime}) returning code
+ </select>
  
  <update id="updateEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
  update app_eventinfo

@@ -1245,15 +1245,16 @@ public class LeakageControlController {
     @ApiOperation(value = "事项信息添加接口", notes = "事项信息添加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String addEventInfo(@RequestBody EventInfo eventInfo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		//TODO 产生一个编码
 		String code = UUID.randomUUID().toString();
 		eventInfo.setCode(code);
 		try {
-			Integer num = ADOConnection.runTask(user.getEnv(),eis, "addEventInfo",Integer.class,eventInfo);
-			if(num > 0) {
+			String codeR = ADOConnection.runTask(user.getEnv(),eis, "addEventInfo",String.class,eventInfo);
+			if(codeR != null) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setData(codeR);
 				msg.setDescription("事项信息添加成功");
 			}else {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1366,7 +1367,7 @@ public class LeakageControlController {
    		//插入关联表数据
    		FilerelationDTO filerelationDTO = new FilerelationDTO();
    		filerelationDTO.setFileId(fileId);
-   		filerelationDTO.setCode(code);
+   		filerelationDTO.setCode(code);  
    		Integer num = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFilerelationData", Integer.class, filerelationDTO);
    		
    		if (fileId != null) {
@@ -1909,7 +1910,7 @@ public class LeakageControlController {
 	        msg.setDescription("事项编码为空");
 	        return msg.toJson();
 		}
-		
+
 		try {
 			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", List.class, queryEventFileDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);

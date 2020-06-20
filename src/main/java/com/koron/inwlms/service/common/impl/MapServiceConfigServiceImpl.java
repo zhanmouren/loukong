@@ -14,10 +14,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.common.GisMapServiceData;
+import com.koron.inwlms.bean.VO.common.DMA;
 import com.koron.inwlms.bean.VO.common.GisMapData;
 import com.koron.inwlms.bean.VO.common.MapOpTion;
 import com.koron.inwlms.bean.VO.common.MapService;
 import com.koron.inwlms.bean.VO.common.MapServiceData;
+import com.koron.inwlms.bean.VO.common.OtherLayer;
 import com.koron.inwlms.bean.VO.common.ProjInfo;
 import com.koron.inwlms.bean.VO.common.TreeData;
 import com.koron.inwlms.bean.VO.common.TreeDataControl;
@@ -98,6 +100,15 @@ public class MapServiceConfigServiceImpl implements MapServiceConfigService{
 			
 			
 		}
+		
+		OtherLayer otherLayer = new OtherLayer();
+		DMA dMA = new DMA();
+		dMA.setServerID("DMA");
+		dMA.setServiceName("DMA地图");
+		dMA.setType("localLayer");
+		otherLayer.setDMA(dMA);
+		
+		mapService.setOtherLayer(otherLayer);
 		mapService.setMapServices(mapServices);
 		mapServiceData.setServices(mapService);
 		

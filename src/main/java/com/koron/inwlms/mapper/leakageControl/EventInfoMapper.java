@@ -35,7 +35,7 @@ public interface EventInfoMapper {
 	
 	Integer updateEventInfo(EventInfo eventInfo); 
 	
-	Integer addEventInfo(EventInfo eventInfo);
+	String addEventInfo(EventInfo eventInfo);
 	List<DataDicRelationVO> querychildKey(EventTypeDTO eventTypeDTO);
 	
 	Integer queryMaxKey(@Param("parent") String parent);
