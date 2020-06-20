@@ -1923,4 +1923,32 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/downEventFileList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载事项文件列表数据", notes = "下载事项文件列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downEventFileList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryEventFileDTO queryEventFileDTO = jsonValue.fromJson(objValue, QueryEventFileDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryEventFileDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			queryEventFileDTO.setPage(1);
+			queryEventFileDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", List.class, queryEventFileDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType()); 
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

@@ -82,6 +82,7 @@
  <if test="startTime != null and endTime == null"> and a."storageTime" &gt; '${startTime}'</if>
  <if test="endTime != null and startTime == null"> and a."storageTime" &lt; '${endTime}'</if>
  <if test="startTime != null and endTime != null"> and a."storageTime" between '${startTime}' and '${endTime}'</if>
+ limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
  <delete id="deleteFileRelation" parameterType="com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO">

@@ -1,6 +1,8 @@
 package com.koron.inwlms.bean.DTO.leakageControl;
 
-public class QueryEventFileDTO {
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
+public class QueryEventFileDTO extends BaseDTO{
 	
 	private String name;
 	
