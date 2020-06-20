@@ -48,4 +48,8 @@
 	from gis_exist_vzone
 	where "pCode" = #{zoneNo}
 	</select>
+	
+	<select id="queryGisMapConfig" resultType="com.koron.inwlms.bean.VO.intellectPartition.GisConfigDetVO">
+	 select * from gis_configDet where "moduleNo" = #{moduleNo}
+	</select>
 </mapper>

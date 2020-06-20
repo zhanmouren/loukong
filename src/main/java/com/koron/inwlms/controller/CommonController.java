@@ -2,6 +2,7 @@ package com.koron.inwlms.controller;
 
 import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
+import com.koron.inwlms.bean.DTO.common.MapServiceParam;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
@@ -313,10 +314,10 @@ public class CommonController {
 	@RequestMapping(value = "/queryMapService.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询地图服务配置", notes = "查询地图服务配置", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMapService(@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
+    public String queryMapService(@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID,@RequestBody MapServiceParam mapServiceParam) {
 		MessageBean<MapServiceData> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MapServiceData.class);	
 		try {
-			MapServiceData mapServiceData = ADOConnection.runTask(user.getEnv(),new MapServiceConfigServiceImpl(), "queryMapServiceConfig", MapServiceData.class,tenantID);
+			MapServiceData mapServiceData = ADOConnection.runTask(user.getEnv(),new MapServiceConfigServiceImpl(), "queryMapServiceConfig", MapServiceData.class,tenantID,mapServiceParam.getModule());
 			msg.setData(mapServiceData);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 		}catch(Exception e) {
