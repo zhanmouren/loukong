@@ -49,14 +49,21 @@
     </select>
 
     <select id="queryReadMeterDataHistoryList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO">
-        select * from mi_importdatahistory
-        <trim prefix="where" prefixOverrides="and|or">
-            <if test="begD != null  and begD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &gt;= #{begD}</if>
-            <if test="endD != null  and endD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &lt;= #{endD}</if>
-        </trim>
-        type = "2"
-        order by "createTime" desc
-        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+        select * from(
+            select 0 as rows,type,"BatchNo","originRow","row",integrity,accuracy,availability,timely,consistency,status,"createBy",to_char(a."createTime",'YYYY-MM-DD') as "createTime","updateBy",to_char(a."updateTime",'YYYY-MM-DD')as "updateTime" from mi_importdatahistory
+            where 1=1
+                <if test="begD != null  and begD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &gt;= #{begD}</if>
+                <if test="endD != null  and endD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &lt;= #{endD}</if>
+             and type = '2'
+            order by "createTime" desc
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        )t
+        union all
+         select count(*) as rows,'','',0,0,0,0,0,0,0,0,'','','','' from mi_importdatahistory
+            where 1=1
+                <if test="begD != null  and begD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &gt;= #{begD}</if>
+                <if test="endD != null  and endD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &lt;= #{endD}</if>
+             and type = '2'
     </select>
 
     <select id="queryMonitorDataByBatchNo"   resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
@@ -79,10 +86,9 @@
     <select id="queryMeterDataByBatchNo"   resultType="com.koron.inwlms.bean.VO.baseInf.MeterDataVO">
         select * from mi_monitordata
         <trim prefix="where" prefixOverrides="and|or">
-            type = "2"
+            type = '2'
             <if test="BatchNo != null "> and  BatchNo = #{BatchNo}</if>
         </trim>
-
         limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
     </select>
 
@@ -178,18 +184,29 @@
     </update>
 
     <select id="queryReadMeterDataList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MeterDataVO">
-        select * from mi_readwaterinfo
+       select * from(
+        select 0 as rows,user_no,user_name,user_type,prior_period_num,prior_period_date,meter_reading_date,currend_period_num,reality_water,meter_reading_way,"createBy",to_char("createTime",'YYYY-MM-DD') as "createTime","updateBy",to_char("updateTime",'YYYY-MM-DD') as "updateTime","BatchNo",gis_meter.p_code as meter_no,gis_meter.pipe_d
+        from mi_readwaterinfo
+        left join gis_meter on mi_readwaterinfo.user_no=gis_meter.accountid
         <trim prefix="where" prefixOverrides="and|or">
             <if test="readType != null  and readType !=''"> and meter_reading_way= #{readType}</if>
-            <if test="usrType != null  and usrType !=''"> and usrType= #{usrType}</if>
-            <if test="waterMeterNo != null  and waterMeterNo !=''"> and waterMeterNo= #{waterMeterNo}</if>
+            <if test="usrType != null  and usrType !=''"> and user_type= #{usrType}</if>
             <if test="userNo != null  and userNo !=''"> and user_no= #{userNo}</if>
-            <if test="brand != null  and brand !=''"> and brand= #{brand}</if>
             <if test="begD != null  and begD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &gt;= #{begD}</if>
             <if test="endD != null  and endD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &lt;= #{endD}</if>
         </trim>
         order by "meter_reading_date" desc
-        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        )t
+        union all
+        select count(*) as rows,'','','',0,'','',0,0,'','','','','','','','' from mi_readwaterinfo
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="readType != null  and readType !=''"> and meter_reading_way= #{readType}</if>
+            <if test="usrType != null  and usrType !=''"> and user_type= #{usrType}</if>
+            <if test="userNo != null  and userNo !=''"> and user_no= #{userNo}</if>
+            <if test="begD != null  and begD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &gt;= #{begD}</if>
+            <if test="endD != null  and endD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &lt;= #{endD}</if>
+        </trim>
     </select>
 
     <select id="queryReadMeterDataDet" resultType="com.koron.inwlms.bean.VO.baseInf.MeterDataVO">

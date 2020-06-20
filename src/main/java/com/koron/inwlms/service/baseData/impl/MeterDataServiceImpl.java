@@ -43,6 +43,8 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param meterDataDTO
      * @return
      */
+    @TaskAnnotation("queryReadMeterDataList")
+    @Override
     public PageListVO<List<MeterDataVO>> queryReadMeterDataList(SessionFactory factory, MeterDataDTO meterDataDTO) {
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         List<MeterDataVO> result = mapper.queryReadMeterDataList(meterDataDTO);
@@ -64,6 +66,8 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param id
      * @return
      */
+    @TaskAnnotation("queryReadMeterDataDet")
+    @Override
     public MeterDataVO queryReadMeterDataDet(SessionFactory factory, Integer id) {
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         MeterDataVO result = mapper.queryReadMeterDataDet(id);
@@ -76,6 +80,8 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param meterDataDTO
      * @return
      */
+    @TaskAnnotation("updateReadMeterDataDet")
+    @Override
     public boolean updateReadMeterDataDet(SessionFactory factory, MeterDataDTO meterDataDTO){
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         boolean result = mapper.updateReadMeterDataDet(meterDataDTO);
@@ -88,6 +94,8 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param meterDataDTO
      * @return
      */
+    @TaskAnnotation("queryReadMeterDataHistoryList")
+    @Override
     public PageListVO<List<MeterDataHisVO>> queryReadMeterDataHistoryList(SessionFactory factory, MeterDataDTO meterDataDTO) {
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         List<MeterDataHisVO> result = mapper.queryReadMeterDataHistoryList(meterDataDTO);
@@ -110,6 +118,8 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param BatchNo
      * @return
      */
+    @TaskAnnotation("queryMeterDataByBatchNo")
+    @Override
     public List<MeterDataVO> queryMeterDataByBatchNo(SessionFactory factory, String BatchNo) {
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         List<MeterDataVO> result = mapper.queryMeterDataByBatchNo(BatchNo);

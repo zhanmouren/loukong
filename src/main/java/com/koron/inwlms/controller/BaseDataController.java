@@ -443,6 +443,29 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @RequestMapping(value = "/queryChargeZones.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询管辖分区接口", notes = "查询管辖分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryChargeZones(@RequestBody ZoneDTO zoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        //TODO:校验参数有效性
+        if(zoneDTO.getUser()!=null && !"".equals(zoneDTO.getUser())){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toJson();
+        }
+
+        //*****查询符合条件数据
+        PageListVO<List<ZoneUserVO>> zus = ADOConnection.runTask(user.getEnv(),zcs, "queryChargeZones", PageListVO.class,zoneDTO);
+
+        msg.setCode(0);
+        msg.setData(zus);
+        return msg.toJson();
+    }
+
+
 
     @RequestMapping(value = "/queryZonePointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与监测点列表接口", notes = "查询分区与监测点列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -991,7 +1014,7 @@ public class BaseDataController {
         PageListVO<List<MeterDataHisVO>>  md= ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataHistoryList", PageListVO.class,meterDataDTO);
         msg.setCode(0);
         msg.setData(md);
-        return msg.toString();
+        return msg.toJson();
     }
 
     @RequestMapping(value = "/updateReadMeterDataDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1009,7 +1032,7 @@ public class BaseDataController {
         boolean ret = ADOConnection.runTask(user.getEnv(),ms, "updateReadMeterDataDet", boolean.class,meterDataDTO);
         msg.setCode(0);
         msg.setData(ret);
-        return msg.toString();
+        return msg.toJson();
     }
 
     @RequestMapping("/downloadMeterDataTemplate.htm")
@@ -1049,6 +1072,8 @@ public class BaseDataController {
         } else {
             try {
                 Integer ret = ADOConnection.runTask(user.getEnv(),mds, "addBatchMeterData", Integer.class, excelBeans);
+                msg.setCode(0);
+                msg.setDescription("操作成功");
             } catch (Exception e) {
                 e.printStackTrace();
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
@@ -1081,7 +1106,6 @@ public class BaseDataController {
     public String queryDataImpact(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
-
         List<DataImpactVO> dis = ADOConnection.runTask(user.getEnv(),dqs, "queryDataImpact", List.class);
         msg.setCode(0);
         msg.setData(dis);

@@ -13,74 +13,100 @@ public class MeterDataVO {
     private Integer rows;
 
     /**
-     * 抄表流水号
-     */
-    private String serialNo;
-
-    /**
      * 水表编号
      */
-    private String waterMeterNo;
+    private String meter_no;
 
     /**
      * 水表口径
      */
-    private Double caliber;
+    private String pipe_d;
 
     /**
-     * 水表类别
+     * 用户编号
      */
-    private String type;
+    private String user_no;
 
     /**
-     * 开户时间
+     * 用户名称
      */
-    private String openTime;
-
-    /**
-     * 换表时间
-     */
-    private String changeTime;
-
-    /**
-     * 用户号
-     */
-    private String userNo;
+    private String user_name;
 
     /**
      * 用户类别
      */
-    private String userType;
-
-    /**
-     * 上次抄表时间
-     */
-    private String lastTime;
+    private String  user_type;
 
     /**
      * 上次读数
      */
-    private Double lastReading;
+    private Double prior_period_num;
 
     /**
-     * 抄表时间
+     * 上期抄表日期
      */
-    private String recordTime;
+    private String prior_period_date;
+
+    /**
+     * 抄表日期
+     */
+    private String meter_reading_date;
 
     /**
      * 抄表读数
      */
-    private Double meterReading;
+    private String currend_period_num;
 
     /**
-     * 用水量
+     * 实际用水量
      */
-    private Double mwo;
+    private Double reality_water;
 
     /**
      * 抄表方式
      */
-    private String readType;
+    private String meter_reading_way;
+
+    /**
+     * 创建人
+     */
+    private String createBy;
+
+    /**
+     * 创建时间
+     */
+    private String createTime;
+
+    /**
+     * 修改人
+     */
+    private String updateBy;
+
+    /**
+     * 修改时间
+     */
+    private String updateTime;
+
+    /**
+     * 批次
+     */
+    private String BatchNo;
+
+    public String getMeter_no() {
+        return meter_no;
+    }
+
+    public void setMeter_no(String meter_no) {
+        this.meter_no = meter_no;
+    }
+
+    public String getPipe_d() {
+        return pipe_d;
+    }
+
+    public void setPipe_d(String pipe_d) {
+        this.pipe_d = pipe_d;
+    }
 
     public Integer getRows() {
         return rows;
@@ -90,115 +116,115 @@ public class MeterDataVO {
         this.rows = rows;
     }
 
-    public String getSerialNo() {
-        return serialNo;
+    public String getUser_no() {
+        return user_no;
     }
 
-    public void setSerialNo(String serialNo) {
-        this.serialNo = serialNo;
+    public void setUser_no(String user_no) {
+        this.user_no = user_no;
     }
 
-    public String getWaterMeterNo() {
-        return waterMeterNo;
+    public String getUser_name() {
+        return user_name;
     }
 
-    public void setWaterMeterNo(String waterMeterNo) {
-        this.waterMeterNo = waterMeterNo;
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
     }
 
-    public Double getCaliber() {
-        return caliber;
+    public String getUser_type() {
+        return user_type;
     }
 
-    public void setCaliber(Double caliber) {
-        this.caliber = caliber;
+    public void setUser_type(String user_type) {
+        this.user_type = user_type;
     }
 
-    public String getType() {
-        return type;
+    public Double getPrior_period_num() {
+        return prior_period_num;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setPrior_period_num(Double prior_period_num) {
+        this.prior_period_num = prior_period_num;
     }
 
-    public String getOpenTime() {
-        return openTime;
+    public String getPrior_period_date() {
+        return prior_period_date;
     }
 
-    public void setOpenTime(String openTime) {
-        this.openTime = openTime;
+    public void setPrior_period_date(String prior_period_date) {
+        this.prior_period_date = prior_period_date;
     }
 
-    public String getChangeTime() {
-        return changeTime;
+    public String getMeter_reading_date() {
+        return meter_reading_date;
     }
 
-    public void setChangeTime(String changeTime) {
-        this.changeTime = changeTime;
+    public void setMeter_reading_date(String meter_reading_date) {
+        this.meter_reading_date = meter_reading_date;
     }
 
-    public String getUserNo() {
-        return userNo;
+    public String getCurrend_period_num() {
+        return currend_period_num;
     }
 
-    public void setUserNo(String userNo) {
-        this.userNo = userNo;
+    public void setCurrend_period_num(String currend_period_num) {
+        this.currend_period_num = currend_period_num;
     }
 
-    public String getUserType() {
-        return userType;
+    public Double getReality_water() {
+        return reality_water;
     }
 
-    public void setUserType(String userType) {
-        this.userType = userType;
+    public void setReality_water(Double reality_water) {
+        this.reality_water = reality_water;
     }
 
-    public String getLastTime() {
-        return lastTime;
+    public String getMeter_reading_way() {
+        return meter_reading_way;
     }
 
-    public void setLastTime(String lastTime) {
-        this.lastTime = lastTime;
+    public void setMeter_reading_way(String meter_reading_way) {
+        this.meter_reading_way = meter_reading_way;
     }
 
-    public Double getLastReading() {
-        return lastReading;
+    public String getCreateBy() {
+        return createBy;
     }
 
-    public void setLastReading(Double lastReading) {
-        this.lastReading = lastReading;
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
     }
 
-    public String getRecordTime() {
-        return recordTime;
+    public String getCreateTime() {
+        return createTime;
     }
 
-    public void setRecordTime(String recordTime) {
-        this.recordTime = recordTime;
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
     }
 
-    public Double getMeterReading() {
-        return meterReading;
+    public String getUpdateBy() {
+        return updateBy;
     }
 
-    public void setMeterReading(Double meterReading) {
-        this.meterReading = meterReading;
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
     }
 
-    public Double getMwo() {
-        return mwo;
+    public String getUpdateTime() {
+        return updateTime;
     }
 
-    public void setMwo(Double mwo) {
-        this.mwo = mwo;
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 
-    public String getReadType() {
-        return readType;
+    public String getBatchNo() {
+        return BatchNo;
     }
 
-    public void setReadType(String readType) {
-        this.readType = readType;
+    public void setBatchNo(String batchNo) {
+        BatchNo = batchNo;
     }
 }

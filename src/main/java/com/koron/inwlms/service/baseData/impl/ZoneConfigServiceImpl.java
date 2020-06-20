@@ -23,6 +23,30 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
 
 
     /**
+     * 查询分区负责人列表
+     * @param factory
+     * @param zoneDTO
+     * @return
+     */
+    @TaskAnnotation("queryZoneMeterList")
+    @Override
+    public PageListVO<List<ZoneUserVO>> queryChargeZones(SessionFactory factory, ZoneDTO zoneDTO){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        List<ZoneUserVO> result = mapper.queryChargeZones(zoneDTO);
+        PageListVO<List<ZoneUserVO>> plv = new PageListVO<>();
+        ZoneUserVO r = result.get(result.size()-1);
+        result.remove(result.size()-1);
+        plv.setDataList(result);
+        PageVO pageVO = PageUtil.getPageBean(zoneDTO.getPage(), zoneDTO.getPageCount(), r.getRows());
+        plv.setTotalPage(pageVO.getTotalPage());
+        plv.setRowNumber(pageVO.getRowNumber());
+        plv.setPageCount(pageVO.getPageCount());
+        plv.setPage(pageVO.getPage());
+        return plv;
+    }
+
+
+    /**
      * 导入分区监测点数据
      */
     @TaskAnnotation("addBatchZonePoint")

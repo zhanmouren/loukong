@@ -7,107 +7,108 @@ package com.koron.inwlms.bean.VO.baseInf;
  */
 public class DataImpactVO {
 
+
     /**
      * 管线缺失行数
      */
-    private Integer pipe_line;
+    private Integer pipeLine;
 
     /**
      * 管径或管长数据项为空的行数
      */
-    private Integer pipe_diameter_len;
+    private Integer pipeDiameterLen;
 
     /**
      * 阀门的数据行数
      */
-    private Integer valve_line;
+    private Integer valveLine;
 
     /**
      * 位置项为空的行数
      */
-    private Integer valve_pos_line;
+    private Integer valvePosLine;
 
     /**
      * 监测点的数据行数
      */
-    private Integer point_line;
+    private Integer pointLine;
 
     /**
      * 监测点的位置项为空的行数
      */
-    private Integer point_pos_line;
+    private Integer pointPosLine;
 
     /**
      * 分区的数据行数
      */
-    private Integer zone_line;
+    private Integer zoneLine;
 
     /**
      * 分区关系表的数据行数
      */
-    private Integer zone_rel_line;
+    private Integer zoneRelLine;
 
-    public Integer getPipe_line() {
-        return pipe_line;
+    public Integer getPipeLine() {
+        return pipeLine;
     }
 
-    public void setPipe_line(Integer pipe_line) {
-        this.pipe_line = pipe_line;
+    public void setPipeLine(Integer pipeLine) {
+        this.pipeLine = pipeLine;
     }
 
-    public Integer getPipe_diameter_len() {
-        return pipe_diameter_len;
+    public Integer getPipeDiameterLen() {
+        return pipeDiameterLen;
     }
 
-    public void setPipe_diameter_len(Integer pipe_diameter_len) {
-        this.pipe_diameter_len = pipe_diameter_len;
+    public void setPipeDiameterLen(Integer pipeDiameterLen) {
+        this.pipeDiameterLen = pipeDiameterLen;
     }
 
-    public Integer getValve_line() {
-        return valve_line;
+    public Integer getValveLine() {
+        return valveLine;
     }
 
-    public void setValve_line(Integer valve_line) {
-        this.valve_line = valve_line;
+    public void setValveLine(Integer valveLine) {
+        this.valveLine = valveLine;
     }
 
-    public Integer getValve_pos_line() {
-        return valve_pos_line;
+    public Integer getValvePosLine() {
+        return valvePosLine;
     }
 
-    public void setValve_pos_line(Integer valve_pos_line) {
-        this.valve_pos_line = valve_pos_line;
+    public void setValvePosLine(Integer valvePosLine) {
+        this.valvePosLine = valvePosLine;
     }
 
-    public Integer getPoint_line() {
-        return point_line;
+    public Integer getPointLine() {
+        return pointLine;
     }
 
-    public void setPoint_line(Integer point_line) {
-        this.point_line = point_line;
+    public void setPointLine(Integer pointLine) {
+        this.pointLine = pointLine;
     }
 
-    public Integer getPoint_pos_line() {
-        return point_pos_line;
+    public Integer getPointPosLine() {
+        return pointPosLine;
     }
 
-    public void setPoint_pos_line(Integer point_pos_line) {
-        this.point_pos_line = point_pos_line;
+    public void setPointPosLine(Integer pointPosLine) {
+        this.pointPosLine = pointPosLine;
     }
 
-    public Integer getZone_line() {
-        return zone_line;
+    public Integer getZoneLine() {
+        return zoneLine;
     }
 
-    public void setZone_line(Integer zone_line) {
-        this.zone_line = zone_line;
+    public void setZoneLine(Integer zoneLine) {
+        this.zoneLine = zoneLine;
     }
 
-    public Integer getZone_rel_line() {
-        return zone_rel_line;
+    public Integer getZoneRelLine() {
+        return zoneRelLine;
     }
 
-    public void setZone_rel_line(Integer zone_rel_line) {
-        this.zone_rel_line = zone_rel_line;
+    public void setZoneRelLine(Integer zoneRelLine) {
+        this.zoneRelLine = zoneRelLine;
     }
 }

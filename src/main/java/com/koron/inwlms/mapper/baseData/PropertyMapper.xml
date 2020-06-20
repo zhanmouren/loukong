@@ -23,6 +23,10 @@
         </if>
     </insert>
 
+    <select id="queryChargeZones" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneUserVO">
+            select id ,zoonNo,user from gis_zone_charge where user = #{user}
+    </select>
+
     <select id="queryPipes" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.PipeLineVO">
         select smid,smtopoerror,smlength,featid,asset_status,p_code,pipe_level,diameter,material,pipe_style,c_value,
         n_value,buriedtype,jointype,is_special,special_type,nominalpressure,length,assetslength,start_id,end_id,star_ele,

@@ -16,6 +16,13 @@ public interface PropertyMapper {
     List<DataVO> queryALList();
 
     /**
+     * 查询负责分区列表
+     * @param zoneDTO
+     * @return
+     */
+    List<ZoneUserVO> queryChargeZones(ZoneDTO zoneDTO);
+
+    /**
      * 批量添加分区监测点数据
      * @param excelBeans
      * @return
