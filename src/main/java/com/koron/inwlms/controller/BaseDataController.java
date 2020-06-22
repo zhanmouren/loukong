@@ -1166,7 +1166,7 @@ public class BaseDataController {
     public String queryMeterType(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
-        List<MeterAccountVO> dis = ADOConnection.runTask(user.getEnv(),ms, "queryMeterType", List.class);
+        List<MeterAccountVO> dis = ADOConnection.runTask(user.getEnv(),mds, "queryMeterType", List.class);
         msg.setCode(0);
         msg.setData(dis);
         return msg.toJson();
