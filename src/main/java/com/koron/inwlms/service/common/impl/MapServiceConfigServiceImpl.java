@@ -106,7 +106,7 @@ public class MapServiceConfigServiceImpl implements MapServiceConfigService{
 		dMA.setServerID("DMA");
 		dMA.setServiceName("DMA地图");
 		dMA.setType("localLayer");
-		otherLayer.setDMA(dMA);
+		otherLayer.setLOCAL_DMA(dMA);
 		
 		mapService.setOtherLayer(otherLayer);
 		mapService.setMapServices(mapServices);
