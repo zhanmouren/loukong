@@ -116,6 +116,6 @@ public interface IMDataMapper {
      * @param BatchNo
      * @return
      */
-    List<MeterDataVO> queryMeterDataByBatchNo(@Param("BatchNo") String BatchNo);
+    List<MeterDataVO> queryMeterDataByBatchNo(MeterDataDTO meterDataDTO);
 
 }

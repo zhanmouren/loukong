@@ -2,7 +2,7 @@ package com.koron.inwlms.service.baseData.impl;
 
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataExcelBean;
-import com.koron.inwlms.bean.VO.baseInf.MeterAccountVO;
+import com.koron.inwlms.bean.VO.baseInf.PointAccountVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataHisVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -30,11 +30,11 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param factory
      * @return
      */
-    @TaskAnnotation("queryMeterType")
+    @TaskAnnotation("queryFlows")
     @Override
-    public List<MeterAccountVO> queryMeterType(SessionFactory factory) {
+    public List<PointAccountVO> queryFlows(SessionFactory factory) {
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
-        List<MeterAccountVO> result = mapper.queryMeterType();
+        List<PointAccountVO> result = mapper.queryFlows();
         return result;
     }
 
@@ -130,15 +130,24 @@ public class MeterDataServiceImpl implements MeterDataService {
     /**
      * 查询某一批次抄表数据
      * @param factory
-     * @param BatchNo
+     * @param meterDataDTO
      * @return
      */
     @TaskAnnotation("queryMeterDataByBatchNo")
     @Override
-    public List<MeterDataVO> queryMeterDataByBatchNo(SessionFactory factory, String BatchNo) {
+    public PageListVO<List<MeterDataVO>> queryMeterDataByBatchNo(SessionFactory factory, MeterDataDTO meterDataDTO) {
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
-        List<MeterDataVO> result = mapper.queryMeterDataByBatchNo(BatchNo);
-        return result;
+        List<MeterDataVO> result = mapper.queryMeterDataByBatchNo(meterDataDTO);
+        PageListVO<List<MeterDataVO>> plv = new PageListVO<>();
+        MeterDataVO r = result.get(result.size()-1);
+        result.remove(result.size()-1);
+        plv.setDataList(result);
+        PageVO pageVO = PageUtil.getPageBean(meterDataDTO.getPage(), meterDataDTO.getPageCount(), r.getRows());
+        plv.setTotalPage(pageVO.getTotalPage());
+        plv.setRowNumber(pageVO.getRowNumber());
+        plv.setPageCount(pageVO.getPageCount());
+        plv.setPage(pageVO.getPage());
+        return plv;
     }
 
 }

@@ -19,7 +19,7 @@ public interface PropertyMapper {
      * 查询户表类型汇总数
       * @return
      */
-    List<MeterAccountVO> queryMeterType();
+    List<PointAccountVO> queryFlows();
 
     /**
      * 添加分区负责人

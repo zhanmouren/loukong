@@ -8,61 +8,119 @@ package com.koron.inwlms.bean.VO.baseInf;
 public class PointVO {
 
     /**
-     *  监测点编号
+     *  地址
      */
-     private String pointID;
+     private String address;
 
     /**
-     * 监测点名称
+     * 管辖部门
      */
+    private String admin_division;
+
+    /**
+     * 符号角度
+     */
+    private Integer angle;
+
+    /**
+     * 归档号
+     */
+    private String archive_id;
+
+    /**
+     * 资产状态
+     */
+    private String asset_status;
+
+    /**
+     * 审核时间
+     */
+    private Integer checkdate;
+
+    private Double[] smgeometry;
+
+    private String featid;
+
+    private Integer smid;
+
+    private Integer smuserid;
+
+    private String objtype;
+
+    private String p_code;
+
     private String name;
 
-    /**
-     * 监测点类别
-     */
-    private String type;
+    private String w_category;
 
-    /**
-     * 用途
-     */
-    private String use;
+    private String is_remote;
 
-    /**
-     * 厂家
-     */
-    private String factory;
-
-    /**
-     * 主要口径（mm）
-     */
-    private Integer mainDiameter;
-
-    /**
-     * 地面标高（m）
-     */
-    private double elevation;
-
-    /**
-     * 行政区
-     */
     private String district;
 
-    /**
-     * 所在道路
-     */
-    private String road;
+    private String magunit;
 
-    /**
-     * 运行状态
-     */
-    private String status;
+    private String planunit;
 
-    public String getPointID() {
-        return pointID;
+    private String is_check;
+
+    private Double x;
+
+    private Double y;
+
+    private String completdate;
+
+    private String inputdate;
+
+    private String subtype;
+
+    private String geoType;
+
+    public Double[] getSmgeometry() {
+        return smgeometry;
     }
 
-    public void setPointID(String pointID) {
-        this.pointID = pointID;
+    public void setSmgeometry(Double[] smgeometry) {
+        this.smgeometry = smgeometry;
+    }
+
+    public String getFeatid() {
+        return featid;
+    }
+
+    public void setFeatid(String featid) {
+        this.featid = featid;
+    }
+
+    public Integer getSmid() {
+        return smid;
+    }
+
+    public void setSmid(Integer smid) {
+        this.smid = smid;
+    }
+
+    public Integer getSmuserid() {
+        return smuserid;
+    }
+
+    public void setSmuserid(Integer smuserid) {
+        this.smuserid = smuserid;
+    }
+
+    public String getObjtype() {
+        return objtype;
+    }
+
+    public void setObjtype(String objtype) {
+        this.objtype = objtype;
+    }
+
+    public String getP_code() {
+        return p_code;
+    }
+
+    public void setP_code(String p_code) {
+        this.p_code = p_code;
     }
 
     public String getName() {
@@ -73,44 +131,20 @@ public class PointVO {
         this.name = name;
     }
 
-    public String getType() {
-        return type;
+    public String getW_category() {
+        return w_category;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setW_category(String w_category) {
+        this.w_category = w_category;
     }
 
-    public String getUse() {
-        return use;
+    public String getIs_remote() {
+        return is_remote;
     }
 
-    public void setUse(String use) {
-        this.use = use;
-    }
-
-    public String getFactory() {
-        return factory;
-    }
-
-    public void setFactory(String factory) {
-        this.factory = factory;
-    }
-
-    public Integer getMainDiameter() {
-        return mainDiameter;
-    }
-
-    public void setMainDiameter(Integer mainDiameter) {
-        this.mainDiameter = mainDiameter;
-    }
-
-    public double getElevation() {
-        return elevation;
-    }
-
-    public void setElevation(double elevation) {
-        this.elevation = elevation;
+    public void setIs_remote(String is_remote) {
+        this.is_remote = is_remote;
     }
 
     public String getDistrict() {
@@ -121,19 +155,123 @@ public class PointVO {
         this.district = district;
     }
 
-    public String getRoad() {
-        return road;
+    public String getMagunit() {
+        return magunit;
     }
 
-    public void setRoad(String road) {
-        this.road = road;
+    public void setMagunit(String magunit) {
+        this.magunit = magunit;
     }
 
-    public String getStatus() {
-        return status;
+    public String getPlanunit() {
+        return planunit;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPlanunit(String planunit) {
+        this.planunit = planunit;
+    }
+
+    public String getIs_check() {
+        return is_check;
+    }
+
+    public void setIs_check(String is_check) {
+        this.is_check = is_check;
+    }
+
+    public Double getX() {
+        return x;
+    }
+
+    public void setX(Double x) {
+        this.x = x;
+    }
+
+    public Double getY() {
+        return y;
+    }
+
+    public void setY(Double y) {
+        this.y = y;
+    }
+
+    public String getCompletdate() {
+        return completdate;
+    }
+
+    public void setCompletdate(String completdate) {
+        this.completdate = completdate;
+    }
+
+    public String getInputdate() {
+        return inputdate;
+    }
+
+    public void setInputdate(String inputdate) {
+        this.inputdate = inputdate;
+    }
+
+    public String getSubtype() {
+        return subtype;
+    }
+
+    public void setSubtype(String subtype) {
+        this.subtype = subtype;
+    }
+
+    public String getGeoType() {
+        return geoType;
+    }
+
+    public void setGeoType(String geoType) {
+        this.geoType = geoType;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getAdmin_division() {
+        return admin_division;
+    }
+
+    public void setAdmin_division(String admin_division) {
+        this.admin_division = admin_division;
+    }
+
+    public Integer getAngle() {
+        return angle;
+    }
+
+    public void setAngle(Integer angle) {
+        this.angle = angle;
+    }
+
+    public String getArchive_id() {
+        return archive_id;
+    }
+
+    public void setArchive_id(String archive_id) {
+        this.archive_id = archive_id;
+    }
+
+    public String getAsset_status() {
+        return asset_status;
+    }
+
+    public void setAsset_status(String asset_status) {
+        this.asset_status = asset_status;
+    }
+
+    public Integer getCheckdate() {
+        return checkdate;
+    }
+
+    public void setCheckdate(Integer checkdate) {
+        this.checkdate = checkdate;
     }
 }

@@ -6,14 +6,20 @@
         select * from(
         select 0 as rows,reportdate,reporttime,type,row,integrity,accuracy,available,timely,consistence,rating from
         app_mon_report
-        where reportdate=#{mon}
+        where 1=1
+        <if test="mon != null and mon != ''">
+            and reportdate=#{mon}
+        </if>
         <if test="pageCount != null and pageCount != null">
             limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         </if>
         )t
         union all
          select count(*) as rows,'' ,'','',0,0,0,0,0,0,0 from app_mon_report
-        where reportdate=#{mon}
+        where 1=1
+        <if test="mon != null and mon != ''">
+            and reportdate=#{mon}
+        </if>
     </select>
 
     <select id="queryDataImpact"  resultType="com.koron.inwlms.bean.VO.baseInf.DataImpactVO">

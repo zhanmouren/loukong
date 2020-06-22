@@ -2,7 +2,7 @@ package com.koron.inwlms.service.baseData;
 
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataExcelBean;
-import com.koron.inwlms.bean.VO.baseInf.MeterAccountVO;
+import com.koron.inwlms.bean.VO.baseInf.PointAccountVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataHisVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -15,7 +15,7 @@ public interface MeterDataService {
     /**
      * 查询户表类型统计
      */
-    public List<MeterAccountVO> queryMeterType(SessionFactory factory);
+    public List<PointAccountVO> queryFlows(SessionFactory factory);
 
     /**
      * 批量插入抄表数据
@@ -61,9 +61,9 @@ public interface MeterDataService {
     /**
      * 查询某一批次抄表数据
      * @param factory
-     * @param BatchNo
+     * @param meterDataDTO
      * @return
      */
-    List<MeterDataVO> queryMeterDataByBatchNo(SessionFactory factory, String BatchNo);
+    PageListVO<List<MeterDataVO>> queryMeterDataByBatchNo(SessionFactory factory, MeterDataDTO meterDataDTO);
 
 }

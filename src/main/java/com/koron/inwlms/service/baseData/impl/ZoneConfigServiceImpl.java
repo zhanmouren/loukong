@@ -50,7 +50,7 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
      * @param zoneDTO
      * @return
      */
-    @TaskAnnotation("queryZoneMeterList")
+    @TaskAnnotation("queryChargeZones")
     @Override
     public PageListVO<List<ZoneUserVO>> queryChargeZones(SessionFactory factory, ZoneDTO zoneDTO){
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);

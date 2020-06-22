@@ -5,17 +5,30 @@ package com.koron.inwlms.bean.VO.baseInf;
  * @date:2020-06-22
  * @description:
  */
-public class MeterAccountVO {
+public class PointAccountVO {
 
     /**
-     * 水表类型
+     * 关系类型
      */
     private String type;
 
     /**
-     * 水表数量
+     * 监测点编号
+     */
+    private String pointNo;
+
+    /**
+     * 数量
      */
     private Integer count;
+
+    public String getPointNo() {
+        return pointNo;
+    }
+
+    public void setPointNo(String pointNo) {
+        this.pointNo = pointNo;
+    }
 
     public String getType() {
         return type;

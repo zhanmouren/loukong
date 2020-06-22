@@ -1,7 +1,7 @@
 package com.koron.inwlms.controller;
 
-
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
@@ -19,6 +19,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,8 @@ import org.swan.bean.MessageBean;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,6 +67,9 @@ public class BaseDataController {
 
     @Autowired
     private MonitorService ms;
+
+    @Value("${server.gis.address}")
+    private String gis;
 
     @RequestMapping(value = "/queryPGData.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询数据接口", notes = "查询数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1028,10 +1034,10 @@ public class BaseDataController {
             return msg.toString();
         }
 
-        List<MonitorDataVO>  md = ADOConnection.runTask(user.getEnv(),mds, "queryMeterDataByBatchNo", List.class, meterDataDTO);
+        PageListVO<List<MeterDataVO>>  md = ADOConnection.runTask(user.getEnv(),mds, "queryMeterDataByBatchNo", PageListVO.class, meterDataDTO);
         msg.setCode(0);
         msg.setData(md);
-        return msg.toString();
+        return msg.toJson();
     }
 
     @RequestMapping(value = "/queryReadMeterDataHistoryList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1049,10 +1055,10 @@ public class BaseDataController {
         return msg.toJson();
     }
 
-    @RequestMapping(value = "/queryReadMeterDataDet/{rmdID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @RequestMapping(value = "/queryReadMeterDataDet/{refID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询抄表详情接口", notes = "查询抄表详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryReadMeterDataDet(@PathVariable("rmdID") Integer rmdID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryReadMeterDataDet(@PathVariable("refID") Integer refID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
         //TODO:校验是否有修改权限
@@ -1060,7 +1066,7 @@ public class BaseDataController {
         //TODO:参数meterDataDTO校验
 
         //*****查询符合条件数据
-        MeterDataVO ret = ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataDet", MeterDataVO.class,rmdID);
+        MeterDataVO ret = ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataDet", MeterDataVO.class,refID);
         msg.setCode(0);
         msg.setData(ret);
         return msg.toJson();
@@ -1160,15 +1166,31 @@ public class BaseDataController {
         return msg.toJson();
     }
 
-    @RequestMapping(value = "/queryMeterType.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @RequestMapping(value = "/queryFlows.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询流量计类型数据", notes = "查询流量计类型数据", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMeterType(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryFlows(@PathVariable("tenantID") String tenantID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
-        List<MeterAccountVO> dis = ADOConnection.runTask(user.getEnv(),mds, "queryMeterType", List.class);
-        msg.setCode(0);
-        msg.setData(dis);
+        Gson gson = new Gson();
+        Map data = new HashMap();
+        List<PointAccountVO> dis = ADOConnection.runTask(user.getEnv(),mds, "queryFlows", List.class);
+        if(dis.size()>0) {
+            List<String> arr = new ArrayList<>();
+            for (PointAccountVO item : dis) {
+                arr.add(item.getPointNo());
+            }
+            String url = gis+"/"+tenantID+"/scada/listByPcodes.htm";
+            //System.out.println(gson.toJson(arr));
+            JsonObject ret = InterfaceUtil.interfaceOfPostUtil(url,gson.toJson(arr));
+            JsonArray gisdata = ret.getAsJsonArray("data");
+
+            List<PointVO>  points= gson.fromJson(gisdata, new TypeToken<List<PointVO>>(){}.getType());
+            data.put("group",dis);
+            data.put("detail",points);
+            msg.setCode(0);
+            msg.setData(data);
+        }
         return msg.toJson();
     }
 
