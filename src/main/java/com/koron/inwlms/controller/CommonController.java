@@ -1,6 +1,8 @@
 package com.koron.inwlms.controller;
 
+import com.github.pagehelper.util.StringUtil;
 import com.koron.common.StaffAttribute;
+import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
 import com.koron.inwlms.bean.DTO.common.MapServiceParam;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
@@ -11,6 +13,7 @@ import com.koron.inwlms.bean.VO.common.MapServiceData;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicNewVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.common.impl.CommonServiceImpl;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
@@ -242,7 +245,7 @@ public class CommonController {
     @ResponseBody
 	public String querySubZoneNos(String zoneNo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
-		List<String> lists = ADOConnection.runTask(user.getEnv(),new GisZoneServiceImpl(), "querySubZoneNos", List.class,zoneNo);
+		List<ZoneInfo> lists = ADOConnection.runTask(user.getEnv(),new GisZoneServiceImpl(), "querySubZoneNos", List.class,zoneNo);	
 		msg.setData(lists);
 		return msg.toJson();
 	}

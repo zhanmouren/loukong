@@ -31,7 +31,7 @@ public interface GisMapper {
 	 * @param zoneNo
 	 * @return
 	 */
-//	List<ZoneInfo> querySubZoneNos(String zoneNo);
+//	List<ZoneInfo> querySubZoneNos(@Param("zoneNo") String zoneNo);
 	
 	/**
 	 * 根据分区查询所有水表信息

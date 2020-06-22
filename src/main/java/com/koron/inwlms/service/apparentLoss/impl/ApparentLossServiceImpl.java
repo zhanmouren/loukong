@@ -1343,6 +1343,11 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drSmallDnAllAnaData.setTtFlowNum(allTtNum);
 		
 		List<DrSmallDnAnaData> dsdaList = new ArrayList<>();
+		drSmallDn15AnaData.setMeterDn(Constant.DN_15+"");
+		drSmallDn20AnaData.setMeterDn(Constant.DN_20+"");
+		drSmallDn25AnaData.setMeterDn(Constant.DN_25+"");
+		drSmallDn40AnaData.setMeterDn(Constant.DN_40+"");
+		drSmallDnAllAnaData.setMeterDn("合计");
 		dsdaList.add(drSmallDn15AnaData);
 		dsdaList.add(drSmallDn20AnaData);
 		dsdaList.add(drSmallDn25AnaData);
