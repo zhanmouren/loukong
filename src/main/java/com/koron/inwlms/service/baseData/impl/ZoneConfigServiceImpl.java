@@ -23,6 +23,28 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
 
 
     /**
+     * 添加负责分区数据
+     */
+    @TaskAnnotation("addChargeZones")
+    @Override
+    public Integer addChargeZones(SessionFactory factory,ZoneDTO zoneDTO){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer result = mapper.addChargeZones(zoneDTO);
+        return result;
+    }
+
+    /**
+     * 删除负责分区数据
+     */
+    @TaskAnnotation("deleteChargeZones")
+    @Override
+    public Integer deleteChargeZones(SessionFactory factory,ZoneDTO zoneDTO){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer result = mapper.deleteChargeZones(zoneDTO);
+        return result;
+    }
+
+    /**
      * 查询分区负责人列表
      * @param factory
      * @param zoneDTO

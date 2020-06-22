@@ -2,11 +2,13 @@ package com.koron.inwlms.service.baseData.impl;
 
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataExcelBean;
+import com.koron.inwlms.bean.VO.baseInf.MeterAccountVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataHisVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.mapper.baseData.IMDataMapper;
+import com.koron.inwlms.mapper.baseData.PropertyMapper;
 import com.koron.inwlms.service.baseData.MeterDataService;
 import com.koron.inwlms.util.PageUtil;
 import org.koron.ebs.mybatis.SessionFactory;
@@ -22,6 +24,19 @@ import java.util.List;
  */
 @Service
 public class MeterDataServiceImpl implements MeterDataService {
+
+    /**
+     * 查询户表类型统计数据
+     * @param factory
+     * @return
+     */
+    @TaskAnnotation("queryMeterType")
+    @Override
+    public List<MeterAccountVO> queryMeterType(SessionFactory factory) {
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        List<MeterAccountVO> result = mapper.queryMeterType();
+        return result;
+    }
 
     /**
      * 批量插入监测数据

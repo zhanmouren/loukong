@@ -45,6 +45,20 @@ public class ZoneDTO extends BaseDTO {
      */
     private String user;
 
+    /**
+     * 分区编号集
+     * @return
+     */
+    private String[] zoons;
+
+    public String[] getZoons() {
+        return zoons;
+    }
+
+    public void setZoons(String[] zoons) {
+        this.zoons = zoons;
+    }
+
     public String getUser() {
         return user;
     }
