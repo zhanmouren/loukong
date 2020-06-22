@@ -2,10 +2,15 @@ package com.koron.inwlms.service.baseData.impl;
 
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataExcelBean;
+import com.koron.inwlms.bean.VO.baseInf.MeterAccountVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataHisVO;
 import com.koron.inwlms.bean.VO.baseInf.MeterDataVO;
+import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.mapper.baseData.IMDataMapper;
+import com.koron.inwlms.mapper.baseData.PropertyMapper;
 import com.koron.inwlms.service.baseData.MeterDataService;
+import com.koron.inwlms.util.PageUtil;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
@@ -19,6 +24,19 @@ import java.util.List;
  */
 @Service
 public class MeterDataServiceImpl implements MeterDataService {
+
+    /**
+     * 查询户表类型统计数据
+     * @param factory
+     * @return
+     */
+    @TaskAnnotation("queryMeterType")
+    @Override
+    public List<MeterAccountVO> queryMeterType(SessionFactory factory) {
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        List<MeterAccountVO> result = mapper.queryMeterType();
+        return result;
+    }
 
     /**
      * 批量插入监测数据
@@ -40,10 +58,21 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param meterDataDTO
      * @return
      */
-    public List<MeterDataVO> queryReadMeterDataList(SessionFactory factory, MeterDataDTO meterDataDTO) {
+    @TaskAnnotation("queryReadMeterDataList")
+    @Override
+    public PageListVO<List<MeterDataVO>> queryReadMeterDataList(SessionFactory factory, MeterDataDTO meterDataDTO) {
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         List<MeterDataVO> result = mapper.queryReadMeterDataList(meterDataDTO);
-        return result;
+        PageListVO<List<MeterDataVO>> plv = new PageListVO<>();
+        MeterDataVO r = result.get(result.size()-1);
+        result.remove(result.size()-1);
+        plv.setDataList(result);
+        PageVO pageVO = PageUtil.getPageBean(meterDataDTO.getPage(), meterDataDTO.getPageCount(), r.getRows());
+        plv.setTotalPage(pageVO.getTotalPage());
+        plv.setRowNumber(pageVO.getRowNumber());
+        plv.setPageCount(pageVO.getPageCount());
+        plv.setPage(pageVO.getPage());
+        return plv;
     }
 
     /**
@@ -52,6 +81,8 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param id
      * @return
      */
+    @TaskAnnotation("queryReadMeterDataDet")
+    @Override
     public MeterDataVO queryReadMeterDataDet(SessionFactory factory, Integer id) {
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         MeterDataVO result = mapper.queryReadMeterDataDet(id);
@@ -64,6 +95,8 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param meterDataDTO
      * @return
      */
+    @TaskAnnotation("updateReadMeterDataDet")
+    @Override
     public boolean updateReadMeterDataDet(SessionFactory factory, MeterDataDTO meterDataDTO){
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         boolean result = mapper.updateReadMeterDataDet(meterDataDTO);
@@ -76,10 +109,21 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param meterDataDTO
      * @return
      */
-    public List<MeterDataHisVO> queryReadMeterDataHistoryList(SessionFactory factory, MeterDataDTO meterDataDTO) {
+    @TaskAnnotation("queryReadMeterDataHistoryList")
+    @Override
+    public PageListVO<List<MeterDataHisVO>> queryReadMeterDataHistoryList(SessionFactory factory, MeterDataDTO meterDataDTO) {
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         List<MeterDataHisVO> result = mapper.queryReadMeterDataHistoryList(meterDataDTO);
-        return result;
+        PageListVO<List<MeterDataHisVO>> plv = new PageListVO<>();
+        MeterDataHisVO r = result.get(result.size()-1);
+        result.remove(result.size()-1);
+        plv.setDataList(result);
+        PageVO pageVO = PageUtil.getPageBean(meterDataDTO.getPage(), meterDataDTO.getPageCount(), r.getRows());
+        plv.setTotalPage(pageVO.getTotalPage());
+        plv.setRowNumber(pageVO.getRowNumber());
+        plv.setPageCount(pageVO.getPageCount());
+        plv.setPage(pageVO.getPage());
+        return plv;
     }
 
 
@@ -89,6 +133,8 @@ public class MeterDataServiceImpl implements MeterDataService {
      * @param BatchNo
      * @return
      */
+    @TaskAnnotation("queryMeterDataByBatchNo")
+    @Override
     public List<MeterDataVO> queryMeterDataByBatchNo(SessionFactory factory, String BatchNo) {
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         List<MeterDataVO> result = mapper.queryMeterDataByBatchNo(BatchNo);

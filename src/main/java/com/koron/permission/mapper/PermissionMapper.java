@@ -148,4 +148,7 @@ public interface PermissionMapper {
     
     //查询用户角色
     public List<TblRoleVO> getRoleByUser(@Param("userCode") String userCode);
+    
+    //删除角色-用户
+    public Integer deleteUserByRole(@Param("roleCode") String roleCode,@Param("list") List<String> userCodeList);
 }

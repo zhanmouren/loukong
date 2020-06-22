@@ -7,6 +7,7 @@ import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +28,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.ZoneRange;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.intellectPartition.PartitionSchemeDetService;
@@ -55,27 +57,57 @@ public class IntellectPartitionController {
 	@RequestMapping(value = "/automaticPartition.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "智能自动分区接口", notes = "智能自动分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String automaticPartition(@RequestBody AutomaticPartitionDTO automaticPartitionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String automaticPartition(@RequestBody AutomaticPartitionDTO automaticPartitionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
 		MessageBean<ModelReturn> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ModelReturn.class);
 		
 		
 		//接收到信号，开始存储方案总表信息
 		TotalSchemeDet totalSchemeDet = new TotalSchemeDet();
-		totalSchemeDet.setAmbientLayer(automaticPartitionDTO.getAmbientLayer());
-		totalSchemeDet.setFlowLayer(automaticPartitionDTO.getFlowLayer());
+		totalSchemeDet.setAmbientLayer(automaticPartitionDTO.getAmbientLayerList().toString());
+		totalSchemeDet.setFlowLayer(automaticPartitionDTO.getFlowLayerList().toString());
 		totalSchemeDet.setMaxZone(automaticPartitionDTO.getMaxZone());
 		totalSchemeDet.setMinZone(automaticPartitionDTO.getMinZone());
 		totalSchemeDet.setZoneCode(automaticPartitionDTO.getZoneCode());
 		totalSchemeDet.setZoneType(automaticPartitionDTO.getZoneType());
 		totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
 		try {
-			ModelReturn data = ADOConnection.runTask(user.getEnv(),psds, "test", ModelReturn.class, automaticPartitionDTO, totalSchemeDet);
+			ModelReturn data = ADOConnection.runTask(user.getEnv(),psds, "getModelReturnData", ModelReturn.class, automaticPartitionDTO, totalSchemeDet,tenantID);
 			msg.setData(data);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 			msg.setDescription("智能分区数据传输失败！");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/getZoneRange.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "获取自动分区范围接口", notes = "获取自动分区范围接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getZoneRange(@RequestBody AutomaticPartitionDTO automaticPartitionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<ZoneRange> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ZoneRange.class);
+		
+		if(automaticPartitionDTO.getZoneCode() == null || automaticPartitionDTO.getZoneCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区 编码为空");
+			return msg.toJson();
+		}
+		
+		if(automaticPartitionDTO.getZoneType() == null ) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区 类型为空");
+			return msg.toJson();
+		}
+		
+		try {
+			ZoneRange data = ADOConnection.runTask(user.getEnv(),psds, "getZoneNum", ZoneRange.class, automaticPartitionDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(data);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区范围查询失败");
 		}
 		
 		return msg.toJson();

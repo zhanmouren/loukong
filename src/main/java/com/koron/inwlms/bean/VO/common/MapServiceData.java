@@ -8,7 +8,7 @@ public class MapServiceData {
 	
 	private MapService services;
 	
-    private MapOpTion mapOpTion;
+    private MapOpTion mapOption;
 	
 	private List<Widgets> widgets;
 
@@ -27,13 +27,14 @@ public class MapServiceData {
 	public void setServices(MapService services) {
 		this.services = services;
 	}
+	
 
-	public MapOpTion getMapOpTion() {
-		return mapOpTion;
+	public MapOpTion getMapOption() {
+		return mapOption;
 	}
 
-	public void setMapOpTion(MapOpTion mapOpTion) {
-		this.mapOpTion = mapOpTion;
+	public void setMapOption(MapOpTion mapOption) {
+		this.mapOption = mapOption;
 	}
 
 	public List<Widgets> getWidgets() {

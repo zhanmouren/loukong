@@ -708,6 +708,15 @@ public class PermissionServiceImpl implements PermissionService{
 			 return finalList;
 			
 		}
+		//删除(一)角色-用户(多)关系
+		@TaskAnnotation("deleteUserByRole")
+		@Override
+		public Integer deleteUserByRole(SessionFactory factory, TblRoleUserDTO tblRoleUserDTO) {
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
+			//执行批量删除角色职员的操作
+			Integer delResult=mapper.deleteUserByRole(tblRoleUserDTO.getRoleCode(),tblRoleUserDTO.getUserCodeList());
+			return delResult;
+		}
 		
 
 }

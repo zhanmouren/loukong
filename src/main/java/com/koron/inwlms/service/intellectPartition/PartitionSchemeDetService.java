@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.ZoneRange;
 
 @Service
 public interface PartitionSchemeDetService {
@@ -28,13 +29,15 @@ public interface PartitionSchemeDetService {
 	Integer changeSchemeDet(SessionFactory factory, Integer state, List<String> codes);
 
 	ModelReturn getModelReturnData(SessionFactory factory, AutomaticPartitionDTO automaticPartitionDTO,
-			TotalSchemeDet totalSchemeDet);
+			TotalSchemeDet totalSchemeDet,String tenantID);
 
 	Integer addKafkaData(SessionFactory factory, KafkaReturnData kafkaReturnData);
 
 	String test(SessionFactory factory, AutomaticPartitionDTO automaticPartitionDTO, TotalSchemeDet totalSchemeDet);
 
 	Integer deleteSchemeDetByCode(SessionFactory factory, List<Integer> ids);
+
+	ZoneRange getZoneNum(SessionFactory factory, AutomaticPartitionDTO automaticPartitionDTO);
 	
 	
 

@@ -23,11 +23,15 @@ import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
+import com.koron.inwlms.bean.VO.leakageControl.EventFileVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
+import com.koron.inwlms.mapper.common.FileMapper;
+import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.EventInfoMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.util.Constant;
@@ -78,10 +82,10 @@ public class EventInfoServiceImpl implements EventInfoService{
 	
 	@TaskAnnotation("addEventInfo")
 	@Override
-	public Integer addEventInfo(SessionFactory factory, EventInfo eventInfo) {
+	public String addEventInfo(SessionFactory factory, EventInfo eventInfo) {
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
-		Integer num = mapper.addEventInfo(eventInfo);
-		return num;
+		String code = mapper.addEventInfo(eventInfo);
+		return code;
 		
 	}
 	
@@ -187,6 +191,34 @@ public class EventInfoServiceImpl implements EventInfoService{
 		return uploadFileDTO;
 	}
 	
+	@TaskAnnotation("queryEventFile")
+	@Override
+	public EventFileVO queryEventFile(SessionFactory factory,QueryEventFileDTO queryEventFileDTO){
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		EventFileVO EventFileVO = new EventFileVO();
+		List<UploadFileDTO> list = mapper.queryEventFile(queryEventFileDTO);
+		EventFileVO.setFileList(list);
+		PageInfo query = new PageInfo();
+		Integer num = mapper.queryEventFileNum(queryEventFileDTO);
+		query.setTotalNumber(num);
+		query.setPage(queryEventFileDTO.getPage());
+		query.setSize(queryEventFileDTO.getPageCount());
+		EventFileVO.setQuery(query);
+		return EventFileVO;
+	}
+	
+	
+	@TaskAnnotation("deleteFileRelation")
+	@Override
+	public Integer deleteFileRelation(SessionFactory factory,QueryEventFileDTO queryEventFileDTO){
+		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		Integer num = mapper.deleteFileRelation(queryEventFileDTO);
+		if(num != 0) {
+			FileMapper filemapper = factory.getMapper(FileMapper.class);
+			int result = filemapper.deleteFileById(queryEventFileDTO.getFileId());
+		}
+		return num;
+	}
 	
 	
 	public static List<EventInfo> readEvetInfo(File file) throws IOException, ParseException {
@@ -280,5 +312,7 @@ public class EventInfoServiceImpl implements EventInfoService{
             return String.valueOf(hssfCell.getStringCellValue());
         }
     }
+    
+    
 
 }

@@ -9,6 +9,23 @@ import java.util.List;
 
 public interface ZoneConfigService {
 
+    /**
+     * 添加负责分区
+     */
+    public Integer addChargeZones(SessionFactory factory, ZoneDTO zoneDTO);
+
+    /**
+     * 删除负责分区
+     */
+    public Integer deleteChargeZones(SessionFactory factory, ZoneDTO zoneDTO);
+
+    /**
+     * 查询分区负责人列表
+     * @param factory
+     * @param zoneDTO
+     * @return
+     */
+    public PageListVO<List<ZoneUserVO>> queryChargeZones(SessionFactory factory, ZoneDTO zoneDTO);
 
     /**
      * 导入分区监测点数据

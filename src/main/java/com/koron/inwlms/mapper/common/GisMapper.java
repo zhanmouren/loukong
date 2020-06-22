@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
+import com.koron.inwlms.bean.VO.intellectPartition.GisConfigDetVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PositionInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
 
@@ -30,7 +31,7 @@ public interface GisMapper {
 	 * @param zoneNo
 	 * @return
 	 */
-//	List<ZoneInfo> querySubZoneNos(String zoneNo);
+//	List<ZoneInfo> querySubZoneNos(@Param("zoneNo") String zoneNo);
 	
 	/**
 	 * 根据分区查询所有水表信息
@@ -80,5 +81,12 @@ public interface GisMapper {
 	 * @return
 	 */
 	ZoneDetailInfoVO queryVZoneDetailInfo(@Param("zoneNo") String zoneNo);
+	
+	/**
+	 * 通过模块名查询地图配置
+	 * @param moduleNo
+	 * @return
+	 */
+	List<GisConfigDetVO> queryGisMapConfig(@Param("moduleNo") String moduleNo);
 	
 }

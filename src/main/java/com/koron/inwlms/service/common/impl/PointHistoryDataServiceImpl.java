@@ -10,6 +10,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
 import com.koron.inwlms.bean.VO.common.GdhRaw;
 import com.koron.inwlms.bean.VO.common.PointDataVO;
 import com.koron.inwlms.bean.VO.common.PointSensor;
@@ -49,7 +50,7 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 			pointTypeVO.setStype(pointSensor.getStype());
 			pointTypeVO.setSname(pointSensor.getName());
 			List<PointDataVO> pointDataList = new ArrayList<>();
-			List<GdhRaw> gdhRawList = mapper.queryPointHistoryData(code, start, end);
+			List<GdhRaw> gdhRawList = mapper.queryPointHistoryData(pointSensor.getCode(), start, end);
 			for(GdhRaw gdhRaw : gdhRawList) {
 				PointDataVO pointDataVO = new PointDataVO();
 				pointDataVO.setValue(Double.valueOf(gdhRaw.getValue()));
@@ -65,5 +66,15 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 		
 		return pointTypeVOList;
 	}
+	
+	@TaskAnnotation("queryPointHourData")
+	@Override
+	public List<MinMonitorPoint> queryPointHourData(SessionFactory factory,Date datatime){
+		PointHistoryDataMapper mapper = factory.getMapper(PointHistoryDataMapper.class);
+		List<MinMonitorPoint> list = mapper.queryPointHourData(datatime);
+		return list;
+		
+	}
+	
 	
 }

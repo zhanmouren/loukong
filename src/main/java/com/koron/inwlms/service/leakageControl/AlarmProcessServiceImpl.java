@@ -10,14 +10,18 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryTreeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
@@ -28,11 +32,14 @@ import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.TimeAndFlowData;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
+import com.koron.inwlms.bean.VO.leakageControl.TreeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
+import com.koron.inwlms.mapper.indexData.IndexMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
 import com.koron.inwlms.mapper.leakageControl.PolicyMapper;
+import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
 
@@ -141,6 +148,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			}
 			alarmProcessLog.setOperation("确认任务");
 			alarmProcessLog.setCreateBy(user.getCode());
+			mapper.addAlarmProcessLog(alarmProcessLog);
 		}else if(alarmProcessVO.getState().equals(Constant.DATADICTIONARY_TASKSTATUSOVER)) {
 			//添加流程日志
 			AlarmProcessLog alarmProcessLog = new AlarmProcessLog();
@@ -151,6 +159,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			}
 			alarmProcessLog.setOperation("完成任务");
 			alarmProcessLog.setCreateBy(user.getCode());
+			mapper.addAlarmProcessLog(alarmProcessLog);
 		}
 		
 		return num;
@@ -187,7 +196,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		}
 		alarmProcessLog.setOperation("创建任务");
 		alarmProcessLog.setCreateBy(user.getCode());
-		
+		mapper.addAlarmProcessLog(alarmProcessLog);
 		return num;
 	}
 	
@@ -520,5 +529,47 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		}
 		return beforAllFlowList;
 	}
+	
+	@TaskAnnotation("queryAlarmProcessLog")
+	@Override
+	public List<AlarmProcessLog> queryAlarmProcessLog(SessionFactory factory,String taskCode) {
+		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		List<AlarmProcessLog> list = mapper.queryAlarmProcessLog(taskCode);
+		return list;
+	}
+	
+	
+	@TaskAnnotation("queryZoneTree")
+	@Override
+	public String queryZoneTree(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
+		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+		LongTreeBean node = mapper.getBeanByForeignIdType(queryTreeDTO.getType(),queryTreeDTO.getForeignKey());
+		List<TreeVO> list = new ArrayList<>();
+		if(node == null) {  
+			return null;
+		}
+		else{
+			List<TreeVO> zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+			if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+				for(TreeVO treeZoneVO : zoneList) {
+					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
+						list.add(treeZoneVO);
+					}
+				}
+				
+			}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
+				for(TreeVO treeZoneVO : zoneList) {
+					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
+						list.add(treeZoneVO);
+					}
+				}
+			}
+		}
+		
+		
+		return null;
+	}
+	
 	
 }

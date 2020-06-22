@@ -8,7 +8,7 @@ import com.koron.inwlms.util.kafka.ZoneKafkaConsumer;
 import com.koron.kafka.Bean.User;
 
 @RestController
-@RequestMapping("/kafka")
+@RequestMapping("/{tenantID}/kafka")
 public class KafkaController {
 
 	

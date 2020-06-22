@@ -8,12 +8,14 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.util.StringUtil;
+import com.koron.common.web.service.TreeService;
 import com.koron.indicator.bean.CalZoneInfos;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PositionInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
@@ -148,76 +150,12 @@ public class GisZoneServiceImpl implements GisZoneService {
 		List<ZoneInfo> list =  new ArrayList<>();
 		if(StringUtil.isEmpty(zoneNo)) {
 			list = mapper.queryZoneNosByRank(Constant.DMAZONELEVEL_ONE,"");
-//			ZoneInfo zoneInfo = new ZoneInfo();
-//			zoneInfo.setZoneNo("FL01");
-//			zoneInfo.setZoneName("FL01一级分区");
-//			list.add(zoneInfo);
-//			ZoneInfo zoneInfo1 = new ZoneInfo();
-//			zoneInfo1.setZoneNo("FL02");
-//			zoneInfo1.setZoneName("FL02一级分区");
-//			list.add(zoneInfo);
-//			list.add(zoneInfo1);	
 		}else {
-			if(("FL01").equals(zoneNo)) {
-				ZoneInfo zoneInfo = new ZoneInfo();
-				zoneInfo.setZoneNo("SL01001");
-				zoneInfo.setZoneName("SL01001二级分区");
-				list.add(zoneInfo);
-				ZoneInfo zoneInfo1 = new ZoneInfo();
-				zoneInfo1.setZoneNo("SL01002");
-				zoneInfo1.setZoneName("SL01002二级分区");
-				list.add(zoneInfo);
-				list.add(zoneInfo1);
-			}else if(("FL02").equals(zoneNo)) {
-				ZoneInfo zoneInfo = new ZoneInfo();
-				zoneInfo.setZoneNo("SL02001");
-				zoneInfo.setZoneName("SL02001二级分区");
-				list.add(zoneInfo);
-				ZoneInfo zoneInfo1 = new ZoneInfo();
-				zoneInfo1.setZoneNo("SL02002");
-				zoneInfo1.setZoneName("SL02002二级分区");
-				list.add(zoneInfo);
-				list.add(zoneInfo1);
-			}else if(("SL01001").equals(zoneNo)) {
-				ZoneInfo zoneInfo = new ZoneInfo();
-				zoneInfo.setZoneNo("DM01001001");
-				zoneInfo.setZoneName("DM01001001DMA分区");
-				list.add(zoneInfo);
-				ZoneInfo zoneInfo1 = new ZoneInfo();
-				zoneInfo1.setZoneNo("DM01001002");
-				zoneInfo1.setZoneName("DM01001002DMA分区");
-				list.add(zoneInfo);
-				list.add(zoneInfo1);
-			}else if(("SL01002").equals(zoneNo)) {
-				ZoneInfo zoneInfo = new ZoneInfo();
-				zoneInfo.setZoneNo("DM01002001");
-				zoneInfo.setZoneName("DM01002001DMA分区");
-				list.add(zoneInfo);
-				ZoneInfo zoneInfo1 = new ZoneInfo();
-				zoneInfo1.setZoneNo("DM01002002");
-				zoneInfo1.setZoneName("DM01002002DMA分区");
-				list.add(zoneInfo);
-				list.add(zoneInfo1);
-			}else if(("SL02001").equals(zoneNo)) {
-				ZoneInfo zoneInfo = new ZoneInfo();
-				zoneInfo.setZoneNo("DM02001001");
-				zoneInfo.setZoneName("DM02001001DMA分区");
-				list.add(zoneInfo);
-				ZoneInfo zoneInfo1 = new ZoneInfo();
-				zoneInfo1.setZoneNo("DM02001002");
-				zoneInfo1.setZoneName("DM02001002DMA分区");
-				list.add(zoneInfo);
-				list.add(zoneInfo1);
-			}else if(("SL02002").equals(zoneNo)) {
-				ZoneInfo zoneInfo = new ZoneInfo();
-				zoneInfo.setZoneNo("DM02002001");
-				zoneInfo.setZoneName("DM02002001DMA分区");
-				list.add(zoneInfo);
-				ZoneInfo zoneInfo1 = new ZoneInfo();
-				zoneInfo1.setZoneNo("DM02002002");
-				zoneInfo1.setZoneName("DM02002002DMA分区");
-				list.add(zoneInfo);
-				list.add(zoneInfo1);
+			List<TreeDeptVO> lists = new TreeService().descendantByCode(factory, 2, zoneNo);
+			for (TreeDeptVO treeDeptVO : lists) {
+				if(treeDeptVO.getForeignkey().equals(zoneNo)) continue;
+				List<ZoneInfo> queryZoneNosByRank = mapper.queryZoneNosByRank("",treeDeptVO.getForeignkey());
+				if(queryZoneNosByRank.size() > 0) list.add(queryZoneNosByRank.get(0));
 			}
 		}
 		

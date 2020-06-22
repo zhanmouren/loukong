@@ -8,121 +8,125 @@ package com.koron.inwlms.bean.VO.baseInf;
 public class MeterDataVO {
 
     /**
-     * 抄表流水号
+     * 行数
      */
-    private String serialNo;
+    private Integer rows;
+
+    /**
+     * id
+     */
+    private Integer id;
 
     /**
      * 水表编号
      */
-    private String waterMeterNo;
+    private String meterNo;
 
     /**
      * 水表口径
      */
-    private Double caliber;
+    private String pipeD;
 
     /**
-     * 水表类别
-     */
-    private String type;
-
-    /**
-     * 开户时间
-     */
-    private String openTime;
-
-    /**
-     * 换表时间
-     */
-    private String changeTime;
-
-    /**
-     * 用户号
+     * 用户编号
      */
     private String userNo;
 
     /**
-     * 用户类别
+     * 用户名称
      */
-    private String userType;
+    private String userName;
 
     /**
-     * 上次抄表时间
+     * 用户类别
      */
-    private String lastTime;
+    private String  userType;
 
     /**
      * 上次读数
      */
-    private Double lastReading;
+    private Double priorPeriodNum;
 
     /**
-     * 抄表时间
+     * 上期抄表日期
      */
-    private String recordTime;
+    private String priorPeriodDate;
+
+    /**
+     * 抄表日期
+     */
+    private String meterReadingDate;
 
     /**
      * 抄表读数
      */
-    private Double meterReading;
+    private String currendPeriodNum;
 
     /**
-     * 用水量
+     * 实际用水量
      */
-    private Double mwo;
+    private Double realityWater;
 
     /**
      * 抄表方式
      */
-    private String readType;
+    private String meterReadingWay;
 
-    public String getSerialNo() {
-        return serialNo;
+    /**
+     * 创建人
+     */
+    private String createBy;
+
+    /**
+     * 创建时间
+     */
+    private String createTime;
+
+    /**
+     * 修改人
+     */
+    private String updateBy;
+
+    /**
+     * 修改时间
+     */
+    private String updateTime;
+
+    /**
+     * 批次
+     */
+    private String BatchNo;
+
+    public Integer getId() {
+        return id;
     }
 
-    public void setSerialNo(String serialNo) {
-        this.serialNo = serialNo;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getWaterMeterNo() {
-        return waterMeterNo;
+    public Integer getRows() {
+        return rows;
     }
 
-    public void setWaterMeterNo(String waterMeterNo) {
-        this.waterMeterNo = waterMeterNo;
+    public void setRows(Integer rows) {
+        this.rows = rows;
     }
 
-    public Double getCaliber() {
-        return caliber;
+    public String getMeterNo() {
+        return meterNo;
     }
 
-    public void setCaliber(Double caliber) {
-        this.caliber = caliber;
+    public void setMeterNo(String meterNo) {
+        this.meterNo = meterNo;
     }
 
-    public String getType() {
-        return type;
+    public String getPipeD() {
+        return pipeD;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getOpenTime() {
-        return openTime;
-    }
-
-    public void setOpenTime(String openTime) {
-        this.openTime = openTime;
-    }
-
-    public String getChangeTime() {
-        return changeTime;
-    }
-
-    public void setChangeTime(String changeTime) {
-        this.changeTime = changeTime;
+    public void setPipeD(String pipeD) {
+        this.pipeD = pipeD;
     }
 
     public String getUserNo() {
@@ -133,6 +137,14 @@ public class MeterDataVO {
         this.userNo = userNo;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     public String getUserType() {
         return userType;
     }
@@ -141,51 +153,91 @@ public class MeterDataVO {
         this.userType = userType;
     }
 
-    public String getLastTime() {
-        return lastTime;
+    public Double getPriorPeriodNum() {
+        return priorPeriodNum;
     }
 
-    public void setLastTime(String lastTime) {
-        this.lastTime = lastTime;
+    public void setPriorPeriodNum(Double priorPeriodNum) {
+        this.priorPeriodNum = priorPeriodNum;
     }
 
-    public Double getLastReading() {
-        return lastReading;
+    public String getPriorPeriodDate() {
+        return priorPeriodDate;
     }
 
-    public void setLastReading(Double lastReading) {
-        this.lastReading = lastReading;
+    public void setPriorPeriodDate(String priorPeriodDate) {
+        this.priorPeriodDate = priorPeriodDate;
     }
 
-    public String getRecordTime() {
-        return recordTime;
+    public String getMeterReadingDate() {
+        return meterReadingDate;
     }
 
-    public void setRecordTime(String recordTime) {
-        this.recordTime = recordTime;
+    public void setMeterReadingDate(String meterReadingDate) {
+        this.meterReadingDate = meterReadingDate;
     }
 
-    public Double getMeterReading() {
-        return meterReading;
+    public String getCurrendPeriodNum() {
+        return currendPeriodNum;
     }
 
-    public void setMeterReading(Double meterReading) {
-        this.meterReading = meterReading;
+    public void setCurrendPeriodNum(String currendPeriodNum) {
+        this.currendPeriodNum = currendPeriodNum;
     }
 
-    public Double getMwo() {
-        return mwo;
+    public Double getRealityWater() {
+        return realityWater;
     }
 
-    public void setMwo(Double mwo) {
-        this.mwo = mwo;
+    public void setRealityWater(Double realityWater) {
+        this.realityWater = realityWater;
     }
 
-    public String getReadType() {
-        return readType;
+    public String getMeterReadingWay() {
+        return meterReadingWay;
     }
 
-    public void setReadType(String readType) {
-        this.readType = readType;
+    public void setMeterReadingWay(String meterReadingWay) {
+        this.meterReadingWay = meterReadingWay;
+    }
+
+    public String getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public String getBatchNo() {
+        return BatchNo;
+    }
+
+    public void setBatchNo(String batchNo) {
+        BatchNo = batchNo;
     }
 }

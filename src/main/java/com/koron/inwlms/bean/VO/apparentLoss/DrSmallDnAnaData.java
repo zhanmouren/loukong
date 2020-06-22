@@ -10,7 +10,7 @@ public class DrSmallDnAnaData {
 	/**
 	 * 口径
 	 */
-	private Integer meterDn;
+	private String meterDn;
 	
 	/**
 	 * 小于5m³的水表数量
@@ -32,9 +32,6 @@ public class DrSmallDnAnaData {
 	 */
 	private Integer tFlowNum = 0;
 
-	public Integer getMeterDn() {
-		return meterDn;
-	}
 
 	public Integer getfFlowNum() {
 		return fFlowNum;
@@ -52,10 +49,6 @@ public class DrSmallDnAnaData {
 		return tFlowNum;
 	}
 
-	public void setMeterDn(Integer meterDn) {
-		this.meterDn = meterDn;
-	}
-
 	public void setfFlowNum(Integer fFlowNum) {
 		this.fFlowNum = fFlowNum;
 	}
@@ -70,6 +63,14 @@ public class DrSmallDnAnaData {
 
 	public void settFlowNum(Integer tFlowNum) {
 		this.tFlowNum = tFlowNum;
+	}
+
+	public String getMeterDn() {
+		return meterDn;
+	}
+
+	public void setMeterDn(String meterDn) {
+		this.meterDn = meterDn;
 	}
 	
 }

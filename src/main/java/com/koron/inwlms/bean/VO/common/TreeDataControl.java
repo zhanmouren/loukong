@@ -4,7 +4,7 @@ public class TreeDataControl {
 	
 	private String serverID;
 	
-	private Integer layerID;
+	private String layerID;
 	
 	private String type;
 
@@ -16,11 +16,13 @@ public class TreeDataControl {
 		this.serverID = serverID;
 	}
 
-	public Integer getLayerID() {
+	
+
+	public String getLayerID() {
 		return layerID;
 	}
 
-	public void setLayerID(Integer layerID) {
+	public void setLayerID(String layerID) {
 		this.layerID = layerID;
 	}
 

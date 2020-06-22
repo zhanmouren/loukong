@@ -14,8 +14,10 @@ import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneIndicatorListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.ZoneThematicValueDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneHstDataVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.BurstLeakAnalysisVO;
 import com.koron.inwlms.bean.VO.zoneLoss.DmaZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.LeakDetailsVO;
 import com.koron.inwlms.bean.VO.zoneLoss.SZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneIndicatorDicVO;
 
@@ -90,4 +92,20 @@ public interface ZoneLossAnaService {
 	 * @return
 	 */
 	List<ZoneIndicatorDicVO> queryZoneHstIndicatorDic(SessionFactory factory,Integer zoneType);
+
+	/**
+	 * 查询分区所有漏点信息
+	 * @param factory
+	 * @return
+	 */
+	List<BurstLeakAnalysisVO> queryBurstLeakAnalysis(SessionFactory factory);
+	
+	/**
+	 * 根据id查询漏点详细信息
+	 * @param factory
+	 * @param id
+	 * @return
+	 */
+	LeakDetailsVO queryBurstLeakById(SessionFactory factory,String id);
 }
+

@@ -995,7 +995,8 @@ public class UserServiceImpl implements UserService{
 				
 				//生成菜单(单条记录) 2020/04/08
 				@TaskAnnotation("addMenu")
-				public synchronized Integer addMenu(SessionFactory factory,MenuTreeDTO menuTreeDTO) {
+				public MenuDTO addMenu(SessionFactory factory,MenuTreeDTO menuTreeDTO) {
+					// TODO Auto-generated method stub
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					MenuDTO menuDTO=new MenuDTO();
 					menuDTO.setLinkAddress(menuTreeDTO.getLinkAddress());
@@ -1012,29 +1013,28 @@ public class UserServiceImpl implements UserService{
 					Integer addRes=userMapper.addMenu(menuDTO);
 					if(addRes==-1) {
 						addRes=-1;
-						return addRes;
+						return null;
 					}
 					//树状关系中插入一条记录
-					 TreeService treeService  =new TreeService();
-					 //组装child,主要两个参数，一个type，一个是foreignkey	
+					 //组装child,主要两个参数，一个type，一个是foreignkey
 					  LongTreeBean child=new LongTreeBean();
 					  child.setForeignkey(menuCode);
 					  child.setType(1);
 					  int type=1;
-					  LongTreeBean parent= treeService.getNode(factory, type, menuTreeDTO.getForeignKey());
+					  LongTreeBean parent= TreeService.getNode(factory, type, menuTreeDTO.getForeignKey());
 					  if(parent==null) {
 						  addRes=-1;
-						  return addRes;
+						  return null;
 					  }else {
 						  //生成根节点
-					      LongTreeBean longTreeBean =treeService.add(factory, parent, child);
+					      LongTreeBean longTreeBean =TreeService.add(factory, parent, child);
 					      if(longTreeBean==null) {
 					    	  addRes=-1;
 					      }else {
 					    	  addRes=1; 
 					      }
 					  }
-					  return addRes;
+					  return menuDTO;
 				}
 
 				//加载角色菜单权限 2020/04/08

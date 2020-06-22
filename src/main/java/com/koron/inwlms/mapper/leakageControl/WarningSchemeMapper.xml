@@ -161,5 +161,6 @@ where "schemeCode" = #{schemeCode}
  insert into app_alertnoticescheme("schemeCode", type, "roleCode", flag, "createBy", "createTime", "updateBy", "updateTime")
  values(#{schemeCode}, #{type}, #{roleCode}, #{flag}, #{createBy}, Now(), #{updateBy}, Now())
  </insert>
+
  
  </mapper>

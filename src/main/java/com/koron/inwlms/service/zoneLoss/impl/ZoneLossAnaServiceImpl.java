@@ -25,9 +25,11 @@ import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
+import com.koron.inwlms.bean.VO.zoneLoss.BurstLeakAnalysisVO;
 import com.koron.inwlms.bean.VO.zoneLoss.DmaZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.IndicatorInfo;
+import com.koron.inwlms.bean.VO.zoneLoss.LeakDetailsVO;
 import com.koron.inwlms.bean.VO.zoneLoss.SZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneIndicatorDicVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
@@ -2599,6 +2601,27 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			lists.add(yZidVO16);
 		}
 		return lists;
+	}
+
+	@TaskAnnotation("queryBurstLeakAnalysis")
+	@Override
+	public List<BurstLeakAnalysisVO> queryBurstLeakAnalysis(SessionFactory factory) {
+		ZoneLossAnaMapper mapper = factory.getMapper(ZoneLossAnaMapper.class);
+		List<BurstLeakAnalysisVO> result = mapper.queryBurstLeakAnalysis();
+		for (BurstLeakAnalysisVO burstLeakAnalysisVO : result) {
+			String xy = burstLeakAnalysisVO.getXy();
+			String[] split = xy.split(",");
+			burstLeakAnalysisVO.setSmGeometry(split);
+		}
+		return result;
+	}
+
+	@TaskAnnotation("queryBurstLeakById")
+	@Override
+	public LeakDetailsVO queryBurstLeakById(SessionFactory factory, String id) {
+		ZoneLossAnaMapper mapper = factory.getMapper(ZoneLossAnaMapper.class);
+		LeakDetailsVO leakDetailsVO = mapper.queryBurstLeakById(id);
+		return leakDetailsVO;
 	}
 	
 }

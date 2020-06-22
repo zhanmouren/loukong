@@ -6,7 +6,7 @@ import com.koron.inwlms.bean.VO.common.MapServiceData;
 
 public interface MapServiceConfigService {
 
-	MapServiceData queryMapServiceConfig(SessionFactory factory);
+	MapServiceData queryMapServiceConfig(SessionFactory factory,String tenantID,String module);
 	
 	
 

@@ -6,7 +6,10 @@
 	<select id="queryZoneNosByRank" 
 	resultType="com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo">
 	select p_code as zoneNo, name as zoneName,inputdate as createTime from gis_exist_zone
-	where rank = #{rank}
+	where 1 = 1
+	<if test="rank != null and rank != ''">
+		and rank = #{rank}
+	</if>
 	<if test="zoneNo != null and zoneNo != ''">
 		and p_code = #{zoneNo}
 	</if>
@@ -47,5 +50,9 @@
 	"createTime"
 	from gis_exist_vzone
 	where "pCode" = #{zoneNo}
+	</select>
+	
+	<select id="queryGisMapConfig" resultType="com.koron.inwlms.bean.VO.intellectPartition.GisConfigDetVO">
+	 select * from gis_configDet where "moduleNo" = #{moduleNo}
 	</select>
 </mapper>

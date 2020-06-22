@@ -55,7 +55,7 @@ public interface TreeMapper {
     @Select("select * from tbltree where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
             + "and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
     List<LongTreeBean> getChildren(LongTreeBean bean);
-    
+
     /**
      * 根据角色获取节点的直接下级节点(新菜单操作)
      *

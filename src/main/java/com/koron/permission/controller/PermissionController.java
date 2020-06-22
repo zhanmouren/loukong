@@ -1252,6 +1252,44 @@ public class PermissionController {
 			
 		     return msg.toJson();
 		}
+		
+		 /*
+		    * date:2020-06-22
+		    * function:通过此接口删除角色-用户关系操作
+		    * author:xiaozhan
+		    */
+		  
+		   @RequestMapping(value = "/deleteUserByRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+		   @ApiOperation(value = "删除角色-用户接口", notes = "删除角色-用户接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+		   @ResponseBody
+			public String deleteUserByRole(@RequestBody TblRoleUserDTO tblRoleUserDTO, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
+			     if(tblRoleUserDTO.getRoleCode()==null || "".equals(tblRoleUserDTO.getRoleCode())) {
+			    	return  MessageBean.create(MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
+			     }
+			     if(tblRoleUserDTO.getUserCodeList()==null) {
+				    return  MessageBean.create(MESSAGE_INT_PARAMS, "用户编码不能为空", Integer.class).toJson();
+				 }
+			     if(tblRoleUserDTO.getUserCodeList().size()<1) {
+					 return  MessageBean.create(MESSAGE_INT_PARAMS, "用户编码不能为空", Integer.class).toJson();
+				 }
+				 MessageBean<Integer> msg = MessageBean.create(MESSAGE_INT_SUCCESS, MESSAGE_STRING_SUCCESS, Integer.class);	       
+				  try{				
+					 Integer addRes=ADOConnection.runTask(user.getEnv(),permissionService, "deleteUserByRole", Integer.class,tblRoleUserDTO);	
+					  if(addRes!=-1) {
+						  msg.setCode(MESSAGE_INT_SUCCESS); 
+						  msg.setDescription("删除角色-用户关系成功"); 					  
+					  }else {
+						  msg.setCode(MESSAGE_INT_ADDERROR); 
+						  msg.setDescription("删除角色-用户关系失败");  
+					  }	  
+			        }catch(Exception e){
+			        	msg.setCode(MESSAGE_INT_ERROR);
+			            msg.setDescription("删除失败");
+			        }
+				
+			     return msg.toJson();
+			}	 
+		   
 	   
 
 }

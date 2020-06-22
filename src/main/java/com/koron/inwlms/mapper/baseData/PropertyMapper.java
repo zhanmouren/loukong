@@ -16,6 +16,33 @@ public interface PropertyMapper {
     List<DataVO> queryALList();
 
     /**
+     * 查询户表类型汇总数
+      * @return
+     */
+    List<MeterAccountVO> queryMeterType();
+
+    /**
+     * 添加分区负责人
+     * @param zoneDTO
+     * @return
+     */
+    Integer addChargeZones(ZoneDTO zoneDTO);
+
+    /**
+     * 删除负责分区
+     * @param zoneDTO
+     * @return
+     */
+    Integer deleteChargeZones(ZoneDTO zoneDTO);
+
+    /**
+     * 查询负责分区列表
+     * @param zoneDTO
+     * @return
+     */
+    List<ZoneUserVO> queryChargeZones(ZoneDTO zoneDTO);
+
+    /**
      * 批量添加分区监测点数据
      * @param excelBeans
      * @return

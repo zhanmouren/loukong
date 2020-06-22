@@ -1343,6 +1343,11 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drSmallDnAllAnaData.setTtFlowNum(allTtNum);
 		
 		List<DrSmallDnAnaData> dsdaList = new ArrayList<>();
+		drSmallDn15AnaData.setMeterDn(Constant.DN_15+"");
+		drSmallDn20AnaData.setMeterDn(Constant.DN_20+"");
+		drSmallDn25AnaData.setMeterDn(Constant.DN_25+"");
+		drSmallDn40AnaData.setMeterDn(Constant.DN_40+"");
+		drSmallDnAllAnaData.setMeterDn("合计");
 		dsdaList.add(drSmallDn15AnaData);
 		dsdaList.add(drSmallDn20AnaData);
 		dsdaList.add(drSmallDn25AnaData);
@@ -1412,13 +1417,13 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		List<DrMeterStatisData> dmsLists = new ArrayList<>();
 		DrMeterStatisData smallDnData = new DrMeterStatisData();
 		smallDnData.setMeterDn("DN15~40");
-		smallDnData.setmFlow(smallDnMFlow);
+		smallDnData.setmFlow(smallDnMFlow == null? 0 : smallDnMFlow );
 		smallDnData.setmFlowRate(sDnMFlowRate);
 		smallDnData.setReadMeterNum(smallDnMeterNum);
 		smallDnData.setReadMeterRate(Double.parseDouble(df.format(smallDnMeterNum / (meterNum * 1.0))));
 		DrMeterStatisData bigDnData = new DrMeterStatisData();
 		bigDnData.setMeterDn(">=DN50");
-		bigDnData.setmFlow(bigDnMFlow);
+		bigDnData.setmFlow(bigDnMFlow == null? 0 : bigDnMFlow);
 		bigDnData.setmFlowRate(bDnMFlowRate);
 		bigDnData.setReadMeterNum(bigDnMeterNum);
 		bigDnData.setReadMeterRate(Double.parseDouble(df.format(bigDnMeterNum / (meterNum * 1.0))));
@@ -1448,7 +1453,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				//判断是大口径，小口径
 				DrFlowMeterData drFlowMeterData = new DrFlowMeterData();
 				drFlowMeterData.setAddress(meterQH.getAddress());
-				drFlowMeterData.setMeterNo(meterQH.getMeterNo());
+				drFlowMeterData.setMeterNo(meterQH.getAccNo());
 				drFlowMeterData.setMeterDn(meterQH.getMeterDn());
 				drFlowMeterData.sethMFlow(maxFList.size()>0?maxFList.get(0):0.0);
 				int changeDn = getChangeDn(qh,qhMaxMinMap); //获取更换的口径

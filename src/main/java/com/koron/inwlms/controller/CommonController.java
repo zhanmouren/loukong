@@ -1,7 +1,10 @@
 package com.koron.inwlms.controller;
 
+import com.github.pagehelper.util.StringUtil;
 import com.koron.common.StaffAttribute;
+import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
+import com.koron.inwlms.bean.DTO.common.MapServiceParam;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
@@ -10,6 +13,7 @@ import com.koron.inwlms.bean.VO.common.MapServiceData;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicNewVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.common.impl.CommonServiceImpl;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
@@ -24,6 +28,7 @@ import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -240,7 +245,7 @@ public class CommonController {
     @ResponseBody
 	public String querySubZoneNos(String zoneNo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
-		List<String> lists = ADOConnection.runTask(user.getEnv(),new GisZoneServiceImpl(), "querySubZoneNos", List.class,zoneNo);
+		List<ZoneInfo> lists = ADOConnection.runTask(user.getEnv(),new GisZoneServiceImpl(), "querySubZoneNos", List.class,zoneNo);	
 		msg.setData(lists);
 		return msg.toJson();
 	}
@@ -312,10 +317,10 @@ public class CommonController {
 	@RequestMapping(value = "/queryMapService.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询地图服务配置", notes = "查询地图服务配置", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMapService(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryMapService(@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID,@RequestBody MapServiceParam mapServiceParam) {
 		MessageBean<MapServiceData> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MapServiceData.class);	
 		try {
-			MapServiceData mapServiceData = ADOConnection.runTask(user.getEnv(),new MapServiceConfigServiceImpl(), "queryMapServiceConfig", MapServiceData.class);
+			MapServiceData mapServiceData = ADOConnection.runTask(user.getEnv(),new MapServiceConfigServiceImpl(), "queryMapServiceConfig", MapServiceData.class,tenantID,mapServiceParam.getModule());
 			msg.setData(mapServiceData);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 		}catch(Exception e) {

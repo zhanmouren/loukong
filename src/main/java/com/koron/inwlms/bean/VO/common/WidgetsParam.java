@@ -6,7 +6,19 @@ public class WidgetsParam {
 	
 	private String show;
 	
+	private Integer size;
+	
 	private List<TreeData> treeData;
+	
+	
+
+	public Integer getSize() {
+		return size;
+	}
+
+	public void setSize(Integer size) {
+		this.size = size;
+	}
 
 	public String getShow() {
 		return show;

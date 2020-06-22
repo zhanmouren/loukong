@@ -45,6 +45,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.PolicyDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
@@ -58,6 +59,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
@@ -65,6 +67,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
+import com.koron.inwlms.bean.VO.leakageControl.EventFileVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventSubtypeVO;
@@ -376,6 +379,31 @@ public class LeakageControlController {
 		
 	}
 	
+	@RequestMapping(value = "/queryAlarmProcessLog.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "预警处理任务操作记录查询", notes = "预警处理任务操作记录查询", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryAlarmProcessLog(@RequestBody AlarmProcessVO alarmProcessVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		if(alarmProcessVO.getTaskCode() == null && alarmProcessVO.getTaskCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!任务编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			List<AlarmProcessLog> list = ADOConnection.runTask(user.getEnv(),aps,"queryAlarmProcessLog",List.class,alarmProcessVO.getTaskCode());
+			msg.setData(list);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败");
+		}
+		
+		return msg.toJson();
+	}
+	
 	@RequestMapping(value = "/addAlarmProcess.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加预警信息处理任务接口", notes = "添加预警信息处理任务接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -464,13 +492,14 @@ public class LeakageControlController {
    		uploadFileDTO.setStoreName(storeName);
    		uploadFileDTO.setStorageTime(new java.util.Date());
    		uploadFileDTO.setCreateBy(createAccount);
+   		uploadFileDTO.setCreateTime(new Date());
    		uploadFileDTO.setFileType(fileType);
    		// 上传文件记录入库
    		Integer fileId = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFileDataReturnId", Integer.class, uploadFileDTO);
    		//插入关联表数据
    		FilerelationDTO filerelationDTO = new FilerelationDTO();
    		filerelationDTO.setFileId(fileId);
-   		filerelationDTO.setCode("");
+   		filerelationDTO.setCode(code);
    		Integer num = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFilerelationData", Integer.class, filerelationDTO);
    		
    		if (fileId != null) {
@@ -490,11 +519,17 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmProcessFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息任务附件接口", notes = "查询预警信息任务附件接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryAlarmProcessFile(@RequestBody String code,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryAlarmProcessFile(@RequestBody AlarmProcessVO alarmProcessVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
+		if(alarmProcessVO.getTaskCode() == null && alarmProcessVO.getTaskCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!任务编码为空");
+	        return msg.toJson();
+		}
+		
 		try {
-			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),aps, "queryAlarmProcessFile",List.class,code);
+			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),aps, "queryAlarmProcessFile",List.class,alarmProcessVO.getTaskCode());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 		}catch(Exception e) {
@@ -1211,15 +1246,16 @@ public class LeakageControlController {
     @ApiOperation(value = "事项信息添加接口", notes = "事项信息添加接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String addEventInfo(@RequestBody EventInfo eventInfo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 		
 		//TODO 产生一个编码
 		String code = UUID.randomUUID().toString();
 		eventInfo.setCode(code);
 		try {
-			Integer num = ADOConnection.runTask(user.getEnv(),eis, "addEventInfo",Integer.class,eventInfo);
-			if(num > 0) {
+			String codeR = ADOConnection.runTask(user.getEnv(),eis, "addEventInfo",String.class,eventInfo);
+			if(codeR != null) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setData(codeR);
 				msg.setDescription("事项信息添加成功");
 			}else {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1278,6 +1314,74 @@ public class LeakageControlController {
 	        msg.setDescription("事项信息导入失败！");
 		}
 		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/downloadEventFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "事项文件上传", notes = "事项文件上传", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String downloadEventFile(@RequestParam("file") MultipartFile file, @RequestParam("code") String code, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		String fileModule = "act";
+		Integer tId = 123;
+		MessageBean<UploadFileVO> msg = new MessageBean<>();
+		// 获取上传文件名,包含后缀
+   		String originalFilename = file.getOriginalFilename();
+   		// 获取后缀
+   		String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
+   	    // 获取当前月份，时间格式:201910
+   		SimpleDateFormat dataFormate = new SimpleDateFormat("yyyyMM");
+   		String time = dataFormate.format(new Date());
+   		// 保存目录
+   		String path = fileConfigInfo.getPath() + File.separator + fileModule + File.separator + time ;
+   		// 生成保存文件
+   		File dirPath = new File(path);
+   		if (!dirPath.exists()) {
+   			dirPath.mkdirs();
+   		}
+   		
+   		//用时间戳作为文件名称存储
+   		String storeName = System.currentTimeMillis()+fileType;
+   		File uploadFile = new File(path+ File.separator + storeName);
+   		double size = file.getSize() / 1014;
+
+   		// 将上传文件保存到路径
+   		try {
+   			file.transferTo(uploadFile);
+   		} catch (IOException e) {
+   			e.printStackTrace();
+   		}
+
+   		String createAccount = user.getLoginName();
+   		UploadFileDTO uploadFileDTO = new UploadFileDTO();
+   		uploadFileDTO.settId(tId);
+   		uploadFileDTO.setFileName(originalFilename);
+   		uploadFileDTO.setFilePath(path);
+   		uploadFileDTO.setFileSize(size);
+   		uploadFileDTO.setModuleType(fileModule);
+   		uploadFileDTO.setStoreName(storeName);
+   		uploadFileDTO.setStorageTime(new java.util.Date());
+   		uploadFileDTO.setCreateBy(createAccount);
+   		uploadFileDTO.setCreateTime(new Date());
+   		uploadFileDTO.setFileType(fileType);
+   		// 上传文件记录入库
+   		Integer fileId = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFileDataReturnId", Integer.class, uploadFileDTO);
+   		//插入关联表数据
+   		FilerelationDTO filerelationDTO = new FilerelationDTO();
+   		filerelationDTO.setFileId(fileId);
+   		filerelationDTO.setCode(code);  
+   		Integer num = ADOConnection.runTask(user.getEnv(),new FileServiceImpl(), "insertFilerelationData", Integer.class, filerelationDTO);
+   		
+   		if (fileId != null) {
+   			UploadFileVO uploadFileVO = new UploadFileVO();
+   			uploadFileVO.setFileId(uploadFileDTO.getId());
+   			uploadFileVO.setFileName(originalFilename);
+   			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+   			msg.setDescription(Constant.MESSAGE_STRING_SUCCESS);
+   			msg.setData(uploadFileVO);
+   		} else {
+   			msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+   			msg.setDescription(Constant.MESSAGE_STRING_ADDERROR);
+   		}
 		return msg.toJson();
 	}
 	
@@ -1652,6 +1756,8 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	
+	
 	@RequestMapping(value = "/queryEventWarnRelation.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "预警处理任务工单查询关联事项", notes = "预警处理任务工单查询关联事项", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1744,5 +1850,106 @@ public class LeakageControlController {
         if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
     }
 	
+	@RequestMapping(value = "/queryZoneTree.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "获取预警方案分区树", notes = "获取预警方案分区树", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZoneTree() {
+		
+		return null;
+	}
+	
+	/**
+	 * 工单和事项下载
+	 * @param response
+	 * @param request
+	 * @param user
+	 */
+	@RequestMapping(value = "/downloadFileById.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
+    @ResponseBody
+    public void downloadFileByCode(@RequestParam("id") Integer id,HttpServletResponse response, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		//
+        UploadFileDTO data = ADOConnection.runTask(user.getEnv(),eis, "queryFileDataById", UploadFileDTO.class, id); 
+        //调用文件工具类下载文件
+        if(data != null) FileUtil.downloadFile(data.getFileName(),data.getFilePath()+"/"+data.getStoreName(), response, request);
+    }
+	
+	@RequestMapping(value = "/deleteFileById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除工单或者事项文件接口", notes = "删除工单或者事项文件接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteFileById(@RequestBody QueryEventFileDTO queryEventFileDTO, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		if(queryEventFileDTO.getFileId() == null) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("文件id为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			Integer num = ADOConnection.runTask(user.getEnv(),eis, "deleteFileRelation", Integer.class, queryEventFileDTO);
+			if(num != 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("删除数据成功");
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无数据删除");
+			}
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("删除失败！");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/queryEventInfoFile.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询事项信息文件接口", notes = "查询事项信息文件接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryEventInfoFile(@RequestBody QueryEventFileDTO queryEventFileDTO, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<EventFileVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventFileVO.class);
+		if(queryEventFileDTO.getCode() == null || queryEventFileDTO.getCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("事项编码为空");
+	        return msg.toJson();
+		}
+
+		try {
+			EventFileVO list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", EventFileVO.class, queryEventFileDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/downEventFileList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "下载事项文件列表数据", notes = "下载事项文件列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downEventFileList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try{
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryEventFileDTO queryEventFileDTO = jsonValue.fromJson(objValue, QueryEventFileDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (queryEventFileDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			queryEventFileDTO.setPage(1);
+			queryEventFileDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			EventFileVO list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", EventFileVO.class, queryEventFileDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+					}.getType()); 
+			// 导出excel文件
+			//导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(list.getFileList(), jsonArray);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 }

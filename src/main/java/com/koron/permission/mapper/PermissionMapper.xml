@@ -320,4 +320,13 @@
         tblrole_user
         where "user"=#{userCode}   
       </select>
+      
+       <!-- 批量删除角色中员工信息 -->
+	   <delete id="deleteUserByRole">
+	        delete from tblrole_user where role=#{roleCode} 
+	        and "user" in
+	        <foreach item="userItem" collection="list" open="(" separator="," close=")">
+	            #{userItem}
+	        </foreach>
+	   </delete>
 </mapper>

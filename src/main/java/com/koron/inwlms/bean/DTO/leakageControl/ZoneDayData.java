@@ -15,6 +15,18 @@ public class ZoneDayData {
 	
 	private String zoneIndex;
 	
+	private String zoneType;
+	
+	
+	
+
+	public String getZoneType() {
+		return zoneType;
+	}
+
+	public void setZoneType(String zoneType) {
+		this.zoneType = zoneType;
+	}
 
 	public String getZoneIndex() {
 		return zoneIndex;

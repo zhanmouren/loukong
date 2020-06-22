@@ -28,12 +28,12 @@
  delete from app_eventinfo where code = #{code}
  </delete>
  
- <insert id="addEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
+ <select id="addEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo" resultType="java.lang.String">
  insert into app_eventinfo(code, name, type, subtype, "objectCode", "firstPartition", "secondPartition", "dmaCode", "objectType", "happenTime", 
  "content", "createBy", "createTime", "updateBy", "updateTime")
  values(#{code}, #{name}, #{type}, #{subtype}, #{objectCode}, #{firstPartition}, #{secondPartition}, #{dmaCode}, #{objectType}, #{happenTime},
- #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime})
- </insert>
+ #{content}, #{createBy}, Now(), #{updateBy}, #{updateTime}) returning code
+ </select>
  
  <update id="updateEventInfo" parameterType="com.koron.inwlms.bean.VO.leakageControl.EventInfo">
  update app_eventinfo
@@ -74,6 +74,28 @@
  <select id="queryEventWarnRelation" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation">
  select * from app_eventwarnrelation where "processCode" = #{processCode}
  </select>
-
+ 
+ <select id="queryEventFile" parameterType="com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO" resultType="com.koron.inwlms.bean.DTO.common.UploadFileDTO">
+ select a.id, a."fileName", a."filePath", a."fileType", a."fileSize", a."storageTime", a."tId", a."moduleType", a."storeName", a."createBy", a."createTime", a."updateBy", a."updateTime", a.status, a.foreignkey
+ from app_file a inner join app_filerelation b on b."fileId" = a.id where b.code = #{code}
+ <if test="name != null and name != '' "> and a."fileName" like '%'||#{name}||'%'</if>
+ <if test="startTime != null and endTime == null"> and a."storageTime" &gt; '${startTime}'</if>
+ <if test="endTime != null and startTime == null"> and a."storageTime" &lt; '${endTime}'</if>
+ <if test="startTime != null and endTime != null"> and a."storageTime" between '${startTime}' and '${endTime}'</if>
+ limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+ </select>
+ 
+ <select id="queryEventFileNum">
+ select count(*)
+ from app_file a inner join app_filerelation b on b."fileId" = a.id where b.code = #{code}
+ <if test="name != null and name != '' "> and a."fileName" like '%'||#{name}||'%'</if>
+ <if test="startTime != null and endTime == null"> and a."storageTime" &gt; '${startTime}'</if>
+ <if test="endTime != null and startTime == null"> and a."storageTime" &lt; '${endTime}'</if>
+ <if test="startTime != null and endTime != null"> and a."storageTime" between '${startTime}' and '${endTime}'</if>
+ </select>
+ 
+ <delete id="deleteFileRelation" parameterType="com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO">
+ delete from app_filerelation where "fileId" = #{fileId}
+ </delete>
  
 </mapper>

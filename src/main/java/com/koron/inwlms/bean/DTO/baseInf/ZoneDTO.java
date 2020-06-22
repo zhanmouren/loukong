@@ -40,6 +40,33 @@ public class ZoneDTO extends BaseDTO {
      */
     private String rank;
 
+    /**
+     * 用户
+     */
+    private String user;
+
+    /**
+     * 分区编号集
+     * @return
+     */
+    private String[] zoons;
+
+    public String[] getZoons() {
+        return zoons;
+    }
+
+    public void setZoons(String[] zoons) {
+        this.zoons = zoons;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
     public String getRank() {
         return rank;
     }

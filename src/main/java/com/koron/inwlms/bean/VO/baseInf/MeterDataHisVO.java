@@ -6,6 +6,12 @@ package com.koron.inwlms.bean.VO.baseInf;
  * @description:
  */
 public class MeterDataHisVO {
+
+    /**
+     * 行数
+     */
+    private Integer rows;
+
     /**
      * id
      */
@@ -75,6 +81,14 @@ public class MeterDataHisVO {
      * 修改时间
      */
     private String updateTime;
+
+    public Integer getRows() {
+        return rows;
+    }
+
+    public void setRows(Integer rows) {
+        this.rows = rows;
+    }
 
     public Integer getId() {
         return id;

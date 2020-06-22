@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
@@ -34,7 +35,7 @@ public interface EventInfoMapper {
 	
 	Integer updateEventInfo(EventInfo eventInfo); 
 	
-	Integer addEventInfo(EventInfo eventInfo);
+	String addEventInfo(EventInfo eventInfo);
 	List<DataDicRelationVO> querychildKey(EventTypeDTO eventTypeDTO);
 	
 	Integer queryMaxKey(@Param("parent") String parent);
@@ -60,5 +61,10 @@ public interface EventInfoMapper {
 	
 	@Select("select * from app_file where id = #{id}")
 	UploadFileDTO queryFileById(@Param("id") Integer id);
+	
+	List<UploadFileDTO> queryEventFile(QueryEventFileDTO queryEventFileDTO);
+	Integer deleteFileRelation(QueryEventFileDTO queryEventFileDTO);
+	
+	Integer queryEventFileNum(QueryEventFileDTO queryEventFileDTO);
 	
 }

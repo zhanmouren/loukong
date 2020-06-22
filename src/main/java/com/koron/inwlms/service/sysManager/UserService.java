@@ -2,31 +2,12 @@ package com.koron.inwlms.service.sysManager;
 
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.sysManager.*;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.koron.common.web.mapper.LongTreeBean;
-import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DeptAndUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.DeptDTO;
-import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
-import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
-import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
-import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
-import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
-import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
-import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
-import com.koron.inwlms.bean.DTO.sysManager.PositionDTO;
-import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
-import com.koron.inwlms.bean.DTO.sysManager.RoleMenuDTO;
-import com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO;
-import com.koron.inwlms.bean.DTO.sysManager.TableMapperDTO;
-import com.koron.inwlms.bean.DTO.sysManager.UpdateWordDTO;
-import com.koron.inwlms.bean.DTO.sysManager.UserDTO;
-import com.koron.inwlms.bean.DTO.sysManager.UserExcelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
@@ -150,7 +131,7 @@ public interface UserService {
 	    
 	    
 	    //生成菜单
-	     Integer addMenu(SessionFactory factory,MenuTreeDTO menuTreeDTO);
+		MenuDTO addMenu(SessionFactory factory, MenuTreeDTO menuTreeDTO);
 	     
 	     //加载角色菜单权限
 	     List<RoleMenusVO> queryRoleMenuByRoleCode(SessionFactory factory,RoleDTO roleDTO);

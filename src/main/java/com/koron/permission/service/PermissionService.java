@@ -121,4 +121,7 @@ public interface PermissionService {
     //根据登录获取有关联(有权限)的操作，如果传父操作， 则只返回此操作下有权限的操作1.0。
     public List<TblRoleMenusVO> getUserMenuOPList(SessionFactory factory,TblRoleAndOPDTO tblRoleAndOPDTO);
     
+    //删除角色-用户关系
+    public Integer  deleteUserByRole(SessionFactory factory,TblRoleUserDTO tblRoleUserDTO);
+    
 }

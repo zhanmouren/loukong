@@ -1,5 +1,7 @@
 package com.koron.inwlms.bean.DTO.intellectPartition;
 
+import java.util.List;
+
 /**
  * 
  * @author 刘刚
@@ -29,11 +31,35 @@ public class AutomaticPartitionDTO {
 	/**
 	 * 地理图层信息
 	 */
-	private String ambientLayer;
+	private List<String> ambientLayerList;
 	/**
 	 * 流量计图层信息
 	 */
-	private String flowLayer;
+	private List<String> flowLayerList;
+	/**
+	 * 虚拟分区分级
+	 */
+	private String othertype;
+	
+	
+	public List<String> getAmbientLayerList() {
+		return ambientLayerList;
+	}
+	public void setAmbientLayerList(List<String> ambientLayerList) {
+		this.ambientLayerList = ambientLayerList;
+	}
+	public List<String> getFlowLayerList() {
+		return flowLayerList;
+	}
+	public void setFlowLayerList(List<String> flowLayerList) {
+		this.flowLayerList = flowLayerList;
+	}
+	public String getOthertype() {
+		return othertype;
+	}
+	public void setOthertype(String othertype) {
+		this.othertype = othertype;
+	}
 	public Integer getZoneType() {
 		return zoneType;
 	}
@@ -63,18 +89,6 @@ public class AutomaticPartitionDTO {
 	}
 	public void setMinZone(Integer minZone) {
 		this.minZone = minZone;
-	}
-	public String getAmbientLayer() {
-		return ambientLayer;
-	}
-	public void setAmbientLayer(String ambientLayer) {
-		this.ambientLayer = ambientLayer;
-	}
-	public String getFlowLayer() {
-		return flowLayer;
-	}
-	public void setFlowLayer(String flowLayer) {
-		this.flowLayer = flowLayer;
 	}
 	
 	

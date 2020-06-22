@@ -14,6 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -30,6 +31,7 @@ import java.util.List;
 /**
  * 该注解指定项目为springboot，由此类当作程序入口 自动装配 web 依赖的环境
  **/
+@EnableScheduling
 @SpringBootApplication
 @ComponentScan(value = {"org.swan", "com.koron", "com.koron.main"})
 public class App extends WebMvcConfigurationSupport {
