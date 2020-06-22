@@ -329,4 +329,17 @@
 	            #{userItem}
 	        </foreach>
 	   </delete>
+	   
+	   <!-- 加载分区树和打勾权限 -->
+	    <select id="queryRoleZone"  parameterType="com.koron.permission.bean.DTO.TblRoleZoneDTO" resultType="com.koron.permission.bean.VO.TblRoleZoneVO">
+	     select   tbltree.*,rangevalue.id as roleRangeId,rangevalue.role as role,rangevalue.catalogue as catalogue,rangevalue.value as value,
+	     zone.name as name
+	     from  gis_exist_zone as zone
+	     left join tbltree  on tbltree.foreignkey=zone.p_code
+	     left join tblrole_range_value as rangevalue on rangevalue.value=zone.p_code and rangevalue.role=#{roleCode}
+	     left join tblrole on tblrole.code=rangevalue.role and rangevalue.role=#{roleCode} and tblrole.app=#{app}
+	     where tbltree.type=2 
+         order by tbltree.seq
+	    </select>
+	   
 </mapper>

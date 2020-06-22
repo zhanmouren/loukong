@@ -37,6 +37,7 @@ import com.koron.permission.bean.DTO.TblRoleDTO;
 import com.koron.permission.bean.DTO.TblRoleOpDTO;
 import com.koron.permission.bean.DTO.TblRoleRangeValueDTO;
 import com.koron.permission.bean.DTO.TblRoleUserDTO;
+import com.koron.permission.bean.DTO.TblRoleZoneDTO;
 import com.koron.permission.bean.DTO.TblTenantDTO;
 import com.koron.permission.bean.VO.TblAppCatalogueVO;
 import com.koron.permission.bean.VO.TblAppOPVO;
@@ -46,6 +47,7 @@ import com.koron.permission.bean.VO.TblOpCodeVO;
 import com.koron.permission.bean.VO.TblOperationVO;
 import com.koron.permission.bean.VO.TblRoleMenusVO;
 import com.koron.permission.bean.VO.TblRoleVO;
+import com.koron.permission.bean.VO.TblRoleZoneVO;
 import com.koron.permission.mapper.PermissionMapper;
 import com.koron.permission.service.PermissionService;
 import com.koron.util.RandomCodeUtil;
@@ -716,6 +718,22 @@ public class PermissionServiceImpl implements PermissionService{
 			//执行批量删除角色职员的操作
 			Integer delResult=mapper.deleteUserByRole(tblRoleUserDTO.getRoleCode(),tblRoleUserDTO.getUserCodeList());
 			return  delResult; 
+		}
+		
+		//加载分区树(打勾的权限)
+		@TaskAnnotation("queryRoleZone")
+		@Override
+		public List<TblRoleZoneVO> queryRoleZone(SessionFactory factory, TblRoleZoneDTO tblRoleZoneDTO) {
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
+			List<TblRoleZoneVO> roleZoneList=mapper.queryRoleZone(tblRoleZoneDTO);
+			if(roleZoneList!=null && roleZoneList.size()>0) {
+				for(int i=0;i<roleZoneList.size();i++) {
+					if(roleZoneList.get(i).getValue()!=null && !"".equals(roleZoneList.get(i).getValue())) {
+						roleZoneList.get(i).setBooltick(true);
+					}
+				}
+			}		
+			return roleZoneList;
 		}
 		
 

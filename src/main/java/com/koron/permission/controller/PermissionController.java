@@ -36,6 +36,7 @@ import com.koron.permission.bean.DTO.TblRoleDTO;
 import com.koron.permission.bean.DTO.TblRoleOpDTO;
 import com.koron.permission.bean.DTO.TblRoleRangeValueDTO;
 import com.koron.permission.bean.DTO.TblRoleUserDTO;
+import com.koron.permission.bean.DTO.TblRoleZoneDTO;
 import com.koron.permission.bean.DTO.TblTenantDTO;
 import com.koron.permission.bean.VO.TblRoleRangeValueListVO;
 import com.koron.permission.service.PermissionService;
@@ -1288,7 +1289,43 @@ public class PermissionController {
 			        }
 				
 			     return msg.toJson();
-			}	 
+			}	
+		   
+		   /*
+		     * date:2020-06-22
+		     * funtion:通过此接口加载角色分区树(打勾)
+		     * author:xiaozhan
+		     */
+			@RequestMapping(value = "/queryRoleZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+		    @ApiOperation(value = "加载角色分区树接口", notes = "加载角色分区树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+		    @ResponseBody
+			public String queryRoleZone(@RequestBody TblRoleZoneDTO tblRoleZoneDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+				if(tblRoleZoneDTO.getRoleCode()==null || "".equals(tblRoleZoneDTO.getRoleCode())) {
+					return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
+				}	
+				if(tblRoleZoneDTO.getApp()==null || "".equals(tblRoleZoneDTO.getApp())) {
+					return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "应用不能为空", Integer.class).toJson();
+				}
+				 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+				  try{				
+					  List<RoleMenusVO> menuList=ADOConnection.runTask(user.getEnv(),permissionService, "queryRoleZone", List.class,tblRoleZoneDTO);	
+					  if(menuList.size()>0) {			 
+						    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+							msg.setDescription("加载角色分区树成功"); 
+							msg.setData(menuList);
+				      }else {
+					        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					        msg.setDescription("没有查询到角色分区树"); 
+					 }		  
+			        }catch(Exception e){
+			        	//查询失败
+			        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+			            msg.setDescription("查询失败");
+			        }
+				
+			     return msg.toJson();
+			}
+			
 		   
 	   
 

@@ -22,6 +22,7 @@ import com.koron.permission.bean.DTO.TblRoleDTO;
 import com.koron.permission.bean.DTO.TblRoleOpDTO;
 import com.koron.permission.bean.DTO.TblRoleRangeValueDTO;
 import com.koron.permission.bean.DTO.TblRoleUserDTO;
+import com.koron.permission.bean.DTO.TblRoleZoneDTO;
 import com.koron.permission.bean.DTO.TblTenantDTO;
 import com.koron.permission.bean.VO.TblAppCatalogueVO;
 import com.koron.permission.bean.VO.TblAppOPVO;
@@ -30,6 +31,7 @@ import com.koron.permission.bean.VO.TblMenusVO;
 import com.koron.permission.bean.VO.TblOpCodeVO;
 import com.koron.permission.bean.VO.TblRoleMenusVO;
 import com.koron.permission.bean.VO.TblRoleVO;
+import com.koron.permission.bean.VO.TblRoleZoneVO;
 
 
 
@@ -151,4 +153,7 @@ public interface PermissionMapper {
     
     //删除角色-用户
     public Integer deleteUserByRole(@Param("roleCode") String roleCode,@Param("list") List<String> userCodeList);
+    
+    //加载分区树以及打勾的权限
+    public List<TblRoleZoneVO> queryRoleZone(TblRoleZoneDTO tblRoleZoneDTO);
 }
