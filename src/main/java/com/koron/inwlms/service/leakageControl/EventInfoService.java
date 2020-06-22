@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
+import com.koron.inwlms.bean.VO.leakageControl.EventFileVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
@@ -44,7 +45,7 @@ public interface EventInfoService {
 
 	UploadFileDTO queryFileDataById(SessionFactory factory, Integer id);
 
-	List<UploadFileDTO> queryEventFile(SessionFactory factory, QueryEventFileDTO queryEventFileDTO);
+	EventFileVO queryEventFile(SessionFactory factory, QueryEventFileDTO queryEventFileDTO);
 
 	Integer deleteFileRelation(SessionFactory factory, QueryEventFileDTO queryEventFileDTO);
 	

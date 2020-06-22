@@ -85,6 +85,15 @@
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
+ <select id="queryEventFileNum">
+ select count(*)
+ from app_file a inner join app_filerelation b on b."fileId" = a.id where b.code = #{code}
+ <if test="name != null and name != '' "> and a."fileName" like '%'||#{name}||'%'</if>
+ <if test="startTime != null and endTime == null"> and a."storageTime" &gt; '${startTime}'</if>
+ <if test="endTime != null and startTime == null"> and a."storageTime" &lt; '${endTime}'</if>
+ <if test="startTime != null and endTime != null"> and a."storageTime" between '${startTime}' and '${endTime}'</if>
+ </select>
+ 
  <delete id="deleteFileRelation" parameterType="com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO">
  delete from app_filerelation where "fileId" = #{fileId}
  </delete>

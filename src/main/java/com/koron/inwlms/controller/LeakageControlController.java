@@ -67,6 +67,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
+import com.koron.inwlms.bean.VO.leakageControl.EventFileVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventSubtypeVO;
@@ -1904,7 +1905,7 @@ public class LeakageControlController {
     @ApiOperation(value = "查询事项信息文件接口", notes = "查询事项信息文件接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryEventInfoFile(@RequestBody QueryEventFileDTO queryEventFileDTO, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<EventFileVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EventFileVO.class);
 		if(queryEventFileDTO.getCode() == null || queryEventFileDTO.getCode().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("事项编码为空");
@@ -1912,7 +1913,7 @@ public class LeakageControlController {
 		}
 
 		try {
-			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", List.class, queryEventFileDTO);
+			EventFileVO list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", EventFileVO.class, queryEventFileDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 		}catch(Exception e) {
@@ -1938,12 +1939,12 @@ public class LeakageControlController {
 			queryEventFileDTO.setPage(1);
 			queryEventFileDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
 			// 查询到导出数据结果
-			List<UploadFileDTO> list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", List.class, queryEventFileDTO);
+			EventFileVO list = ADOConnection.runTask(user.getEnv(),eis, "queryEventFile", EventFileVO.class, queryEventFileDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType()); 
 			// 导出excel文件
 			//导出list
-			return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+			return ExportDataUtil.getExcelDataFileInfoByList(list.getFileList(), jsonArray);
 			
 		} catch (Exception e) {
 			e.printStackTrace();

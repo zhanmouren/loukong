@@ -53,6 +53,13 @@ public class MapServiceConfigServiceImpl implements MapServiceConfigService{
 		
 		ProjInfo projInfo = new ProjInfo();
 		for(GisMapServiceData gisMapServiceData : gisMapDataList) {
+			GisMapData gisMapData = new GisMapData();
+			gisMapData.setOpacity(gisMapServiceData.getOpacity());
+			gisMapData.setServiceName(gisMapServiceData.getAlias());
+			gisMapData.setType("tiledMapLayer");
+			gisMapData.setUrl(gisMapServiceData.getResturl());
+			mapServices.put(gisMapServiceData.getId_service(), gisMapData);
+			
 			//获取BaseMap url
 			if(gisMapServiceData.getId_service().equals("BaseMap")) {
 				mapServiceData.setBaseMapUrl(gisMapServiceData.getResturl());
@@ -74,16 +81,14 @@ public class MapServiceConfigServiceImpl implements MapServiceConfigService{
 				projInfo.setBounds(boundsList);
 				mapOpTion.setProjInfo(projInfo);	
 				mapServiceData.setMapOption(mapOpTion);
-			}else if(gisMapServiceData.getId_service().equals("BaseMap")) {
-				
+				continue;
+			}else if(gisMapServiceData.getId_service().equals("Map")) {
+				continue;
+			}else if(gisMapServiceData.getId_service().equals("Data")) {
+				continue;
 			}
 			
-			GisMapData gisMapData = new GisMapData();
-			gisMapData.setOpacity(gisMapServiceData.getOpacity());
-			gisMapData.setServiceName(gisMapServiceData.getAlias());
-			gisMapData.setType("tiledMapLayer");
-			gisMapData.setUrl(gisMapServiceData.getResturl());
-			mapServices.put(gisMapServiceData.getId_service(), gisMapData);
+			
 			
 			TreeData treeData = new TreeData();
 			List<TreeDataControl> controlList = new ArrayList<>();

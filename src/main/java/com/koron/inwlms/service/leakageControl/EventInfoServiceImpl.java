@@ -26,6 +26,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
+import com.koron.inwlms.bean.VO.leakageControl.EventFileVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
@@ -192,10 +193,18 @@ public class EventInfoServiceImpl implements EventInfoService{
 	
 	@TaskAnnotation("queryEventFile")
 	@Override
-	public List<UploadFileDTO> queryEventFile(SessionFactory factory,QueryEventFileDTO queryEventFileDTO){
+	public EventFileVO queryEventFile(SessionFactory factory,QueryEventFileDTO queryEventFileDTO){
 		EventInfoMapper mapper = factory.getMapper(EventInfoMapper.class);
+		EventFileVO EventFileVO = new EventFileVO();
 		List<UploadFileDTO> list = mapper.queryEventFile(queryEventFileDTO);
-		return list;
+		EventFileVO.setFileList(list);
+		PageInfo query = new PageInfo();
+		Integer num = mapper.queryEventFileNum(queryEventFileDTO);
+		query.setTotalNumber(num);
+		query.setPage(queryEventFileDTO.getPage());
+		query.setSize(queryEventFileDTO.getPageCount());
+		EventFileVO.setQuery(query);
+		return EventFileVO;
 	}
 	
 	

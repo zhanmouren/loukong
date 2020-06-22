@@ -1,12 +1,7 @@
-package com.koron.inwlms.bean.DTO.intellectPartition;
+package com.koron.inwlms.bean.VO.intellectPartition;
 
-/**
- * 
- * @author 刘刚
- *
- */
-public class GisZonePipeData {
-
+public class GisZonePipeDateVO {
+	
 	/**
 	 * 管道点号（本点号）
 	 */
@@ -42,7 +37,7 @@ public class GisZonePipeData {
 	/**
 	 * 管线是否有已关闭阀门
 	 */
-	private Integer pip_value;
+	private String pip_value;
 	/**
 	 * 管线是否已经安装水表
 	 */
@@ -77,63 +72,6 @@ public class GisZonePipeData {
 	private Double pip_price;
 	
 	private Integer is_border;
-	
-
-	public Integer getRailway() {
-		return railway;
-	}
-
-	public void setRailway(Integer railway) {
-		this.railway = railway;
-	}
-
-	public Integer getAdministration() {
-		return administration;
-	}
-
-	public void setAdministration(Integer administration) {
-		this.administration = administration;
-	}
-
-	public Integer getLayerOne() {
-		return layerOne;
-	}
-
-	public void setLayerOne(Integer layerOne) {
-		this.layerOne = layerOne;
-	}
-
-	public Integer getLayerTwo() {
-		return layerTwo;
-	}
-
-	public void setLayerTwo(Integer layerTwo) {
-		this.layerTwo = layerTwo;
-	}
-
-	public Integer getLayerThree() {
-		return layerThree;
-	}
-
-	public void setLayerThree(Integer layerThree) {
-		this.layerThree = layerThree;
-	}
-
-	public Integer getLayerFour() {
-		return layerFour;
-	}
-
-	public void setLayerFour(Integer layerFour) {
-		this.layerFour = layerFour;
-	}
-
-	public Integer getIs_border() {
-		return is_border;
-	}
-
-	public void setIs_border(Integer is_border) {
-		this.is_border = is_border;
-	}
 
 	public String getPip_p() {
 		return pip_p;
@@ -150,8 +88,6 @@ public class GisZonePipeData {
 	public void setPip_p_pre(String pip_p_pre) {
 		this.pip_p_pre = pip_p_pre;
 	}
-
-	
 
 	public String getPip_obj_code() {
 		return pip_obj_code;
@@ -201,11 +137,11 @@ public class GisZonePipeData {
 		this.point_z = point_z;
 	}
 
-	public Integer getPip_value() {
+	public String getPip_value() {
 		return pip_value;
 	}
 
-	public void setPip_value(Integer pip_value) {
+	public void setPip_value(String pip_value) {
 		this.pip_value = pip_value;
 	}
 
@@ -225,6 +161,54 @@ public class GisZonePipeData {
 		this.pip_river = pip_river;
 	}
 
+	public Integer getRailway() {
+		return railway;
+	}
+
+	public void setRailway(Integer railway) {
+		this.railway = railway;
+	}
+
+	public Integer getAdministration() {
+		return administration;
+	}
+
+	public void setAdministration(Integer administration) {
+		this.administration = administration;
+	}
+
+	public Integer getLayerOne() {
+		return layerOne;
+	}
+
+	public void setLayerOne(Integer layerOne) {
+		this.layerOne = layerOne;
+	}
+
+	public Integer getLayerTwo() {
+		return layerTwo;
+	}
+
+	public void setLayerTwo(Integer layerTwo) {
+		this.layerTwo = layerTwo;
+	}
+
+	public Integer getLayerThree() {
+		return layerThree;
+	}
+
+	public void setLayerThree(Integer layerThree) {
+		this.layerThree = layerThree;
+	}
+
+	public Integer getLayerFour() {
+		return layerFour;
+	}
+
+	public void setLayerFour(Integer layerFour) {
+		this.layerFour = layerFour;
+	}
+
 	public Integer getPip_d() {
 		return pip_d;
 	}
@@ -240,8 +224,15 @@ public class GisZonePipeData {
 	public void setPip_price(Double pip_price) {
 		this.pip_price = pip_price;
 	}
+
+	public Integer getIs_border() {
+		return is_border;
+	}
+
+	public void setIs_border(Integer is_border) {
+		this.is_border = is_border;
+	}
 	
 	
-	
-	
+
 }

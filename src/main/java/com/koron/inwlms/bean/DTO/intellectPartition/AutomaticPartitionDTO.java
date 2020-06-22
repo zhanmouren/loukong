@@ -34,6 +34,18 @@ public class AutomaticPartitionDTO {
 	 * 流量计图层信息
 	 */
 	private String flowLayer;
+	/**
+	 * 虚拟分区分级
+	 */
+	private String othertype;
+	
+	
+	public String getOthertype() {
+		return othertype;
+	}
+	public void setOthertype(String othertype) {
+		this.othertype = othertype;
+	}
 	public Integer getZoneType() {
 		return zoneType;
 	}

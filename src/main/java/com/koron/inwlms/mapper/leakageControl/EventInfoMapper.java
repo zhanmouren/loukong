@@ -65,4 +65,6 @@ public interface EventInfoMapper {
 	List<UploadFileDTO> queryEventFile(QueryEventFileDTO queryEventFileDTO);
 	Integer deleteFileRelation(QueryEventFileDTO queryEventFileDTO);
 	
+	Integer queryEventFileNum(QueryEventFileDTO queryEventFileDTO);
+	
 }
