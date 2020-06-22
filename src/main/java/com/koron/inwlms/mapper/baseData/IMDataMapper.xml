@@ -114,7 +114,9 @@
             <if test="DMA != null and DMA != '' "> </if>
             type='1'
         </trim>
-        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        <if test="pageCount !=null and page !=null">
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        </if>
         )t
         union all
         select count(*) as rows,'','','','',0.0,0.0,0.0,0.0,'',''
@@ -151,7 +153,9 @@
             <if test="DMA != null and DMA != '' "> </if>
             type='2'
         </trim>
-        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        <if test="pageCount !=null and page !=null">
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        </if>
         )t
         union all
         select count(*) as rows,'','','','',0.0,0.0,0.0,0.0,'',''
@@ -205,7 +209,9 @@
             <if test="endD != null  and endD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &lt;= #{endD}</if>
         </trim>
         order by "meter_reading_date" desc
-        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        <if test="pageCount !=null and page !=null">
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        </if>
         )t
         union all
         select count(*) as rows,0,'','','',0,'','',0,0,'','','','','','','','' from mi_readwaterinfo

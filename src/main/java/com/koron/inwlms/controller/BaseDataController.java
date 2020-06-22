@@ -427,6 +427,30 @@ public class BaseDataController {
         return msg.toString();
     }
 
+    @RequestMapping(value = "/downloadZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "导出分区接口", notes = "导出分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downloadZoneList(@RequestBody ZoneDTO zoneDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        Gson jsonValue = new Gson();
+        //TODO:校验参数有效性
+        if(zoneDTO.getBegD()!=null && !"".equals(zoneDTO.getBegD()) && !_checkFormat("YYYY-MM-DD",zoneDTO.getBegD())){
+            msg.setCode(Constant.BASE_PARAM_DATE_FORMAT_ERROR);
+            msg.setDescription("日期格式不正确");
+            return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+        }
+
+        //*****查询符合条件数据
+        PageListVO<List<ZoneVO>> zps = ADOConnection.runTask(user.getEnv(),zcs, "queryZoneList", PageListVO.class,zoneDTO);
+        List<ZoneVO> list= zps.getDataList();
+        List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+        }.getType());
+        //导出list
+        return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+    }
+
     @RequestMapping(value = "/queryZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区列表接口", notes = "查询分区列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -503,6 +527,25 @@ public class BaseDataController {
             msg.setDescription("操作失败");
         }
         return msg.toJson();
+    }
+
+    @RequestMapping(value = "/downloadZonePointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "导出分区与监测点接口", notes = "导出分区与监测点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downloadZonePointList(@RequestBody ZonePointDTO zonePointDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        Gson jsonValue = new Gson();
+        //TODO:校验参数有效性
+
+        //*****查询符合条件数据
+        PageListVO<List<ZonePointVO>> zps = ADOConnection.runTask(user.getEnv(),zcs, "queryZonePointList", PageListVO.class,zonePointDTO);
+        List<ZonePointVO> list= zps.getDataList();
+        List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+        }.getType());
+        //导出list
+        return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
     }
 
     @RequestMapping(value = "/queryZonePointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -674,6 +717,25 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @RequestMapping(value = "/downloadZoneMeterList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "导出分区与户表接口", notes = "导出分区与户表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downloadZoneMeterList(@RequestBody ZoneMeterDTO zoneMeterDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        Gson jsonValue = new Gson();
+        //TODO:校验参数有效性
+
+        //*****查询符合条件数据
+        PageListVO<List<ZoneMeterVO>> zps = ADOConnection.runTask(user.getEnv(),zcs, "queryZoneMeterList", PageListVO.class,zoneMeterDTO);
+        List<ZoneMeterVO> list= zps.getDataList();
+        List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+        }.getType());
+        //导出list
+        return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+    }
+
     @RequestMapping(value = "/queryZoneMeterList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与户表列表接口", notes = "查询分区与户表列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -832,6 +894,33 @@ public class BaseDataController {
             }
         }
         return msg.toJson();
+    }
+
+    @RequestMapping(value = "/downloadMonitorDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "导出监测数据接口", notes = "导出监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downloadMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        Gson jsonValue = new Gson();
+        //TODO:校验参数有效性
+
+        //*****查询符合条件数据
+        PageListVO<List<MonitorDataVO>> mds = null;
+        //List<MonitorDataVO> mds = null;
+        if("1".equals(monitorDataDTO.getType())) {
+            //*****获取压力/流量数据
+            mds = ADOConnection.runTask(user.getEnv(),ms, "queryPressureFlowList", PageListVO.class, monitorDataDTO);
+        }else{
+            //*****获取噪声数据
+            mds = ADOConnection.runTask(user.getEnv(),ms, "queryNoiseList", PageListVO.class, monitorDataDTO);
+        }
+        List<MonitorDataVO> list= mds.getDataList();
+        List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+        }.getType());
+        //导出list
+        return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
     }
 
     @RequestMapping(value = "/queryMonitorDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
@@ -1005,8 +1094,27 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @RequestMapping(value = "/downloadReadMeterDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "导出抄表接口", notes = "导出抄表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public HttpEntity<?> downloadZoneMeterList(@RequestBody MeterDataDTO meterDataDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        Gson jsonValue = new Gson();
+        //TODO:校验参数有效性
+
+        //*****查询符合条件数据
+        PageListVO<List<MeterDataVO>> md = ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataList", PageListVO.class, meterDataDTO);
+        List<MeterDataVO> list= md.getDataList();
+        List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
+        }.getType());
+        //导出list
+        return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+    }
+
     @RequestMapping(value = "/queryReadMeterDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询抄表列表接口", notes = "查询监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "查询抄表列表接口", notes = "查询抄表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryReadMeterDataList(@RequestBody MeterDataDTO meterDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();

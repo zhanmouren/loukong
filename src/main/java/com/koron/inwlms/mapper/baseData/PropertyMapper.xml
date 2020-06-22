@@ -88,7 +88,9 @@
         <if test="rank != null and rank != ''">
             and rank= #{rank}
         </if>
-        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        <if test="pageCount!=null and page !=null">
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        </if>
         )t
         union all
         select count(*) as rows, '' as  zoneNo,'' as name,'' as rank,'' as position,'' as status,'','','',0,0 from gis_exist_zone
@@ -131,7 +133,9 @@
             <if test="type != null and type != ''">
                 and type=#{type}
             </if>
-            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+            <if test="pageCount !=null and page !=null">
+                limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+            </if>
         )t
         union all
         select count(*) as rows, 0 as "refID", '' as zoneNo ,'' as zoneName, '' as pointNo,'' as pointName,'' as type, '' as BatchNo,'' as createBy,'' as createTime from gis_zone_point
@@ -219,7 +223,9 @@
             <if test="type != null and type != ''">
                 and type=#{type}
             </if>
-          limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        <if test="pageCount !=null and page !=null">
+            limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+        </if>
         )t
         union all
         select count(*),0 as refID, '' as zoneNo,'' as zoneName, '' as meterNo,'' as userNo,'' as type,'' as BatchNo from gis_zone_meter
