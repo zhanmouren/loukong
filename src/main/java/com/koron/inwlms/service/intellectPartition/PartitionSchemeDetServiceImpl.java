@@ -129,6 +129,8 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
 		Gson gson = new Gson();
 		
+		List<String> ambientLayerList = automaticPartitionDTO.getAmbientLayerList();
+		
 		//调用gis接口，获取所选分区管线数据(不包括图层信息)
 		String gisPath = "http://10.13.1.11:8888/"+tenantID+"/getDmaAllPipe.htm";
 		GisAllPipeDTO gisAllPipeDTO = new GisAllPipeDTO();
