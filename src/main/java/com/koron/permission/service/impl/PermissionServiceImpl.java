@@ -715,7 +715,7 @@ public class PermissionServiceImpl implements PermissionService{
 			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
 			//执行批量删除角色职员的操作
 			Integer delResult=mapper.deleteUserByRole(tblRoleUserDTO.getRoleCode(),tblRoleUserDTO.getUserCodeList());
-			return delResult;
+			return  delResult; 
 		}
 		
 
