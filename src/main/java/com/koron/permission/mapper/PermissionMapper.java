@@ -4,15 +4,20 @@ package com.koron.permission.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
+import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.permission.bean.DTO.TblAppCatalogueDTO;
 import com.koron.permission.bean.DTO.TblAppDTO;
 import com.koron.permission.bean.DTO.TblAppOPDTO;
 import com.koron.permission.bean.DTO.TblOperationDTO;
 import com.koron.permission.bean.DTO.TblOrgRoleDTO;
+import com.koron.permission.bean.DTO.TblRoleAndOPDTO;
 import com.koron.permission.bean.DTO.TblRoleDTO;
 import com.koron.permission.bean.DTO.TblRoleOpDTO;
 import com.koron.permission.bean.DTO.TblRoleRangeValueDTO;
@@ -21,7 +26,9 @@ import com.koron.permission.bean.DTO.TblTenantDTO;
 import com.koron.permission.bean.VO.TblAppCatalogueVO;
 import com.koron.permission.bean.VO.TblAppOPVO;
 import com.koron.permission.bean.VO.TblAppVO;
+import com.koron.permission.bean.VO.TblMenusVO;
 import com.koron.permission.bean.VO.TblOpCodeVO;
+import com.koron.permission.bean.VO.TblRoleMenusVO;
 import com.koron.permission.bean.VO.TblRoleVO;
 
 
@@ -135,4 +142,10 @@ public interface PermissionMapper {
 	
 	//根据角色code查询人员总条数
   	public int getRoleUserCount(RoleDTO roleDTO);
+  	
+    //加载角色菜单按钮操作权限
+    public List<TblRoleMenusVO> queryRoleMenuByRoleCode(TblRoleAndOPDTO tblRoleAndOPDTO);
+    
+    //查询用户角色
+    public List<TblRoleVO> getRoleByUser(@Param("userCode") String userCode);
 }

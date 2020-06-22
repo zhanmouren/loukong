@@ -16,6 +16,7 @@ import com.koron.common.StaffAttribute;
 import com.koron.common.bean.StaffBean;
 import com.koron.common.permission.SPIAccountAnno;
 import com.koron.common.web.service.TreeService;
+import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
@@ -30,6 +31,7 @@ import com.koron.permission.bean.DTO.TblOpCodeListDTO;
 import com.koron.permission.bean.DTO.TblOpDTO;
 import com.koron.permission.bean.DTO.TblOperationDTO;
 import com.koron.permission.bean.DTO.TblOrgRoleDTO;
+import com.koron.permission.bean.DTO.TblRoleAndOPDTO;
 import com.koron.permission.bean.DTO.TblRoleDTO;
 import com.koron.permission.bean.DTO.TblRoleOpDTO;
 import com.koron.permission.bean.DTO.TblRoleRangeValueDTO;
@@ -108,7 +110,7 @@ public class PermissionController {
 	 * @Date 2020.06.01
 	 * description:添加应用信息
 	 */
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/addApp.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加应用接口", notes = "添加应用接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -155,7 +157,7 @@ public class PermissionController {
 	 * @Date 2020.06.01
 	 * description:修改应用信息
 	 */
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/updateApp.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改应用接口", notes = "修改应用接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -199,7 +201,7 @@ public class PermissionController {
 	 * @Date 2020.06.01
 	 * description:删除应用信息
 	 */
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/deleteApp.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除应用接口", notes = "删除应用接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -233,7 +235,7 @@ public class PermissionController {
 	 * @Date 2020.06.01
 	 * description:查询应用信息
 	 */
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/queryApp.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询应用信息接口", notes = "查询应用信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -261,7 +263,7 @@ public class PermissionController {
      * function:生成父节点 (type=10)
      * author:xiaozhan
      */	
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/addPerParent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "生成父节点接口", notes = "生成父节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -298,7 +300,7 @@ public class PermissionController {
      * function:通过此接口生成操作节点。
      * author:xiaozhan
      */
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/addOperate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "生成操作节点接口", notes = "生成操作节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -318,6 +320,9 @@ public class PermissionController {
 		 if(tblOperationDTO.getOpFlag()==null || "".equals(tblOperationDTO.getOpFlag())) {
 			 return  MessageBean.create(MESSAGE_INT_PARAMS, "操作标识不能为空", Integer.class).toJson(); 
 		 }
+		 tblOperationDTO.setEnv(user.getEnv());
+		 tblOperationDTO.setCreator(user.getLoginName());
+		 tblOperationDTO.setModifier(user.getLoginName());
 		 MessageBean<List> msg = MessageBean.create(MESSAGE_INT_SUCCESS, MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
 			  Integer addRes=ADOConnection.runTask(user.getEnv(),permissionService, "addOperate", Integer.class,tblOperationDTO);	
@@ -341,7 +346,7 @@ public class PermissionController {
      * function:通过此接口批量删除操作节点。
      * author:xiaozhan
      */
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/deleteOperate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量删除操作节点接口", notes = "批量删除操作节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -375,7 +380,7 @@ public class PermissionController {
      * function:通过此接口修改操作节点状态。
      * author:xiaozhan
      */
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/updateOperate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改操作节点信息接口", notes = "修改操作节点信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -422,7 +427,7 @@ public class PermissionController {
     * function:通过此接口配置(一)应用-操作（多）之间的联系。
     * author:xiaozhan
     */
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/addAppOP.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
    @ApiOperation(value = "生成应用-操作接口", notes = "生成操作节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
    @ResponseBody
@@ -468,7 +473,7 @@ public class PermissionController {
      * function:通过此接口删除(一)应用-操作(多)节点。
      * author:xiaozhan
      */
-	@OPSPIMethod("op001")
+	
 	@RequestMapping(value = "/deleteAppOp.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除(一)应用-操作(多)节点接口", notes = "删除(一)应用-操作(多)节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -629,7 +634,7 @@ public class PermissionController {
 	    * function:通过此接口查询所有角色
 	    * author:xiaozhan
 	    */
-	   //@OPSPIMethod("op001")
+	   
 	   @RequestMapping(value = "/queryAllRole.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	   @ApiOperation(value = "查询所有角色接口", notes = "查询所有角色接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
@@ -701,7 +706,7 @@ public class PermissionController {
 	    */
 	  
 	   @RequestMapping(value = "/addRoleOP.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-	   @ApiOperation(value = "添加角色-用户接口", notes = "添加角色-用户接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	   @ApiOperation(value = "添加角色-操作接口", notes = "添加角色-操作接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	   @ResponseBody
 		public String addRoleOP(@RequestBody TblRoleOpDTO tblRoleOpDTO, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		     if(tblRoleOpDTO.getRoleCode()==null || "".equals(tblRoleOpDTO.getRoleCode())) {
@@ -1175,20 +1180,23 @@ public class PermissionController {
 		}	
 	   
 	   /*
-	     * date:2020-04-08
-	     * funtion:通过此接口加载该角色所有菜单以及可查看的权限。
+	     * date:2020-06-18
+	     * funtion:通过此接口加载该角色所有菜单以及可查看的权限。06-18
 	     * author:xiaozhan
 	     */
 		@RequestMapping(value = "/queryRoleMenuByRoleCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	    @ApiOperation(value = "加载角色菜单按钮权限接口", notes = "加载角色菜单按钮权限接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	    @ResponseBody
-		public String queryRoleMenuByRoleCode(@RequestBody RoleDTO roleDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
-			if(roleDTO.getRoleCode()==null || "".equals(roleDTO.getRoleCode())) {
+		public String queryRoleMenuByRoleCode(@RequestBody TblRoleAndOPDTO tblRoleAndOPDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+			if(tblRoleAndOPDTO.getRoleCode()==null || "".equals(tblRoleAndOPDTO.getRoleCode())) {
 				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
-			}		
+			}	
+			if(tblRoleAndOPDTO.getApp()==null || "".equals(tblRoleAndOPDTO.getApp())) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "应用不能为空", Integer.class).toJson();
+			}
 			 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 			  try{				
-				  List<RoleMenusVO> menuList=ADOConnection.runTask(user.getEnv(),permissionService, "queryRoleMenuByRoleCode", List.class,roleDTO);	
+				  List<RoleMenusVO> menuList=ADOConnection.runTask(user.getEnv(),permissionService, "queryRoleMenuByRoleCode", List.class,tblRoleAndOPDTO);	
 				  if(menuList.size()>0) {			 
 					    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 						msg.setDescription("查询角色菜单查看权限成功"); 
@@ -1200,6 +1208,45 @@ public class PermissionController {
 		        }catch(Exception e){
 		        	//查询失败
 		        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+		            msg.setDescription("查询失败");
+		        }
+			
+		     return msg.toJson();
+		}
+		
+	
+		/*
+		 * @author xiaozhan
+		 * @Date 2020.05.28
+		 * description:根据登录获取有关联(有权限)的操作，如果传父操作， 则只返回此操作下有权限的操作1.0。
+		 */
+		@RequestMapping(value = "/getUserMenuOPList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	    @ApiOperation(value = "获取用户相关联操作(菜单按钮)接口", notes = "获取用户相关联操作(按钮)接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	    @ResponseBody
+		public String getUserMenuOPList(@RequestBody TblRoleAndOPDTO tblRoleAndOPDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
+			if(tblRoleAndOPDTO.getType()==null || "".equals(tblRoleAndOPDTO.getType())) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
+			}	
+			if(tblRoleAndOPDTO.getForeignKey()==null || "".equals(tblRoleAndOPDTO.getForeignKey())) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
+			}
+			if(tblRoleAndOPDTO.getApp()==null || "".equals(tblRoleAndOPDTO.getApp())) {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "应用不能为空", Integer.class).toJson();
+			}
+			tblRoleAndOPDTO.setUserCode(user.getCode());
+			MessageBean<List> msg = MessageBean.create(MESSAGE_INT_SUCCESS, MESSAGE_STRING_SUCCESS, List.class);	
+			  try{
+				  List<?> opList=ADOConnection.runTask(user.getEnv(),permissionService, "getUserMenuOPList", List.class,tblRoleAndOPDTO);
+				  if(opList.size()>=0) {
+					  msg.setCode(MESSAGE_INT_SUCCESS);
+					  msg.setDescription("获取用户权限列表成功");
+					  msg.setData(opList);
+				  }else {
+					  msg.setCode(MESSAGE_INT_SELECTERROR);
+					  msg.setDescription("获取用户权限列表失败");
+				  }
+		        }catch(Exception e){
+		        	msg.setCode(MESSAGE_INT_ERROR);
 		            msg.setDescription("查询失败");
 		        }
 			

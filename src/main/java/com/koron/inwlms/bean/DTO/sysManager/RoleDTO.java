@@ -32,6 +32,7 @@ public class RoleDTO extends BaseDTO{
 	//修改时间
 	private Timestamp updateTime;
 	
+
 	public List<String> getRoleCodeList() {
 		return roleCodeList;
 	}

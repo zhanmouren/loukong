@@ -34,7 +34,18 @@ public class TblOperationDTO{
      //修改时间
      private Timestamp modify_time;
      
-    public Integer getType() {
+     //修改环境
+     private String env;
+     
+     
+   
+	public String getEnv() {
+		return env;
+	}
+	public void setEnv(String env) {
+		this.env = env;
+	}
+	public Integer getType() {
  		return type;
  	}
  	public void setType(Integer type) {

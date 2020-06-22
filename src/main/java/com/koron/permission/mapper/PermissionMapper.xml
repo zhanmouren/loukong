@@ -301,4 +301,23 @@
        where "userRela".role=#{roleCode}     
     </select>
     
+     <!--加载角色权限菜单按钮-->
+     <select id="queryRoleMenuByRoleCode"  parameterType="com.koron.permission.bean.DTO.TblRoleAndOPDTO" resultType="com.koron.permission.bean.VO.TblRoleMenusVO">
+         select tbltree.*,"menu".sequence as sequence,"menu".id as "menuId","menu".code as "moduleCode","menu"."moduleNo" as "moduleNo",
+		"menu"."moduleName" as "moduleName","menu"."linkAddress" as "linkAddress"
+		from tbloperation as op
+		left join sm_modulemenu as "menu" on "menu".code=op.code
+		left join tbltree on tbltree.foreignkey="menu".code
+		left join tblrole_op as "roleop" on "roleop".operation="menu".code 
+		left join tblrole  on tblrole.code="roleop".role and tblrole.app=#{app} 
+		where op.flag=1
+		order by tbltree.seq
+      </select>
+      
+      <!--查询用户所有角色-->
+       <select id="getRoleByUser"  resultType="com.koron.permission.bean.VO.TblRoleVO">
+        select  role as roleCode from 
+        tblrole_user
+        where "user"=#{userCode}   
+      </select>
 </mapper>

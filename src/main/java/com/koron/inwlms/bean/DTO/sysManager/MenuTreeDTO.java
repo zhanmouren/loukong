@@ -23,6 +23,16 @@ public class MenuTreeDTO {
 	   //模块菜单同级顺序
 	   private Integer sequence;
 	   
+	   //用户编码
+	   private String userCode;
+	   
+	   
+	public String getUserCode() {
+		return userCode;
+	}
+	public void setUserCode(String userCode) {
+		this.userCode = userCode;
+	}
 	public Integer getSequence() {
 		return sequence;
 	}

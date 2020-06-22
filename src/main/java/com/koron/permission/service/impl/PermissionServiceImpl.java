@@ -1,10 +1,15 @@
 package com.koron.permission.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.koron.ebs.mybatis.ADOConnection;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.mapper.TreeMapper;
 import com.koron.common.web.service.TreeService;
+import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
@@ -25,6 +32,7 @@ import com.koron.permission.bean.DTO.TblAppOPDTO;
 import com.koron.permission.bean.DTO.TblOpCodeListDTO;
 import com.koron.permission.bean.DTO.TblOperationDTO;
 import com.koron.permission.bean.DTO.TblOrgRoleDTO;
+import com.koron.permission.bean.DTO.TblRoleAndOPDTO;
 import com.koron.permission.bean.DTO.TblRoleDTO;
 import com.koron.permission.bean.DTO.TblRoleOpDTO;
 import com.koron.permission.bean.DTO.TblRoleRangeValueDTO;
@@ -33,7 +41,10 @@ import com.koron.permission.bean.DTO.TblTenantDTO;
 import com.koron.permission.bean.VO.TblAppCatalogueVO;
 import com.koron.permission.bean.VO.TblAppOPVO;
 import com.koron.permission.bean.VO.TblAppVO;
+import com.koron.permission.bean.VO.TblMenusVO;
 import com.koron.permission.bean.VO.TblOpCodeVO;
+import com.koron.permission.bean.VO.TblOperationVO;
+import com.koron.permission.bean.VO.TblRoleMenusVO;
 import com.koron.permission.bean.VO.TblRoleVO;
 import com.koron.permission.mapper.PermissionMapper;
 import com.koron.permission.service.PermissionService;
@@ -91,7 +102,7 @@ public class PermissionServiceImpl implements PermissionService{
 	//生成操作节点
 	@TaskAnnotation("addOperate")
 	@Override
-	public Integer addOperate(SessionFactory factory, TblOperationDTO tblOperationDTO) {
+	public synchronized Integer addOperate(SessionFactory factory, TblOperationDTO tblOperationDTO) {
 		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 		//生成code
 		String opCode=randomCodeUtil.getUUID32();
@@ -107,15 +118,18 @@ public class PermissionServiceImpl implements PermissionService{
 		 //组装child,主要两个参数，一个type，一个是foreignkey	
 		  LongTreeBean child=new LongTreeBean();
 		  child.setForeignkey(opCode);
-		  child.setType(10);
-		  int type=10;
-		  LongTreeBean parent= treeService.getNode(factory, type, tblOperationDTO.getForeignkey());
+		  child.setType(1);
+		  int type=1;
+		//  LongTreeBean parent= treeService.getNode(factory, type, tblOperationDTO.getForeignkey());
+		  LongTreeBean parent= treeService.getNode(factory,1,tblOperationDTO.getForeignkey());
+//		  LongTreeBean parent=ADOConnection.runTask(tblOperationDTO.getEnv(),treeService, "getNode", LongTreeBean.class,type, tblOperationDTO.getForeignkey());
 		  if(parent==null) {
 			  addRes=-3;
 			  return addRes;
 		  }else {
 			  //生成子节点
 		      LongTreeBean longTreeBean =treeService.add(factory, parent, child);
+//		      LongTreeBean longTreeBean=ADOConnection.runTask(tblOperationDTO.getEnv(),treeService, "addNode", LongTreeBean.class,parent, child);		  	
 		      if(longTreeBean==null) {
 		    	  addRes=-4;
 		      }else {
@@ -273,7 +287,7 @@ public class PermissionServiceImpl implements PermissionService{
 	@TaskAnnotation("addRoleOP")
 	@Override
 	public Integer addRoleOP(SessionFactory factory, TblRoleOpDTO tblRoleOpDTO) {
-		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 	   
+		PermissionMapper mapper=factory.getMapper(PermissionMapper.class);	
 		//封装数据
 		List<TblRoleOpDTO> roleOpList=new ArrayList<>();
 		for(int i=0;i<tblRoleOpDTO.getOpCodeList().size();i++) {
@@ -302,8 +316,8 @@ public class PermissionServiceImpl implements PermissionService{
 			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);			 
 			//修改的时候先删除该角色之前的操作  (角色-操作表)
 		    Integer deleteRes=mapper.deleteRoleOp(tblRoleOpDTO.getRoleCode());	
-		    if(deleteRes==-1) {
-		    	return -1;
+		    if(tblRoleOpDTO.getOpCodeList().size()<1) {
+		    	return deleteRes;
 		    }
 			//封装数据
 			List<TblRoleOpDTO> roleOpList=new ArrayList<>();
@@ -457,5 +471,243 @@ public class PermissionServiceImpl implements PermissionService{
 			result.setPage(pageVO.getPage());
 			return result;		
 		}
+		//查询角色菜单操作权限
+		@TaskAnnotation("queryRoleMenuByRoleCode")
+		@Override
+		public List<TblRoleMenusVO> queryRoleMenuByRoleCode(SessionFactory factory, TblRoleAndOPDTO tblRoleAndOPDTO) {
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
+			TreeMapper treeMapper=factory.getMapper(TreeMapper.class);
+			List<TblRoleMenusVO> roleMenusList=mapper.queryRoleMenuByRoleCode(tblRoleAndOPDTO);	
+			
+			List<TblRoleMenusVO> finalMenuList=new ArrayList<>();
+			 if(roleMenusList!=null && roleMenusList.size()>0) {
+			    finalMenuList=roleMenusList.stream().filter(s->s.getParentMask()>0).collect(Collectors.toList());
+			 }else {
+				 return new ArrayList<TblRoleMenusVO>();
+			 }
+			 Map<Integer,List<TblRoleMenusVO>> treemap = new HashMap<>();	
+		     Map<Integer,List<TblRoleMenusVO>> treeList=treeMenuSeq(finalMenuList,treemap);
+		     
+		     //新建一个最终的List去接收
+		     List<TblRoleMenusVO> finalList=new ArrayList<>();
+		     for (Map.Entry<Integer, List<TblRoleMenusVO>> entry : treeList.entrySet()) {			
+					//System.out.println("Keyqwww = " + entry.getKey() + ", Value www= " + entry.getValue());
+					if(entry.getKey()==1) {
+						finalList.addAll(entry.getValue()); 
+					}else {
+						//位置
+						int place=0;
+						//获取当前value
+						List<TblRoleMenusVO> finalListCur=entry.getValue();
+						lxk:
+						for(int i=0;i<finalList.size();i++) {						
+							for(int j=0;j<finalListCur.size();j++) {
+								if(finalList.get(i).getModuleCode().equals(finalListCur.get(j).getModuleCode())) {								
+									place=i;
+									break  lxk;
+								}
+							}
+						}
+						//删除i到i+finalList.size()的位置
+							finalList.removeAll(finalListCur);
+						//添加finalList1到指定位置		
+						int fzVal=0;
+						for(int j=place;j<place+finalListCur.size();j++) {
+								  finalList.add(j,finalListCur.get(fzVal));
+								  fzVal++;
+						}
+					}
+					
+			}
+		    //拿到数据查找按钮权限,根据角色查询权限
+		     if(finalList!=null && finalList.size()>0) {
+				for(int i=0;i<finalList.size();i++) {
+					LongTreeBean longTreeBean=treeMapper.getBeanByForeignIdType(1, finalList.get(i).getForeignkey());
+					if(longTreeBean!=null) {
+						List<TblRoleMenusVO> menuopList=treeMapper.getMenuAndOpChildren(longTreeBean,tblRoleAndOPDTO.getRoleCode());
+						if(menuopList!=null && menuopList.size()>0) {
+							String[] strArr = menuopList.get(0).getOpCodeName().split(";");
+					
+								List<String> finalOpList=new ArrayList<>();
+								for(int p=0;p<strArr.length;p++) {
+									finalOpList.add(strArr[p]);
+								}
+								finalList.get(i).setOpCodeNameList(finalOpList);
+							
+						}
+					}
+				}
+		     }
+			 return finalList;
+		}
+		
+		
+		//同级菜单排序
+		public static  Map<Integer,List<TblRoleMenusVO>>  treeMenuSeq(List<TblRoleMenusVO> finalMenuList,Map<Integer,List<TblRoleMenusVO>> treemap) {
+			//	int firstnum=0;
+				//取第一个数
+				Integer firstParentmask=finalMenuList.get(0).getParentMask();
+				TblRoleMenusVO lastTblRoleMenusVO=new TblRoleMenusVO();
+				lastTblRoleMenusVO.setParentMask(firstParentmask);
+				
+				finalMenuList.add(lastTblRoleMenusVO);
+				//循环数组
+				//创建map集合
+			    Map<Integer,List<TblRoleMenusVO>> map = new HashMap<>();	
+			    //起始坐标
+				int indexi=0;
+				for(int q=1;q<finalMenuList.size();q++) {
+					 if(finalMenuList.get(q).getParentMask()==firstParentmask) {
+						List<TblRoleMenusVO> list=new ArrayList<TblRoleMenusVO>();
+		                for(int j=0;j<q;j++) {
+		                	if(j >= indexi) {                 	
+		                   	 list.add(finalMenuList.get(j));
+		                   	 map.put(q,list); 
+		                	}                   	 
+						 }	
+		                //更改起始下标
+		           	    indexi=q;
+					}				
+				}
+				List<TblRoleMenusVO> finalSeqDeptList=new ArrayList<>();
+				//装在List里面，从小到大排序
+				List<Integer> sequenceList=new ArrayList<>();
+				//先排序
+				for (Map.Entry<Integer, List<TblRoleMenusVO>> entry : map.entrySet()) {
+					//  System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+					  sequenceList.add(entry.getValue().get(0).getSequence());
+				}
+				Collections.sort(sequenceList);
+				
+				 for(int z=0;z<sequenceList.size();z++) {
+					for (Map.Entry<Integer, List<TblRoleMenusVO>> entry : map.entrySet()) {									 
+						 if(entry.getValue().get(0).getSequence()==sequenceList.get(z)) {
+							 finalSeqDeptList.addAll(entry.getValue());
+							 break;
+						 }
+					}
+				}
+//				 System.out.println("输出结果为：");
+//				 //输出经过该层级后的排序结果
+//				for(int t=0;t<finalSeqDeptList.size();t++) {			
+//					System.out.println(finalSeqDeptList.get(t));
+//				}
+				 int key=1;
+		       
+			    for (Map.Entry<Integer, List<TblRoleMenusVO>> entry : treemap.entrySet()) {   
+			    	key=entry.getKey()+1;			
+				}	    
+			    treemap.put(key, finalSeqDeptList);		
+				for (Map.Entry<Integer, List<TblRoleMenusVO>> entry : map.entrySet()) {
+					List<TblRoleMenusVO> finalsonDeptList=new ArrayList<>();
+					List<TblRoleMenusVO> menuList= entry.getValue();
+					if(menuList!=null && menuList.size()>0) {
+					  //去除第一个
+						for(int j=1;j<menuList.size();j++) {
+							finalsonDeptList.add(menuList.get(j));
+						}
+						
+					}
+					
+					if(finalsonDeptList!=null &&  finalsonDeptList.size()>0) {				
+						treeMenuSeq(finalsonDeptList,treemap);		 	   
+					}
+
+				}		
+				return treemap;
+				 				
+			}
+		
+		//获取用户相关联操作(菜单按钮) 某个菜单下所有可以查看菜单
+		@TaskAnnotation("getUserMenuOPList")
+		@Override
+		public List<TblRoleMenusVO> getUserMenuOPList(SessionFactory factory,TblRoleAndOPDTO tblRoleAndOPDTO) {
+			
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
+			TreeMapper treeMapper=factory.getMapper(TreeMapper.class);
+			List<TblRoleMenusVO> roleMenusList=mapper.queryRoleMenuByRoleCode(tblRoleAndOPDTO);	
+			
+			List<TblRoleMenusVO> finalMenuList=new ArrayList<>();
+			 if(roleMenusList!=null && roleMenusList.size()>0) {
+			    finalMenuList=roleMenusList.stream().filter(s->s.getParentMask()>0).collect(Collectors.toList());
+			 }else {
+				 return new ArrayList<TblRoleMenusVO>();
+			 }
+			 Map<Integer,List<TblRoleMenusVO>> treemap = new HashMap<>();	
+		     Map<Integer,List<TblRoleMenusVO>> treeList=treeMenuSeq(finalMenuList,treemap);
+		     
+		     //新建一个最终的List去接收
+		     List<TblRoleMenusVO> finalList=new ArrayList<>();
+		     for (Map.Entry<Integer, List<TblRoleMenusVO>> entry : treeList.entrySet()) {			
+					//System.out.println("Keyqwww = " + entry.getKey() + ", Value www= " + entry.getValue());
+					if(entry.getKey()==1) {
+						finalList.addAll(entry.getValue()); 
+					}else {
+						//位置
+						int place=0;
+						//获取当前value
+						List<TblRoleMenusVO> finalListCur=entry.getValue();
+						lxk:
+						for(int i=0;i<finalList.size();i++) {						
+							for(int j=0;j<finalListCur.size();j++) {
+								if(finalList.get(i).getModuleCode().equals(finalListCur.get(j).getModuleCode())) {								
+									place=i;
+									break  lxk;
+								}
+							}
+						}
+						//删除i到i+finalList.size()的位置
+							finalList.removeAll(finalListCur);
+						//添加finalList1到指定位置		
+						int fzVal=0;
+						for(int j=place;j<place+finalListCur.size();j++) {
+								  finalList.add(j,finalListCur.get(fzVal));
+								  fzVal++;
+						}
+					}
+					
+			}
+		    //根据登录的用户查询角色
+		     List<TblRoleVO> roleList=mapper.getRoleByUser(tblRoleAndOPDTO.getUserCode());
+		     List<String> roleCodeList=new ArrayList<>();
+		     if(roleList!=null && roleList.size()>0) {
+		    	 for(int p=0;p<roleList.size();p++) {
+		    		 roleCodeList.add(roleList.get(p).getRoleCode());
+		    	 }
+		    	
+		     }else {
+				 return new ArrayList<TblRoleMenusVO>();
+			 }
+		    //拿到数据查找按钮权限
+		     if(finalList!=null && finalList.size()>0) {
+				for(int i=0;i<finalList.size();i++) {
+					LongTreeBean longTreeBean=treeMapper.getBeanByForeignIdType(1, finalList.get(i).getForeignkey());
+					if(longTreeBean!=null) {
+						List<TblRoleMenusVO> menuopList=treeMapper.getMenuAndOpByUser(longTreeBean);
+						if(menuopList!=null && menuopList.size()>0) {
+							//过滤重复的
+							Set<String> finalOpSet=new HashSet<>();							
+							for(int n=0;n<menuopList.size();n++) {
+								boolean containsRole=roleCodeList.contains(menuopList.get(n).getRoleCode());
+								if(containsRole) {
+									String[] strArr = menuopList.get(n).getOpCodeName().split(";");							
+									for(int p=0;p<strArr.length;p++) {
+										finalOpSet.add(strArr[p]);
+									}
+								}
+							}
+							
+							List<String> finalOpList = new ArrayList<>(finalOpSet);
+							finalList.get(i).setOpCodeNameList(finalOpList);
+							
+						}
+					}
+				}
+		     }
+		     finalList=finalList.stream().filter(s->s.getOpCodeNameList()!=null && s.getOpCodeNameList().size()>0).collect(Collectors.toList());
+			 return finalList;
+			
+		}
+		
 
 }

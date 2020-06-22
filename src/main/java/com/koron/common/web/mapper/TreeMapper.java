@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.*;
 
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
+import com.koron.permission.bean.VO.TblRoleMenusVO;
 
 public interface TreeMapper {
     /**
@@ -54,6 +55,37 @@ public interface TreeMapper {
     @Select("select * from tbltree where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
             + "and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
     List<LongTreeBean> getChildren(LongTreeBean bean);
+    
+    /**
+     * 根据角色获取节点的直接下级节点(新菜单操作)
+     *
+     * @param bean 节点
+     * @return 节点集合
+     */
+    @Select("select case when string_agg(concat_ws(':',tblop.name,tblop.code),';') is null then '' else string_agg(concat_ws(':',tblop.name,tblop.code),';') end as opCodeName\r\n" + 
+    		"	from tblrole_op tblroleop\r\n" + 
+    		"	left join  tbloperation as  tblop on tblroleop.operation=tblop.code\r\n" + 
+    		"	left join tbltree  on tbltree.foreignkey= tblop.code"
+    		+ " where (tbltree.seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq} and tblop.status=0 and tblroleop.role=#{roleCode}"
+            + "and (tbltree.seq & ((1::int8 << (62 - #{bean.parentMask}-#{bean.mask} - #{bean.childMask}))-1)) = 0 and tbltree.type = #{bean.type}"
+            )
+    List<TblRoleMenusVO> getMenuAndOpChildren(@Param("bean") LongTreeBean bean,@Param("roleCode") String roleCode);
+    
+    /**
+     * 根据登录的用户获取节点的直接下级节点(新菜单操作)
+     *
+     * @param bean 节点
+     * @return 节点集合
+     */
+    @Select("select tblroleop.role as roleCode,case when string_agg(concat_ws(':',tblop.name,tblop.code),';') is null then '' else string_agg(concat_ws(':',tblop.name,tblop.code),';') end as opCodeName\r\n" + 
+    		"	from tblrole_op tblroleop\r\n" + 
+    		"	left join  tbloperation as  tblop on tblroleop.operation=tblop.code\r\n" + 
+    		"	left join tbltree  on tbltree.foreignkey= tblop.code"
+    		+ " where (tbltree.seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq} and tblop.status=0"
+            + "and (tbltree.seq & ((1::int8 << (62 - #{bean.parentMask}-#{bean.mask} - #{bean.childMask}))-1)) = 0 and tbltree.type = #{bean.type} group by tblroleop.role"
+            )
+    List<TblRoleMenusVO> getMenuAndOpByUser(@Param("bean") LongTreeBean bean);
+
 
     /**
      * 获取节点的直接下级节点(目录菜单)
