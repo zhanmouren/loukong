@@ -5,4 +5,14 @@
 		select code,name,level2 from lc_app_dim_indicator where code = #{code};
 	</select>
 	
+	<select id="queryBurstLeakAnalysis" resultType="com.koron.inwlms.bean.VO.zoneLoss.BurstLeakAnalysisVO">
+		select "LEAKCOND" as faultType,"YEAR_PIPE" as mainAge,"LEAK_ID" as mainBurstId,"DIAMETER" as mainDiameter,
+		"DEALRESULT" as processingStatus,"COORDINATE" as xy
+		from gis_leak;
+	</select>
+	
+	<select id="queryBurstLeakById" resultType="com.koron.inwlms.bean.VO.zoneLoss.LeakDetailsVO">
+		select * from gis_leak where "LEAK_ID" = #{id}
+	</select>
+	
 </mapper>
