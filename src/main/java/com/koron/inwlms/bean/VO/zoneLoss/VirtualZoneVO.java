@@ -1,6 +1,5 @@
 package com.koron.inwlms.bean.VO.zoneLoss;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,8 +15,6 @@ public class VirtualZoneVO {
 	private String baseRegion;
 	//分区名称
 	private String name;
-	
-//	private List<ZoneDetailInfoVO> cutRegion;
 
 	private List<String> cutRegion;
 	
@@ -53,15 +50,4 @@ public class VirtualZoneVO {
 		this.cutRegion = cutRegion;
 	}
 
-//	public List<ZoneDetailInfoVO> getCutRegion() {
-//		return cutRegion;
-//	}
-//
-//	public void setCutRegion(List<ZoneDetailInfoVO> cutRegion) {
-//		this.cutRegion = cutRegion;
-//	}
-
-	
-	
-	
 }

@@ -59,7 +59,7 @@ public class VirtualCommonController {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关虚拟分区"); 
 			     msg.setData(result);
-			 }else {
+			 }else if(result == null){
 			   //没查询到数据
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("没有查询到相关虚拟分区"); 

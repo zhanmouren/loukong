@@ -2,15 +2,12 @@ package com.koron.inwlms.mapper.zoneLoss;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryVSZoneListDTO;
-import com.koron.inwlms.bean.VO.zoneLoss.VSZoneListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VirtualZoneVO;
-import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
 
 /** 
  * @author lzy

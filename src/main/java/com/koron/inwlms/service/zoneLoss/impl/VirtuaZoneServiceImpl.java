@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryVSZoneListDTO;
-import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
-import com.koron.inwlms.bean.VO.zoneLoss.VSZoneListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VirtualZoneVO;
-import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
 import com.koron.inwlms.mapper.zoneLoss.VirtualZoneMapper;
 import com.koron.inwlms.service.zoneLoss.VirtualZoneService;
 
@@ -73,20 +70,6 @@ public class VirtuaZoneServiceImpl implements VirtualZoneService{
 				}
 			}
 		}
-//			for(int i=0;i < virtualZoneList.size();i++) {
-//				String foreignKey = virtualZoneList.get(i).getBaseRegion();
-//				LongTreeBean node=treeMapper.getBeanByForeignIdType(type,foreignKey);
-//				if(node == null) {
-//					return null;
-//				}
-//				else{
-//					List<ZoneDetailInfoVO> zoneList=virtualZoneMapper.queryChildren(node);
-//					virtualZoneList.get(i).setCutRegion(zoneList);
-//				}
-//			}
-//		}
-		
-		
 		return virtualZoneList;
 	}
 

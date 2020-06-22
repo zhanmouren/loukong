@@ -5,7 +5,6 @@ import java.util.List;
 import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryVSZoneListDTO;
-import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VirtualZoneVO;
 
 /**
