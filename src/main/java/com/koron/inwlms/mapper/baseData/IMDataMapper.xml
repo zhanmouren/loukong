@@ -48,9 +48,9 @@
 
     </select>
 
-    <select id="queryReadMeterDataHistoryList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO">
+    <select id="queryReadMeterDataHistoryList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MeterDataHisVO">
         select * from(
-            select 0 as rows,type,"BatchNo","originRow","row",integrity,accuracy,availability,timely,consistency,status,"createBy",to_char(a."createTime",'YYYY-MM-DD') as "createTime","updateBy",to_char(a."updateTime",'YYYY-MM-DD')as "updateTime" from mi_importdatahistory
+            select 0 as rows,type,"BatchNo","originRow","row",integrity,accuracy,availability,timely,consistency,status,"createBy",to_char("createTime",'YYYY-MM-DD') as "createTime","updateBy",to_char("updateTime",'YYYY-MM-DD')as "updateTime" from mi_importdatahistory
             where 1=1
                 <if test="begD != null  and begD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &gt;= #{begD}</if>
                 <if test="endD != null  and endD !=''"> and to_char(a."createTime",'YYYY-MM-DD') &lt;= #{endD}</if>
@@ -185,7 +185,7 @@
 
     <select id="queryReadMeterDataList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MeterDataVO">
        select * from(
-        select 0 as rows,user_no,user_name,user_type,prior_period_num,prior_period_date,meter_reading_date,currend_period_num,reality_water,meter_reading_way,"createBy",to_char("createTime",'YYYY-MM-DD') as "createTime","updateBy",to_char("updateTime",'YYYY-MM-DD') as "updateTime","BatchNo",gis_meter.p_code as meter_no,gis_meter.pipe_d
+        select 0 as rows,mi_readwaterinfo.id,user_no as "userNo",user_name as "userName",user_type as "userType",prior_period_num as "priorPeriodNum",prior_period_date as "priorPeriodDate",meter_reading_date as "meterReadingDate",currend_period_num as "currendPeriodNum",reality_water as "realityWater",meter_reading_way "meterReadingWay","createBy",to_char("createTime",'YYYY-MM-DD') as "createTime","updateBy",to_char("updateTime",'YYYY-MM-DD') as "updateTime","BatchNo",gis_meter.p_code as "meterNo",gis_meter.pipe_d as "pipeD"
         from mi_readwaterinfo
         left join gis_meter on mi_readwaterinfo.user_no=gis_meter.accountid
         <trim prefix="where" prefixOverrides="and|or">
@@ -199,7 +199,7 @@
         limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         )t
         union all
-        select count(*) as rows,'','','',0,'','',0,0,'','','','','','','','' from mi_readwaterinfo
+        select count(*) as rows,0,'','','',0,'','',0,0,'','','','','','','','' from mi_readwaterinfo
         <trim prefix="where" prefixOverrides="and|or">
             <if test="readType != null  and readType !=''"> and meter_reading_way= #{readType}</if>
             <if test="usrType != null  and usrType !=''"> and user_type= #{usrType}</if>

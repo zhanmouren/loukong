@@ -465,7 +465,39 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @RequestMapping(value = "/updateChargeZones.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "更新管辖分区接口", notes = "更新管辖分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateChargeZones(@RequestBody ZoneDTO zoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //TODO:权限校验是否有查询权限
 
+        MessageBean msg = new MessageBean();
+        //TODO:校验参数有效性
+        if(zoneDTO.getUser()!=null && !"".equals(zoneDTO.getUser())){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toJson();
+        }
+
+        //*****插入符合条件数据
+        Integer r1 = ADOConnection.runTask(user.getEnv(),zcs, "deleteChargeZones", Integer.class,zoneDTO);
+        if(r1>=0) {
+            if(zoneDTO.getZoons().length>0) {
+                Integer r2 = ADOConnection.runTask(user.getEnv(), zcs, "addChargeZones", Integer.class, zoneDTO);
+                if (r2 > 0) {
+                    msg.setCode(0);
+                    msg.setDescription("操作成功");
+                }
+            }else{
+                msg.setCode(0);
+                msg.setDescription("操作成功");
+            }
+        }else{
+            msg.setCode(Constant.MESSAGE_INT_ERROR);
+            msg.setDescription("操作失败");
+        }
+        return msg.toJson();
+    }
 
     @RequestMapping(value = "/queryZonePointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与监测点列表接口", notes = "查询分区与监测点列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1017,6 +1049,23 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @RequestMapping(value = "/queryReadMeterDataDet/{rmdID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询抄表详情接口", notes = "查询抄表详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryReadMeterDataDet(@PathVariable("rmdID") Integer rmdID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+
+        MessageBean msg = new MessageBean();
+        //TODO:校验是否有修改权限
+
+        //TODO:参数meterDataDTO校验
+
+        //*****查询符合条件数据
+        MeterDataVO ret = ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataDet", MeterDataVO.class,rmdID);
+        msg.setCode(0);
+        msg.setData(ret);
+        return msg.toJson();
+    }
+
     @RequestMapping(value = "/updateReadMeterDataDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改抄表详情接口", notes = "修改抄表详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1027,7 +1076,6 @@ public class BaseDataController {
 
         //TODO:参数meterDataDTO校验
 
-        //TODO:获取抄表详情数据
         //*****查询符合条件数据
         boolean ret = ADOConnection.runTask(user.getEnv(),ms, "updateReadMeterDataDet", boolean.class,meterDataDTO);
         msg.setCode(0);
@@ -1107,6 +1155,18 @@ public class BaseDataController {
 
         MessageBean msg = new MessageBean();
         List<DataImpactVO> dis = ADOConnection.runTask(user.getEnv(),dqs, "queryDataImpact", List.class);
+        msg.setCode(0);
+        msg.setData(dis);
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryMeterType.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询流量计类型数据", notes = "查询流量计类型数据", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryMeterType(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+
+        MessageBean msg = new MessageBean();
+        List<MeterAccountVO> dis = ADOConnection.runTask(user.getEnv(),ms, "queryMeterType", List.class);
         msg.setCode(0);
         msg.setData(dis);
         return msg.toJson();

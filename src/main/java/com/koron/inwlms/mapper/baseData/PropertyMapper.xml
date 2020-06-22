@@ -2,6 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.baseData.PropertyMapper">
 
+    <select id="queryMeterType"  resultType="com.koron.inwlms.bean.VO.baseInf.MeterAccountVO">
+        select use_quality as type,count(*) as count  from gis_meter group by use_quality
+    </select>
+
+    <insert id="addChargeZones" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
+        insert into gis_zone_charge(
+        "user","zoonNo"
+        )values
+        <if test="zoons != null and zoons.size > 0">
+            <foreach collection="array" item="item"  index="" separator=",">
+                (#{user},#{zoons})
+            </foreach>
+        </if>
+    </insert>
+
+    <delete id="deleteChargeZones" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
+           delete from gis_zone_charge where user = #{user}
+     </delete>
+
+
     <insert id="addBatchZonePoint" >
         insert into gis_zone_point(
         "zoneNo","pointNo",type,"BatchNo","createBy","createTime"
@@ -41,9 +61,11 @@
 
     <select id="queryZoneList"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneVO">
        select * from(
-        select 0 as rows, gis_exist_zone.p_code as "zoneNo",gis_exist_zone.name,rank,'' as position,'' as status,t.p_code as parentCode,t.name as parentName,"queryFirstZoon"(tbltree.seq) as firstZoon from gis_exist_zone
+        select 0 as rows, gis_exist_zone.p_code as "zoneNo",gis_exist_zone.name,rank,'' as position,'' as status,t.p_code as parentCode,t.name as parentName,"queryFirstZoon"(tbltree.seq) as firstZoon, 0 as pressureDeviation,  as timeFactor from gis_exist_zone
         left join tbltree on gis_exist_zone.p_code = tbltree.foreignkey
         left join LATERAL(select * from "queryParentZoon"(gis_exist_zone.p_code,tbltree.seq))t on t.code = gis_exist_zone.p_code
+        --left join ana_zone_day on gis_exist_zone.p_code = ana_zone_day.zoneNo and ana_zone_day."analysisDate"=to_char(now() - interval '1 day','YYYY-MM-DD') and ana_zone_day.code = ''
+        --left join ana_zone_moni_day on gis_exist_zone.p_code = ana_zone_moni_day.zoneNo and ana_zone_moni_day."analysisDate"=to_char(now() - interval '1 day','YYYY-MM-DD') and ana_zone_moni_day.code = ''
         where 1=1
         <choose>
             <when test="DMA != null and DMA != ''">

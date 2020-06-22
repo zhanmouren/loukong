@@ -13,59 +13,64 @@ public class MeterDataVO {
     private Integer rows;
 
     /**
+     * id
+     */
+    private Integer id;
+
+    /**
      * 水表编号
      */
-    private String meter_no;
+    private String meterNo;
 
     /**
      * 水表口径
      */
-    private String pipe_d;
+    private String pipeD;
 
     /**
      * 用户编号
      */
-    private String user_no;
+    private String userNo;
 
     /**
      * 用户名称
      */
-    private String user_name;
+    private String userName;
 
     /**
      * 用户类别
      */
-    private String  user_type;
+    private String  userType;
 
     /**
      * 上次读数
      */
-    private Double prior_period_num;
+    private Double priorPeriodNum;
 
     /**
      * 上期抄表日期
      */
-    private String prior_period_date;
+    private String priorPeriodDate;
 
     /**
      * 抄表日期
      */
-    private String meter_reading_date;
+    private String meterReadingDate;
 
     /**
      * 抄表读数
      */
-    private String currend_period_num;
+    private String currendPeriodNum;
 
     /**
      * 实际用水量
      */
-    private Double reality_water;
+    private Double realityWater;
 
     /**
      * 抄表方式
      */
-    private String meter_reading_way;
+    private String meterReadingWay;
 
     /**
      * 创建人
@@ -92,20 +97,12 @@ public class MeterDataVO {
      */
     private String BatchNo;
 
-    public String getMeter_no() {
-        return meter_no;
+    public Integer getId() {
+        return id;
     }
 
-    public void setMeter_no(String meter_no) {
-        this.meter_no = meter_no;
-    }
-
-    public String getPipe_d() {
-        return pipe_d;
-    }
-
-    public void setPipe_d(String pipe_d) {
-        this.pipe_d = pipe_d;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getRows() {
@@ -116,76 +113,92 @@ public class MeterDataVO {
         this.rows = rows;
     }
 
-    public String getUser_no() {
-        return user_no;
+    public String getMeterNo() {
+        return meterNo;
     }
 
-    public void setUser_no(String user_no) {
-        this.user_no = user_no;
+    public void setMeterNo(String meterNo) {
+        this.meterNo = meterNo;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getPipeD() {
+        return pipeD;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setPipeD(String pipeD) {
+        this.pipeD = pipeD;
     }
 
-    public String getUser_type() {
-        return user_type;
+    public String getUserNo() {
+        return userNo;
     }
 
-    public void setUser_type(String user_type) {
-        this.user_type = user_type;
+    public void setUserNo(String userNo) {
+        this.userNo = userNo;
     }
 
-    public Double getPrior_period_num() {
-        return prior_period_num;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setPrior_period_num(Double prior_period_num) {
-        this.prior_period_num = prior_period_num;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getPrior_period_date() {
-        return prior_period_date;
+    public String getUserType() {
+        return userType;
     }
 
-    public void setPrior_period_date(String prior_period_date) {
-        this.prior_period_date = prior_period_date;
+    public void setUserType(String userType) {
+        this.userType = userType;
     }
 
-    public String getMeter_reading_date() {
-        return meter_reading_date;
+    public Double getPriorPeriodNum() {
+        return priorPeriodNum;
     }
 
-    public void setMeter_reading_date(String meter_reading_date) {
-        this.meter_reading_date = meter_reading_date;
+    public void setPriorPeriodNum(Double priorPeriodNum) {
+        this.priorPeriodNum = priorPeriodNum;
     }
 
-    public String getCurrend_period_num() {
-        return currend_period_num;
+    public String getPriorPeriodDate() {
+        return priorPeriodDate;
     }
 
-    public void setCurrend_period_num(String currend_period_num) {
-        this.currend_period_num = currend_period_num;
+    public void setPriorPeriodDate(String priorPeriodDate) {
+        this.priorPeriodDate = priorPeriodDate;
     }
 
-    public Double getReality_water() {
-        return reality_water;
+    public String getMeterReadingDate() {
+        return meterReadingDate;
     }
 
-    public void setReality_water(Double reality_water) {
-        this.reality_water = reality_water;
+    public void setMeterReadingDate(String meterReadingDate) {
+        this.meterReadingDate = meterReadingDate;
     }
 
-    public String getMeter_reading_way() {
-        return meter_reading_way;
+    public String getCurrendPeriodNum() {
+        return currendPeriodNum;
     }
 
-    public void setMeter_reading_way(String meter_reading_way) {
-        this.meter_reading_way = meter_reading_way;
+    public void setCurrendPeriodNum(String currendPeriodNum) {
+        this.currendPeriodNum = currendPeriodNum;
+    }
+
+    public Double getRealityWater() {
+        return realityWater;
+    }
+
+    public void setRealityWater(Double realityWater) {
+        this.realityWater = realityWater;
+    }
+
+    public String getMeterReadingWay() {
+        return meterReadingWay;
+    }
+
+    public void setMeterReadingWay(String meterReadingWay) {
+        this.meterReadingWay = meterReadingWay;
     }
 
     public String getCreateBy() {
