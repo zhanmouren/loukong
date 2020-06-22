@@ -7,6 +7,7 @@ import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
 import com.koron.inwlms.bean.DTO.common.MapServiceParam;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryVSZoneListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.common.MapServiceData;
@@ -15,10 +16,12 @@ import com.koron.inwlms.bean.VO.sysManager.DataDicNewVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.inwlms.bean.VO.zoneLoss.VirtualZoneVO;
 import com.koron.inwlms.service.common.impl.CommonServiceImpl;
 import com.koron.inwlms.service.common.impl.FileServiceImpl;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.service.common.impl.MapServiceConfigServiceImpl;
+import com.koron.inwlms.service.zoneLoss.VirtualZoneService;
 import com.koron.inwlms.util.FileUtil;
 import com.koron.util.Constant;
 import io.swagger.annotations.Api;
@@ -58,6 +61,9 @@ public class CommonController {
 
 	@Autowired
     private FileConfigInfo fileConfigInfo;
+	
+	@Autowired
+	private VirtualZoneService virtualZoneService;
     /**
    	 * 上传文件
    	 * 
@@ -332,7 +338,39 @@ public class CommonController {
 		return msg.toJson();
 	}
 	
-	
+	/*
+     * date:2020-03-19
+     * funtion:查询虚拟分区接口
+     * author:lzy
+     */
+	@RequestMapping(value = "/queryVirtualZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询虚拟分区接口", notes = "查询虚拟分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryVirtualZone(@RequestBody QueryVSZoneListDTO queryVSZoneListDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+		if(queryVSZoneListDTO.getVirtualZoneType()== null || queryVSZoneListDTO.getVirtualZoneType().equals("")) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!虚拟分区类型不能为空", Integer.class).toJson();
+		} 
+		
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 try {
+			 List<VirtualZoneVO> result=ADOConnection.runTask(user.getEnv(),virtualZoneService, "queryVirtualZone", List.class, queryVSZoneListDTO);
+			 if(result.size()>0) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("查询到相关虚拟分区"); 
+			     msg.setData(result);
+			 }else if(result == null){
+			   //没查询到数据
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("没有查询到相关虚拟分区"); 
+			 }
+		 }catch(Exception e){
+	     	//查询失败
+	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询虚拟分区失败");
+	     }
+		 return msg.toJson();
+		 
+	}
 //	@RequestMapping(value = "/addZoneTreeInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 //    @ApiOperation(value = "添加分区树", notes = "添加分区树", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 //    @ResponseBody
