@@ -995,8 +995,7 @@ public class UserServiceImpl implements UserService{
 				
 				//生成菜单(单条记录) 2020/04/08
 				@TaskAnnotation("addMenu")
-				public MenuDTO addMenu(SessionFactory factory,MenuTreeDTO menuTreeDTO) {
-					// TODO Auto-generated method stub
+				public synchronized MenuDTO addMenu(SessionFactory factory,MenuTreeDTO menuTreeDTO) {
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					MenuDTO menuDTO=new MenuDTO();
 					menuDTO.setLinkAddress(menuTreeDTO.getLinkAddress());
