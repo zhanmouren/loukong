@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.swan.bean.MessageBean;
 
@@ -17,18 +19,17 @@ import com.koron.inwlms.bean.VO.sysManager.LabelVO;
 import com.koron.inwlms.bean.VO.sysManager.PageLabelListVO;
 import com.koron.inwlms.bean.VO.sysManager.PagePositionListVO;
 import com.koron.inwlms.bean.VO.sysManager.PositionVO;
-import com.koron.inwlms.bean.VO.sysManager.UserListVO;
-import com.koron.inwlms.mapper.sysManager.LabelMapper;
 import com.koron.inwlms.mapper.sysManager.PositionMapper;
 import com.koron.inwlms.service.sysManager.PositionService;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.inwlms.util.RandomCodeUtil;
 import com.koron.util.Constant;
-import com.koron.util.SessionUtil;
 
 @Service
 public class PositionServiceImpl implements PositionService{
 
+	private static final Logger logger = LoggerFactory.getLogger(PositionServiceImpl.class);
+	
 	//查询职位 2020/05/13
 	@TaskAnnotation("queryPosition")
 	@Override

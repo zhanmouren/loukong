@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.swan.bean.MessageBean;
 
@@ -39,6 +41,7 @@ import com.koron.util.SessionUtil;
 @Service
 public class LabelServiceImpl implements LabelService{
 
+	
 
 	//查询标签 2020/04/17
 	@TaskAnnotation("queryLabel")
