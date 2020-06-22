@@ -54,7 +54,7 @@ public interface TreeMapper {
     @Select("select * from tbltree where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
             + "and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
     List<LongTreeBean> getChildren(LongTreeBean bean);
-    
+
     /**
      * 获取节点的直接下级节点(目录菜单)
      *
@@ -71,17 +71,17 @@ public interface TreeMapper {
      * @param bean 节点
      * @return 节点集合
      */
-    @Select("select tbltree.*,sm_modulemenu.code \"menuCode\",sm_modulemenu.id \"menuId\",sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n" + 
-    		"		 ,case when string_agg(DISTINCT (to_char(\"rolemenu\".op,'9')),',') is null then '' else string_agg(DISTINCT (to_char(\"rolemenu\".op,'9')),',') end as op\r\n" + 
-    		"		 from tbltree\r\n" + 
-    		"		 left join sm_modulemenu on sm_modulemenu.code=tbltree.foreignkey\r\n" + 
-    		"		 left join sm_rolemenus \"rolemenu\" on \"rolemenu\".\"moduleCode\"=sm_modulemenu.code\r\n" + 
-    		"		 left join sm_userrole  \"role\" on  \"role\".code=\"rolemenu\".\"roleCode\"\r\n" + 
-    		"		 LEFT JOIN sm_userrolerelation \"rela\" on  \"rela\".\"roleCode\"=\"role\".code\r\n" + 
-    		"		 left join sm_user \"user\" on \"user\".code=\"rela\".\"userCode\"\r\n" + 
-    		"		 where  (seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq}  and  (seq & ((1::int8 << (62 - #{bean.parentMask}-#{bean.mask} - #{bean.childMask}))-1)) = 0 and tbltree.type = 1  and \"user\".code=#{userCode}\r\n" + 
-    		"		 GROUP BY  tbltree.id,tbltree.childmask,tbltree.foreignkey,tbltree.mask,tbltree.parentmask,\r\n" + 
-    		"		 tbltree.seq,tbltree.\"type\",sm_modulemenu.code ,sm_modulemenu.id ,sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n" 
+    @Select("select tbltree.*,sm_modulemenu.code \"menuCode\",sm_modulemenu.id \"menuId\",sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n" +
+    		"		 ,case when string_agg(DISTINCT (to_char(\"rolemenu\".op,'9')),',') is null then '' else string_agg(DISTINCT (to_char(\"rolemenu\".op,'9')),',') end as op\r\n" +
+    		"		 from tbltree\r\n" +
+    		"		 left join sm_modulemenu on sm_modulemenu.code=tbltree.foreignkey\r\n" +
+    		"		 left join sm_rolemenus \"rolemenu\" on \"rolemenu\".\"moduleCode\"=sm_modulemenu.code\r\n" +
+    		"		 left join sm_userrole  \"role\" on  \"role\".code=\"rolemenu\".\"roleCode\"\r\n" +
+    		"		 LEFT JOIN sm_userrolerelation \"rela\" on  \"rela\".\"roleCode\"=\"role\".code\r\n" +
+    		"		 left join sm_user \"user\" on \"user\".code=\"rela\".\"userCode\"\r\n" +
+    		"		 where  (seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq}  and  (seq & ((1::int8 << (62 - #{bean.parentMask}-#{bean.mask} - #{bean.childMask}))-1)) = 0 and tbltree.type = 1  and \"user\".code=#{userCode}\r\n" +
+    		"		 GROUP BY  tbltree.id,tbltree.childmask,tbltree.foreignkey,tbltree.mask,tbltree.parentmask,\r\n" +
+    		"		 tbltree.seq,tbltree.\"type\",sm_modulemenu.code ,sm_modulemenu.id ,sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n"
     			)
     List<TreeMenuVO> queryChildOneMenu(@Param("bean") LongTreeBean bean,@Param("userCode") String userCode);
 
@@ -100,17 +100,17 @@ public interface TreeMapper {
      * @param bean 节点
      * @return 节点集合
      */
-    @Select("select tbltree.*,sm_modulemenu.sequence \"sequence\",sm_modulemenu.code \"menuCode\",sm_modulemenu.id \"menuId\",sm_modulemenu.\"ownOP\" \"ownOP\",sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n" + 
-    		"		  ,case when string_agg(DISTINCT(to_char(\"rolemenu\".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char(\"rolemenu\".op,'9')),',') end as op\r\n" + 
-    		"		 from tbltree\r\n" + 
-    		"		 left join sm_modulemenu on sm_modulemenu.code=tbltree.foreignkey\r\n" + 
-    		"		 left join sm_rolemenus \"rolemenu\" on \"rolemenu\".\"moduleCode\"=sm_modulemenu.code\r\n" + 
-    		"		 left join sm_userrole  \"role\" on  \"role\".code=\"rolemenu\".\"roleCode\"\r\n" + 
-    		"		 LEFT JOIN sm_userrolerelation \"rela\" on  \"rela\".\"roleCode\"=\"role\".code\r\n" + 
-    		"		 left join sm_user \"user\" on \"user\".code=\"rela\".\"userCode\"\r\n" + 
-    		"		 where (seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq} and type = #{bean.type}  and \"user\".code=#{userCode}  \r\n" + 
-    		"		 GROUP BY  tbltree.id,tbltree.childmask,tbltree.foreignkey,tbltree.mask,tbltree.parentmask,\r\n" + 
-    		"		 tbltree.seq,tbltree.\"type\",sm_modulemenu.code ,sm_modulemenu.id ,sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n" + 
+    @Select("select tbltree.*,sm_modulemenu.sequence \"sequence\",sm_modulemenu.code \"menuCode\",sm_modulemenu.id \"menuId\",sm_modulemenu.\"ownOP\" \"ownOP\",sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n" +
+    		"		  ,case when string_agg(DISTINCT(to_char(\"rolemenu\".op,'9')),',') is null then '' else string_agg(DISTINCT(to_char(\"rolemenu\".op,'9')),',') end as op\r\n" +
+    		"		 from tbltree\r\n" +
+    		"		 left join sm_modulemenu on sm_modulemenu.code=tbltree.foreignkey\r\n" +
+    		"		 left join sm_rolemenus \"rolemenu\" on \"rolemenu\".\"moduleCode\"=sm_modulemenu.code\r\n" +
+    		"		 left join sm_userrole  \"role\" on  \"role\".code=\"rolemenu\".\"roleCode\"\r\n" +
+    		"		 LEFT JOIN sm_userrolerelation \"rela\" on  \"rela\".\"roleCode\"=\"role\".code\r\n" +
+    		"		 left join sm_user \"user\" on \"user\".code=\"rela\".\"userCode\"\r\n" +
+    		"		 where (seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq} and type = #{bean.type}  and \"user\".code=#{userCode}  \r\n" +
+    		"		 GROUP BY  tbltree.id,tbltree.childmask,tbltree.foreignkey,tbltree.mask,tbltree.parentmask,\r\n" +
+    		"		 tbltree.seq,tbltree.\"type\",sm_modulemenu.code ,sm_modulemenu.id ,sm_modulemenu.\"moduleNo\",sm_modulemenu.\"moduleName\",sm_modulemenu.\"linkAddress\"\r\n" +
     		"		  order by tbltree.seq")
     public List<TreeMenuVO> queryChildAllMenu(@Param("bean") LongTreeBean bean,@Param("userCode") String userCode);
     /**
@@ -140,7 +140,7 @@ public interface TreeMapper {
 	@Select("select * from tbltree " + "where (seq & ~((1::int8 << (62 - #{bean.parentMask}))-1)) = (#{bean.seq} & ~((1::int8 << (62 - #{bean.parentMask}))-1))"
 			+ " and (seq & ((1::int8 << (62 - #{bean.parentMask}+#{bean.mask}))-1)) = 0")
     public List<LongTreeBean> getSibling(@Param("bean") LongTreeBean bean);
-	
+
 	 /**
      * 获取节点的兄弟节点(菜单)
      *
@@ -216,6 +216,7 @@ public interface TreeMapper {
     public int setChildMask(@Param("childmask") int childmask, @Param("foreignkey") String foreignkey);
 
     @Select("update tbltree set mask = #{bean.mask},parentmask = #{bean.parentMask},seq = #{bean.seq} where id = #{bean.id}")
+
     public Integer updateMask(@Param("bean") LongTreeBean bean);
 
     /**
@@ -232,7 +233,7 @@ public interface TreeMapper {
     /**
      * @return
      */
-	@Select("select COALESCE(max(key),0) from (select row_number() over() as key,a.seq >> (62-parentmask-mask)  & (1::int8 << mask )-1 as value from tbltree a where a.type = #{type} and seq > #{lower} and seq < #{upper} and (seq & ((1::int8 << #{mask}) -1)) = 0) as t where t.key = t.value")
+	@Select("select COALESCE(max(key),0) from (select row_number() over(order by seq) as key,a.seq >> (62-parentmask-mask)  & (1::int8 << mask )-1 as value from tbltree a where a.type = #{type} and seq > #{lower} and seq < #{upper} and (seq & ((1::int8 << #{mask}) -1)) = 0) as t where t.key = t.value")
     public int getAvailable(@Param("lower") long lower, @Param("upper") long upper, @Param("mask") int mask, @Param("type") int type);
 
     /**
