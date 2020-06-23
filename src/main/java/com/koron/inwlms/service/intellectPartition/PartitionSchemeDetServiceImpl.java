@@ -502,7 +502,10 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			preZoneRelationDTO.setrCode(code);
 			preZoneRelationDTO.setZoneSchemeId(schemeDetId);
 			mapper.addPreZone(preZoneRelationDTO);
-			mapper.addPipePreZone(preZoneList);
+			if(preZoneList != null && preZoneList.size() != 0) {
+				mapper.addPipePreZone(preZoneList);
+			}
+			
 		}
 		
 		return kafkaReturnData.getPartition_detail().size();

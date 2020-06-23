@@ -218,7 +218,7 @@ public class IntellectPartitionController {
 			msg.setDescription("分区管线查询失败");
 		}
 		
-		return null;
+		return msg.toJson();
 	}
 	
 	

@@ -14,6 +14,7 @@ import com.koron.inwlms.bean.DTO.intellectPartition.KafkaReturnData;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.intellectPartition.PartitionSchemeDetServiceImpl;
 
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -26,7 +27,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 public class ZoneKafkaConsumer {
 	 private String topicUser="model_partition_zoning_result";
 	 
-	 public void consume() {
+	 public void consume(UserVO user) {
 	        Properties props = new Properties();
 
 	        // 必须设置的属性
@@ -64,7 +65,7 @@ public class ZoneKafkaConsumer {
 	                String value = record.value();
 	                KafkaReturnData kafkaReturnData = jsonValue.fromJson(value, KafkaReturnData.class);
 	                //数据入库
-	                ADOConnection.runTask(new PartitionSchemeDetServiceImpl(), "addKafkaData", Integer.class, kafkaReturnData);
+	                ADOConnection.runTask(user.getEnv(),new PartitionSchemeDetServiceImpl(), "addKafkaData", Integer.class, kafkaReturnData);
 	                     
 	            });
 	        }

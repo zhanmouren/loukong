@@ -48,6 +48,6 @@ public interface PartitionSchemeMapper {
 	@Select("select \"rCode\" from gis_prezone where \"zoneSchemeId\" = #{zoneSchemeId}")
 	List<String> queryRCodeBySchemeId(@Param("zoneSchemeId") Integer zoneSchemeId);
 	
-	@Select("select * from gis_pipe_prezone where rCode = #{code}")
+	@Select("select * from gis_pipe_prezone where \"rCode\" = #{code}")
 	List<ZonePipeData> queryZonePipeData(@Param("code") String code);
 }

@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class SchemeDet {
 
-	private BigInteger id;
+	private Integer id;
 	/**
 	 * 分区方案汇总编码
 	 */
@@ -55,11 +55,13 @@ public class SchemeDet {
 		this.schemeType = schemeType;
 	}
 
-	public BigInteger getId() {
+	
+
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(BigInteger id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

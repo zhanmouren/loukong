@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.koron.common.StaffAttribute;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.util.kafka.ZoneKafkaConsumer;
 import com.koron.kafka.Bean.User;
+import com.koron.util.Constant;
 
 @RestController
 @RequestMapping("/{tenantID}/kafka")
@@ -37,7 +40,7 @@ public class KafkaController {
 	  }
 	 
 	 @RequestMapping("/readMsg")
-	 public void readMsg() {
-		 kafkacus.consume();
+	 public void readMsg(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		 kafkacus.consume(user);
 	  }
 }

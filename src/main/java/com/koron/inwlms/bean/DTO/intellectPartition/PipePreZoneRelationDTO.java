@@ -14,7 +14,7 @@ public class PipePreZoneRelationDTO {
 	/**
 	 * 是否为边界
 	 */
-	private String isBorder;
+	private Integer isBorder;
 	
 	private String createBy;
 	
@@ -44,11 +44,13 @@ public class PipePreZoneRelationDTO {
 		this.pipeCode = pipeCode;
 	}
 
-	public String getIsBorder() {
+	
+
+	public Integer getIsBorder() {
 		return isBorder;
 	}
 
-	public void setIsBorder(String isBorder) {
+	public void setIsBorder(Integer isBorder) {
 		this.isBorder = isBorder;
 	}
 

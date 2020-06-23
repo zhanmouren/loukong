@@ -606,11 +606,11 @@ public class Constant {
 	/**
 	 * 管线不为分区边界
 	 */
-	public final static String IS_BORDER_F = "0";
+	public final static Integer IS_BORDER_F = 0;
 	/**
 	 * 管线为分区边界
 	 */
-	public final static String IS_BORDER_T = "1";
+	public final static Integer IS_BORDER_T = 1;
 	
 	/**
 	 * 分区报警

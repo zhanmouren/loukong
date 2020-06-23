@@ -55,12 +55,12 @@
  </select>
  
  <insert id="addPreZone" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.PreZoneRelationDTO">
- insert into "GIS_PREZONE"("zoneSchemeId", "rCode")
+ insert into gis_prezone("zoneSchemeId", "rCode")
  values(#{zoneSchemeId}, #{rCode})
  </insert>
  
  <insert id="addPipePreZone" parameterType="java.util.List">
- insert into "GIS_PIPE_PREZONE"("rCode", "pipeCode", "isBorder", "createBy", "createTime", "updateBy", "updateTime") values
+ insert into gis_pipe_prezone("rCode", "pipeCode", "isBorder", "createBy", "createTime", "updateBy", "updateTime") values
  <foreach collection="list" item="pipe"  index="index" separator=",">
 			(#{pipe.rCode}, #{pipe.pipeCode}, #{pipe.isBorder}, #{pipe.createBy}, Now(), #{pipe.updateBy},Now())
 		</foreach>
