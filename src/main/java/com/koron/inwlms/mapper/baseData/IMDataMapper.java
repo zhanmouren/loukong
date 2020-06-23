@@ -16,7 +16,19 @@ import java.util.List;
 @Repository
 public interface IMDataMapper {
 
+    /**
+     * 批量删除抄表数据
+     * @param refID
+     * @return
+     */
+    Integer deleteMeterData(@Param("refID")Integer refID);
 
+    /**
+     * 批量删除抄表数据
+     * @param BatchNo
+     * @return
+     */
+    Integer deleteMeterDataByBatch(@Param("BatchNo")String BatchNo);
 
     /**
      * 批量添加监测数据

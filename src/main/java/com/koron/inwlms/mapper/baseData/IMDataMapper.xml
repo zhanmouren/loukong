@@ -2,6 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.baseData.IMDataMapper">
 
+    <delete id="deleteMeterData">
+        delete from mi_readwaterinfo where "id" =#{refID}
+    </delete>
+
+    <delete id="deleteMeterDataByBatch" parameterType="java.lang.String">
+        delete from mi_readwaterinfo where "BatchNo" =#{BatchNo}
+        delete from mi_importdatahistory where "BatchNo" =#{BatchNo} and type = '2'
+    </delete>
+
     <insert id="addBatchMeterData" >
         insert into mi_readwaterinfo(
         user_no,user_name,user_type,prior_period_num,prior_period_date,meter_reading_date,currend_period_num,reality_water,meter_reading_way,"BatchNo","createBy","createTime"
@@ -68,14 +77,14 @@
 
     <select id="queryMonitorDataByBatchNo"   resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
         select * from(
-            select 0 as rows,status,"pointID",type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char("createTime",'YYYY-MM-DD HH:MM:SS') as createTime from mi_monitordata
+            select 0 as rows,mi_monitordata.id,status,"pointID",type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char("createTime",'YYYY-MM-DD HH:MM:SS') as createTime from mi_monitordata
             <trim prefix="where" prefixOverrides="and|or">
                 <if test="batchNo != null "> and "BatchNo" = #{batchNo}</if>
             </trim>
             limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         )t
         union all
-        select count(*) as rows,'','','','',0.0,0.0,0.0,0.0,'',''
+        select count(*) as rows,0,'','','','',0.0,0.0,0.0,0.0,'',''
         from mi_monitordata
         <trim prefix="where" prefixOverrides="and|or">
                 <if test="batchNo != null "> and "BatchNo" = #{batchNo}</if>
@@ -103,33 +112,36 @@
 
     <select id="queryPressureFlowList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
         select * from(
-        select 0 as rows,status,"pointID",type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char("createTime",'YYYY-MM-DD HH:MM:SS') as createTime from mi_monitordata
+        select 0 as rows,mi_monitordata.id,status,"pointID",gis_scada_station.name,mi_monitordata.type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char(mi_monitordata."createTime",'YYYY-MM-DD HH:MM:SS') as "createTime","queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType" from mi_monitordata
+        left join gis_scada_station on mi_monitordata."pointID" = gis_scada_station.p_code
+        left join gis_zone_point on mi_monitordata."pointID" = gis_zone_point."pointNo"
+        left join tbltree on gis_zone_point."zoneNo" = tbltree.foreignkey
         <trim prefix="where" prefixOverrides="and|or">
             <if test="status != null and status != '' "> and status = #{status}</if>
-            <if test="DMAType != null and DMAType != '' "> </if>
+            <if test="dmaType != null and dmaType != '' "> </if>
             <if test="use != null and use != '' "> </if>
-            <if test="pointID != null and pointID != '' "> and "pointID"=#{pointID}</if>
+            <if test="pointID != null and pointID != '' "> and "pointID" like '%'||#{pointID}||'%'</if>
             <if test="first != null and first != '' "> </if>
             <if test="second != null and second != '' "> </if>
             <if test="DMA != null and DMA != '' "> </if>
-            type='1'
+            <if test=" 1==1 "> and mi_monitordata.type='1' </if>
         </trim>
         <if test="pageCount !=null and page !=null">
             limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         </if>
         )t
         union all
-        select count(*) as rows,'','','','',0.0,0.0,0.0,0.0,'',''
+        select count(*) as rows,0,'','','','','',0.0,0.0,0.0,0.0,'','','',''
         from mi_monitordata
         <trim prefix="where" prefixOverrides="and|or">
             <if test="status != null and status != '' "> and status = #{status}</if>
-            <if test="DMAType != null and DMAType != '' "> </if>
+            <if test="dmaType != null and dmaType != '' "> </if>
             <if test="use != null and use != '' "> </if>
-            <if test="pointID != null and pointID != '' "> and "pointID"=#{pointID}</if>
+            <if test="pointID != null and pointID != '' "> and "pointID" like '%'||#{pointID}||'%'</if>
             <if test="first != null and first != '' "> </if>
             <if test="second != null and second != '' "> </if>
             <if test="DMA != null and DMA != '' "> </if>
-            type='1'
+            <if test=" 1==1 "> and mi_monitordata.type='1' </if>
         </trim>
     </select>
 
@@ -142,33 +154,36 @@
 
     <select id="queryNoiseList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
        select * from(
-        select 0 as rows,status,"pointID",type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char("createTime",'YYYY-MM-DD HH:MM:SS') as createTime from mi_monitordata
+        select 0 as rows,mi_monitordata.id,status,"pointID",gis_scada_station.name,mi_monitordata.type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char(mi_monitordata."createTime",'YYYY-MM-DD HH:MM:SS') as createTime,"queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType" from mi_monitordata
+        left join gis_scada_station on mi_monitordata."pointID" = gis_scada_station.p_code
+        left join gis_zone_point on mi_monitordata."pointID" = gis_zone_point."pointNo"
+        left join tbltree on gis_zone_point."zoneNo" = tbltree.foreignkey
         <trim prefix="where" prefixOverrides="and|or">
             <if test="status != null and status != '' "> and status = #{status}</if>
-            <if test="DMAType != null and DMAType != '' "> </if>
+            <if test="dmaType != null and dmaType != '' "> </if>
             <if test="use != null and use != '' "> </if>
-            <if test="pointID != null and pointID != '' "> and "pointID"=#{pointID}</if>
+            <if test="pointID != null and pointID != '' "> and "pointID" like '%'||#{pointID}||'%'</if>
             <if test="first != null and first != '' "> </if>
             <if test="second != null and second != '' "> </if>
             <if test="DMA != null and DMA != '' "> </if>
-            type='2'
+            <if test=" 1==1 "> and mi_monitordata.type='2' </if>
         </trim>
         <if test="pageCount !=null and page !=null">
             limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         </if>
         )t
         union all
-        select count(*) as rows,'','','','',0.0,0.0,0.0,0.0,'',''
+        select count(*) as rows,0,'','','','','',0.0,0.0,0.0,0.0,'','','',''
         from mi_monitordata
         <trim prefix="where" prefixOverrides="and|or">
             <if test="status != null and status != '' "> and status = #{status}</if>
-            <if test="DMAType != null and DMAType != '' "> </if>
+            <if test="dmaType != null and dmaType != '' "> </if>
             <if test="use != null and use != '' "> </if>
-            <if test="pointID != null and pointID != '' "> and "pointID"=#{pointID}</if>
+            <if test="pointID != null and pointID != '' "> and "pointID" like '%'||#{pointID}||'%'</if>
             <if test="first != null and first != '' "> </if>
             <if test="second != null and second != '' "> </if>
             <if test="DMA != null and DMA != '' "> </if>
-            type='2'
+            <if test=" 1==1 "> and mi_monitordata.type='2' </if>
         </trim>
     </select>
 
@@ -204,7 +219,7 @@
         <trim prefix="where" prefixOverrides="and|or">
             <if test="readType != null  and readType !=''"> and meter_reading_way= #{readType}</if>
             <if test="usrType != null  and usrType !=''"> and user_type= #{usrType}</if>
-            <if test="userNo != null  and userNo !=''"> and user_no= #{userNo}</if>
+            <if test="userNo != null  and userNo !=''"> and user_no like '%'||#{userNo}||'%'</if>
             <if test="begD != null  and begD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &gt;= #{begD}</if>
             <if test="endD != null  and endD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &lt;= #{endD}</if>
         </trim>
@@ -218,7 +233,7 @@
         <trim prefix="where" prefixOverrides="and|or">
             <if test="readType != null  and readType !=''"> and meter_reading_way= #{readType}</if>
             <if test="usrType != null  and usrType !=''"> and user_type= #{usrType}</if>
-            <if test="userNo != null  and userNo !=''"> and user_no= #{userNo}</if>
+            <if test="userNo != null  and userNo !=''"> and user_no like '%'||#{userNo}||'%'</if>
             <if test="begD != null  and begD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &gt;= #{begD}</if>
             <if test="endD != null  and endD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &lt;= #{endD}</if>
         </trim>

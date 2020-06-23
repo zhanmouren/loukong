@@ -10,6 +10,11 @@ import com.koron.inwlms.util.ImportExcelUtil;
 public class MonitorDataVO {
 
     /**
+     * id
+     */
+    private Integer id;
+
+    /**
      * 行数
      */
     private Integer rows;
@@ -113,6 +118,11 @@ public class MonitorDataVO {
     private Double unfavorPressure;
 
     /**
+     * 一级分区
+     */
+    private String firstZoon;
+
+    /**
      * 批次
      */
     private String BatchNo;
@@ -136,6 +146,36 @@ public class MonitorDataVO {
      * 修改时间
      */
     private String updateTime;
+
+    /**
+     * 监测用途
+     * @return
+     */
+    private String useType;
+
+    public String getUseType() {
+        return useType;
+    }
+
+    public void setUseType(String useType) {
+        this.useType = useType;
+    }
+
+    public String getFirstZoon() {
+        return firstZoon;
+    }
+
+    public void setFirstZoon(String firstZoon) {
+        this.firstZoon = firstZoon;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getRows() {
         return rows;

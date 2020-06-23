@@ -430,11 +430,15 @@ public class BaseDataController {
     @RequestMapping(value = "/downloadZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "导出分区接口", notes = "导出分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadZoneList(@RequestBody ZoneDTO zoneDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    //public HttpEntity<?> downloadZoneList(@RequestBody ZoneDTO zoneDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public HttpEntity<?> downloadZoneList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
         Gson jsonValue = new Gson();
+        ZoneDTO zoneDTO = jsonValue.fromJson(objValue, ZoneDTO.class);
+
         //TODO:校验参数有效性
         if(zoneDTO.getBegD()!=null && !"".equals(zoneDTO.getBegD()) && !_checkFormat("YYYY-MM-DD",zoneDTO.getBegD())){
             msg.setCode(Constant.BASE_PARAM_DATE_FORMAT_ERROR);
@@ -532,13 +536,16 @@ public class BaseDataController {
     @RequestMapping(value = "/downloadZonePointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "导出分区与监测点接口", notes = "导出分区与监测点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadZonePointList(@RequestBody ZonePointDTO zonePointDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    //public HttpEntity<?> downloadZonePointList(@RequestBody ZonePointDTO zonePointDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public HttpEntity<?> downloadZonePointList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
         Gson jsonValue = new Gson();
         //TODO:校验参数有效性
 
+        ZonePointDTO zonePointDTO = jsonValue.fromJson(objValue, ZonePointDTO.class);
         //*****查询符合条件数据
         PageListVO<List<ZonePointVO>> zps = ADOConnection.runTask(user.getEnv(),zcs, "queryZonePointList", PageListVO.class,zonePointDTO);
         List<ZonePointVO> list= zps.getDataList();
@@ -720,13 +727,15 @@ public class BaseDataController {
     @RequestMapping(value = "/downloadZoneMeterList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "导出分区与户表接口", notes = "导出分区与户表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadZoneMeterList(@RequestBody ZoneMeterDTO zoneMeterDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public HttpEntity<?> downloadZoneMeterList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //public HttpEntity<?> downloadZoneMeterList(@RequestBody ZoneMeterDTO zoneMeterDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
         Gson jsonValue = new Gson();
         //TODO:校验参数有效性
 
+        ZoneMeterDTO zoneMeterDTO = jsonValue.fromJson(objValue, ZoneMeterDTO.class);
         //*****查询符合条件数据
         PageListVO<List<ZoneMeterVO>> zps = ADOConnection.runTask(user.getEnv(),zcs, "queryZoneMeterList", PageListVO.class,zoneMeterDTO);
         List<ZoneMeterVO> list= zps.getDataList();
@@ -899,13 +908,15 @@ public class BaseDataController {
     @RequestMapping(value = "/downloadMonitorDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "导出监测数据接口", notes = "导出监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    //public HttpEntity<?> downloadMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public HttpEntity<?> downloadMonitorDataList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
         Gson jsonValue = new Gson();
         //TODO:校验参数有效性
 
+        MonitorDataDTO monitorDataDTO = jsonValue.fromJson(objValue, MonitorDataDTO.class);
         //*****查询符合条件数据
         PageListVO<List<MonitorDataVO>> mds = null;
         //List<MonitorDataVO> mds = null;
@@ -1097,13 +1108,13 @@ public class BaseDataController {
     @RequestMapping(value = "/downloadReadMeterDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "导出抄表接口", notes = "导出抄表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadZoneMeterList(@RequestBody MeterDataDTO meterDataDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public HttpEntity<?> downloadReadMeterDataList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
         Gson jsonValue = new Gson();
         //TODO:校验参数有效性
-
+        MeterDataDTO meterDataDTO = jsonValue.fromJson(objValue, MeterDataDTO.class);
         //*****查询符合条件数据
         PageListVO<List<MeterDataVO>> md = ADOConnection.runTask(user.getEnv(),mds, "queryReadMeterDataList", PageListVO.class, meterDataDTO);
         List<MeterDataVO> list= md.getDataList();
@@ -1242,6 +1253,48 @@ public class BaseDataController {
                 msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
             }
         }
+        return msg.toJson();
+    }
+
+    @RequestMapping("/deleteMeterData/{refID}")
+    @ApiOperation(value = "删除抄表数据", notes = "删除抄表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteMeterDataByBatch(@PathVariable("refID") Integer refID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        MessageBean msg = new MessageBean();
+        //TODO:校验是否有删除权限
+
+        //TODO:
+        if(refID==null){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toString();
+        }
+
+        //***删除数据
+        Integer ret = ADOConnection.runTask(user.getEnv(),mds, "deleteMeterData", Integer.class,refID);
+        msg.setCode(0);
+        msg.setDescription(Constant.MESSAGE_STRING_SUCCESS);
+        return msg.toJson();
+    }
+
+    @RequestMapping("/deleteMeterDataByBatch/{BatchNo}")
+    @ApiOperation(value = "删除某一批次抄表数据", notes = "删除某一批次抄表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteMeterDataByBatch(@PathVariable("BatchNo") String BatchNo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        MessageBean msg = new MessageBean();
+        //TODO:校验是否有删除权限
+
+        //TODO:
+        if(BatchNo==null || "".equals(BatchNo)){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toString();
+        }
+
+        //***删除某一批次数据
+        Integer ret = ADOConnection.runTask(user.getEnv(),mds, "deleteMeterDataByBatch", Integer.class,BatchNo);
+        msg.setCode(0);
+        msg.setDescription(Constant.MESSAGE_STRING_SUCCESS);
         return msg.toJson();
     }
 

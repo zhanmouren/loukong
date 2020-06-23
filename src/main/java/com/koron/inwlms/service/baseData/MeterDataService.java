@@ -13,6 +13,22 @@ import java.util.List;
 public interface MeterDataService {
 
     /**
+     * 删除抄表数据
+     * @param factory
+     * @param refID
+     * @return
+     */
+    public Integer deleteMeterData(SessionFactory factory, Integer refID);
+
+    /**
+     * 删除某一批次抄表数据
+     * @param factory
+     * @param BatchNo
+     * @return
+     */
+    public Integer deleteMeterDataByBatch(SessionFactory factory, String BatchNo);
+
+    /**
      * 查询户表类型统计
      */
     public List<PointAccountVO> queryFlows(SessionFactory factory);

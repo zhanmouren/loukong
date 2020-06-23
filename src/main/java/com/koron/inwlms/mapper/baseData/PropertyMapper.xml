@@ -61,7 +61,7 @@
 
     <select id="queryZoneList"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneVO">
        select * from(
-        select 0 as rows, gis_exist_zone.p_code as "zoneNo",gis_exist_zone.name,rank,'' as position,'' as status,t.p_code as parentCode,t.name as parentName,"queryFirstZoon"(tbltree.seq) as firstZoon, 0 as pressureDeviation, 0 as timeFactor from gis_exist_zone
+        select 0 as rows, gis_exist_zone.p_code as "zoneNo",gis_exist_zone.name as "zoneName",rank,'' as position,'' as status,t.p_code as parentCode,t.name as parentName,"queryFirstZoon"(tbltree.seq) as firstZoon, 0 as "pressureDeviation", 0 as "timeFactor",0 as "waterPressure" from gis_exist_zone
         left join tbltree on gis_exist_zone.p_code = tbltree.foreignkey
         left join LATERAL(select * from "queryParentZoon"(gis_exist_zone.p_code,tbltree.seq))t on t.code = gis_exist_zone.p_code
         <!--left join ana_zone_day on gis_exist_zone.p_code = ana_zone_day.zoneNo and ana_zone_day."analysisDate"=to_char(now() - interval '1 day','YYYY-MM-DD') and ana_zone_day.code = ''
@@ -69,14 +69,8 @@
         -->
         where 1=1
         <choose>
-            <when test="DMA != null and DMA != ''">
-                and p_code = #{DMA}
-            </when>
-            <when test="second != null and second != ''">
-                and p_code = #{second}
-            </when>
-            <when test="first != null and first != ''">
-                and p_code = #{first}
+            <when test="zoneNo != null and zoneNo != ''">
+                and p_code = #{zoneNo}
             </when>
         </choose>
         <if test="begD != null and begD != ''">
@@ -93,17 +87,11 @@
         </if>
         )t
         union all
-        select count(*) as rows, '' as  zoneNo,'' as name,'' as rank,'' as position,'' as status,'','','',0,0 from gis_exist_zone
+        select count(*) as rows, '' as  zoneNo,'' as name,'' as rank,'' as position,'' as status,'','','',0,0,0 from gis_exist_zone
         where 1=1
         <choose>
-            <when test="DMA != null and DMA != ''">
-                and p_code = #{DMA}
-            </when>
-            <when test="second != null and second != ''">
-                and p_code = #{second}
-            </when>
-            <when test="first != null and first != ''">
-                and p_code = #{first}
+            <when test="zoneNo != null and zoneNo != ''">
+                and p_code = #{zoneNo}
             </when>
         </choose>
         <if test="begD != null and begD != ''">
@@ -210,7 +198,7 @@
 
     <select id="queryZoneMeterList"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneMeterVO">
         select * from(
-        select 0 as rows,gis_zone_meter.id as refID,"zoneNo",gis_exist_zone.name as zoneName,gis_meter.p_code as"meterNo",gis_meter.accountid as userNo,type,"BatchNo" from gis_zone_meter
+        select 0 as rows,gis_zone_meter.id as "refID","zoneNo",gis_exist_zone.name as "zoneName",gis_meter.p_code as"meterNo",gis_meter.accountid as "userNo",type,"BatchNo" from gis_zone_meter
         left join gis_exist_zone on gis_exist_zone.p_code = gis_zone_meter."zoneNo"
         left join gis_meter on gis_zone_meter."meterNo" = gis_meter.p_code
         where 1=1

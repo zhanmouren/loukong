@@ -26,6 +26,11 @@ public class ZoneDTO extends BaseDTO {
     private String DMA;
 
     /**
+     * 分区编号
+     */
+    private String zoneNo;
+
+    /**
      * 开始时间
      */
     private String begD;
@@ -50,6 +55,14 @@ public class ZoneDTO extends BaseDTO {
      * @return
      */
     private String[] zoons;
+
+    public String getZoneNo() {
+        return zoneNo;
+    }
+
+    public void setZoneNo(String zoneNo) {
+        this.zoneNo = zoneNo;
+    }
 
     public String[] getZoons() {
         return zoons;

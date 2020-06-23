@@ -25,6 +25,35 @@ import java.util.List;
 @Service
 public class MeterDataServiceImpl implements MeterDataService {
 
+
+    /**
+     * 删除抄表数据
+     * @param factory
+     * @param refID
+     * @return
+     */
+    @TaskAnnotation("deleteMeterData")
+    @Override
+    public Integer deleteMeterData(SessionFactory factory, Integer refID){
+        IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
+        Integer result = mapper.deleteMeterData(refID);
+        return result;
+    }
+
+    /**
+     * 删除某一批次抄表数据
+     * @param factory
+     * @param BatchNo
+     * @return
+     */
+    @TaskAnnotation("deleteMeterDataByBatch")
+    @Override
+    public Integer deleteMeterDataByBatch(SessionFactory factory, String BatchNo){
+        IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
+        Integer result = mapper.deleteMeterDataByBatch(BatchNo);
+        return result;
+    }
+
     /**
      * 查询户表类型统计数据
      * @param factory

@@ -27,7 +27,7 @@ public class MonitorDataDTO extends BaseDTO {
     /**
      * DMA类型
      */
-    private String DMAType;
+    private String dmaType;
 
     /**
      * 监测用途
@@ -104,12 +104,12 @@ public class MonitorDataDTO extends BaseDTO {
         this.status = status;
     }
 
-    public String getDMAType() {
-        return DMAType;
+    public String getDmaType() {
+        return dmaType;
     }
 
-    public void setDMAType(String DMAType) {
-        this.DMAType = DMAType;
+    public void setDmaType(String dmaType) {
+        this.dmaType = dmaType;
     }
 
     public String getUse() {
