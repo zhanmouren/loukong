@@ -404,21 +404,21 @@ public class IndexServiceImpl implements IndexService{
 			     //漏损率   月
 				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_FLMMNFTDF);	
 				//漏损量 月
-				zoneLossMList.add(Constant.APPARENT_INDIC_FLMAL);
+				zoneLossMList.add(Constant.APPARENT_INDIC_FLMWL);
 				}else if(areaType==2) {  //二级分区
 				//产销差率  月 			
 				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_SLMNRR);		
 				//漏损率   月
 				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_SLMMNFTDF);	
 				//漏损量 月
-				zoneLossMList.add(Constant.APPARENT_INDIC_SLMAL);
+				zoneLossMList.add(Constant.APPARENT_INDIC_SLMWL);
 				}else {      //DMA
 				//产销差率  月 			
 				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_DMMNRR);		
 				//漏损率   月
 				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_DMMMNFTDF);	
 				//漏损量 月
-				zoneLossMList.add(Constant.APPARENT_INDIC_DMMAL);				
+				zoneLossMList.add(Constant.APPARENT_INDIC_DMMWL);				
 				}		
 				indicatorDTO.setCodes(zoneLossMList);
 				indicatorDTO.setTimeType(timeTypeMonth);
@@ -457,7 +457,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossMList.get(v).setType("E3");
 							 }
 							//漏损量 月
-							 if(Constant.APPARENT_INDIC_FLMAL.equals(indZoneLossMList.get(v).getCode())) {
+							 if(Constant.APPARENT_INDIC_FLMWL.equals(indZoneLossMList.get(v).getCode())) {
 								 indZoneLossMList.get(v).setType("E1");
 							 }
 							}else if(areaType==2) {  //二级分区
@@ -470,7 +470,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossMList.get(v).setType("E3");
 							 }
 							//漏损量 月
-							 if(Constant.APPARENT_INDIC_SLMAL.equals(indZoneLossMList.get(v).getCode())) {
+							 if(Constant.APPARENT_INDIC_SLMWL.equals(indZoneLossMList.get(v).getCode())) {
 								 indZoneLossMList.get(v).setType("E1");
 							 }
 							}else {      //DMA
@@ -483,7 +483,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossMList.get(v).setType("E3");
 							 }
 							//漏损量 月
-							 if(Constant.APPARENT_INDIC_DMMAL.equals(indZoneLossMList.get(v).getCode())) {
+							 if(Constant.APPARENT_INDIC_DMMWL.equals(indZoneLossMList.get(v).getCode())) {
 								 indZoneLossMList.get(v).setType("E1");
 							 }
 							}		
@@ -508,7 +508,7 @@ public class IndexServiceImpl implements IndexService{
 				//漏损率  年
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_FLYMNFTDF);	
 				//漏损量 年		
-				zoneLossYList.add(Constant.APPARENT_INDIC_FLYAL);
+				zoneLossYList.add(Constant.APPARENT_INDIC_FLYWL);
 					
 				}else if(areaType==2) {  //二级分区
 				//产销差率  年			
@@ -516,14 +516,14 @@ public class IndexServiceImpl implements IndexService{
 				//漏损率  年
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_SLYMNFTDF);	
 				//漏损量 年		
-				zoneLossYList.add(Constant.APPARENT_INDIC_SLYAL);
+				zoneLossYList.add(Constant.APPARENT_INDIC_SLYWL);
 				}else {//DMA
 				//产销差率  年			
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_DMYNRR);		
 				//漏损率  年
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_DMYMNFTDF);	
 				//漏损量 年		
-				zoneLossYList.add(Constant.APPARENT_INDIC_DMYAL);
+				zoneLossYList.add(Constant.APPARENT_INDIC_DMYWL);
 				}
 				indicatorDTO.setCodes(zoneLossYList);
 				//截取年
@@ -565,7 +565,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossYList.get(c).setType("E4");
 							 }
 							 //漏损量 年		
-							 if(Constant.APPARENT_INDIC_FLYAL.equals(indZoneLossYList.get(c).getCode())) {
+							 if(Constant.APPARENT_INDIC_FLYWL.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("E2");
 							 }
 								
@@ -579,7 +579,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossYList.get(c).setType("E4");
 							 }
 							 //漏损量 年		
-							 if(Constant.APPARENT_INDIC_SLYAL.equals(indZoneLossYList.get(c).getCode())) {
+							 if(Constant.APPARENT_INDIC_SLYWL.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("E2");
 							 }
 						   }
@@ -593,7 +593,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossYList.get(c).setType("E4");
 							 }
 							 //漏损量 年		
-							 if(Constant.APPARENT_INDIC_DMYAL.equals(indZoneLossYList.get(c).getCode())) {
+							 if(Constant.APPARENT_INDIC_DMYWL.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("E2");
 							 }
 
