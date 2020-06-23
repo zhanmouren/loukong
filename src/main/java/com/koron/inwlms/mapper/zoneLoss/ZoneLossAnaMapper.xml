@@ -15,4 +15,60 @@
 		select * from gis_leak where "LEAK_ID" = #{id}
 	</select>
 	
+	<select id="queryBurstLeakList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryLeakListDTO" 
+		resultType="com.koron.inwlms.bean.VO.zoneLoss.LeakDetailsVO">
+		select * from gis_leak where 1 = 1
+		<if test="startSize !='' and startSize !=null">
+			and "LEAKDIA" &gt;= #{startSize}
+		</if>
+		<if test="endSize !='' and endSize !=null">
+			and "LEAKDIA" &lt;= #{endSize}
+		</if>
+		<if test="repStartTime !='' and repStartTime !=null">
+			and "REP_DATE" &gt;= to_date(#{repStartTime},'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		<if test="repEndTime !='' and repEndTime !=null">
+			and "REP_DATE" &lt;= to_date(#{repEndTime},'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		<if test="repaieStartTime !='' and repaieStartTime !=null">
+			and "REPAIE_DATE" &gt;= to_date(#{repaieStartTime},'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		<if test="repaieEndTime !='' and repaieEndTime !=null">
+			and "REPAIE_DATE" &lt;= to_date(#{repaieEndTime},'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		<if test="description != null and description != ''">
+			and "REMARK" like '%'||#{description}||'%'
+		</if>
+		<if test="orderby !=null and orderby !=''">
+			ORDER BY ${orderby}
+		</if>
+		limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+	</select>
+	
+	<select id="countBurstLeak" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryLeakListDTO" 
+	resultType="java.lang.Integer">
+		select count(*) from gis_leak where 1 = 1
+		<if test="startSize !='' and startSize !=null">
+			and "LEAKDIA" &gt;= #{startSize}
+		</if>
+		<if test="endSize !='' and endSize !=null">
+			and "LEAKDIA" &lt;= #{endSize}
+		</if>
+		<if test="repStartTime !='' and repStartTime !=null">
+			and "REP_DATE" &gt;= to_date(#{repStartTime},'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		<if test="repEndTime !='' and repEndTime !=null">
+			and "REP_DATE" &lt;= to_date(#{repEndTime},'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		<if test="repaieStartTime !='' and repaieStartTime !=null">
+			and "REPAIE_DATE" &gt;= to_date(#{repaieStartTime},'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		<if test="repaieEndTime !='' and repaieEndTime !=null">
+			and "REPAIE_DATE" &lt;= to_date(#{repaieEndTime},'YYYY-MM-DD HH24:MI:SS')
+		</if>
+		<if test="description != null and description != ''">
+			and "REMARK" like '%'||#{description}||'%'
+		</if>
+	</select>
+	
 </mapper>

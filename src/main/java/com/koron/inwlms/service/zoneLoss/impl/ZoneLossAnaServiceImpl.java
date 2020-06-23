@@ -15,6 +15,7 @@ import com.github.pagehelper.util.StringUtil;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryDmaZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryLeakListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QuerySZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneHstDataDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneIndicatorListDTO;
@@ -31,8 +32,10 @@ import com.koron.inwlms.bean.VO.zoneLoss.FZoneLossListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.IndicatorInfo;
 import com.koron.inwlms.bean.VO.zoneLoss.LeakDetailsVO;
 import com.koron.inwlms.bean.VO.zoneLoss.SZoneLossListVO;
+import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneIndicatorDicVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
+import com.koron.inwlms.mapper.zoneLoss.WaterBalanceAnaMapper;
 import com.koron.inwlms.mapper.zoneLoss.ZoneLossAnaMapper;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.service.zoneLoss.ZoneLossAnaService;
@@ -2622,6 +2625,32 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		ZoneLossAnaMapper mapper = factory.getMapper(ZoneLossAnaMapper.class);
 		LeakDetailsVO leakDetailsVO = mapper.queryBurstLeakById(id);
 		return leakDetailsVO;
+	}
+
+	@TaskAnnotation("queryBurstLeakList")
+	@Override
+	public PageListVO<List<LeakDetailsVO>> queryBurstLeakList(SessionFactory factory, QueryLeakListDTO queryLeakListDTO) {
+		
+		ZoneLossAnaMapper mapper = factory.getMapper(ZoneLossAnaMapper.class);
+		// 查询总条数
+		int rowNumber = mapper.countBurstLeak(queryLeakListDTO);
+		//判断分页
+		if(rowNumber<(queryLeakListDTO.getPage()-1)*queryLeakListDTO.getPageCount()) return null;
+				
+		// 查询列表数据
+		List<LeakDetailsVO> dataLists = mapper.queryBurstLeakList(queryLeakListDTO);
+				
+		
+		// 返回数据结果
+		PageListVO<List<LeakDetailsVO>> result = new PageListVO<>();
+		result.setDataList(dataLists);
+		// 插入分页信息
+		PageVO pageVO = PageUtil.getPageBean(queryLeakListDTO.getPage(), queryLeakListDTO.getPageCount(), rowNumber);
+		result.setTotalPage(pageVO.getTotalPage());
+		result.setRowNumber(pageVO.getRowNumber());
+		result.setPageCount(pageVO.getPageCount());
+		result.setPage(pageVO.getPage());
+		return result;
 	}
 	
 }

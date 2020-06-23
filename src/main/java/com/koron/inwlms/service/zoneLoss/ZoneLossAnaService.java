@@ -8,6 +8,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryDmaZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryLeakListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QuerySZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneHstDataDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneIndicatorListDTO;
@@ -107,5 +108,13 @@ public interface ZoneLossAnaService {
 	 * @return
 	 */
 	LeakDetailsVO queryBurstLeakById(SessionFactory factory,String id);
+	
+	/**
+	 * 查询漏点信息列表
+	 * @param factory
+	 * @param queryLeakListDTO
+	 * @return
+	 */
+	PageListVO<List<LeakDetailsVO>> queryBurstLeakList(SessionFactory factory,QueryLeakListDTO queryLeakListDTO);
 }
 

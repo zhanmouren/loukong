@@ -6,9 +6,12 @@ import org.apache.ibatis.annotations.Param;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
 
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryLeakListDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO;
 import com.koron.inwlms.bean.VO.zoneLoss.BurstLeakAnalysisVO;
 import com.koron.inwlms.bean.VO.zoneLoss.IndicatorInfo;
 import com.koron.inwlms.bean.VO.zoneLoss.LeakDetailsVO;
+import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 
 /**
  * 分区漏损-水平衡分析mapper
@@ -37,4 +40,18 @@ public interface ZoneLossAnaMapper {
 	 * @return
 	 */
 	LeakDetailsVO queryBurstLeakById(@Param("id") String id);
+	
+	/**
+	 * 查询漏点信息列表
+	 * @param queryLeakListDTO
+	 * @return
+	 */
+	List<LeakDetailsVO> queryBurstLeakList(QueryLeakListDTO queryLeakListDTO);
+
+	/**
+	 * 查询漏点条数
+	 * @param queryLeakListDTO
+	 * @return
+	 */
+	int countBurstLeak(QueryLeakListDTO queryLeakListDTO);
 }

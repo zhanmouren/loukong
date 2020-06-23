@@ -1,5 +1,6 @@
 package com.koron.inwlms.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import com.koron.inwlms.bean.DTO.zoneLoss.LegitimateNightUseDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.LegitimateNightUseEditDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryDmaZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryFZoneLossListDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryLeakListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QuerySZoneLossListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryVCZoneListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryVSZoneListDTO;
@@ -69,6 +71,7 @@ import com.koron.inwlms.service.zoneLoss.VZoneLossAnaService;
 import com.koron.inwlms.service.zoneLoss.WaterBalanceAnaService;
 import com.koron.inwlms.service.zoneLoss.ZoneLossAnaService;
 import com.koron.inwlms.util.ExportDataUtil;
+import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -97,7 +100,6 @@ public class ZoneLossController {
 	@Autowired
 	private LeakageParamSetService lpss;
 
-	private QueryDmaZoneLossListDTO queryFZoneLossListDTO;
 
 	@RequestMapping(value = "/queryZoneWBLossData.htm", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
@@ -1964,5 +1966,59 @@ public class ZoneLossController {
 		}
 		return msg.toJson();
 	}
+	
+	@RequestMapping(value = "/queryBurstLeakList.htm", method = RequestMethod.POST, produces = {
+	"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询漏点信息列表", notes = "查询漏点信息列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	public String queryBurstLeakList(@RequestBody QueryLeakListDTO queryLeakListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
+			PageListVO.class);
+	try {
+		PageListVO<List<LeakDetailsVO>> lists = ADOConnection.runTask(user.getEnv(), zlas, "queryBurstLeakList",
+				PageListVO.class, queryLeakListDTO);
+		msg.setData(lists);
+	} catch (Exception e) {
+		msg.setCode(Constant.MESSAGE_INT_ERROR);
+		msg.setDescription(Constant.MESSAGE_STRING_ERROR);
+	}
+	return msg.toJson();
+	}
 
+	/**
+	 * 导出合理夜晚使用量信息
+	 *
+	 * @return
+	 */
+	@ApiOperation(value = "导出漏点信息列表", notes = "导出漏点信息列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/downloadBurstLeakList.htm", method = RequestMethod.POST, produces = {
+			"text/html;charset=UTF-8" })
+	@ResponseBody
+	public HttpEntity<?> downloadBurstLeakList(@RequestParam String objValue, @RequestParam String titleInfos,
+			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		try {
+			Gson jsonValue = new Gson();
+			// 查询条件字符串转对象，查询数据结果
+			QueryLeakListDTO qllDTO = jsonValue.fromJson(objValue, QueryLeakListDTO.class);
+			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
+			if (qllDTO == null) {
+				return new HttpEntity<Integer>(Constant.MESSAGE_INT_NULL);
+			}
+			qllDTO.setPage(1);
+			qllDTO.setPageCount(Constant.DOWN_MAX_LIMIT);
+			// 查询到导出数据结果
+			PageListVO<List<LeakDetailsVO>> lists = ADOConnection.runTask(user.getEnv(), zlas, "queryBurstLeakList",
+					PageListVO.class, qllDTO);
+			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,
+					new TypeToken<List<Map<String, String>>>() {
+					}.getType());
+			// 导出excel文件
+			// 导出list
+			return ExportDataUtil.getExcelDataFileInfoByList(lists.getDataList(), jsonArray);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
