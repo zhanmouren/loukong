@@ -40,8 +40,18 @@ public class AutomaticPartitionDTO {
 	 * 虚拟分区分级
 	 */
 	private String othertype;
+	/**
+	 * 虚拟分区中的所有实际分区codeList
+	 */
+	private List<String> cutRegion;
 	
 	
+	public List<String> getCutRegion() {
+		return cutRegion;
+	}
+	public void setCutRegion(List<String> cutRegion) {
+		this.cutRegion = cutRegion;
+	}
 	public List<String> getAmbientLayerList() {
 		return ambientLayerList;
 	}

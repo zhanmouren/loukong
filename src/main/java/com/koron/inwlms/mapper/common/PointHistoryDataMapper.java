@@ -25,4 +25,8 @@ public interface PointHistoryDataMapper {
 	
 	@Select("select * from nw_monitorpoint_hour where \"analysisDate\" = #{datatime}")
 	List<MinMonitorPoint> queryPointHourData(@Param("datatime") Date datatime);
+	
+	@Select("select a.code as code, round( a.value/c.precision :: NUMERIC, 2 ) as value, a.\"analysisDate\" as \"analysisDate\", a.\"stationCode\" as \"stationCode\"\r\n" + 
+			"from nw_monitorpoint_hour a left join lc_app_dim_indicator b on a.code = b.code where a.code = #{code} and a.\"analysisDate\" between '${start}' and '${end}'")
+	List<MinMonitorPoint> queryPointHourDataByDay(@Param("code") String code,@Param("start") Date start, @Param("end") Date end);
 }

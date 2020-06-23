@@ -60,11 +60,11 @@ public class ZoneKafkaConsumer {
 	                System.out.printf("成功消费消息：topic = %s ,partition = %d,offset = %d, key = %s, value = %s%n",
 	                        record.topic(), record.partition(), record.offset(), record.key(), record.value());
 	                
-//	                Gson jsonValue = new Gson();
-//	                String value = record.value();
-//	                KafkaReturnData kafkaReturnData = jsonValue.fromJson(value, KafkaReturnData.class);
-//	                //数据入库
-//	                ADOConnection.runTask(new PartitionSchemeDetServiceImpl(), "addKafkaData", Integer.class, kafkaReturnData);
+	                Gson jsonValue = new Gson();
+	                String value = record.value();
+	                KafkaReturnData kafkaReturnData = jsonValue.fromJson(value, KafkaReturnData.class);
+	                //数据入库
+	                ADOConnection.runTask(new PartitionSchemeDetServiceImpl(), "addKafkaData", Integer.class, kafkaReturnData);
 	                     
 	            });
 	        }

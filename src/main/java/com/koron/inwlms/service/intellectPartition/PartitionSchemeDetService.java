@@ -11,6 +11,8 @@ import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeData;
+import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeDataReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZoneRange;
 
 @Service
@@ -38,6 +40,8 @@ public interface PartitionSchemeDetService {
 	Integer deleteSchemeDetByCode(SessionFactory factory, List<Integer> ids);
 
 	ZoneRange getZoneNum(SessionFactory factory, AutomaticPartitionDTO automaticPartitionDTO);
+
+	List<ZonePipeDataReturn> getSchemePipeData(SessionFactory factory, Integer schemeId);
 	
 	
 

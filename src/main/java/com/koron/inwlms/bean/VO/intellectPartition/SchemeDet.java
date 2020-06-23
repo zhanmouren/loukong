@@ -12,10 +12,6 @@ public class SchemeDet {
 
 	private BigInteger id;
 	/**
-	 * 分区方案编码
-	 */
-	private String code;
-	/**
 	 * 分区方案汇总编码
 	 */
 	private String totalSchemeCode;
@@ -40,6 +36,8 @@ public class SchemeDet {
 	 */
 	private Integer state;
 	
+	private String schemeType;
+	
 	private String createBy;
 	
 	private Date createTime;
@@ -48,13 +46,13 @@ public class SchemeDet {
 	
 	private Date updateTime;
 
-	
-	public String getCode() {
-		return code;
+
+	public String getSchemeType() {
+		return schemeType;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setSchemeType(String schemeType) {
+		this.schemeType = schemeType;
 	}
 
 	public BigInteger getId() {

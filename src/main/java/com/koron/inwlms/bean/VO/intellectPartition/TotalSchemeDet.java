@@ -37,6 +37,10 @@ public class TotalSchemeDet {
 	 * 分区编码
 	 */
 	private String zoneCode;
+	/**
+	 * 方案状态，0暂存，1保存
+	 */
+	private Integer state;
 
 	private String createBy;
 	
@@ -45,6 +49,15 @@ public class TotalSchemeDet {
 	private String updateBy;
 	
 	private Date updateTime;
+
+	
+	public Integer getState() {
+		return state;
+	}
+
+	public void setState(Integer state) {
+		this.state = state;
+	}
 
 	public Integer getId() {
 		return id;

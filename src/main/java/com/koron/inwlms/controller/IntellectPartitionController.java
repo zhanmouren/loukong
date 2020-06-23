@@ -28,6 +28,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeDataReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZoneRange;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -67,9 +68,10 @@ public class IntellectPartitionController {
 		totalSchemeDet.setFlowLayer(automaticPartitionDTO.getFlowLayerList().toString());
 		totalSchemeDet.setMaxZone(automaticPartitionDTO.getMaxZone());
 		totalSchemeDet.setMinZone(automaticPartitionDTO.getMinZone());
-		totalSchemeDet.setZoneCode(automaticPartitionDTO.getZoneCode());
 		totalSchemeDet.setZoneType(automaticPartitionDTO.getZoneType());
 		totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
+		totalSchemeDet.setZoneCode(automaticPartitionDTO.getZoneCode());
+		totalSchemeDet.setState(0);
 		try {
 			ModelReturn data = ADOConnection.runTask(user.getEnv(),psds, "getModelReturnData", ModelReturn.class, automaticPartitionDTO, totalSchemeDet,tenantID);
 			msg.setData(data);
@@ -171,6 +173,54 @@ public class IntellectPartitionController {
 		}
 		return null;
 	}
+	
+	@RequestMapping(value = "/getKafkaReturn.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区方案数据", notes = "查询分区方案数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getKafkaReturn(@RequestBody TotalSchemeDetDTO totalSchemeDetDTO, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		if(totalSchemeDetDTO.getCode() == null || totalSchemeDetDTO.getCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("方案总表编码为空");
+			return msg.toJson();
+		}
+		
+		try {
+			List<SchemeDet> list = ADOConnection.runTask(user.getEnv(),psds, "querySchemeDet", List.class,totalSchemeDetDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区方案查询失败"); 
+		}
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/getZonePipeReturn.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询预分区管线编码数据", notes = "查询预分区管线编码数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getZonePipeReturn(@RequestBody SchemeDet schemeDet, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		try {
+			List<ZonePipeDataReturn> list = ADOConnection.runTask(user.getEnv(),psds, "getSchemePipeData", List.class,schemeDet.getId());
+			if(list != null && list.size() != 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setData(list);
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("数据为空");
+			}
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区管线查询失败");
+		}
+		
+		return null;
+	}
+	
 	
 	/**
 	 * 通过方案总表code查询分区方案数据

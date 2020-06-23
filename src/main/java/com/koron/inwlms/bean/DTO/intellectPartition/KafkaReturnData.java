@@ -16,15 +16,15 @@ public class KafkaReturnData {
 	/**
 	 * 分区数量上限
 	 */
-	private Integer num_up;
+	private Double num_up;
 	/**
 	 * 分区数量下限
 	 */
-	private Integer num_down;
+	private Double num_down;
 	/**
 	 * 分区个数
 	 */
-	private Integer partition_no;
+	private Double partition_no;
 	/**
 	 * 结构度
 	 */
@@ -36,7 +36,7 @@ public class KafkaReturnData {
 	/**
 	 * 新增设备数量
 	 */
-	private Integer flow_num;
+	private Double flow_num;
 	/**
 	 * 是否完成全部分区 
 	 */
@@ -57,29 +57,34 @@ public class KafkaReturnData {
 	public void setTotal_plan_code(String total_plan_code) {
 		this.total_plan_code = total_plan_code;
 	}
+	
 
-	public Integer getNum_up() {
+	public Double getNum_up() {
 		return num_up;
 	}
 
-	public void setNum_up(Integer num_up) {
+	public void setNum_up(Double num_up) {
 		this.num_up = num_up;
 	}
 
-	public Integer getNum_down() {
+	public Double getNum_down() {
 		return num_down;
 	}
 
-	public void setNum_down(Integer num_down) {
+	public void setNum_down(Double num_down) {
 		this.num_down = num_down;
 	}
 
-	public Integer getPartition_no() {
+	public Double getPartition_no() {
 		return partition_no;
 	}
 
-	public void setPartition_no(Integer partition_no) {
+	public void setPartition_no(Double partition_no) {
 		this.partition_no = partition_no;
+	}
+
+	public void setFlow_num(Double flow_num) {
+		this.flow_num = flow_num;
 	}
 
 	public Double getTightness() {
@@ -98,12 +103,8 @@ public class KafkaReturnData {
 		this.economy = economy;
 	}
 
-	public Integer getFlow_num() {
+	public Double getFlow_num() {
 		return flow_num;
-	}
-
-	public void setFlow_num(Integer flow_num) {
-		this.flow_num = flow_num;
 	}
 
 	public Integer getIs_end() {

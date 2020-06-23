@@ -31,6 +31,8 @@ import com.koron.inwlms.bean.VO.intellectPartition.GisZonePipeDateVO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeData;
+import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeDataReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZoneRange;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
@@ -128,15 +130,22 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	public ModelReturn getModelReturnData(SessionFactory factory,AutomaticPartitionDTO automaticPartitionDTO,TotalSchemeDet totalSchemeDet,String tenantID) {
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
 		Gson gson = new Gson();
-		
+		List<String> railwayList = new ArrayList<>();
+		List<String> riverList = new ArrayList<>();
+		List<String> xzqList = new ArrayList<>(); 
+		List<String> scadaList = new ArrayList<>(); 
 		List<String> ambientLayerList = automaticPartitionDTO.getAmbientLayerList();
+		List<String> flowLayerList = automaticPartitionDTO.getFlowLayerList();
 		
 		//调用gis接口，获取所选分区管线数据(不包括图层信息)
 		String gisPath = "http://10.13.1.11:8888/"+tenantID+"/getDmaAllPipe.htm";
 		GisAllPipeDTO gisAllPipeDTO = new GisAllPipeDTO();
 		List<String> cutRegion = new ArrayList<>();
-		gisAllPipeDTO.setBaseRegion(totalSchemeDet.getZoneCode());
+		gisAllPipeDTO.setBaseRegion(automaticPartitionDTO.getZoneCode());
 		//查看是否是虚拟分区
+		if(automaticPartitionDTO.getCutRegion() != null && automaticPartitionDTO.getCutRegion().size() != 0) {
+			cutRegion = automaticPartitionDTO.getCutRegion();
+		}
 		gisAllPipeDTO.setCutRegion(cutRegion);
 		String gisJsonData = gson.toJson(gisAllPipeDTO);
 		JsonObject gisResultData = InterfaceUtil.interfaceOfPostUtil(gisPath, gisJsonData);
@@ -147,50 +156,64 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		JsonArray gisdata = gisResultData.getAsJsonArray("data");
 		List<GisZonePipeDateVO>  gisZonePipeDateVO= gson.fromJson(gisdata, new TypeToken<List<GisZonePipeDateVO>>(){}.getType());
 
-		//调用gis接口，查询铁路图层信息
-		String gisPath1 = "http://10.13.1.11:8888/"+tenantID+"/railwayIntersect.htm";
-		JsonObject gisResultData1 = InterfaceUtil.interfaceOfPostUtil(gisPath1, gisJsonData);
-		String code2 = gisResultData1.get("code").getAsString();
-		if(!code2.equals("0")) {
-			return null;
+		if(ambientLayerList != null && ambientLayerList.size() != 0) {
+			for(String flag : ambientLayerList) {
+				if(flag.equals("BASE_RAILWAY")) {
+					//调用gis接口，查询铁路图层信息
+					String gisPath1 = "http://10.13.1.11:8888/"+tenantID+"/railwayIntersect.htm";
+					JsonObject gisResultData1 = InterfaceUtil.interfaceOfPostUtil(gisPath1, gisJsonData);
+					String code2 = gisResultData1.get("code").getAsString();
+					if(!code2.equals("0")) {
+						return null;
+					}
+					JsonArray gisdata1 = gisResultData.getAsJsonArray("data");
+					railwayList = gson.fromJson(gisdata1, new TypeToken<List<String>>(){}.getType());
+				}else if(flag.equals("BASE_RIVER")) {
+					//调用gis接口，查询河流图层信息
+					String gisPath2 = "http://10.13.1.11:8888/"+tenantID+"/riverIntersect.htm";
+					JsonObject gisResultData2 = InterfaceUtil.interfaceOfPostUtil(gisPath2, gisJsonData);
+					String code3 = gisResultData2.get("code").getAsString();
+					if(!code3.equals("0")) {
+						return null;
+					}
+					JsonArray gisdata2 = gisResultData.getAsJsonArray("data");
+					riverList = gson.fromJson(gisdata2, new TypeToken<List<String>>(){}.getType());
+				}else if(flag.equals("BASE_XZQ")) {
+					//查询gis接口，查询行政区域图层信息
+					String gisPath3 = "http://10.13.1.11:8888/"+tenantID+"/xzqIntersect.htm";
+					JsonObject gisResultData3 = InterfaceUtil.interfaceOfPostUtil(gisPath3, gisJsonData);
+					String code4 = gisResultData3.get("code").getAsString();
+					if(!code4.equals("0")) {
+						return null;
+					}
+					JsonArray gisdata3 = gisResultData.getAsJsonArray("data");
+					xzqList = gson.fromJson(gisdata3, new TypeToken<List<String>>(){}.getType());
+				}
+			}
 		}
-		JsonArray gisdata1 = gisResultData.getAsJsonArray("data");
-		List<String> railwayList = gson.fromJson(gisdata1, new TypeToken<List<String>>(){}.getType());
 		
-		//调用gis接口，查询河流图层信息
-		String gisPath2 = "http://10.13.1.11:8888/"+tenantID+"/riverIntersect.htm";
-		JsonObject gisResultData2 = InterfaceUtil.interfaceOfPostUtil(gisPath2, gisJsonData);
-		String code3 = gisResultData1.get("code").getAsString();
-		if(!code3.equals("0")) {
-			return null;
+		if(flowLayerList != null && flowLayerList.size() != 0) {
+			//查询gis接口，查询计量点相交管线
+			String gisPath4 = "http://10.13.1.11:8888/"+tenantID+"/scadaIntersect.htm";
+			JsonObject gisResultData4 = InterfaceUtil.interfaceOfPostUtil(gisPath4, gisJsonData);
+			String code5 = gisResultData4.get("code").getAsString();
+			if(!code5.equals("0")) {
+				return null;
+			}
+			JsonArray gisdata4 = gisResultData.getAsJsonArray("data");
+			scadaList = gson.fromJson(gisdata4, new TypeToken<List<String>>(){}.getType());
 		}
-		JsonArray gisdata2 = gisResultData.getAsJsonArray("data");
-		List<String> riverList = gson.fromJson(gisdata2, new TypeToken<List<String>>(){}.getType());
 		
-		//查询gis接口，查询行政区域图层信息
-		String gisPath3 = "http://10.13.1.11:8888/"+tenantID+"/xzqIntersect.htm";
-		JsonObject gisResultData3 = InterfaceUtil.interfaceOfPostUtil(gisPath3, gisJsonData);
-		String code4 = gisResultData1.get("code").getAsString();
-		if(!code4.equals("0")) {
-			return null;
-		}
-		JsonArray gisdata3 = gisResultData.getAsJsonArray("data");
-		List<String> xzqList = gson.fromJson(gisdata3, new TypeToken<List<String>>(){}.getType());
-		
-		//查询gis接口，查询计量点相交管线
-		String gisPath4 = "http://10.13.1.11:8888/"+tenantID+"/scadaIntersect.htm";
-		JsonObject gisResultData4 = InterfaceUtil.interfaceOfPostUtil(gisPath4, gisJsonData);
-		String code5 = gisResultData1.get("code").getAsString();
-		if(!code5.equals("0")) {
-			return null;
-		}
-		JsonArray gisdata4 = gisResultData.getAsJsonArray("data");
-		List<String> scadaList = gson.fromJson(gisdata4, new TypeToken<List<String>>(){}.getType());
 		List<GisZonePipeData> pipeinfo = new ArrayList<>();
 		
 		for(GisZonePipeDateVO gisZonePipeDataVO : gisZonePipeDateVO) {
 			//获取数据
 			GisZonePipeData gisZonePipeData = new GisZonePipeData();
+			if(gisZonePipeDataVO.getPip_p() == null || gisZonePipeDataVO.getPip_p_pre() == null || gisZonePipeDataVO.getPip_obj_code() == null || gisZonePipeDataVO.getPip_len() == null) {
+				System.out.print(1);
+			}else if(gisZonePipeDataVO.getPoint_a() == null || gisZonePipeDataVO.getPoint_b() == null || gisZonePipeDataVO.getPip_d() == null) {
+				System.out.print(1);
+			}
 			gisZonePipeData.setPip_p(gisZonePipeDataVO.getPip_p());
 			gisZonePipeData.setPip_p_pre(gisZonePipeDataVO.getPip_p_pre());
 			gisZonePipeData.setPip_obj_code(gisZonePipeDataVO.getPip_obj_code());
@@ -200,39 +223,62 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			gisZonePipeData.setPip_d(gisZonePipeDataVO.getPip_d());
 			gisZonePipeData.setPoint_c(gisZonePipeDataVO.getPoint_c());
 			gisZonePipeData.setPoint_z(gisZonePipeDataVO.getPoint_z());
+			gisZonePipeData.setAdministration(0);
+			gisZonePipeData.setRailway(0);
+			gisZonePipeData.setPip_river(0);
+			gisZonePipeData.setPip_gauge(0);
+			gisZonePipeData.setLayerOne(0);
+			gisZonePipeData.setLayerTwo(0);
+			gisZonePipeData.setLayerThree(0);
+			gisZonePipeData.setLayerFour(0);
+			
+			//测试数据
+			gisZonePipeData.setPoint_c(0.0);
+			gisZonePipeData.setPoint_z(0.0);
+			
 			if(gisZonePipeDataVO.getPip_value().equals("W101510001")) {
-				gisZonePipeData.setPip_value(1);
+				gisZonePipeData.setPip_value(1); 
 			}else {
 				gisZonePipeData.setPip_value(0);
 			}
 			
 			//铁路
-			for(String code : railwayList) {
-				if(gisZonePipeDataVO.getPip_obj_code().equals(code)) {
-					gisZonePipeData.setRailway(1);
+			if(railwayList != null && railwayList.size() != 0) {
+				for(String code : railwayList) {
+					if(gisZonePipeDataVO.getPip_obj_code().equals(code)) {
+						gisZonePipeData.setRailway(1);
+					}
 				}
 			}
 			
 			//河流
-			for(String code : riverList) {
-				if(gisZonePipeData.getPip_obj_code().equals(code)) {
-					gisZonePipeData.setPip_river(1);
+			if(riverList != null && riverList.size() != 0) {
+				for(String code : riverList) {
+					if(gisZonePipeData.getPip_obj_code().equals(code)) {
+						gisZonePipeData.setPip_river(1);
+					}
 				}
 			}
 			
 			//行政
-			for(String code : xzqList) {
-				if(gisZonePipeData.getPip_obj_code().equals(code)) {
-					gisZonePipeData.setAdministration(1);
+			if(xzqList != null && xzqList.size() != 0) {
+				for(String code : xzqList) {
+					if(gisZonePipeData.getPip_obj_code().equals(code)) {
+						gisZonePipeData.setAdministration(1);
+					}
 				}
 			}
 			
+			
 			//流量计
-			for(String code : scadaList) {
-				if(gisZonePipeData.getPip_obj_code().equals(code)) {
-					gisZonePipeData.setPip_gauge(1);
+			if(scadaList != null && scadaList.size() != 0) {
+				for(String code : scadaList) {
+					if(gisZonePipeData.getPip_obj_code().equals(code)) {
+						gisZonePipeData.setPip_gauge(1);
+					}
 				}
 			}
+			
 			pipeinfo.add(gisZonePipeData);
 		}
 		
@@ -242,14 +288,25 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		String type = "dma";
 		EconomicIndicatorMapper emapper = factory.getMapper(EconomicIndicatorMapper.class);
 		List<PartitionInvestVO> partInvestList = emapper.queryPartitionInvestCaliber(type);
-		for(GisZonePipeData gisZonePipeData : pipeinfo) {
-			String caliber = gisZonePipeData.getPip_d() +"";
-			for(PartitionInvestVO partitionInvestVO : partInvestList) {
-				if(partitionInvestVO.getCaliber().equals(caliber)) {
-					gisZonePipeData.setPip_price(partitionInvestVO.getMoney());
+		if(partInvestList != null && partInvestList.size() != 0) {
+			for(GisZonePipeData gisZonePipeData : pipeinfo) {
+				String caliber = gisZonePipeData.getPip_d() +"";
+				for(PartitionInvestVO partitionInvestVO : partInvestList) {
+					if(partitionInvestVO.getCaliber().equals(caliber)) {
+						gisZonePipeData.setPip_price(partitionInvestVO.getMoney());
+					}
 				}
+				//测试
+				gisZonePipeData.setPip_price(100.1);
+			}
+		}else {
+			//测试
+			for(GisZonePipeData gisZonePipeData : pipeinfo) {
+				//测试
+				gisZonePipeData.setPip_price(100.1);
 			}
 		}
+		
 		
 		//TODO 判断是否有子分区
 		boolean zoneFlag = false;
@@ -392,6 +449,27 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		return zoneRange;
 	}
 	
+	@TaskAnnotation("getSchemePipeData")
+	@Override
+	public List<ZonePipeDataReturn> getSchemePipeData(SessionFactory factory,Integer schemeId) {
+		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
+		List<ZonePipeDataReturn> zonePipeDataReturnList = new ArrayList<>();
+		List<String> codeList = mapper.queryRCodeBySchemeId(schemeId);
+		if(codeList != null && codeList.size() != 0) {
+			for(String code : codeList) {
+				ZonePipeDataReturn zonePipeDataReturn = new ZonePipeDataReturn();
+				List<ZonePipeData> zonePipeDataList = mapper.queryZonePipeData(code);
+				zonePipeDataReturn.setrCode(code);
+				zonePipeDataReturn.setPipeCodeList(zonePipeDataList);
+				zonePipeDataReturnList.add(zonePipeDataReturn);
+			}
+			return zonePipeDataReturnList;
+		}else {
+			return null;
+		}
+
+	}
+	
 	/**
 	 * kafka消费智能分区的数据存库
 	 */
@@ -404,11 +482,11 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		
 		SchemeDet SchemeDet = new SchemeDet();
         SchemeDet.setTotalSchemeCode(kafkaReturnData.getTotal_plan_code());
-        SchemeDet.setFlowNum(kafkaReturnData.getFlow_num());
+        SchemeDet.setFlowNum(kafkaReturnData.getFlow_num().intValue());
         SchemeDet.setTightness(kafkaReturnData.getTightness());
         SchemeDet.setEcomony(kafkaReturnData.getEconomy());
-        SchemeDet.setRegionNum(kafkaReturnData.getPartition_no());
-		String schemeDetCode = mapper.addSchemeDet(SchemeDet);
+        SchemeDet.setRegionNum(kafkaReturnData.getPartition_no().intValue());
+		Integer schemeDetId = mapper.addSchemeDet(SchemeDet);
 		
 		for(ZoneSchemeData zoneSchemeData : kafkaReturnData.getPartition_detail()) {
 			String code = UUID.randomUUID().toString();
@@ -422,7 +500,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			}
 			PreZoneRelationDTO preZoneRelationDTO = new PreZoneRelationDTO();
 			preZoneRelationDTO.setrCode(code);
-			preZoneRelationDTO.setZoneSchemeCode(schemeDetCode);
+			preZoneRelationDTO.setZoneSchemeId(schemeDetId);
 			mapper.addPreZone(preZoneRelationDTO);
 			mapper.addPipePreZone(preZoneList);
 		}
@@ -461,9 +539,9 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		gisZoneData.setPip_info(pipeinfo);
 		gisZoneData.setNum_up(automaticPartitionDTO.getMaxZone());
 		gisZoneData.setNum_down(automaticPartitionDTO.getMinZone());
-		gisZoneData.setNum_up(20);
-		gisZoneData.setNum_down(5);
-		gisZoneData.setTotal_plan_code("888");
+		gisZoneData.setNum_up(67);
+		gisZoneData.setNum_down(50);
+		gisZoneData.setTotal_plan_code("123");
 		String data101 = gson.toJson(gisZoneData);
 		String mlPath = "http://10.13.1.11:7500/partition/partitionParamVerify";
 		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
@@ -483,7 +561,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	}
 	
 	public List<GisZonePipeData> readText() {
-		File file = new File("D:/智能分区-10000.txt");
+		File file = new File("D:/智能分区-1000.txt");
 		StringBuilder result = new StringBuilder();
         try{
             BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件

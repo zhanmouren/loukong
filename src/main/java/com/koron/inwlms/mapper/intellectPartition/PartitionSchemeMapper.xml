@@ -12,7 +12,7 @@
  
  <select id="addTotalSchemeDet" parameterType="com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet" resultType="java.lang.String">
  insert into app_totalschemedet(code, "zoneType", "maxZone", "minZone", "ambientLayer", "flowLayer", "zoneGrade", "zoneCode", "createBy", "createTime", "updateBy", "updateTime", state)
- values(#{code}, #{zoneType}, #{maxZone}, #{minZone}, #{ambientLayer}, #{flowLayer}, #{zoneGrade}, #{zoneCode}, #{createBy}, now, #{updateBy}, #{updateTime}, #{state}) returning code
+ values(concat('ZP_',nextval('zp_'::regclass)), #{zoneType}, #{maxZone}, #{minZone}, #{ambientLayer}, #{flowLayer}, #{zoneGrade}, #{zoneCode}, #{createBy}, Now(), #{updateBy}, Now(), #{state}) returning code
  </select>
  
  <delete id="deleteTotalSchemeDet" parameterType="java.lang.String">
@@ -49,14 +49,14 @@
  </foreach>
  </update>
  
- <select id="addSchemeDet" parameterType="com.koron.inwlms.bean.VO.intellectPartition.SchemeDet" resultType="java.lang.String">
- insert into app_schemedet(code, "totalSchemeCode", "regionNum", ecomony, tightness, "flowNum", state)
- values(#{code}, #{totalSchemeCode}, #{regionNum}, #{ecomony}, #{tightness}, #{flowNum}, #{state}) returning code
+ <select id="addSchemeDet" parameterType="com.koron.inwlms.bean.VO.intellectPartition.SchemeDet" resultType="java.lang.Integer">
+ insert into app_schemedet("totalSchemeCode", "regionNum", ecomony, tightness, "flowNum", state, "createBy", "createTime", "updateBy", "updateTime")
+ values(#{totalSchemeCode}, #{regionNum}, #{ecomony}, #{tightness}, #{flowNum}, #{state}, #{createBy}, Now(), #{updateBy}, Now()) returning id
  </select>
  
  <insert id="addPreZone" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.PreZoneRelationDTO">
- insert into "GIS_PREZONE"("zoneSchemeCode", "rCode")
- values(#{zoneSchemeCode}, #{rCode})
+ insert into "GIS_PREZONE"("zoneSchemeId", "rCode")
+ values(#{zoneSchemeId}, #{rCode})
  </insert>
  
  <insert id="addPipePreZone" parameterType="java.util.List">
@@ -72,5 +72,6 @@
  #{iditem}
  </foreach>
  </delete>
+ 
 
 </mapper>

@@ -32,12 +32,14 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 		int end = (int)endDate.getTime();
 		int nowTime = (int)nowDate.getTime();
 		//判断前后7天范围是否超过当前日期
+		Date startDate = new Date();
 		if(nowTime < end) {
-			Date startDate = TimeUtil.addDay(nowDate, -7);
+			startDate = TimeUtil.addDay(nowDate, -7);
+			endDate = nowDate;
 			end = nowTime;
 			start = (int)startDate.getTime();
 		}else {
-			Date startDate = TimeUtil.addDay(alarmDate, -3);
+			startDate = TimeUtil.addDay(alarmDate, -3);
 			start = (int)startDate.getTime();
 		}
 		
@@ -47,20 +49,38 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 		List<PointSensor> pointTypeList = mapper.queryPointType(code);
 		for(PointSensor pointSensor : pointTypeList) {
 			PointTypeVO pointTypeVO = new PointTypeVO();
-			pointTypeVO.setStype(pointSensor.getStype());
+			String indexCode = "";
+			if(pointSensor.getStype().equals("Q4") && !pointSensor.getSname().equals("反向瞬时")) {
+				indexCode = "MOHFDF";
+			}else if(pointSensor.getStype().equals("Q4") && pointSensor.getSname().equals("反向瞬时")) {
+				indexCode = "MOHRF";
+			}
+			pointTypeVO.setStype(indexCode);
 			pointTypeVO.setSname(pointSensor.getName());
 			List<PointDataVO> pointDataList = new ArrayList<>();
-			List<GdhRaw> gdhRawList = mapper.queryPointHistoryData(pointSensor.getCode(), start, end);
-			for(GdhRaw gdhRaw : gdhRawList) {
+			
+			//查询监测点小时表
+			List<MinMonitorPoint> minMonitorPointList = mapper.queryPointHourDataByDay(indexCode, startDate, endDate);
+			for(MinMonitorPoint minMonitorPoint : minMonitorPointList) {
 				PointDataVO pointDataVO = new PointDataVO();
-				pointDataVO.setValue(Double.valueOf(gdhRaw.getValue()));
-				long time = gdhRaw.getDatetime().longValue();
-				Date timeDate = new Date(time);
-				pointDataVO.setTime(timeDate);
+				pointDataVO.setValue(minMonitorPoint.getValue().doubleValue());
+				pointDataVO.setTime(minMonitorPoint.getAnalysisDate());
 				pointDataList.add(pointDataVO);
 			}
 			pointTypeVO.setPointDataList(pointDataList);
 			pointTypeVOList.add(pointTypeVO);
+			
+//			List<GdhRaw> gdhRawList = mapper.queryPointHistoryData(pointSensor.getCode(), start, end);
+//			for(GdhRaw gdhRaw : gdhRawList) {
+//				PointDataVO pointDataVO = new PointDataVO();
+//				pointDataVO.setValue(Double.valueOf(gdhRaw.getValue()));
+//				long time = gdhRaw.getDatetime().longValue();
+//				Date timeDate = new Date(time);
+//				pointDataVO.setTime(timeDate);
+//				pointDataList.add(pointDataVO);
+//			}
+//			pointTypeVO.setPointDataList(pointDataList);
+//			
 		}
 		
 		
