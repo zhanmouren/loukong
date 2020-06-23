@@ -49,7 +49,27 @@ public class TblRoleMenusVO extends TreeBean.Long{
 	private String opCodeName;
 	//按钮编码加名称List
 	private List<String> opCodeNameList;
+	//菜单拥有权限
+	private String opOwn;
+	//菜单拥有的权限
+	private List<String> opOwnList;
 	
+    
+	public String getOpOwn() {
+		return opOwn;
+	}
+
+	public void setOpOwn(String opOwn) {
+		this.opOwn = opOwn;
+	}
+
+	public List<String> getOpOwnList() {
+		return opOwnList;
+	}
+
+	public void setOpOwnList(List<String> opOwnList) {
+		this.opOwnList = opOwnList;
+	}
 
 	public List<String> getOpCodeNameList() {
 		return opCodeNameList;
@@ -189,7 +209,7 @@ public class TblRoleMenusVO extends TreeBean.Long{
 		return "TblRoleMenusVO [sequence=" + sequence + ", roleId=" + roleId + ", roleCode=" + roleCode + ", roleName="
 				+ roleName + ", roleStatus=" + roleStatus + ", menuId=" + menuId + ", moduleCode=" + moduleCode
 				+ ", moduleNo=" + moduleNo + ", moduleName=" + moduleName + ", linkAddress=" + linkAddress + ", opCode="
-				+ opCode + ", opName=" + opName + ", opCodeName=" + opCodeName + ",opCodeNameList="+opCodeNameList+", id=" + id + ", type=" + type
+				+ opCode + ", opName=" + opName + ",opOwn="+opOwn+",opOwnList="+opOwnList+", opCodeName=" + opCodeName + ",opCodeNameList="+opCodeNameList+", id=" + id + ", type=" + type
 				+ ", foreignkey=" + foreignkey + ",parentMask=" + super.getParentMask() + ", mask=" + super.getMask() + ", childMask=" + super.getChildMask() + "]";
 	}
 

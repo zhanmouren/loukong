@@ -850,38 +850,38 @@ public class Constant {
 	/**
 	 * 全网月表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_WNMAL="WNMAL";
+	public final static String APPARENT_INDIC_WNMWL="WNMWL";
 	
 	/**
 	 * 一级分区月表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_FLMAL="FLMAL";
+	public final static String APPARENT_INDIC_FLMWL="FLMWL";
 	
 	/**
 	 * 二级分区月表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_SLMAL="SLMAL";
+	public final static String APPARENT_INDIC_SLMWL="SLMWL";
 	/**
 	 * DMA/PMA分区月表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_DMMAL="DMMAL";
+	public final static String APPARENT_INDIC_DMMWL="DMMWL";
 	/**
 	 * 全网年表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_WNYAL="WNYAL";
+	public final static String APPARENT_INDIC_WNYWL="WNYWL";
 	
 	/**
 	 * 一级分区年表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_FLYAL="FLYAL";
+	public final static String APPARENT_INDIC_FLYWL="FLYWL";
 	/**
 	 * 二级分区年表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_SLYAL="SLYAL";
+	public final static String APPARENT_INDIC_SLYWL="SLYWL";
 	/**
 	 * DMA/PMA分区年表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_DMYAL="DMYAL";
+	public final static String APPARENT_INDIC_DMYWL="DMYWL";
 		
 	
 	/**

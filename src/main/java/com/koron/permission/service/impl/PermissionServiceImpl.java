@@ -523,11 +523,14 @@ public class PermissionServiceImpl implements PermissionService{
 			}
 		    //拿到数据查找按钮权限,根据角色查询权限
 		     if(finalList!=null && finalList.size()>0) {
-				for(int i=0;i<finalList.size();i++) {
+				for(int i=0;i<finalList.size();i++) {					
 					LongTreeBean longTreeBean=treeMapper.getBeanByForeignIdType(1, finalList.get(i).getForeignkey());
 					if(longTreeBean!=null) {
+						// 根据角色获取节点的直接下级节点(新菜单操作)
 						List<TblRoleMenusVO> menuopList=treeMapper.getMenuAndOpChildren(longTreeBean,tblRoleAndOPDTO.getRoleCode());
-						if(menuopList!=null && menuopList.size()>0) {
+						//查询该菜单所有的操作节点
+						List<TblRoleMenusVO> allopList=treeMapper.getAllMenuAndOp(longTreeBean);
+						if(menuopList!=null && menuopList.size()>0 && !"".equals(menuopList.get(0).getOpCodeName())) {
 							String[] strArr = menuopList.get(0).getOpCodeName().split(";");
 					
 								List<String> finalOpList=new ArrayList<>();
@@ -536,7 +539,21 @@ public class PermissionServiceImpl implements PermissionService{
 								}
 								finalList.get(i).setOpCodeNameList(finalOpList);
 							
+						}else {
+							finalList.get(i).setOpCodeNameList(new ArrayList<>());
 						}
+						if(allopList!=null && allopList.size()>0 && !"".equals(allopList.get(0).getOpOwn())) {
+							String[] strArrnew = allopList.get(0).getOpOwn().split(";");
+							List<String> allOpList=new ArrayList<>();
+							for(int f=0;f<strArrnew.length;f++) {
+								allOpList.add(strArrnew[f]);
+							}
+							finalList.get(i).setOpOwnList(allOpList);
+							
+						}else {
+							finalList.get(i).setOpOwnList(new  ArrayList<>());
+						}
+						
 					}
 				}
 		     }
