@@ -2487,7 +2487,7 @@ public class SystemManagerController {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询职位成功"); 
 					msg.setData(positionList);
-				  }else {
+				  }else if(positionList == null){
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			        msg.setDescription("没有查询到相关职位"); 
 			 }		  

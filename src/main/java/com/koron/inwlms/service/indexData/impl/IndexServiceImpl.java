@@ -44,7 +44,6 @@ public class IndexServiceImpl implements IndexService{
 	public List<IndicatorVO> queryCompreInfo(SessionFactory factory,IndicatorNewDTO indicatorDTO) {
 			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
 			List<IndicatorVO> finalList=new ArrayList<>();
-			//TODO 根据分区编号，查询是该分区属于哪个级别（全网，一级，二级还是DMA）
 			/**
 			管网长度  用户数              ------基础指标-水司用户 BASE_INDIC
 			供水量  月 年                    -------水平衡基础数据  BALANCE_INDIC
@@ -216,6 +215,9 @@ public class IndexServiceImpl implements IndexService{
 					indBalanceMList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 				}
 			    
+				for(int i=0;i<indBalanceMList.size();i++) {
+					indBalanceMList.get(i).setValue(Math.round(indBalanceMList.get(i).getValue()/10000)/100.0);
+			    }
 			
 			    //取出数据
 			    if(indBalanceMList!=null && indBalanceMList.size()>0) {
@@ -326,7 +328,9 @@ public class IndexServiceImpl implements IndexService{
 					indBalanceYList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 				}
 			   
-			    
+			    for(int i=0;i<indBalanceYList.size();i++) {
+			    	indBalanceYList.get(i).setValue(Math.round(indBalanceYList.get(i).getValue()/10000)/100.0);
+			    }
 				
 				
 				//取出数据
@@ -430,6 +434,9 @@ public class IndexServiceImpl implements IndexService{
 					indZoneLossMList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);
 				}
 				
+				for(int i=0;i<indZoneLossMList.size();i++) {
+					indZoneLossMList.get(i).setValue(Math.round(indZoneLossMList.get(i).getValue()/10000)/100.0);
+			    }
 				
 				//取出数据
 				if(indZoneLossMList!=null && indZoneLossMList.size()>0) {
@@ -537,6 +544,9 @@ public class IndexServiceImpl implements IndexService{
 					indZoneLossYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
 				}
 			   
+				for(int i=0;i<indZoneLossYList.size();i++) {
+					indZoneLossYList.get(i).setValue(Math.round(indZoneLossYList.get(i).getValue()/10000)/100.0);
+			    }
 				
 				//取出数据
 				if(indZoneLossYList!=null && indZoneLossYList.size()>0) {
@@ -641,6 +651,10 @@ public class IndexServiceImpl implements IndexService{
 					indZoneLossLMList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
 				}
 			   
+				for(int i=0;i<indZoneLossLMList.size();i++) {
+					indZoneLossLMList.get(i).setValue(Math.round(indZoneLossLMList.get(i).getValue()/10000)/100.0);
+			    }
+				
 				//清空条件
 			//	indicatorDTO.setCodes(new ArrayList<String>());
 				
@@ -680,6 +694,9 @@ public class IndexServiceImpl implements IndexService{
 					indZoneLossLYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
 				}
 				
+				for(int i=0;i<indZoneLossLYList.size();i++) {
+					indZoneLossLYList.get(i).setValue(Math.round(indZoneLossLYList.get(i).getValue()/10000)/100.0);
+			    }
 				
 				//取出产销差率(当月)
 				  double WNMNRRNow=0;
