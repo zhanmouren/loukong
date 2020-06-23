@@ -1289,15 +1289,23 @@ public class BaseDataController {
                 arr.add(item.getPointNo());
             }
             String url = gis+"/"+tenantID+"/scada/listByPcodes.htm";
-            //System.out.println(gson.toJson(arr));
             JsonObject ret = InterfaceUtil.interfaceOfPostUtil(url,gson.toJson(arr));
             JsonArray gisdata = ret.getAsJsonArray("data");
 
             List<PointVO>  points= gson.fromJson(gisdata, new TypeToken<List<PointVO>>(){}.getType());
+            for(PointVO item :points){
+                for(PointAccountVO pa : dis){
+                    if(item.getP_code().equals(pa.getPointNo())){
+                        item.setType(pa.getType());
+                    }
+                }
+            }
+            /*
             data.put("group",dis);
             data.put("detail",points);
+            */
             msg.setCode(0);
-            msg.setData(data);
+            msg.setData(points);
         }
         return msg.toJson();
     }

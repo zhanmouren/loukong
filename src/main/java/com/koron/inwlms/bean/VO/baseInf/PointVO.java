@@ -37,6 +37,11 @@ public class PointVO {
      */
     private Integer checkdate;
 
+    /**
+     * 用途类型
+     */
+     private String type;
+
     private Double[] smgeometry;
 
     private String featid;
@@ -74,6 +79,14 @@ public class PointVO {
     private String subtype;
 
     private String geoType;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public Double[] getSmgeometry() {
         return smgeometry;

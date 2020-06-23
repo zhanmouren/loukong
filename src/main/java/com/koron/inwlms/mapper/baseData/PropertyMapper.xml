@@ -3,7 +3,7 @@
 <mapper namespace="com.koron.inwlms.mapper.baseData.PropertyMapper">
 
     <select id="queryFlows"  resultType="com.koron.inwlms.bean.VO.baseInf.PointAccountVO">
-        select type,"pointNo" from gis_zone_point where type is not null group by type ,"pointNo"
+        select type,"pointNo" from gis_zone_point where type is not null group by type ,"pointNo" order by type
     </select>
 
     <insert id="addChargeZones" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
