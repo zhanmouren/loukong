@@ -850,7 +850,7 @@ public class Constant {
 	/**
 	 * 全网月表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_WNMAL="WNMAL";
+	public final static String APPARENT_INDIC_WNMWL="WNMWL";
 	
 	/**
 	 * 一级分区月表观漏损编码
@@ -868,7 +868,7 @@ public class Constant {
 	/**
 	 * 全网年表观漏损编码
 	 */
-	public final static String APPARENT_INDIC_WNYAL="WNYAL";
+	public final static String APPARENT_INDIC_WNYWL="WNYWL";
 	
 	/**
 	 * 一级分区年表观漏损编码
