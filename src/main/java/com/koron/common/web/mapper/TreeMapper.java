@@ -93,10 +93,10 @@ public interface TreeMapper {
      * @return 节点集合
      */
     @Select("select case when string_agg(distinct(concat_ws(':',tblop.name,tblop.code)),';') is null then '' else string_agg(distinct(concat_ws(':',tblop.name,tblop.code)),';') end as opOwn\r\n" + 
-    		"	from tblrole_op tblroleop\r\n" + 
-    		"	left join  tbloperation as  tblop on tblroleop.operation=tblop.code\r\n" + 
+    		
+    		"	from  tbloperation as  tblop" + 
     		"	left join tbltree  on tbltree.foreignkey= tblop.code"
-    		+ " where (tbltree.seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq} and tblop.status=0"
+    		+ " where (tbltree.seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq} and tblop.status=0 and tblop.flag=2"
             + " and (tbltree.seq & ((1::int8 << (62 - #{bean.parentMask}-#{bean.mask} - #{bean.childMask}))-1)) = 0 and tbltree.type = #{bean.type}"
             )
     List<TblRoleMenusVO> getAllMenuAndOp(@Param("bean") LongTreeBean bean);
