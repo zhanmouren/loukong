@@ -124,9 +124,11 @@ public class TreeService {
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
 		UserMapper userMapper = factory.getMapper(UserMapper.class);	
 		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+		if(node==null) {
+			return new ArrayList<>();
+		}
 		List<TreeDeptVO> deptList=mapper.getDescendantName(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
 		//查询Code为Org001的组织的详细信息
-		//TODO
 		String orgCode="org001";
 		List <OrgVO> orgList=userMapper.queryOrgByCode(orgCode);
 		if(deptList.size()>0 && orgList.size()>0) {
