@@ -28,6 +28,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDetReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeDataReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZoneRange;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
@@ -144,7 +145,7 @@ public class IntellectPartitionController {
     @ApiOperation(value = "查询方案总表数据", notes = "查询方案总表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryTotalSchemeDet(@RequestBody TotalSchemeDetDTO totalSchemeDetDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<TotalSchemeDetReturn> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, TotalSchemeDetReturn.class);
 		
 		if(totalSchemeDetDTO.getStartTime() == null || totalSchemeDetDTO.getStartTime().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -158,7 +159,7 @@ public class IntellectPartitionController {
 		}
 		
 		try {
-			List<TotalSchemeDet> list = ADOConnection.runTask(user.getEnv(),psds, "queryTotalSchemeDet", List.class,totalSchemeDetDTO);
+			TotalSchemeDetReturn list = ADOConnection.runTask(user.getEnv(),psds, "queryTotalSchemeDet", TotalSchemeDetReturn.class,totalSchemeDetDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 			

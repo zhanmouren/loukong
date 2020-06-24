@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDetReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeData;
 import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeDataReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZoneRange;
@@ -26,7 +27,7 @@ public interface PartitionSchemeDetService {
 
 	String addTotalSchemeDet(SessionFactory factory, TotalSchemeDet totalSchemeDet);
 
-	List<TotalSchemeDet> queryTotalSchemeDet(SessionFactory factory, TotalSchemeDetDTO totalSchemeDetDTO);
+	TotalSchemeDetReturn queryTotalSchemeDet(SessionFactory factory, TotalSchemeDetDTO totalSchemeDetDTO);
 
 	Integer changeSchemeDet(SessionFactory factory, Integer state, List<String> codes);
 
