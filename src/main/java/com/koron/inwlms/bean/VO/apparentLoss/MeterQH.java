@@ -21,7 +21,7 @@ public class MeterQH {
 	/**
 	 * 水表类型
 	 */
-	private String meterType;
+	private Integer meterType;
 	
 	/**
 	 * 用水类别
@@ -92,12 +92,12 @@ public class MeterQH {
 	}
 
 
-	public String getMeterType() {
+	public Integer getMeterType() {
 		return meterType;
 	}
 
 
-	public void setMeterType(String meterType) {
+	public void setMeterType(Integer meterType) {
 		this.meterType = meterType;
 	}
 

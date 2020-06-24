@@ -287,7 +287,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			List<MeterRunAnalysisVO> data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisList", List.class,queryALDTO);
+			List<MeterRunAnalysisVO> data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisList", List.class,queryALDTO,null);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);

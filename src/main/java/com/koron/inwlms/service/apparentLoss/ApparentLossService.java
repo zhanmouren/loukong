@@ -68,7 +68,7 @@ public interface ApparentLossService {
 	 * @param queryALDTO
 	 * @return
 	 */
-	List<MeterRunAnalysisVO> queryMeterRunAnalysisList(SessionFactory factory,QueryALDTO queryALDTO);
+	List<MeterRunAnalysisVO> queryMeterRunAnalysisList(SessionFactory factory,QueryALDTO queryALDTO,List<MeterInfo> lists);
 
 	/**
 	 * 查询水表分析图表数据

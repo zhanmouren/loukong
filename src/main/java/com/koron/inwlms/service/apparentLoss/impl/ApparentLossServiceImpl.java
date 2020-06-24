@@ -113,7 +113,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(queryALDTO);
 		
 		//查询总体分析数据
-		DrTotalAnalysisDataVO drTotalAnalysisDataVO = queryDrTotalAnalysisData(factory,queryALDTO,lists);
+		DrTotalAnalysisDataVO drTotalAnalysisDataVO = queryDrTotalAnalysisData(factory,queryALDTO,userVO,lists);
 		//水表现状数据
 		DrCurrentMeterDataVO drCurrentMeterDataVO = queryDrCurrentMeterData(factory,queryALDTO,lists);
 		//表计管理数据
@@ -424,13 +424,15 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	 */
 	@TaskAnnotation("queryMeterRunAnalysisList")
 	@Override
-	public List<MeterRunAnalysisVO> queryMeterRunAnalysisList(SessionFactory factory, QueryALDTO queryALDTO) {
+	public List<MeterRunAnalysisVO> queryMeterRunAnalysisList(SessionFactory factory, QueryALDTO queryALDTO,List<MeterInfo> lists) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		Integer timeType = queryALDTO.getTimeType();
 		Integer startTime = queryALDTO.getStartTime();
 		Integer endTime = queryALDTO.getEndTime();
 		//调用gis接口获取分区的水表信息
-		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory, "");
+		if(lists == null) {
+			lists = queryMeterInfoByZoneNo(factory, "");
+		}
 		// 根据时间类型转换开始时间和结束时间
 		if (Constant.TIME_TYPE_Y.equals(timeType)) {
 			// 将年的时间范围转化为年月
@@ -444,18 +446,47 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			queryALDTO.setStartTime(Integer.parseInt(startTime.toString() + "01"));
 			queryALDTO.setEndTime(TimeUtil.getMonthByYear(endTime));
 		}
-		List<Integer> dnLists = new ArrayList<>();
 		List<MeterRunAnalysisVO> resLists = new ArrayList<>();
-		for (MeterInfo meterInfo : lists) {
-			Integer meterDn = meterInfo.getMeterDn();
-			if (!dnLists.contains(meterDn)) {
-				MeterRunAnalysisVO meterRunAnalysisVO = new MeterRunAnalysisVO();
-				meterRunAnalysisVO.setMeterDn(meterInfo.getMeterDn());
-				meterRunAnalysisVO.setMeterType(meterInfo.getMeterType());
-				resLists.add(meterRunAnalysisVO);
-				dnLists.add(meterDn);
-			}
-		}
+		MeterRunAnalysisVO meterRunAnalysisVO = new MeterRunAnalysisVO();
+		meterRunAnalysisVO.setMeterDn(15+"");
+		MeterRunAnalysisVO meterRunAnalysisVO1 = new MeterRunAnalysisVO();
+		meterRunAnalysisVO1.setMeterDn(20+"");
+		MeterRunAnalysisVO meterRunAnalysisVO2 = new MeterRunAnalysisVO();
+		meterRunAnalysisVO2.setMeterDn(25+"");
+		MeterRunAnalysisVO meterRunAnalysisVO3 = new MeterRunAnalysisVO();
+		meterRunAnalysisVO3.setMeterDn(40+"");
+		MeterRunAnalysisVO meterRunAnalysisVO4 = new MeterRunAnalysisVO();
+		meterRunAnalysisVO4.setMeterDn(50+"");
+		MeterRunAnalysisVO meterRunAnalysisVO5 = new MeterRunAnalysisVO();
+		meterRunAnalysisVO5.setMeterDn(80+"");
+		MeterRunAnalysisVO meterRunAnalysisVO6 = new MeterRunAnalysisVO();
+		meterRunAnalysisVO6.setMeterDn(100+"");
+		MeterRunAnalysisVO meterRunAnalysisVO7 = new MeterRunAnalysisVO();
+		meterRunAnalysisVO7.setMeterDn(150+"");
+		MeterRunAnalysisVO meterRunAnalysisVO8 = new MeterRunAnalysisVO();
+		meterRunAnalysisVO8.setMeterDn(200+"");
+		MeterRunAnalysisVO meterRunAnalysisVO9 = new MeterRunAnalysisVO();
+		meterRunAnalysisVO9.setMeterDn(300+"");
+		resLists.add(meterRunAnalysisVO);
+		resLists.add(meterRunAnalysisVO1);
+		resLists.add(meterRunAnalysisVO2);
+		resLists.add(meterRunAnalysisVO3);
+		resLists.add(meterRunAnalysisVO4);
+		resLists.add(meterRunAnalysisVO5);
+		resLists.add(meterRunAnalysisVO6);
+		resLists.add(meterRunAnalysisVO7);
+		resLists.add(meterRunAnalysisVO8);
+		resLists.add(meterRunAnalysisVO9);
+//		for (MeterInfo meterInfo : lists) {
+//			Integer meterDn = meterInfo.getMeterDn();
+//			if (!dnLists.contains(meterDn)) {
+//				MeterRunAnalysisVO meterRunAnalysisVO = new MeterRunAnalysisVO();
+//				meterRunAnalysisVO.setMeterDn(meterInfo.getMeterDn());
+//				meterRunAnalysisVO.setMeterType(meterInfo.getMeterType());
+//				resLists.add(meterRunAnalysisVO);
+//				dnLists.add(meterDn);
+//			}
+//		}
 		// 获取配置信息表数据
 		Map<String, Double> qhMaxMinMap = getQhMaxMinMap(factory);
 		// 获取口径的最大/最小参数流量
@@ -463,24 +494,27 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		// 计算流量异常情况，零流量/低流量/正常/过载
 		List<MeterQH> queryMeterQH = mapper.queryMeterQH(queryALDTO, lists);
 		try {
-			
 		for (MeterQH meterQH : queryMeterQH) {
 			if(meterQH.getQh() == null || meterQH.getMeterDn() == null) continue;
 			double qh = Double.parseDouble(meterQH.getQh());
 			for (MeterRunAnalysisVO mraVO : resLists) {
-				if (mraVO.getMeterDn() == meterQH.getMeterDn()) {
+				if (mraVO.getMeterDn().equals(meterQH.getMeterDn()+"")) {
 					// 判断流量QH是否小0.001，是则为零流量水表
 					if (qh < 0.001) {
+						if(meterQH.getMeterType() == 2) mraVO.setFsZeroFlowMeterNum(mraVO.getFsZeroFlowMeterNum()+1);
 						mraVO.setZeroFlowMeterNum(mraVO.getZeroFlowMeterNum() + 1);
 					} else {
 						// 计算低流量/正常/过载水表
 						MeterDNParam meterDNParam = getMeterDNParam(qhMaxMinMap, meterQH.getMeterDn());
 						if(meterDNParam.getMaxQ() == null || meterDNParam.getMinQ() == null) break;
 						if (qh < Double.parseDouble(meterDNParam.getMinQ())) {
+							if(meterQH.getMeterType() == 2) mraVO.setFsLowFlowMeterNum(mraVO.getFsLowFlowMeterNum()+1);
 							mraVO.setLowFlowMeterNum(mraVO.getLowFlowMeterNum() + 1);
 						} else if (qh < Double.parseDouble(meterDNParam.getMaxQ())) {
+							if(meterQH.getMeterType() == 2) mraVO.setFsNormalFlowMeterNum(mraVO.getFsNormalFlowMeterNum()+1);
 							mraVO.setNormalFlowMeterNum(mraVO.getNormalFlowMeterNum() + 1);
 						} else {
+							if(meterQH.getMeterType() == 2) mraVO.setFsHighFlowMeterNum(mraVO.getFsHighFlowMeterNum()+1);
 							mraVO.setHighFlowMeterNum(mraVO.getHighFlowMeterNum() + 1);
 						}
 					}
@@ -490,8 +524,27 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			}
 		}
 		} catch (Exception e) {
-			System.out.println(33);
 		}
+		int allNum = 0;
+		int lowFlowNum = 0;
+		int normalNum = 0;
+		int highFlowNum = 0;
+		int zeroFlowNum = 0;
+		MeterRunAnalysisVO mRunAnalysisVO = new MeterRunAnalysisVO();
+		for (MeterRunAnalysisVO mraVO : resLists) {
+			allNum += mraVO.getMeterNum();
+			lowFlowNum += mraVO.getLowFlowMeterNum();
+			normalNum += mraVO.getNormalFlowMeterNum();
+			highFlowNum += mraVO.getHighFlowMeterNum();
+			zeroFlowNum += mraVO.getZeroFlowMeterNum();
+		}
+		mRunAnalysisVO.setMeterDn("合计");
+		mRunAnalysisVO.setHighFlowMeterNum(highFlowNum);
+		mRunAnalysisVO.setLowFlowMeterNum(lowFlowNum);
+		mRunAnalysisVO.setMeterNum(allNum);
+		mRunAnalysisVO.setNormalFlowMeterNum(normalNum);
+		mRunAnalysisVO.setZeroFlowMeterNum(zeroFlowNum);
+		resLists.add(mRunAnalysisVO);
 		return resLists;
 	}
 
@@ -503,7 +556,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	@Override
 	public MeterAnalysisMapVO queryMeterRunAnalysisMapData(SessionFactory factory, QueryALDTO queryALDTO) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
-		List<MeterRunAnalysisVO> queryMeterRunAnalysisList = queryMeterRunAnalysisList(factory, queryALDTO);
+		List<MeterRunAnalysisVO> queryMeterRunAnalysisList = queryMeterRunAnalysisList(factory, queryALDTO,null);
 		MeterAnalysisMapVO meterAnalysisMapVO = new MeterAnalysisMapVO();
 		MeterFlowRateData bigDnData = new MeterFlowRateData();
 		MeterFlowRateData smallDnData = new MeterFlowRateData();
@@ -523,15 +576,15 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		int bigDnNoFSHighFSum = 0; // 大口径（除消防表）过载流量水表数量
 		// 口径大于等于50的是大口径水表，否则是小口径
 		for (MeterRunAnalysisVO meterRunAnalysisVO : queryMeterRunAnalysisList) {
-			Integer meterDn = meterRunAnalysisVO.getMeterDn();
+			if(meterRunAnalysisVO.getMeterDn() == null || meterRunAnalysisVO.getMeterDn().equals("合计") ) continue;
+			int meterDn = Integer.parseInt(meterRunAnalysisVO.getMeterDn());
 			if (meterDn >= Constant.METER_DN_SIZE) {
 				// 大口径，判断是否是消防表
-				if (Constant.FS_METER.equals(meterRunAnalysisVO.getMeterType())) {
-					bigDnNoFSDnZeroFSum += meterRunAnalysisVO.getZeroFlowMeterNum();
-					bigDnNoFSLowFSum += meterRunAnalysisVO.getLowFlowMeterNum();
-					bigDnNoFSNorFSum += meterRunAnalysisVO.getNormalFlowMeterNum();
-					bigDnNoFSHighFSum += meterRunAnalysisVO.getHighFlowMeterNum();
-				}
+				bigDnNoFSDnZeroFSum = bigDnNoFSDnZeroFSum + meterRunAnalysisVO.getZeroFlowMeterNum() - meterRunAnalysisVO.getFsZeroFlowMeterNum();
+				bigDnNoFSLowFSum = bigDnNoFSLowFSum + meterRunAnalysisVO.getLowFlowMeterNum() - meterRunAnalysisVO.getFsLowFlowMeterNum();
+				bigDnNoFSNorFSum = bigDnNoFSNorFSum + meterRunAnalysisVO.getNormalFlowMeterNum() - meterRunAnalysisVO.getFsNormalFlowMeterNum();
+				bigDnNoFSHighFSum = bigDnNoFSHighFSum + meterRunAnalysisVO.getHighFlowMeterNum() - meterRunAnalysisVO.getFsHighFlowMeterNum();
+				
 				bigDnZeroFSum += meterRunAnalysisVO.getZeroFlowMeterNum();
 				bigDnLowFSum += meterRunAnalysisVO.getLowFlowMeterNum();
 				bigDnNorFSum += meterRunAnalysisVO.getNormalFlowMeterNum();
@@ -544,33 +597,18 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				smallDnHighFSum += meterRunAnalysisVO.getHighFlowMeterNum();
 			}
 		}
-		double bigDnSum = (bigDnZeroFSum + bigDnLowFSum + bigDnNorFSum + bigDnHighFSum) * 1.0;
-		double smallDnSum = (smallDnZeroFSum + smallDnLowFSum + smallDnNorFSum + smallDnHighFSum) * 1.0;
-		double bigDnNoFSDnSum = (bigDnNoFSDnZeroFSum + bigDnNoFSLowFSum + bigDnNoFSNorFSum + bigDnNoFSHighFSum) * 1.0;
-		DecimalFormat df = new DecimalFormat("#.0000");
-		bigDnData
-				.setZeroFlowMeterRate(bigDnZeroFSum == 0 ? 0 : Double.parseDouble(df.format(bigDnZeroFSum / bigDnSum)));
-		bigDnData.setLowFlowMeterRate(bigDnLowFSum == 0 ? 0 : Double.parseDouble(df.format(bigDnLowFSum / bigDnSum)));
-		bigDnData
-				.setNormalFlowMeterRate(bigDnNorFSum == 0 ? 0 : Double.parseDouble(df.format(bigDnNorFSum / bigDnSum)));
-		bigDnData
-				.setHighFlowMeterRate(bigDnHighFSum == 0 ? 0 : Double.parseDouble(df.format(bigDnHighFSum / bigDnSum)));
-		smallDnData.setZeroFlowMeterRate(
-				smallDnZeroFSum == 0 ? 0 : Double.parseDouble(df.format(smallDnZeroFSum / smallDnSum)));
-		smallDnData.setLowFlowMeterRate(
-				smallDnLowFSum == 0 ? 0 : Double.parseDouble(df.format(smallDnLowFSum / smallDnSum)));
-		smallDnData.setNormalFlowMeterRate(
-				smallDnNorFSum == 0 ? 0 : Double.parseDouble(df.format(smallDnNorFSum / smallDnSum)));
-		smallDnData.setHighFlowMeterRate(
-				smallDnHighFSum == 0 ? 0 : Double.parseDouble(df.format(smallDnHighFSum / smallDnSum)));
-		bigDnNoFSData.setZeroFlowMeterRate(
-				bigDnNoFSDnZeroFSum == 0 ? 0 : Double.parseDouble(df.format(bigDnNoFSDnZeroFSum / bigDnNoFSDnSum)));
-		bigDnNoFSData.setLowFlowMeterRate(
-				bigDnNoFSLowFSum == 0 ? 0 : Double.parseDouble(df.format(bigDnNoFSLowFSum / bigDnNoFSDnSum)));
-		bigDnNoFSData.setNormalFlowMeterRate(
-				bigDnNoFSNorFSum == 0 ? 0 : Double.parseDouble(df.format(bigDnNoFSNorFSum / bigDnNoFSDnSum)));
-		bigDnNoFSData.setHighFlowMeterRate(
-				bigDnNoFSHighFSum == 0 ? 0 : Double.parseDouble(df.format(bigDnNoFSHighFSum / bigDnNoFSDnSum)));
+		bigDnData.setZeroFlowMeterRate(bigDnZeroFSum*1.0);
+		bigDnData.setLowFlowMeterRate(bigDnLowFSum*1.0);
+		bigDnData.setNormalFlowMeterRate(bigDnNorFSum*1.0);
+		bigDnData.setHighFlowMeterRate(bigDnHighFSum*1.0);
+		smallDnData.setZeroFlowMeterRate(smallDnZeroFSum*1.0);
+		smallDnData.setLowFlowMeterRate(smallDnLowFSum*1.0);
+		smallDnData.setNormalFlowMeterRate(smallDnNorFSum*1.0);
+		smallDnData.setHighFlowMeterRate(smallDnHighFSum*1.0);
+		bigDnNoFSData.setZeroFlowMeterRate(bigDnNoFSDnZeroFSum*1.0);
+		bigDnNoFSData.setLowFlowMeterRate(bigDnNoFSLowFSum*1.0);
+		bigDnNoFSData.setNormalFlowMeterRate(bigDnNoFSNorFSum*1.0);
+		bigDnNoFSData.setHighFlowMeterRate(bigDnNoFSHighFSum*1.0);
 
 		//根据分区编号获取水表信息
 		List<MeterInfo> lists = getMeterInfo(factory,queryALDTO);
@@ -594,13 +632,13 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	/**
 	 * 总体分析接口
 	 */
-	public DrTotalAnalysisDataVO queryDrTotalAnalysisData(SessionFactory factory, QueryALDTO queryALDTO,List<MeterInfo> lists) {		
+	public DrTotalAnalysisDataVO queryDrTotalAnalysisData(SessionFactory factory, QueryALDTO queryALDTO,UserVO userVO,List<MeterInfo> lists) {		
 		DrTotalAnalysisDataVO drTotalAnalysisDataVO = new DrTotalAnalysisDataVO();
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		GisZoneServiceImpl gisZoneServiceImpl = new GisZoneServiceImpl();
 		String anaRange = "";
 		String zoneNo = "";
-		drTotalAnalysisDataVO.setGroupName("常平水司");
+		drTotalAnalysisDataVO.setGroupName(userVO.getOrg());
 		if(StringUtil.isEmpty(queryALDTO.getZoneNo()) && queryALDTO.getZoneRank() == null) {
 			anaRange = "全网";
 		}else {
@@ -698,7 +736,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		taData.setOverdueMetersRateList(overdueMetersRateList);
 		drTotalAnalysisDataVO.setTrendAnalysisData(taData);
 		// 计算水表运行分析
-		List<MeterRunAnalysisVO> queryMeterRunAnalysisList = queryMeterRunAnalysisList(factory, queryALDTO);
+		List<MeterRunAnalysisVO> queryMeterRunAnalysisList = queryMeterRunAnalysisList(factory, queryALDTO,null);
 		int meterNum = 0;
 		int lowFlowMeterNum = 0;
 		int zeroFlowMeterNum = 0;
@@ -1243,7 +1281,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		Integer endTime = queryALDTO.getEndTime();
 	
 		// 1、不同口径水表计量统计
-		List<MeterRunAnalysisVO> mralists = queryMeterRunAnalysisList(factory, queryALDTO);
+		List<MeterRunAnalysisVO> mralists = queryMeterRunAnalysisList(factory, queryALDTO,lists);
 		drMeterAnaDataVO.setMraLists(mralists);
 
 		// 2、大口径，小口径，大口径（除消防表）的运行情况统计

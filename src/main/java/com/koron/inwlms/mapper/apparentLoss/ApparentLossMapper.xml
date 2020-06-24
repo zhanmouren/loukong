@@ -519,20 +519,21 @@
 	</select>
 	
 	<select id="queryWNMMeterReadFlow" resultType="java.lang.Double">
-		select round(avg(c.avgFlow)/10000 :: NUMERIC, 2 ) from(
+		select round(avg(c.avgFlow)/1000000:: NUMERIC, 2 ) from(
 		select "yearMonth",avg(value) as avgFlow
 		from ana_company_month 
-		where "yearMonth" &gt;= (select id from lc_app_dim_month where "yearMonth" = #{qaDTO.startTime}) and "yearMonth"  &lt;= (select id from lc_app_dim_month where "yearMonth" = #{qaDTO.endTime})
-		group by "yearMonth") c
+		where "yearMonth" &gt;= (select id from lc_app_dim_month where "yearMonth" = #{qaDTO.startTime}) 
+		and "yearMonth"  &lt;= (select id from lc_app_dim_month where "yearMonth" = #{qaDTO.endTime})
+		and code = 'WNMBMC' group by "yearMonth") c
 	</select>
 	
 	<select id="queryMeterQH" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterQH">
-		select b."CTM_NUM" as accNo,b."CTM_NAME" as accName,b."TBL_NUM" as meterNo,
+		select b."CLASS_ID" as meterType,b."CTM_NUM" as accNo,b."CTM_NAME" as accName,b."TBL_NUM" as meterNo,
 		b."BORE_VALUE" as meterDn,b."CTM_ADDR" address,b."YS_NAME" as useType,b."CB_DAY" mReadDate,a."MONTH_ID",max(real_num) as qh from 
 		(select "CTM_NUM","MONTH_ID",round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num
 		from rw_fct_cb 
 		where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}) a left join 
-		rw_fct_ctm b on a."CTM_NUM" = b."CTM_NUM" group by a."CTM_NUM",a."MONTH_ID", b."CTM_NUM",
+		rw_fct_ctm b on a."CTM_NUM" = b."CTM_NUM" group by b."CLASS_ID",a."CTM_NUM",a."MONTH_ID", b."CTM_NUM",
 		b."CTM_NAME",b."TBL_NUM",b."BORE_VALUE",b."CTM_ADDR",b."YS_NAME",b."CB_DAY";
 	
 	</select>

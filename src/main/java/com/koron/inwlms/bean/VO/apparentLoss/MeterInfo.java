@@ -23,7 +23,11 @@ public class MeterInfo {
 	private Integer meterDn;
 	
 	/**
-	 * 水表类型
+	 * 水表类型，
+	 * 1	正常表
+	   2	消防表
+	   3	监控表
+	   4	公司表内部
 	 */
 	private String meterType;
 	

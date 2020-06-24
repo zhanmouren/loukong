@@ -11,7 +11,7 @@ public class MeterRunAnalysisVO {
 	/**
 	 * 口径编号
 	 */
-	private Integer meterDn;
+	private String meterDn;
 	
 	/**
 	 * 水表总数
@@ -23,27 +23,34 @@ public class MeterRunAnalysisVO {
 	 */
 	private int lowFlowMeterNum = 0;
 	
+	private int fsLowFlowMeterNum = 0;
+	
 	/**
 	 * 零流量水表数量
 	 */
 	private int zeroFlowMeterNum  = 0; 
+	
+	private int fsZeroFlowMeterNum  = 0; 
 	
 	/**
 	 * 正常流量水表数量
 	 */
 	private int normalFlowMeterNum  = 0;
 	
+	private int fsNormalFlowMeterNum  = 0;
+	
 	/**
 	 * 过载流量水表数量
 	 */
 	private int highFlowMeterNum  = 0;
 	
+	private int fsHighFlowMeterNum  = 0;
 	/**
 	 * 水表类型
 	 */
 	private String meterType;
 
-	public Integer getMeterDn() {
+	public String getMeterDn() {
 		return meterDn;
 	}
 
@@ -67,7 +74,7 @@ public class MeterRunAnalysisVO {
 		return highFlowMeterNum;
 	}
 
-	public void setMeterDn(Integer meterDn) {
+	public void setMeterDn(String meterDn) {
 		this.meterDn = meterDn;
 	}
 
@@ -97,6 +104,38 @@ public class MeterRunAnalysisVO {
 
 	public void setMeterType(String meterType) {
 		this.meterType = meterType;
+	}
+
+	public int getFsLowFlowMeterNum() {
+		return fsLowFlowMeterNum;
+	}
+
+	public void setFsLowFlowMeterNum(int fsLowFlowMeterNum) {
+		this.fsLowFlowMeterNum = fsLowFlowMeterNum;
+	}
+
+	public int getFsZeroFlowMeterNum() {
+		return fsZeroFlowMeterNum;
+	}
+
+	public void setFsZeroFlowMeterNum(int fsZeroFlowMeterNum) {
+		this.fsZeroFlowMeterNum = fsZeroFlowMeterNum;
+	}
+
+	public int getFsNormalFlowMeterNum() {
+		return fsNormalFlowMeterNum;
+	}
+
+	public void setFsNormalFlowMeterNum(int fsNormalFlowMeterNum) {
+		this.fsNormalFlowMeterNum = fsNormalFlowMeterNum;
+	}
+
+	public int getFsHighFlowMeterNum() {
+		return fsHighFlowMeterNum;
+	}
+
+	public void setFsHighFlowMeterNum(int fsHighFlowMeterNum) {
+		this.fsHighFlowMeterNum = fsHighFlowMeterNum;
 	}
 
 }
