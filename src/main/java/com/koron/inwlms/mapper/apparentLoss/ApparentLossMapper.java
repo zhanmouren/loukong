@@ -23,6 +23,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.MeterMFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterQH;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRTimeUnset;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterReadData;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterReadNumInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MonthFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
@@ -282,4 +283,26 @@ public interface ApparentLossMapper {
 	 */
 	Integer countDrqlSDnLHFlowDataList(@Param("qaDTO") QueryALListDTO qaDTO);
 	
+	/**
+	 * 查询已抄表的数量信息
+	 * @param startTime
+	 * @param endTime
+	 * @return
+	 */
+	List<MeterReadNumInfo> queryMeterReadNum(@Param("startTime") Integer startTime,@Param("endTime") Integer endTime);
+
+	/**
+	 * 记录诊断报告默认结果，每个月定时记录一次，
+	 * 诊断报告默认计算最新一年的数据，默认展示，计算至少需要两个月（2月默认计算去年1月到今年1月）
+	 * @param tenantid
+	 * @param result
+	 */
+	void addDrReportResult(@Param("tenantid") String tenantid,@Param("result") String result);
+	
+	/**
+	 * 根据租户id返回诊断报告结果
+	 * @param tenantid
+	 * @return
+	 */
+	String getDrReportResult(@Param("tenantid") String tenantid);
 }

@@ -12,6 +12,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -371,7 +372,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrTotalData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告总数据", notes = "查询诊断报告总数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrTotalData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	public String queryDrTotalData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
 		MessageBean<DrTotalVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrTotalVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -405,7 +406,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			DrTotalVO data = ADOConnection.runTask(user.getEnv(),als, "queryDrTotalData", DrTotalVO.class,queryALDTO);
+			DrTotalVO data = ADOConnection.runTask(user.getEnv(),als, "queryDrTotalData", DrTotalVO.class,queryALDTO,user,tenantID);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);

@@ -32,6 +32,11 @@ public class QueryALDTO{
 	 * 结束时间
 	 */
 	private Integer endTime;
+	
+	/**
+	 * 初始化标记，0：系统初始化，1：手动查询
+	 */
+	private Integer initFlag;
 
 	public Integer getTimeType() {
 		return timeType;
@@ -71,6 +76,14 @@ public class QueryALDTO{
 
 	public void setZoneRank(Integer zoneRank) {
 		this.zoneRank = zoneRank;
+	}
+
+	public Integer getInitFlag() {
+		return initFlag;
+	}
+
+	public void setInitFlag(Integer initFlag) {
+		this.initFlag = initFlag;
 	}
 	
 }

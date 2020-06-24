@@ -28,6 +28,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 /**
  * 表观漏损接口
@@ -129,7 +130,7 @@ public interface ApparentLossService {
 	 * @param queryALDTO
 	 * @return
 	 */
-	DrTotalVO queryDrTotalData(SessionFactory factory, QueryALDTO queryALDTO);
+	DrTotalVO queryDrTotalData(SessionFactory factory, QueryALDTO queryALDTO,UserVO userVO,String tenantID);
 	
 	/**
 	 * 查询大口径零流量水表数据

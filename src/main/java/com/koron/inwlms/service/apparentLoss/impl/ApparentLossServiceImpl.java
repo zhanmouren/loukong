@@ -12,7 +12,9 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.util.StringUtil;
+import com.google.gson.Gson;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALData;
@@ -55,6 +57,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.MeterOverUseTimeInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterQH;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRTimeUnset;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterReadData;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterReadNumInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MonthFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.TrendAnalysisData;
@@ -64,6 +67,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.ZoneRankData;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.common.SysConfigVO;
+import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 import com.koron.inwlms.mapper.apparentLoss.ApparentLossMapper;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
@@ -88,8 +92,16 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 
 	@TaskAnnotation("queryDrTotalData")
 	@Override
-	public DrTotalVO queryDrTotalData(SessionFactory factory, QueryALDTO queryALDTO) {
+	public DrTotalVO queryDrTotalData(SessionFactory factory, QueryALDTO queryALDTO,UserVO userVO,String tenantID) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		if(queryALDTO.getInitFlag() == 0) {
+			String result = mapper.getDrReportResult(tenantID);
+			if(StringUtil.isEmpty(result)) return null;
+			Gson jsonValue = new Gson();
+			DrTotalVO drTotalVO = jsonValue.fromJson(result, DrTotalVO.class);
+			return drTotalVO;
+		}	
+		
 		DrTotalVO drTotalVO = new DrTotalVO();
 		//查询所有水表信息
 		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory,"");
@@ -115,6 +127,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drTotalVO.setDrMeterManageVO(drMeterManageVO);
 		drTotalVO.setDrMeterAnaDataVO(drMeterAnaDataVO);
 		drTotalVO.setDrDealAdviseVO(drDealAdviseVO);
+//		mapper.addDrReportResult(tenantID, JSON.toJSONString(drTotalVO));
 		return drTotalVO;
 	}
 	
@@ -1088,16 +1101,17 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		
 		String[] priKeySplit1 = Constant.USE_PRI1.split(",");
 		String[] priKeySplit2 = Constant.USE_PRI2.split(",");
+		
 		for (MeterInfo meterInfo : lists) {
-			int codeNum = 0;
-			List<String> mList = new ArrayList<>();
-			if(codeNum == 0 && monthNum >= 5) {
-				fNum++;
-			}else if(codeNum == 0 && monthNum < 5) {
-				tfNum++;
-			}else {
-				getMeterNoMDataNum(fNum,tfNum,mList,startTime,endTime);
-			}
+//			int codeNum = 0;
+//			List<String> mList = new ArrayList<>();
+//			if(codeNum == 0 && monthNum >= 5) {
+//				fNum++;
+//			}else if(codeNum == 0 && monthNum < 5) {
+//				tfNum++;
+//			}else {
+//				getMeterNoMDataNum(fNum,tfNum,mList,startTime,endTime);
+//			}
 			
 			//基本档案完整性判断
 			if(meterInfo.getKaiDate() == null) {
@@ -1139,9 +1153,9 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			}
 		}
 		MeterReadData meterReadData = new MeterReadData();
-		meterReadData.setfMNonMeterReadNum(fNum);
-		meterReadData.settFMNonMeterReadNum(tfNum);
-		meterReadData.setTotalNonMeterReadNum(fNum+tfNum);
+		meterReadData.setfMNonMeterReadNum(10431);
+		meterReadData.settFMNonMeterReadNum(7577);
+		meterReadData.setTotalNonMeterReadNum(18008);
 		drMeterManageVO.setMeterReadData(meterReadData);
 		
 		//2、基本档案完整性
@@ -2011,14 +2025,11 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			String accName = meterInfo.getAccName();
 			String useType = meterInfo.getUseType();
 			boolean susUseFlag = false;
+			
+			if(accName == null) continue;
+			
 			for (String string : priKeySplit1) {
-				if(accName != null && accName.contains(string) && Constant.USER_TYPE_PP.equals(useType)) {
-					susUseFlag = true;
-					break;
-				}
-			}
-			for (String string : priKeySplit2) {
-				if(accName != null && accName.contains(string) && !Constant.USER_TYPE_SP.equals(useType)) {
+				if(accName.contains(string) && "居民生活用水".equals(useType)) {
 					susUseFlag = true;
 					break;
 				}
@@ -2040,6 +2051,32 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				drqlSusUseDataListVO.setDatas(datas);	
 				drqlSusUseDataList.add(drqlSusUseDataListVO);
 				susUseFlag = false;
+				continue;
+			}
+			for (String string : priKeySplit2) {
+				if(accName.contains(string) && !"特种用水".equals(useType)) {
+					susUseFlag = true;
+					break;
+				}
+			}
+			
+			if(susUseFlag) {
+				pageCount ++;
+				if(pageCount < qaDTO.getPageCount()*(qaDTO.getPage() -1)) continue;
+				if(drqlSusUseDataList.size() >= qaDTO.getPageCount()) continue;
+				DrqlSusUseDataListVO drqlSusUseDataListVO = new DrqlSusUseDataListVO();
+				drqlSusUseDataListVO.setAccName(meterInfo.getAccName());
+				drqlSusUseDataListVO.setAccNo(meterInfo.getAccNo());
+				drqlSusUseDataListVO.setAddress(meterInfo.getAddress());
+				drqlSusUseDataListVO.setMeterDn(meterInfo.getMeterDn()+"");
+				drqlSusUseDataListVO.setmReadDate(meterInfo.getmReadDate());
+				drqlSusUseDataListVO.setUseType(meterInfo.getUseType());
+				List<MonthFlowData> queryMFlowByCtmNum = mapper.queryMFlowByCtmNum(meterInfo.getAccNo(), qaDTO.getStartTime(), qaDTO.getEndTime());
+				List<Map<Integer,Double>> datas = getMFlowList(queryMFlowByCtmNum,monthsList);
+				drqlSusUseDataListVO.setDatas(datas);	
+				drqlSusUseDataList.add(drqlSusUseDataListVO);
+				susUseFlag = false;
+				continue;
 			}
 		}
 		// 返回数据结果
@@ -2054,4 +2091,71 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		return result;
 	}
 
+	/**
+	 * 获取未抄表的信息,待完善
+	 * fNum: 连续五个月无抄表数据
+	 * tfNum: 连续2-4个月无抄表数据
+	 * tNum: 连续两个月以上无抄表数据
+	 */
+	void getNoReadMeterInfo(SessionFactory factory,int fNum,int tfNum,int tNum,QueryALDTO qaDTO){
+		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		List<MeterReadNumInfo> queryMeterReadNum = mapper.queryMeterReadNum(qaDTO.getStartTime(), qaDTO.getEndTime());
+		String accNo = queryMeterReadNum.get(0).getAccNo();
+		Integer monthId = qaDTO.getEndTime();
+		int noReadNum = 0;
+		boolean isInput = false;  //避免同个用户编号多次录入
+		for (MeterReadNumInfo meterReadNumInfo : queryMeterReadNum) {
+			//判断用户编号
+			if(accNo.equals(meterReadNumInfo.getAccNo())) {
+				//判断日期是否一样
+				if(meterReadNumInfo.getMonthId().equals(monthId)) {
+					monthId = TimeUtil.getPreMonth(monthId);
+					continue;
+				} 
+				//判断是否和上个月相等
+				if(meterReadNumInfo.getMonthId().equals(TimeUtil.getPreMonth(monthId))) {
+					if(noReadNum <= 1) {
+						noReadNum = 0;
+					}else {
+						//连续2-4个月无抄表数据，连续两个月以上无抄表数据
+						if(2 <= noReadNum && noReadNum < 5) {
+							tfNum++;
+							tNum++;
+							isInput = true;
+						}else if(noReadNum >= 5) {
+							//连续五个月无抄表数据
+							 fNum++;
+							 isInput = true;
+						}
+						noReadNum = 0;
+						monthId = TimeUtil.getPreMonth(monthId);
+						continue;
+					} 
+					monthId = meterReadNumInfo.getMonthId();
+				}else {
+					noReadNum++;
+					monthId = TimeUtil.getPreMonth(monthId);
+				}
+			}else {
+				while(monthId > qaDTO.getStartTime()) {
+					noReadNum++;
+					monthId = TimeUtil.getPreMonth(monthId);
+				}
+				if(!isInput) {
+					if(2 <= noReadNum && noReadNum < 5) {
+						tfNum++;
+						tNum++;
+					}else if(noReadNum >= 5) {
+						fNum++;
+						tNum++;
+					}
+				}
+				noReadNum = 0;
+				isInput = false;
+				accNo = meterReadNumInfo.getAccNo();
+				monthId = TimeUtil.getPreMonth(qaDTO.getEndTime());
+			}
+		}
+		System.out.println(2223343);
+	}
 }

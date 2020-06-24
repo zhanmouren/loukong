@@ -515,7 +515,7 @@
 	resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterInfo">
 		select "CTM_NUM" as accNo,"CTM_NAME" as accName,"TBL_NUM" as meterNo,
 		"BORE_VALUE" as meterDn,"CLASS_ID" as meterType,"CTM_ADDR" address,"YS_NAME" as useType,
-		"CB_DAY" mReadDate,DATE_PART('days',now()-to_date("KAI_DATE",'YYYY-MM-DD'))/356 as useYear from rw_fct_ctm  
+		"CB_DAY" mReadDate,DATE_PART('days',now()-to_date((case when "CHANGE_DATE" is null then "KAI_DATE" else "CHANGE_DATE" end),'YYYY-MM-DD'))/356 as useYear from rw_fct_ctm  
 	</select>
 	
 	<select id="queryWNMMeterReadFlow" resultType="java.lang.Double">
@@ -527,11 +527,6 @@
 	</select>
 	
 	<select id="queryMeterQH" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterQH">
-		<!-- select a."CTM_NUM" as meterNo,a."MONTH_ID",max(real_num) as qh from 
-		(select "CTM_NUM","MONTH_ID",round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num
-		from rw_fct_cb 
-		where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID" &lt;= #{qaDTO.endTime}) a group by a."CTM_NUM",a."MONTH_ID"
-		 -->
 		select b."CTM_NUM" as accNo,b."CTM_NAME" as accName,b."TBL_NUM" as meterNo,
 		b."BORE_VALUE" as meterDn,b."CTM_ADDR" address,b."YS_NAME" as useType,b."CB_DAY" mReadDate,a."MONTH_ID",max(real_num) as qh from 
 		(select "CTM_NUM","MONTH_ID",round( "REAL_NUM"/30/24*2 :: NUMERIC, 6 ) as real_num
@@ -773,4 +768,20 @@
 		where d.qh &lt; (select cast(value as numeric) from sm_config where key = 'QMIDN' || d.meterDn) or d.qh &gt;= (select cast(value as numeric) from sm_config where key = 'QMADN' || d.meterDn)
 	</select>
 	
+	<select id="queryMeterReadNum" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterReadNumInfo">
+		select "CTM_NUM" as accNo,"MONTH_ID" as monthId from rw_fct_cb where
+		"MONTH_ID" &gt;= #{startTime} and "MONTH_ID" &lt;= #{endTime}
+		order by "CTM_NUM" desc
+	</select>
+	
+	<insert id = "addDrReportResult">
+	INSERT INTO app_dr_report_result(tenantid, result)
+	VALUES(#{tenantid}, #{result})
+	ON conflict(tenantid)
+	DO UPDATE SET result = #{result} , tenantid = #{tenantid}
+	</insert>
+	
+	<select id = "getDrReportResult" resultType = "java.lang.String">
+		select result from app_dr_report_result where tenantid = #{tenantid}
+	</select>
 </mapper> 
