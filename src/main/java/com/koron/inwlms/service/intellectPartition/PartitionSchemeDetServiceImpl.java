@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -22,6 +23,7 @@ import com.koron.inwlms.bean.DTO.intellectPartition.GisAllPipeDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.GisZoneData;
 import com.koron.inwlms.bean.DTO.intellectPartition.GisZonePipeData;
 import com.koron.inwlms.bean.DTO.intellectPartition.KafkaReturnData;
+import com.koron.inwlms.bean.DTO.intellectPartition.LayerData;
 import com.koron.inwlms.bean.DTO.intellectPartition.PipePreZoneRelationDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.PreZoneRelationDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
@@ -31,6 +33,8 @@ import com.koron.inwlms.bean.VO.intellectPartition.GisZonePipeDateVO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDetReturn;
+import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDetVO;
 import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeData;
 import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeDataReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZoneRange;
@@ -41,11 +45,15 @@ import com.koron.inwlms.mapper.intellectPartition.PartitionSchemeMapper;
 import com.koron.inwlms.mapper.leakageControl.EconomicIndicatorMapper;
 import com.koron.inwlms.util.InterfaceUtil;
 import com.koron.inwlms.util.TimeUtil;
+import com.koron.inwlms.util.kafka.ZoneKafkaConsumer;
 import com.koron.util.Constant;
 
 
 @Service
 public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
+	
+	@Autowired
+    private ZoneKafkaConsumer kafkacus;
 	
 	/**
 	 * 通过方案总表code删除分区方案表数据
@@ -107,10 +115,37 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	 */
 	@TaskAnnotation("queryTotalSchemeDet")
 	@Override
-	public List<TotalSchemeDet> queryTotalSchemeDet(SessionFactory factory,TotalSchemeDetDTO totalSchemeDetDTO){
+	public TotalSchemeDetReturn queryTotalSchemeDet(SessionFactory factory,TotalSchemeDetDTO totalSchemeDetDTO){
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
+		Gson gson = new Gson();
+		TotalSchemeDetReturn totalSchemeDetReturn = new TotalSchemeDetReturn();
+		List<TotalSchemeDetVO> totalSchemeDetVOList = new ArrayList<>();
 		List<TotalSchemeDet> list = mapper.queryTotalSchemeDet(totalSchemeDetDTO);
-		return list;
+		for(TotalSchemeDet totalSchemeDet : list) {
+			TotalSchemeDetVO totalSchemeDetVO = new TotalSchemeDetVO();
+			totalSchemeDetVO.setCode(totalSchemeDet.getCode());
+			totalSchemeDetVO.setMaxZone(totalSchemeDet.getMaxZone());
+			totalSchemeDetVO.setMinZone(totalSchemeDet.getMinZone());
+			totalSchemeDetVO.setZoneCode(totalSchemeDet.getZoneCode());
+			if(totalSchemeDet.getZoneGrade() != null) {
+				totalSchemeDetVO.setZoneGrade(totalSchemeDet.getZoneGrade());
+			}
+			if(totalSchemeDet.getZoneType() != null) {
+				totalSchemeDetVO.setZoneType(totalSchemeDet.getZoneType());
+			}
+			if(totalSchemeDet.getAmbientLayer() != null) {
+				List<LayerData> ambientLayerList = gson.fromJson(totalSchemeDet.getAmbientLayer(), new TypeToken<List<LayerData>>(){}.getType());
+				totalSchemeDetVO.setAmbientLayer(ambientLayerList);
+			}
+			if(totalSchemeDet.getFlowLayer() != null) {
+				List<LayerData> flowLayerList = gson.fromJson(totalSchemeDet.getFlowLayer(), new TypeToken<List<LayerData>>(){}.getType());
+				totalSchemeDetVO.setFlowLayer(flowLayerList);
+			}
+			
+			totalSchemeDetVOList.add(totalSchemeDetVO);
+		}
+		totalSchemeDetReturn.setTotalSchemeDetList(totalSchemeDetVOList);
+		return totalSchemeDetReturn;
 	}
 	
 	@TaskAnnotation("changeSchemeDet")
@@ -134,8 +169,8 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		List<String> riverList = new ArrayList<>();
 		List<String> xzqList = new ArrayList<>(); 
 		List<String> scadaList = new ArrayList<>(); 
-		List<String> ambientLayerList = automaticPartitionDTO.getAmbientLayerList();
-		List<String> flowLayerList = automaticPartitionDTO.getFlowLayerList();
+		List<LayerData> ambientLayerList = automaticPartitionDTO.getAmbientLayerList();
+		List<LayerData> flowLayerList = automaticPartitionDTO.getFlowLayerList();
 		
 		//调用gis接口，获取所选分区管线数据(不包括图层信息)
 		String gisPath = "http://10.13.1.11:8888/"+tenantID+"/getDmaAllPipe.htm";
@@ -157,8 +192,8 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		List<GisZonePipeDateVO>  gisZonePipeDateVO= gson.fromJson(gisdata, new TypeToken<List<GisZonePipeDateVO>>(){}.getType());
 
 		if(ambientLayerList != null && ambientLayerList.size() != 0) {
-			for(String flag : ambientLayerList) {
-				if(flag.equals("BASE_RAILWAY")) {
+			for(LayerData layerData : ambientLayerList) {
+				if(layerData.getCode().equals("BASE_RAILWAY")) {
 					//调用gis接口，查询铁路图层信息
 					String gisPath1 = "http://10.13.1.11:8888/"+tenantID+"/railwayIntersect.htm";
 					JsonObject gisResultData1 = InterfaceUtil.interfaceOfPostUtil(gisPath1, gisJsonData);
@@ -168,7 +203,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 					}
 					JsonArray gisdata1 = gisResultData.getAsJsonArray("data");
 					railwayList = gson.fromJson(gisdata1, new TypeToken<List<String>>(){}.getType());
-				}else if(flag.equals("BASE_RIVER")) {
+				}else if(layerData.getCode().equals("BASE_RIVER")) {
 					//调用gis接口，查询河流图层信息
 					String gisPath2 = "http://10.13.1.11:8888/"+tenantID+"/riverIntersect.htm";
 					JsonObject gisResultData2 = InterfaceUtil.interfaceOfPostUtil(gisPath2, gisJsonData);
@@ -178,7 +213,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 					}
 					JsonArray gisdata2 = gisResultData.getAsJsonArray("data");
 					riverList = gson.fromJson(gisdata2, new TypeToken<List<String>>(){}.getType());
-				}else if(flag.equals("BASE_XZQ")) {
+				}else if(layerData.getCode().equals("BASE_XZQ")) {
 					//查询gis接口，查询行政区域图层信息
 					String gisPath3 = "http://10.13.1.11:8888/"+tenantID+"/xzqIntersect.htm";
 					JsonObject gisResultData3 = InterfaceUtil.interfaceOfPostUtil(gisPath3, gisJsonData);
@@ -200,7 +235,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			if(!code5.equals("0")) {
 				return null;
 			}
-			JsonArray gisdata4 = gisResultData.getAsJsonArray("data");
+			JsonArray gisdata4 = gisResultData4.getAsJsonArray("data");
 			scadaList = gson.fromJson(gisdata4, new TypeToken<List<String>>(){}.getType());
 		}
 		
@@ -355,18 +390,23 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
 		//TODO 解析返回数据
 		String codejy = mlResultData.get("flag").getAsString();
+		String time = mlResultData.get("time").getAsString();
 		if(codejy.equals("1")) {
 			String rpPath = "http://10.13.1.11:7500/partition/receivePartitionModel";
 			JsonObject rpResultData = InterfaceUtil.interfaceOfPostUtil(rpPath, gson.toJson(gisZoneData));
 			String codeml = rpResultData.get("flag").getAsString();
-			if(codeml.equals("1")) {
-				JsonObject mldata = rpResultData.get("data").getAsJsonObject();
-				ModelReturn modelreturn = gson.fromJson(mldata, new TypeToken<ModelReturn>(){}.getType());
-				return modelreturn;
+			if(!codeml.equals("1")) {
+				codejy = "3";
+			}else {
 			}
+		}else {
+			codejy = "2";
 		}
-		
-		return null;
+		ModelReturn modelreturn = new ModelReturn();
+		modelreturn.setTime(time);
+		modelreturn.setTotal_plan_code(code);
+		modelreturn.setFlag(codejy);
+		return modelreturn;
 	}
 	
 	@TaskAnnotation("getZoneNum")

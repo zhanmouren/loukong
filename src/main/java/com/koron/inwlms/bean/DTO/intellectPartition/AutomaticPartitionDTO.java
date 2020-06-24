@@ -31,11 +31,11 @@ public class AutomaticPartitionDTO {
 	/**
 	 * 地理图层信息
 	 */
-	private List<String> ambientLayerList;
+	private List<LayerData> ambientLayerList;
 	/**
 	 * 流量计图层信息
 	 */
-	private List<String> flowLayerList;
+	private List<LayerData> flowLayerList;
 	/**
 	 * 虚拟分区分级
 	 */
@@ -52,16 +52,17 @@ public class AutomaticPartitionDTO {
 	public void setCutRegion(List<String> cutRegion) {
 		this.cutRegion = cutRegion;
 	}
-	public List<String> getAmbientLayerList() {
+
+	public List<LayerData> getAmbientLayerList() {
 		return ambientLayerList;
 	}
-	public void setAmbientLayerList(List<String> ambientLayerList) {
+	public void setAmbientLayerList(List<LayerData> ambientLayerList) {
 		this.ambientLayerList = ambientLayerList;
 	}
-	public List<String> getFlowLayerList() {
+	public List<LayerData> getFlowLayerList() {
 		return flowLayerList;
 	}
-	public void setFlowLayerList(List<String> flowLayerList) {
+	public void setFlowLayerList(List<LayerData> flowLayerList) {
 		this.flowLayerList = flowLayerList;
 	}
 	public String getOthertype() {
