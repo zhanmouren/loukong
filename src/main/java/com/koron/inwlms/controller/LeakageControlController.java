@@ -52,6 +52,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.common.PointDataVO;
 import com.koron.inwlms.bean.VO.common.PointTypeVO;
 import com.koron.inwlms.bean.VO.common.UploadFileVO;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
@@ -162,6 +163,24 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/queryPointHistoryDataType.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询监测点历史数据类型编码", notes = "查询监测点历史数据类型编码", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPointHistoryDataType(@RequestBody AlarmMessageVO alarmMessageVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		try {
+			List<PointTypeVO> list = ADOConnection.runTask(user.getEnv(),phds, "queryPointHistoryData", List.class, alarmMessageVO.getCode());
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败");
+		}
+		
+		return msg.toJson();
+	}
+	
 	@RequestMapping(value = "/queryPointHistoryData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询监测点历史数据", notes = "查询监测点历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -169,7 +188,7 @@ public class LeakageControlController {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		try {
-			List<PointTypeVO> list = ADOConnection.runTask(user.getEnv(),phds, "queryPointHistoryData", List.class, alarmMessageVO.getCode(),alarmMessageVO.getAlarmTime());
+			List<PointDataVO> list = ADOConnection.runTask(user.getEnv(),phds, "queryPointHistoryData", List.class, alarmMessageVO.getCode(),alarmMessageVO.getAlarmTime());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 		}catch(Exception e) {

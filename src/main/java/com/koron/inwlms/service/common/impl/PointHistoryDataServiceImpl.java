@@ -23,7 +23,7 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 
 	@TaskAnnotation("queryPointHistoryData")
 	@Override
-	public List<PointTypeVO> queryPointHistoryData(SessionFactory factory,String code,Date alarmDate) throws ParseException {
+	public List<PointDataVO> queryPointHistoryData(SessionFactory factory,String code,Date alarmDate) throws ParseException {
 		//SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		//Date alarmDate = format.parse(alarmTime);
 		Date nowDate = new Date();
@@ -42,33 +42,41 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 			startDate = TimeUtil.addDay(alarmDate, -3);
 			start = (int)startDate.getTime();
 		}
-		
-		List<PointTypeVO> pointTypeVOList = new ArrayList<>();
-		//根据监测点编码获取采集通道
 		PointHistoryDataMapper mapper = factory.getMapper(PointHistoryDataMapper.class);
-		List<PointSensor> pointTypeList = mapper.queryPointType(code);
-		for(PointSensor pointSensor : pointTypeList) {
-			PointTypeVO pointTypeVO = new PointTypeVO();
-			String indexCode = "";
-			if(pointSensor.getStype().equals("Q4") && !pointSensor.getSname().equals("反向瞬时")) {
-				indexCode = "MOHFDF";
-			}else if(pointSensor.getStype().equals("Q4") && pointSensor.getSname().equals("反向瞬时")) {
-				indexCode = "MOHRF";
-			}
-			pointTypeVO.setStype(indexCode);
-			pointTypeVO.setSname(pointSensor.getName());
-			List<PointDataVO> pointDataList = new ArrayList<>();
-			
-			//查询监测点小时表
-			List<MinMonitorPoint> minMonitorPointList = mapper.queryPointHourDataByDay(indexCode, startDate, endDate);
-			for(MinMonitorPoint minMonitorPoint : minMonitorPointList) {
-				PointDataVO pointDataVO = new PointDataVO();
-				pointDataVO.setValue(minMonitorPoint.getValue().doubleValue());
-				pointDataVO.setTime(minMonitorPoint.getAnalysisDate());
-				pointDataList.add(pointDataVO);
-			}
-			pointTypeVO.setPointDataList(pointDataList);
-			pointTypeVOList.add(pointTypeVO);
+		
+		//查询监测点小时表
+		List<PointDataVO> pointDataList = new ArrayList<>();
+		List<MinMonitorPoint> minMonitorPointList = mapper.queryPointHourDataByDay(code, startDate, endDate);
+		for(MinMonitorPoint minMonitorPoint : minMonitorPointList) {
+			PointDataVO pointDataVO = new PointDataVO();
+			pointDataVO.setValue(minMonitorPoint.getValue().doubleValue());
+			pointDataVO.setTime(minMonitorPoint.getAnalysisDate());
+			pointDataList.add(pointDataVO);
+		}
+		
+//		List<PointSensor> pointTypeList = mapper.queryPointType(code);
+//		for(PointSensor pointSensor : pointTypeList) {
+//			PointTypeVO pointTypeVO = new PointTypeVO();
+//			String indexCode = "";
+//			if(pointSensor.getStype().equals("Q4") && !pointSensor.getSname().equals("反向瞬时")) {
+//				indexCode = "MOHFDF";
+//			}else if(pointSensor.getStype().equals("Q4") && pointSensor.getSname().equals("反向瞬时")) {
+//				indexCode = "MOHRF";
+//			}
+//			pointTypeVO.setStype(indexCode);
+//			pointTypeVO.setSname(pointSensor.getName());
+//			List<PointDataVO> pointDataList = new ArrayList<>();
+//			
+//			//查询监测点小时表
+//			List<MinMonitorPoint> minMonitorPointList = mapper.queryPointHourDataByDay(indexCode, startDate, endDate);
+//			for(MinMonitorPoint minMonitorPoint : minMonitorPointList) {
+//				PointDataVO pointDataVO = new PointDataVO();
+//				pointDataVO.setValue(minMonitorPoint.getValue().doubleValue());
+//				pointDataVO.setTime(minMonitorPoint.getAnalysisDate());
+//				pointDataList.add(pointDataVO);
+//			}
+//			pointTypeVO.setPointDataList(pointDataList);
+//			pointTypeVOList.add(pointTypeVO);
 			
 //			List<GdhRaw> gdhRawList = mapper.queryPointHistoryData(pointSensor.getCode(), start, end);
 //			for(GdhRaw gdhRaw : gdhRawList) {
@@ -81,8 +89,52 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 //			}
 //			pointTypeVO.setPointDataList(pointDataList);
 //			
-		}
 		
+		
+		return pointDataList;
+	}
+	
+	@TaskAnnotation("queryPointHistoryData")
+	@Override
+	public List<PointTypeVO> queryPointHistoryDataType(SessionFactory factory,String code) {
+		PointHistoryDataMapper mapper = factory.getMapper(PointHistoryDataMapper.class);
+		List<PointTypeVO> pointTypeVOList = new ArrayList<>();
+		List<PointSensor> pointTypeList = mapper.queryPointType(code);
+		boolean flag = false;
+		for(PointSensor pointSensor : pointTypeList) {
+			PointTypeVO pointTypeVO = new PointTypeVO();
+			String indexCode = "";
+			if(pointSensor.getStype().equals("Q4") && !pointSensor.getSname().equals("反向瞬时")) {
+				indexCode = "MOHFDF";
+			}else if(pointSensor.getStype().equals("Q4") && pointSensor.getSname().equals("反向瞬时")) {
+				indexCode = "MOHRF";
+			}
+			if(pointSensor.getStype().equals("Q4")) {
+				flag = true;
+			}
+			pointTypeVO.setSname(pointSensor.getName());
+			pointTypeVO.setIndexCode(indexCode);
+			pointTypeVOList.add(pointTypeVO);
+		}
+		if(flag) {
+			PointTypeVO pointTypeVO = new PointTypeVO();
+			String indexCode = "MOHFLOW";
+			pointTypeVO.setSname("流量");
+			pointTypeVO.setIndexCode(indexCode);
+			pointTypeVOList.add(pointTypeVO);
+			
+			PointTypeVO pointTypeVO1 = new PointTypeVO();
+			String indexCode1 = "MOHFV";
+			pointTypeVO1.setSname("正向流速");
+			pointTypeVO1.setIndexCode(indexCode1);
+			pointTypeVOList.add(pointTypeVO1);
+			
+			PointTypeVO pointTypeVO2 = new PointTypeVO();
+			String indexCode2 = "MOHRV";
+			pointTypeVO2.setSname("反向流速");
+			pointTypeVO2.setIndexCode(indexCode2);
+			pointTypeVOList.add(pointTypeVO2);
+		}
 		
 		return pointTypeVOList;
 	}
