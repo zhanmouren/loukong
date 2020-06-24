@@ -18,6 +18,7 @@ import com.koron.inwlms.bean.VO.zoneLoss.VirtualZoneVO;
 public interface VirtualZoneMapper {
 
 	public List<VirtualZoneVO> queryVirtualZoneList(QueryVSZoneListDTO queryVSZoneListDTO);
+	VirtualZoneVO querySingleVirtualZone(QueryVSZoneListDTO queryVSZoneListDTO);
 	
 	//获取该分区的直接下级分区
 	@Select("select p_code as \"zoneNo\" \r\n" + 

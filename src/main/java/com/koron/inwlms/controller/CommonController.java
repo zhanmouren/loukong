@@ -371,6 +371,27 @@ public class CommonController {
 		 return msg.toJson();
 		 
 	}
+	
+	@RequestMapping(value = "/querySigleVirtualZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询虚拟分区接口", notes = "查询虚拟分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String querySingleVirtualZone(@RequestBody QueryVSZoneListDTO queryVSZoneListDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+		if(queryVSZoneListDTO.getVirtualZoneNo() == null || queryVSZoneListDTO.getVirtualZoneNo().equals("")) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!虚拟分区编码不能为空", Integer.class).toJson();
+		}
+		
+		MessageBean<VirtualZoneVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, VirtualZoneVO.class);
+		
+		try {
+			VirtualZoneVO result=ADOConnection.runTask(user.getEnv(),virtualZoneService, "querySingleVirtualZone", VirtualZoneVO.class, queryVSZoneListDTO);
+			msg.setData(result);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询虚拟分区失败");
+		}
+		return msg.toJson();
+	}
 //	@RequestMapping(value = "/addZoneTreeInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 //    @ApiOperation(value = "添加分区树", notes = "添加分区树", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 //    @ResponseBody

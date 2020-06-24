@@ -7,5 +7,9 @@
 		where a."virtualZoneType" = #{virtualZoneType}
 	</select>
 	
+	<select id="querySingleVirtualZone" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryVSZoneListDTO" resultType="com.koron.inwlms.bean.VO.zoneLoss.VirtualZoneVO">
+	select a."masCode" as baseRegion, a."pCode" as zoneNo,a.name
+	from gis_exist_vzone a where a."pCode" = #{virtualZoneNo}
+	</select>
 
 </mapper>

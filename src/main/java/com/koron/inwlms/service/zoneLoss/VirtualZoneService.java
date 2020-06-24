@@ -16,4 +16,6 @@ public interface VirtualZoneService {
 
 	//查询虚拟分区
 	public List<VirtualZoneVO> queryVirtualZone(SessionFactory factory, QueryVSZoneListDTO queryVSZoneListDTO);
+
+	VirtualZoneVO querySingleVirtualZone(SessionFactory factory, QueryVSZoneListDTO queryVSZoneListDTO);
 }

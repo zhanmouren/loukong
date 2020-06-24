@@ -72,5 +72,31 @@ public class VirtuaZoneServiceImpl implements VirtualZoneService{
 		}
 		return virtualZoneList;
 	}
+	
+	@TaskAnnotation("querySingleVirtualZone")
+	@Override
+	public VirtualZoneVO querySingleVirtualZone(SessionFactory factory, QueryVSZoneListDTO queryVSZoneListDTO) {
+		TreeMapper treeMapper = factory.getMapper(TreeMapper.class);
+		VirtualZoneMapper virtualZoneMapper = factory.getMapper(VirtualZoneMapper.class);
+		int type  = 2;
+		VirtualZoneVO virtualZone = virtualZoneMapper.querySingleVirtualZone(queryVSZoneListDTO);
+		String foreignKey = virtualZone.getBaseRegion();
+		LongTreeBean node=treeMapper.getBeanByForeignIdType(type,foreignKey);
+		if(node == null) {
+			return null;
+		}
+		else{
+			List<String> zoneList=virtualZoneMapper.queryChildren(node);
+			for(int j=0;j < zoneList.size();j++) {
+				if(zoneList.get(j).equals(foreignKey)) {
+					zoneList.remove(j);
+				}
+			}
+			
+			virtualZone.setCutRegion(zoneList);
+			
+		}
+		return virtualZone;
+	}
 
 }
