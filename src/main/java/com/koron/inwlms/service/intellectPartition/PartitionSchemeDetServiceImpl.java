@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -41,11 +42,15 @@ import com.koron.inwlms.mapper.intellectPartition.PartitionSchemeMapper;
 import com.koron.inwlms.mapper.leakageControl.EconomicIndicatorMapper;
 import com.koron.inwlms.util.InterfaceUtil;
 import com.koron.inwlms.util.TimeUtil;
+import com.koron.inwlms.util.kafka.ZoneKafkaConsumer;
 import com.koron.util.Constant;
 
 
 @Service
 public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
+	
+	@Autowired
+    private ZoneKafkaConsumer kafkacus;
 	
 	/**
 	 * 通过方案总表code删除分区方案表数据
@@ -355,18 +360,23 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
 		//TODO 解析返回数据
 		String codejy = mlResultData.get("flag").getAsString();
+		String time = mlResultData.get("time").getAsString();
 		if(codejy.equals("1")) {
 			String rpPath = "http://10.13.1.11:7500/partition/receivePartitionModel";
 			JsonObject rpResultData = InterfaceUtil.interfaceOfPostUtil(rpPath, gson.toJson(gisZoneData));
 			String codeml = rpResultData.get("flag").getAsString();
-			if(codeml.equals("1")) {
-				JsonObject mldata = rpResultData.get("data").getAsJsonObject();
-				ModelReturn modelreturn = gson.fromJson(mldata, new TypeToken<ModelReturn>(){}.getType());
-				return modelreturn;
+			if(!codeml.equals("1")) {
+				codejy = "3";
+			}else {
 			}
+		}else {
+			codejy = "2";
 		}
-		
-		return null;
+		ModelReturn modelreturn = new ModelReturn();
+		modelreturn.setTime(time);
+		modelreturn.setTotal_plan_code(code);
+		modelreturn.setFlag(codejy);
+		return modelreturn;
 	}
 	
 	@TaskAnnotation("getZoneNum")

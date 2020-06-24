@@ -4,7 +4,7 @@ public class ModelReturn {
 	
 	private String total_plan_code;
 	
-	private Integer flag;
+	private String flag;
 	
 	private String msg;
 	
@@ -27,11 +27,13 @@ public class ModelReturn {
 		this.total_plan_code = total_plan_code;
 	}
 
-	public Integer getFlag() {
+	
+
+	public String getFlag() {
 		return flag;
 	}
 
-	public void setFlag(Integer flag) {
+	public void setFlag(String flag) {
 		this.flag = flag;
 	}
 

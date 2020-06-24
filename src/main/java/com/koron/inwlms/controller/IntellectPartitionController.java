@@ -61,15 +61,39 @@ public class IntellectPartitionController {
     public String automaticPartition(@RequestBody AutomaticPartitionDTO automaticPartitionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
 		MessageBean<ModelReturn> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ModelReturn.class);
 		
+		if(automaticPartitionDTO.getMaxZone() == null && automaticPartitionDTO.getMinZone() == null) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区范围为空");
+			return msg.toJson();
+		}
+		
+		if(automaticPartitionDTO.getZoneType() == null && automaticPartitionDTO.getZoneType().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区类型为空");
+			return msg.toJson();
+		}
+		
+		if(automaticPartitionDTO.getZoneCode() == null && automaticPartitionDTO.getZoneCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区 编码为空");
+			return msg.toJson();
+		}
 		
 		//接收到信号，开始存储方案总表信息
 		TotalSchemeDet totalSchemeDet = new TotalSchemeDet();
-		totalSchemeDet.setAmbientLayer(automaticPartitionDTO.getAmbientLayerList().toString());
-		totalSchemeDet.setFlowLayer(automaticPartitionDTO.getFlowLayerList().toString());
+		if(automaticPartitionDTO.getAmbientLayerList() != null && automaticPartitionDTO.getAmbientLayerList().size() != 0) {
+			totalSchemeDet.setAmbientLayer(automaticPartitionDTO.getAmbientLayerList().toString());
+		}
+		if(automaticPartitionDTO.getFlowLayerList() != null && automaticPartitionDTO.getFlowLayerList().size() != 0) {
+			totalSchemeDet.setFlowLayer(automaticPartitionDTO.getFlowLayerList().toString());
+		}
+		
 		totalSchemeDet.setMaxZone(automaticPartitionDTO.getMaxZone());
 		totalSchemeDet.setMinZone(automaticPartitionDTO.getMinZone());
 		totalSchemeDet.setZoneType(automaticPartitionDTO.getZoneType());
-		totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
+		if(automaticPartitionDTO.getZoneGrade() != null) {
+			totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
+		}
 		totalSchemeDet.setZoneCode(automaticPartitionDTO.getZoneCode());
 		totalSchemeDet.setState(0);
 		try {
