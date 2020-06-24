@@ -33,7 +33,7 @@ public interface ZoneConfigService {
      * @param excelBeans
      * @return
      */
-    public Integer addBatchZonePoint(SessionFactory factory,List<ZonePointExcelBean> excelBeans);
+    public Integer addBatchZonePoint(SessionFactory factory,List<ZonePointExcelBean> excelBeans,DataQualityVO dq);
 
     /**
      * 查询分区列表数据
@@ -86,7 +86,7 @@ public interface ZoneConfigService {
      * @param excelBeans
      * @return
      */
-    public Integer addBatchZoneMeter(SessionFactory factory,List<ZoneMeterExcelBean> excelBeans);
+    public Integer addBatchZoneMeter(SessionFactory factory,List<ZoneMeterExcelBean> excelBeans,DataQualityVO dq);
 
     /**
      * 查询分区户表导入历史列表数据

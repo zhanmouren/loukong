@@ -4,6 +4,7 @@ import com.koron.inwlms.bean.DTO.baseInf.*;
 import com.koron.inwlms.bean.VO.baseInf.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
+import com.koron.inwlms.mapper.baseData.DataQualityMapper;
 import com.koron.inwlms.mapper.baseData.PropertyMapper;
 import com.koron.inwlms.service.baseData.ZoneConfigService;
 import com.koron.inwlms.util.PageUtil;
@@ -73,10 +74,18 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
      */
     @TaskAnnotation("addBatchZonePoint")
     @Override
-    public Integer addBatchZonePoint(SessionFactory factory,List<ZonePointExcelBean> excelBeans){
+    public Integer addBatchZonePoint(SessionFactory factory,List<ZonePointExcelBean> excelBeans,DataQualityVO dq){
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
         Integer result = mapper.addBatchZonePoint(excelBeans);
-        return result;
+        if(result>0){
+            DataQualityMapper dqmapper = factory.getMapper(DataQualityMapper.class);
+            Integer ret = dqmapper.addZoneConfDataQuality(dq);
+            return ret;
+        }else{
+            return result;
+        }
+
+
     }
 
     /**
@@ -208,10 +217,16 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
      */
     @TaskAnnotation("addBatchZoneMeter")
     @Override
-    public Integer addBatchZoneMeter(SessionFactory factory,List<ZoneMeterExcelBean> excelBeans){
+    public Integer addBatchZoneMeter(SessionFactory factory,List<ZoneMeterExcelBean> excelBeans,DataQualityVO dq){
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
         Integer result = mapper.addBatchZoneMeter(excelBeans);
-        return result;
+        if(result>0){
+            DataQualityMapper dqmapper = factory.getMapper(DataQualityMapper.class);
+            Integer ret = dqmapper.addZoneConfDataQuality(dq);
+            return ret;
+        }else{
+            return result;
+        }
     }
 
     /**

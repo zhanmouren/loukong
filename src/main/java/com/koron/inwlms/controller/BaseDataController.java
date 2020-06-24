@@ -116,7 +116,7 @@ public class BaseDataController {
     @RequestMapping("/importPipe.htm")
     @ApiOperation(value = "导入管线接口", notes = "导入管线接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importPipe(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent") MultipartFile file) {
+    public String importPipe(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file) {
         //TODO:操作权限校验
 
         //TODO:Excel数据读取校验完整性，一致性，准确性
@@ -210,7 +210,7 @@ public class BaseDataController {
     @RequestMapping("/importPoint.htm")
     @ApiOperation(value = "导入监测点接口", notes = "导入监测点接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importPoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+    public String importPoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("file ") MultipartFile file) {
 
         //TODO:Excel数据读取校验完整性，一致性，准确性
 
@@ -333,7 +333,7 @@ public class BaseDataController {
     @RequestMapping("/importFacility.htm")
     @ApiOperation(value = "导入附属设施接口", notes = "导入附属设施接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importFacility(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+    public String importFacility(@RequestParam("BatchNo") String BatchNo,@RequestParam("file ") MultipartFile file) {
 
         //TODO:Excel数据读取校验完整性，一致性，准确性
 
@@ -413,7 +413,7 @@ public class BaseDataController {
     @RequestMapping("/importTable.htm")
     @ApiOperation(value = "导入水表数据接口", notes = "导入水表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importTable(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file) {
+    public String importTable(@RequestParam("BatchNo") String BatchNo,@RequestParam("file ") MultipartFile file) {
         //TODO:校验是否有数据添加权限
 
         //TODO:Excel数据读取校验完整性，一致性，准确性
@@ -676,7 +676,7 @@ public class BaseDataController {
     @RequestMapping("/importZonePoint.htm")
     @ApiOperation(value = "导入分区与监测点数据接口", notes = "导入分区与监测点数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importZonePoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String importZonePoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
 
         //TODO:校验是否有数据添加权限
@@ -688,17 +688,57 @@ public class BaseDataController {
             return msg.toString();
         }
 
-        //TODO:Excel数据读取校验完整性，一致性，准确性
         List<ZonePointExcelBean> excelBeans = ImportExcelUtil.readExcel(file, ZonePointExcelBean.class);
-        for(ZonePointExcelBean bean : excelBeans){
-            bean.setBatchNo(BatchNo);
-        }
+
         if (excelBeans == null || excelBeans.size()==0) {
             msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
             msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
         } else {
             try {
-                Integer ret = ADOConnection.runTask(user.getEnv(),zcs, "addBatchZonePoint", Integer.class, excelBeans);
+                //TODO:Excel数据读取校验完整性，一致性，准确性
+                DataQualityVO dq = new DataQualityVO();
+                Integer zoonNum = 0;
+                Integer pointNum = 0;
+                Integer typeNum = 0;
+                Integer validNum = 0;
+                for(ZonePointExcelBean bean : excelBeans){
+                    boolean isZoonNo = true;
+                    boolean isPointNo = true;
+                    boolean isType = true;
+                    bean.setBatchNo(BatchNo);
+                    if(bean.getZoneNo()==null || "".equals(bean.getZoneNo())){
+                        zoonNum++;
+                        isZoonNo = false;
+                    }
+                    if(bean.getPointNo() == null || "".equals(bean.getPointNo())){
+                        pointNum++;
+                        isPointNo = false;
+                    }
+                    if(bean.getType()== null || "".equals(bean.getType())){
+                        typeNum++;
+                        isType = false;
+                    }
+                    if(isZoonNo && isPointNo && isType){
+                        validNum++;
+                    }
+                }
+                dq.setRow(validNum);
+                dq.setOriginRow(excelBeans.size());
+                dq.setAvailability((double)(validNum/excelBeans.size()));//有效性
+                dq.setIntegrity((double)(1-(zoonNum+pointNum+typeNum)/(validNum*3)));//完整性
+                dq.setAccuracy(1.0);//准确性
+                dq.setConsistency((double)(zoonNum+pointNum)/(2*100));
+                dq.setTimely(1.0);
+                dq.setBatchNo(BatchNo);
+                dq.setCreateBy(user.getLoginName());
+                dq.setType("L103500001");
+
+                Integer ret = ADOConnection.runTask(user.getEnv(),zcs, "addBatchZonePoint", Integer.class, excelBeans,dq);
+               /*
+                if(ret>0){
+                    Integer r = ADOConnection.runTask(user.getEnv(),dqs, "addZoneConfDataQuality", Integer.class, dq);
+                }
+                */
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
                 msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
@@ -874,7 +914,7 @@ public class BaseDataController {
     @RequestMapping("/importZoneMeter.htm")
     @ApiOperation(value = "导入分区与户表数据接口", notes = "导入分区与户表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importZoneMeter(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent ") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String importZoneMeter(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
 
         //TODO:校验是否有数据添加权限
@@ -896,7 +936,44 @@ public class BaseDataController {
             msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
         } else {
             try {
-                Integer ret = ADOConnection.runTask(user.getEnv(),zcs, "addBatchZoneMeter", Integer.class, excelBeans);
+                //Excel数据读取校验完整性，一致性，准确性
+                DataQualityVO dq = new DataQualityVO();
+                Integer zoonNum = 0;
+                Integer meterNum = 0;
+                Integer typeNum = 0;
+                Integer validNum = 0;
+                for(ZoneMeterExcelBean bean : excelBeans){
+                    boolean isZoonNo = true;
+                    boolean isPointNo = true;
+                    boolean isType = true;
+                    bean.setBatchNo(BatchNo);
+                    if(bean.getZoneNo()==null || "".equals(bean.getZoneNo())){
+                        zoonNum++;
+                        isZoonNo = false;
+                    }
+                    if(bean.getMeterNo() == null || "".equals(bean.getMeterNo())){
+                        meterNum++;
+                        isPointNo = false;
+                    }
+                    if(bean.getType()== null || "".equals(bean.getType())){
+                        typeNum++;
+                        isType = false;
+                    }
+                    if(isZoonNo && isPointNo && isType){
+                        validNum++;
+                    }
+                }
+                dq.setRow(validNum);
+                dq.setOriginRow(excelBeans.size());
+                dq.setAvailability((double)(validNum/excelBeans.size()));//有效性
+                dq.setIntegrity((double)(1-(zoonNum+meterNum+typeNum)/(validNum*3)));//完整性
+                dq.setAccuracy(1.0);//准确性
+                dq.setConsistency((double)(zoonNum+meterNum)/(2*100));
+                dq.setTimely(1.0);
+                dq.setBatchNo(BatchNo);
+                dq.setCreateBy(user.getLoginName());
+                dq.setType("L103500002");
+                Integer ret = ADOConnection.runTask(user.getEnv(),zcs, "addBatchZoneMeter", Integer.class, excelBeans, dq);
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
                 msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
@@ -1080,7 +1157,7 @@ public class BaseDataController {
     @RequestMapping("/importMonitorData.htm")
     @ApiOperation(value = "导入监测数据接口", notes = "导入监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importMonitorData(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String importMonitorData(@RequestParam("BatchNo") String BatchNo,@RequestParam("type") String type,@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean<?> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 
         //TODO:校验是否有数据添加权限
@@ -1088,14 +1165,19 @@ public class BaseDataController {
         //TODO:Excel数据读取校验完整性，一致性，准确性
 
         List<MonitorDataExcelBean> excelBeans = ImportExcelUtil.readExcel(file, MonitorDataExcelBean.class);
-        for(MonitorDataExcelBean bean : excelBeans){
-            bean.setBatchNo(BatchNo);
-        }
+
         if (excelBeans == null || excelBeans.size()==0) {
             msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
             msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
         } else {
             try {
+                //TODO:Excel数据读取校验完整性，一致性，准确性
+                DataQualityVO dq = _checkMonitorDataQuality(excelBeans,type);
+                for(MonitorDataExcelBean bean : excelBeans) {
+                    bean.setBatchNo(BatchNo);
+                }
+                dq.setBatchNo(BatchNo);
+                dq.setCreateBy(user.getLoginName());
                 Integer ret = ADOConnection.runTask(user.getEnv(),ms, "addBatchMointorData", Integer.class, excelBeans);
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
@@ -1228,7 +1310,7 @@ public class BaseDataController {
     @RequestMapping("/importMeterData.htm")
     @ApiOperation(value = "导入抄表数据接口", notes = "导入抄表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importMeterData(@RequestParam("BatchNo") String BatchNo,@RequestParam("FileContent") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String importMeterData(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean<?> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 
         //TODO:校验是否有数据添加权限
@@ -1327,6 +1409,18 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @RequestMapping(value = "/queryMonitoringQuantity.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询监测水量校对数据", notes = "查询监测水量校对数据", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryMonitoringQuantity(@RequestBody DataQualityDTO dqd,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+
+        MessageBean msg = new MessageBean();
+        Gson gson = new Gson();
+        Map data = new HashMap();
+        List<PointAccountVO> dis = ADOConnection.runTask(user.getEnv(),mds, "queryFlows", List.class);
+        return msg.toJson();
+    }
+
     @RequestMapping(value = "/queryFlows.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询流量计类型数据", notes = "查询流量计类型数据", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1379,6 +1473,119 @@ public class BaseDataController {
             _r = false;
         }
         return _r;
+    }
+
+    /**
+     * 监测数据数据质量校验
+     */
+    DataQualityVO _checkMonitorDataQuality(List<MonitorDataExcelBean> excelBeans,String type){
+
+        DataQualityVO dq = new DataQualityVO();
+
+        if("L104000001".equals(type)){
+            Integer flowNum = 0;
+            Integer forwardFlowRateNum = 0;
+            Integer reverseFlowRateNum = 0;
+            Integer flowRateNum = 0;
+            Integer upstreamPressureNum = 0;
+            Integer downstreamPressureNum =0;
+            Integer unfavorPressureNum = 0;
+            Integer pointNum = 0;
+            Integer validNum = 0;
+
+            for(MonitorDataExcelBean bean : excelBeans){
+                boolean isForwardFlowRate = true;
+                boolean isFlow = true;
+                boolean isReverseFlowRate = true;
+                boolean isFlowRate = true;
+                boolean isUpstreamPressure = true;
+                boolean isDownstreamPressure = true;
+                boolean isUnfavorPressure = true;
+                boolean isPointID = true;
+
+                if(bean.getPointID()== null || "".equals(bean.getPointID())){
+                    pointNum++;
+                    isPointID = false;
+                }
+
+                if(bean.getFlow()== null || "".equals(bean.getFlow())){
+                    flowNum++;
+                    isFlow = false;
+                }
+                if(bean.getForwardFlowRate()== null || "".equals(bean.getForwardFlowRate())){
+                    forwardFlowRateNum++;
+                    isForwardFlowRate = false;
+                }
+                if(bean.getReverseFlowRate()==null || "".equals(bean.getReverseFlowRate())){
+                    flowRateNum++;
+                    isFlow = false;
+                }
+                if(bean.getFlowRate()==null || "".equals(bean.getFlowRate())){
+                    flowRateNum++;
+                    isFlowRate = false;
+                }
+                if(bean.getUpstreamPressure()==null || "".equals(bean.getUpstreamPressure())){
+                    upstreamPressureNum++;
+                    isUpstreamPressure = false;
+                }
+                if(bean.getDownstreamPressure() == null || "".equals(bean.getDownstreamPressure())){
+                    downstreamPressureNum++;
+                    isDownstreamPressure = false;
+                }
+                if(bean.getUnfavorPressure() == null || "".equals(bean.getUnfavorPressure())){
+                    unfavorPressureNum++;
+                    isUnfavorPressure = false;
+                }
+
+                if(isPointID && isFlow && isForwardFlowRate && isReverseFlowRate && isFlowRate && isUpstreamPressure && isDownstreamPressure && isUnfavorPressure){
+                    validNum++;
+                }
+            }
+            dq.setRow(validNum);
+            dq.setOriginRow(excelBeans.size());
+            dq.setAvailability((double)(validNum/excelBeans.size()));//有效性
+            dq.setIntegrity((double)(1-(pointNum+flowNum+forwardFlowRateNum+reverseFlowRateNum+flowRateNum+upstreamPressureNum+downstreamPressureNum+unfavorPressureNum)/(validNum*8)));//完整性
+            dq.setAccuracy(1.0);//准确性
+            dq.setConsistency((double)(pointNum+flowNum+forwardFlowRateNum+reverseFlowRateNum+flowRateNum+upstreamPressureNum+downstreamPressureNum+unfavorPressureNum)/(2*100));
+            dq.setTimely(1.0);
+            dq.setType(type);
+        }else{
+            Integer noiseNum = 0;
+            Integer thresholdNum = 0;
+            Integer pointNum = 0;
+            Integer validNum = 0;
+
+            for(MonitorDataExcelBean bean : excelBeans){
+                boolean isNoise = true;
+                boolean isThresholdNum = true;
+                boolean isPointID = true;
+
+                if(bean.getPointID()== null || "".equals(bean.getPointID())){
+                    pointNum++;
+                    isPointID = false;
+                }
+                if(bean.getNoise()== null || "".equals(bean.getNoise())){
+                    noiseNum++;
+                    isNoise = false;
+                }
+                if(bean.getThreshold()== null || "".equals(bean.getThreshold())){
+                    thresholdNum++;
+                    isThresholdNum = false;
+                }
+                if(isPointID && isNoise && isThresholdNum){
+                    validNum++;
+                }
+            }
+            dq.setRow(validNum);
+            dq.setOriginRow(excelBeans.size());
+            dq.setAvailability((double)(validNum/excelBeans.size()));//有效性
+            dq.setIntegrity((double)(1-(pointNum+noiseNum+thresholdNum)/(validNum*3)));//完整性
+            dq.setAccuracy(1.0);//准确性
+            dq.setConsistency((double)(pointNum+noiseNum+thresholdNum)/(2*100));
+            dq.setTimely(1.0);
+            dq.setType(type);
+        }
+        return dq;
     }
 
 }

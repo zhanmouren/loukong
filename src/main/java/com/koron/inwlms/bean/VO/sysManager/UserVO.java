@@ -53,6 +53,17 @@ public class UserVO {
 	  //环境
 	  private String env;
 
+	  //组织
+	  private String org;
+
+	public String getOrg() {
+		return org;
+	}
+
+	public void setOrg(String org) {
+		this.org = org;
+	}
+
 	public String getPositionCode() {
 		return positionCode;
 	}

@@ -94,14 +94,14 @@ public class MonitorDataExcelBean {
     /**
      * 阀前压力
      */
-    @ImportExcelUtil.ExcelColumn("阀前压力")
+    @ImportExcelUtil.ExcelColumn("压力p1")
     @ImportExcelUtil.RequiredColumn
     private String upstreamPressure;
 
     /**
      * 阀后压力
      */
-    @ImportExcelUtil.ExcelColumn("阀后压力")
+    @ImportExcelUtil.ExcelColumn("压力p2")
     @ImportExcelUtil.RequiredColumn
     private String downstreamPressure;
 

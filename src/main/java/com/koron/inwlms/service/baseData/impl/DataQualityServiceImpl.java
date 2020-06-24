@@ -2,6 +2,7 @@ package com.koron.inwlms.service.baseData.impl;
 
 import com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO;
 import com.koron.inwlms.bean.VO.baseInf.DataImpactVO;
+import com.koron.inwlms.bean.VO.baseInf.DataQualityVO;
 import com.koron.inwlms.bean.VO.baseInf.MonRepVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
@@ -46,5 +47,12 @@ public class DataQualityServiceImpl implements DataQualityService {
         DataQualityMapper mapper = factory.getMapper(DataQualityMapper.class);
         List<DataImpactVO> list = mapper.queryDataImpact();
         return list;
+    }
+
+    @TaskAnnotation("addZoneConfDataQuality")
+    public Integer addZoneConfDataQuality(SessionFactory factory, DataQualityVO dq){
+        DataQualityMapper mapper = factory.getMapper(DataQualityMapper.class);
+        Integer ret = mapper.addZoneConfDataQuality(dq);
+        return ret;
     }
 }

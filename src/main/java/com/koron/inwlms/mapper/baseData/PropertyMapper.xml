@@ -17,6 +17,11 @@
         </if>
     </insert>
 
+    <insert id="addZoneConfDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO">
+        insert into gis_zoneconfhistory("BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy","createTime",type)
+        values(#{BatchNo},#{originRow},#{row},#{integrity},#{accuracy},#{availability},#{timely},#{consistency},#{status},#{createBy},now(),#{type})
+    </insert>
+
     <delete id="deleteChargeZones" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
            delete from gis_zone_charge where user = #{user}
      </delete>
@@ -143,7 +148,7 @@
         select * from(
         select
         0 as rows,"BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy",to_char("createTime",'YYYY-MM-DD')as
-        createTime from gis_zonepointhistory
+        createTime from gis_zoneconfhistory
         where 1=1
         <if test="begD != null and begD != ''">
             and to_char( "createTime",'YYYY-MM-dd') &gt;= #{begD}
@@ -151,10 +156,11 @@
         <if test="endD != null and endD != ''">
             and to_char( "createTime",'YYYY-MM-dd') &lt;= #{endD}
         </if>
+            and type = 'L103500001'
         limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         )t
         union all
-        select count(*) ,'',0,0,0,0,0,0,0,0,'',''from gis_zonepointhistory
+        select count(*) ,'',0,0,0,0,0,0,0,0,'',''from gis_zoneconfhistory
         where 1=1
         <if test="begD != null and begD != ''">
             and to_char( "createTime",'YYYY-MM-dd') &gt;= #{begD}
@@ -162,6 +168,7 @@
         <if test="endD != null and endD != ''">
             and to_char( "createTime",'YYYY-MM-dd') &lt;= #{endD}
         </if>
+            and type = 'L103500001'
     </select>
 
     <select id="queryZonePointDet"  resultType="com.koron.inwlms.bean.VO.baseInf.ZonePointVO">
@@ -192,7 +199,7 @@
      </delete>
 
     <delete id="deleteZonePointByBatch">
-           delete from gis_zonepointhistory where "BatchNo" = #{BatchNo}
+           delete from gis_zoneconfhistory where "BatchNo" = #{BatchNo} and type = 'L103500001'
            delete from gis_zonepointrelation where "BatchNo" = #{BatchNo}
      </delete>
 
@@ -233,7 +240,7 @@
         select * from(
         select
         0 as rows,"BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy",to_char("createTime",'YYYY-MM-DD')as
-        createTime from gis_zonemeterhistory
+        createTime from gis_zoneconfhistory
         where 1=1
         <if test="begD != null and begD != ''">
             and to_char( "createTime",'YYYY-MM-dd') &gt;= #{begD}
@@ -241,10 +248,11 @@
         <if test="endD != null and endD != ''">
             and to_char( "createTime",'YYYY-MM-dd') &lt;= #{endD}
         </if>
+            and type ='L103500002'
         )t
         union all
         select
-        count(*),'',0,0,0,0,0,0,0,0,'','' from gis_zonemeterhistory
+        count(*),'',0,0,0,0,0,0,0,0,'','' from gis_zoneconfhistory
         where 1=1
         <if test="begD != null and begD != ''">
             and to_char( "createTime",'YYYY-MM-dd') &gt;= #{begD}
@@ -252,6 +260,7 @@
         <if test="endD != null and endD != ''">
             and to_char( "createTime",'YYYY-MM-dd') &lt;= #{endD}
         </if>
+            and type ='L103500002'
     </select>
 
     <select id="queryZoneMeterDet"  resultType="com.koron.inwlms.bean.VO.baseInf.ZoneMeterVO">
@@ -280,7 +289,7 @@
     </update>
 
     <delete id="deleteZoneMeterByBatchNo">
-           delete from gis_zonemeterhistory where "BatchNo" = #{BatchNo}
+           delete from gis_zoneconfhistory where "BatchNo" = #{BatchNo} and type ='L103500002'
            delete from gis_zone_meter where "BatchNo" = #{BatchNo}
      </delete>
 
