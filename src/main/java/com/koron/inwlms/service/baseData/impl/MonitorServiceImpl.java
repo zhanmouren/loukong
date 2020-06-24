@@ -2,10 +2,12 @@ package com.koron.inwlms.service.baseData.impl;
 
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataExcelBean;
+import com.koron.inwlms.bean.VO.baseInf.DataQualityVO;
 import com.koron.inwlms.bean.VO.baseInf.MonitorDataVO;
 import com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
+import com.koron.inwlms.mapper.baseData.DataQualityMapper;
 import com.koron.inwlms.mapper.baseData.IMDataMapper;
 import com.koron.inwlms.service.baseData.MonitorService;
 import com.koron.inwlms.util.PageUtil;
@@ -31,10 +33,15 @@ public class MonitorServiceImpl implements MonitorService {
      */
     @TaskAnnotation("addBatchMointorData")
     @Override
-    public Integer addBatchMointorData(SessionFactory factory,List<MonitorDataExcelBean> excelBeans){
+    public Integer addBatchMointorData(SessionFactory factory, List<MonitorDataExcelBean> excelBeans, DataQualityVO dq){
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         Integer result = mapper.addBatchMointorData(excelBeans);
-        return result;
+        if(result>0){
+            Integer ret = mapper.addImportDataQuality(dq);
+            return ret;
+        }else{
+            return result;
+        }
     }
 
     /**

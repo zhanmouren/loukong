@@ -75,7 +75,7 @@
         where 1=1
         <choose>
             <when test="zoneNo != null and zoneNo != ''">
-                and p_code = #{zoneNo}
+                and gis_exist_zone.p_code = #{zoneNo}
             </when>
         </choose>
         <if test="begD != null and begD != ''">
@@ -96,7 +96,7 @@
         where 1=1
         <choose>
             <when test="zoneNo != null and zoneNo != ''">
-                and p_code = #{zoneNo}
+                and gis_exist_zone.p_code = #{zoneNo}
             </when>
         </choose>
         <if test="begD != null and begD != ''">
@@ -118,10 +118,10 @@
             left join gis_scada_station on gis_zone_point."pointNo" = gis_scada_station.p_code
             where 1=1
             <if test="zoneNo != null and zoneNo != ''">
-                and "zoneNo"=#{zoneNo}
+                and "zoneNo" like '%'||#{zoneNo}||'%'
             </if>
             <if test="pointNo != null and pointNo != ''">
-                and "pointNo"=#{pointNo}
+                and "pointNo" like '%'||#{pointNo}||'%'
             </if>
             <if test="type != null and type != ''">
                 and type=#{type}

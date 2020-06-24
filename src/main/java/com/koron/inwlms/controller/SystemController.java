@@ -63,7 +63,8 @@ public class SystemController {
 	private String postgresqlDriver;
 
 	private final Map<String,String> envMap=new HashMap<>();
-	
+
+	private final Map orgMap = new HashMap<>();
 	/**
 	 * 用户登录方法
 	 *
@@ -86,12 +87,13 @@ public class SystemController {
 		try {
 			//登录成功，数据源注册操作
 			String env = tenantID+ EnvSource.DEFAULT;
-			//String env = "";
 
 			if(envMap.get(tenantID)==null || "".equals(envMap.get(tenantID))) {
 				//调用云管平台接口获取租户数据
 				String token = getTenantToken(Constant.APPID, tenantID);
 				if (token != null) {
+					//***获取租户相关信息
+
 					DBInfoDTO dbd = getDBInfo(token);
 					if (dbd != null) {
 						Properties prop = new Properties();
@@ -128,7 +130,14 @@ public class SystemController {
 				loginLogDTO.setType("L102110002");
 				if(userVO.getPassword().equals(userLoginDTO.getPassword())) {
 
-					userVO.setEnv(env);
+					//****TODO:临时处理-定义用户所属组织
+					if("4a1e7e2df9134cd297d03bbbc26df7f4".equals(tenantID)){
+						userVO.setOrg("梅州水司");
+					}else if("565ee7bdd75a4c6e937ce9b406b3aa85".equals(tenantID)){
+						userVO.setOrg("常平水司");
+					}
+					//***end
+					userVO.setEnv(env);//设置用户数据环境
 
 					msg.setData(userVO);
 					loginLogDTO.setResult("登录成功");

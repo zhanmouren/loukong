@@ -4,6 +4,7 @@ import com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO;
 import com.koron.inwlms.bean.VO.baseInf.DataImpactVO;
 import com.koron.inwlms.bean.VO.baseInf.DataQualityVO;
 import com.koron.inwlms.bean.VO.baseInf.MonRepVO;
+import com.koron.inwlms.bean.VO.baseInf.MonitorQuantityVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.mapper.baseData.DataQualityMapper;
@@ -54,5 +55,22 @@ public class DataQualityServiceImpl implements DataQualityService {
         DataQualityMapper mapper = factory.getMapper(DataQualityMapper.class);
         Integer ret = mapper.addZoneConfDataQuality(dq);
         return ret;
+    }
+
+    @TaskAnnotation("queryMonitoringQuantity")
+    public PageListVO<List<MonitorQuantityVO>> queryMonitoringQuantity(SessionFactory factory, DataQualityDTO dqd){
+        DataQualityMapper mapper = factory.getMapper(DataQualityMapper.class);
+        List<MonitorQuantityVO> result = mapper.queryMonitoringQuantity(dqd);
+        MonitorQuantityVO r = result.get(result.size()-1);
+        result.remove(result.size()-1);
+        PageListVO<List<MonitorQuantityVO>> plv = new PageListVO<>();
+        plv.setDataList(result);
+        PageVO pageVO = PageUtil.getPageBean(dqd.getPage(), dqd.getPageCount(), r.getRows());
+        plv.setTotalPage(pageVO.getTotalPage());
+        plv.setRowNumber(pageVO.getRowNumber());
+        plv.setPageCount(pageVO.getPageCount());
+        plv.setPage(pageVO.getPage());
+
+        return plv;
     }
 }

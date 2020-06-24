@@ -26,6 +26,20 @@ public class DataQualityDTO extends BaseDTO {
      */
     private String status;
 
+    /**
+     * 仅显示异常
+     * @return
+     */
+    private Integer flag;
+
+    public Integer getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Integer flag) {
+        this.flag = flag;
+    }
+
     public String getPointName() {
         return pointName;
     }

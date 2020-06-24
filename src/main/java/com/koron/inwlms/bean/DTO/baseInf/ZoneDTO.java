@@ -43,7 +43,7 @@ public class ZoneDTO extends BaseDTO {
     /**
      * 分区级别
      */
-    private String rank;
+    private String zoneRank;
 
     /**
      * 用户
@@ -55,6 +55,20 @@ public class ZoneDTO extends BaseDTO {
      * @return
      */
     private String[] zoons;
+
+    /**
+     * 分区等级
+     * @return
+     */
+    private String rank;
+
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
 
     public String getZoneNo() {
         return zoneNo;
@@ -80,12 +94,12 @@ public class ZoneDTO extends BaseDTO {
         this.user = user;
     }
 
-    public String getRank() {
-        return rank;
+    public String getZoneRank() {
+        return zoneRank;
     }
 
-    public void setRank(String rank) {
-        this.rank = rank;
+    public void setZoneRank(String zoneRank) {
+        this.zoneRank = zoneRank;
     }
 
     public String getFirst() {

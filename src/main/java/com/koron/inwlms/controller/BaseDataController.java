@@ -1178,7 +1178,7 @@ public class BaseDataController {
                 }
                 dq.setBatchNo(BatchNo);
                 dq.setCreateBy(user.getLoginName());
-                Integer ret = ADOConnection.runTask(user.getEnv(),ms, "addBatchMointorData", Integer.class, excelBeans);
+                Integer ret = ADOConnection.runTask(user.getEnv(),ms, "addBatchMointorData", Integer.class, excelBeans,dq);
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
                 msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
@@ -1409,15 +1409,17 @@ public class BaseDataController {
         return msg.toJson();
     }
 
-    @RequestMapping(value = "/queryMonitoringQuantity.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询监测水量校对数据", notes = "查询监测水量校对数据", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/queryMonitoringQuantity.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询监测水量校对数据", notes = "查询监测水量校对数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryMonitoringQuantity(@RequestBody DataQualityDTO dqd,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
         Gson gson = new Gson();
         Map data = new HashMap();
-        List<PointAccountVO> dis = ADOConnection.runTask(user.getEnv(),mds, "queryFlows", List.class);
+        PageListVO<List<MonitorQuantityVO>> dis = ADOConnection.runTask(user.getEnv(),dqs, "queryMonitoringQuantity", PageListVO.class,dqd);
+        msg.setCode(0);
+        msg.setData(dis);
         return msg.toJson();
     }
 

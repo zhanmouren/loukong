@@ -4,10 +4,7 @@ import com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MeterDataExcelBean;
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataExcelBean;
-import com.koron.inwlms.bean.VO.baseInf.MeterDataHisVO;
-import com.koron.inwlms.bean.VO.baseInf.MeterDataVO;
-import com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO;
-import com.koron.inwlms.bean.VO.baseInf.MonitorDataVO;
+import com.koron.inwlms.bean.VO.baseInf.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -130,4 +127,10 @@ public interface IMDataMapper {
      */
     List<MeterDataVO> queryMeterDataByBatchNo(MeterDataDTO meterDataDTO);
 
+    /**
+     * 添加监测抄表导入历史
+     * @param dq
+     * @return
+     */
+    Integer addImportDataQuality(DataQualityVO dq);
 }

@@ -2,6 +2,7 @@ package com.koron.inwlms.service.baseData;
 
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataExcelBean;
+import com.koron.inwlms.bean.VO.baseInf.DataQualityVO;
 import com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO;
 import com.koron.inwlms.bean.VO.baseInf.MonitorDataVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -17,7 +18,7 @@ public interface MonitorService {
      * @param excelBeans
      * @return
      */
-    public Integer addBatchMointorData(SessionFactory factory,List<MonitorDataExcelBean> excelBeans);
+    public Integer addBatchMointorData(SessionFactory factory, List<MonitorDataExcelBean> excelBeans, DataQualityVO dq);
 
     /**
      * 查询压力/流量监测列表数据

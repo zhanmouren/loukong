@@ -11,6 +11,11 @@
         delete from mi_importdatahistory where "BatchNo" =#{BatchNo} and type = '2'
     </delete>
 
+    <insert id="addZoneConfDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO">
+        insert into mi_importdatahistory("BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy","createTime",type)
+        values(#{BatchNo},#{originRow},#{row},#{integrity},#{accuracy},#{availability},#{timely},#{consistency},#{status},#{createBy},now(),#{type})
+    </insert>
+
     <insert id="addBatchMeterData" >
         insert into mi_readwaterinfo(
         user_no,user_name,user_type,prior_period_num,prior_period_date,meter_reading_date,currend_period_num,reality_water,meter_reading_way,"BatchNo","createBy","createTime"

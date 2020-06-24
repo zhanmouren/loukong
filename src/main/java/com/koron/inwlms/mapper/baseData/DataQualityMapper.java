@@ -4,6 +4,7 @@ import com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO;
 import com.koron.inwlms.bean.VO.baseInf.DataImpactVO;
 import com.koron.inwlms.bean.VO.baseInf.DataQualityVO;
 import com.koron.inwlms.bean.VO.baseInf.MonRepVO;
+import com.koron.inwlms.bean.VO.baseInf.MonitorQuantityVO;
 
 import java.util.List;
 
@@ -23,7 +24,12 @@ public interface DataQualityMapper {
     List<DataImpactVO> queryDataImpact();
 
     /**
-     * 添加分区监测点导入历史
+     * 添加分区配置导入历史
      */
     Integer addZoneConfDataQuality(DataQualityVO dq);
+
+    /**
+     * 监测水量校对
+     */
+    List<MonitorQuantityVO> queryMonitoringQuantity(DataQualityDTO dqd);
 }

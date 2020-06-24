@@ -1056,7 +1056,8 @@ public class Constant {
 	 */
 	//public final static String LINUX_TEMPALTE_PATH = "static/excelTemplate/";
 	//本地
-	public final static String LINUX_TEMPALTE_PATH = "src/main/resources/static/excelTemplate/";
+	//public final static String LINUX_TEMPALTE_PATH = "src/main/resources/static/excelTemplate/";
+	public final static String LINUX_TEMPALTE_PATH = "/usr/inms_file/excelTemplate/";
 
 	/**
 	 * 管线导入模板文件名

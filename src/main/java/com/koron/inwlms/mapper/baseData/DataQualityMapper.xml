@@ -2,6 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.baseData.DataQualityMapper">
 
+    <select id="queryMonitoringQuantity" parameterType="com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MonitorQuantityVO">
+
+         select * from(
+            select 0 as rows,ana_monitorpoint_month.id,ana_monitorpoint_month."moniCode",code,lc_app_dim_month."yearMonth",value, t."lastValue",t."last3avg"
+            from ana_monitorpoint_month
+            join lc_app_dim_month on ana_monitorpoint_month."yearMonth" = lc_app_dim_month.id
+            left join LATERAL(select * from "queryLastMonthMoni"(ana_monitorpoint_month."moniCode",ana_monitorpoint_month."yearMonth",lc_app_dim_month."yearMonth"))t on ana_monitorpoint_month."yearMonth" = t."yearMonth" and ana_monitorpoint_month."moniCode"=t."moniCode"
+            where code ='MOMR' order by lc_app_dim_month."yearMonth" desc
+            <if test="pageCount != null and pageCount != null">
+                limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+            </if>
+         )m
+         union all
+        select count(*) as rows,0,'','',0,0, 0,0
+        from ana_monitorpoint_month
+        where code ='MOMR'
+    </select>
+
     <select id="queryMonRep" parameterType="com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MonRepVO">
         select * from(
         select 0 as rows,reportdate,reporttime,type,row,integrity,accuracy,available,timely,consistence,rating from
