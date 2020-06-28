@@ -8,292 +8,294 @@ package com.koron.inwlms.bean.VO.zoneLoss;
 public class LeakDetailsVO {
 
 	//id
-	private Integer id;
+	private Integer ID;
 	//任务编号
-	private String worderid;
+	private String WORDERID;
 	//检漏负责人	
-	private String patrolmanid;
+	private String PATROLMANID;
 	//漏损现象
-	private String isligorsh;
+	private String ISLIGORSH;
 	//管段FEATID
-	private String featid;
+	private String FEATID;
 	//管径（mm）
-	private Double diameter ;
+	private Double DIAMETER ;
 	//管材
-	private String material ;
+	private String MATERIAL ;
 	//漏水点位置
-	private String location;
+	private String LOCATION;
 	//漏点编号
-	private String leakid ;
+	private String LEAKID ;
 	//发现方式
-	private String foundtype ;
+	private String FOUNDTYPE ;
 	//压力(MPa)
-	private Double pressure ;
+	private Double PRESSURE ;
 	//管段埋深（m）
-	private Double depth ;
+	private Double DEPTH ;
 	//漏水时间（h）
-	private Double leaktime ;
+	private Double LEAKTIME ;
 	//漏点类型
-	private String leakcond;
+	private String LEAKCOND;
 	//上报时间（探漏时间）
-	private String repdate;
+	private String REPDATE;
 	//巡查负责人
-	private String reported;
+	private String REPORTED;
 	//开始维修时间
-	private String exdate;
+	private String EXDATE;
 	//完成时间
-	private String repaiedate ;
+	private String REPAIEDATE ;
 	//维修负责人
-	private String mainperson;
+	private String MAINPERSON;
 	//坐标
-	private String coordinate;
+	private String COORDINATE;
 	//备注
-	private String remark;
+	private String REMARK;
 	//管段编号
-	private String pcode;
+	private String PCODE;
 	//负责人
-	private String assigner;
+	private String ASSIGNER;
 	//处理结果
-	private String dealresult;
+	private String DEALRESULT;
 	//漏点形状
-	private String leakshape;
+	private String LEAKSHAPE;
 	//漏点尺寸（cm）
-	private Double leakdia ;
+	private Double LEAKDIA ;
 	//漏水流量（m3/h）
-	private Double leakflow ;
+	private Double LEAKFLOW ;
 	//漏失水量（m3）
-	private String waterleak ;
+	private String WATERLEAK ;
 	//管龄
-	private Double yearpipe ;
+	private Double YEARPIPE ;
 	//管径纠正（mm）
-	private String diametercorrect;
+	private String DIAMETERCORRECT;
 	//管材纠正
-	private String materialcorrect;
+	private String MATERIALCORRECT;
 	//管段埋深纠正（m）
-	private String depthcorrect ;
+	private String DEPTHCORRECT ;
 	//紧急程度
-	private String emergencylevel ;
+	private String EMERGENCYLEVEL ;
 	//停水时间
-	private String cutofftime ;
+	private String CUTOFFTIME ;
 	//漏点所在区域
-	private String leakregion ;
+	private String LEAKREGION ;
 	//漏点编号(手填)
-	private String leakid2;
+	private String LEAKID2;
 	public Integer getId() {
-		return id;
+		return ID;
 	}
-	public void setId(Integer id) {
-		this.id = id;
+	public void setId(Integer ID) {
+		this.ID = ID;
 	}
-	public String getWorderid() {
-		return worderid;
+	public String getWORDERID() {
+		return WORDERID;
 	}
-	public void setWorderid(String worderid) {
-		this.worderid = worderid;
+	public void setWORDERID(String wORDERID) {
+		WORDERID = wORDERID;
 	}
-	public String getPatrolmanid() {
-		return patrolmanid;
+	public String getPATROLMANID() {
+		return PATROLMANID;
 	}
-	public void setPatrolmanid(String patrolmanid) {
-		this.patrolmanid = patrolmanid;
+	public void setPATROLMANID(String pATROLMANID) {
+		PATROLMANID = pATROLMANID;
 	}
-	public String getIsligorsh() {
-		return isligorsh;
+	public String getISLIGORSH() {
+		return ISLIGORSH;
 	}
-	public void setIsligorsh(String isligorsh) {
-		this.isligorsh = isligorsh;
+	public void setISLIGORSH(String iSLIGORSH) {
+		ISLIGORSH = iSLIGORSH;
 	}
-	public String getFeatid() {
-		return featid;
+	public String getFEATID() {
+		return FEATID;
 	}
-	public void setFeatid(String featid) {
-		this.featid = featid;
+	public void setFEATID(String fEATID) {
+		FEATID = fEATID;
 	}
-	public Double getDiameter() {
-		return diameter;
+	public Double getDIAMETER() {
+		return DIAMETER;
 	}
-	public void setDiameter(Double diameter) {
-		this.diameter = diameter;
+	public void setDIAMETER(Double dIAMETER) {
+		DIAMETER = dIAMETER;
 	}
-	public String getMaterial() {
-		return material;
+	public String getMATERIAL() {
+		return MATERIAL;
 	}
-	public void setMaterial(String material) {
-		this.material = material;
+	public void setMATERIAL(String mATERIAL) {
+		MATERIAL = mATERIAL;
 	}
-	public String getLocation() {
-		return location;
+	public String getLOCATION() {
+		return LOCATION;
 	}
-	public void setLocation(String location) {
-		this.location = location;
+	public void setLOCATION(String lOCATION) {
+		LOCATION = lOCATION;
 	}
-	public String getLeakid() {
-		return leakid;
+	public String getLEAKID() {
+		return LEAKID;
 	}
-	public void setLeakid(String leakid) {
-		this.leakid = leakid;
+	public void setLEAKID(String lEAKID) {
+		LEAKID = lEAKID;
 	}
-	public String getFoundtype() {
-		return foundtype;
+	public String getFOUNDTYPE() {
+		return FOUNDTYPE;
 	}
-	public void setFoundtype(String foundtype) {
-		this.foundtype = foundtype;
+	public void setFOUNDTYPE(String fOUNDTYPE) {
+		FOUNDTYPE = fOUNDTYPE;
 	}
-	public Double getPressure() {
-		return pressure;
+	public Double getPRESSURE() {
+		return PRESSURE;
 	}
-	public void setPressure(Double pressure) {
-		this.pressure = pressure;
+	public void setPRESSURE(Double pRESSURE) {
+		PRESSURE = pRESSURE;
 	}
-	public Double getDepth() {
-		return depth;
+	public Double getDEPTH() {
+		return DEPTH;
 	}
-	public void setDepth(Double depth) {
-		this.depth = depth;
+	public void setDEPTH(Double dEPTH) {
+		DEPTH = dEPTH;
 	}
-	public Double getLeaktime() {
-		return leaktime;
+	public Double getLEAKTIME() {
+		return LEAKTIME;
 	}
-	public void setLeaktime(Double leaktime) {
-		this.leaktime = leaktime;
+	public void setLEAKTIME(Double lEAKTIME) {
+		LEAKTIME = lEAKTIME;
 	}
-	public String getLeakcond() {
-		return leakcond;
+	public String getLEAKCOND() {
+		return LEAKCOND;
 	}
-	public void setLeakcond(String leakcond) {
-		this.leakcond = leakcond;
+	public void setLEAKCOND(String lEAKCOND) {
+		LEAKCOND = lEAKCOND;
 	}
-	public String getRepdate() {
-		return repdate;
+	public String getREPDATE() {
+		return REPDATE;
 	}
-	public void setRepdate(String repdate) {
-		this.repdate = repdate;
+	public void setREPDATE(String rEPDATE) {
+		REPDATE = rEPDATE;
 	}
-	public String getReported() {
-		return reported;
+	public String getREPORTED() {
+		return REPORTED;
 	}
-	public void setReported(String reported) {
-		this.reported = reported;
+	public void setREPORTED(String rEPORTED) {
+		REPORTED = rEPORTED;
 	}
-	public String getExdate() {
-		return exdate;
+	public String getEXDATE() {
+		return EXDATE;
 	}
-	public void setExdate(String exdate) {
-		this.exdate = exdate;
+	public void setEXDATE(String eXDATE) {
+		EXDATE = eXDATE;
 	}
-	public String getRepaiedate() {
-		return repaiedate;
+	public String getREPAIEDATE() {
+		return REPAIEDATE;
 	}
-	public void setRepaiedate(String repaiedate) {
-		this.repaiedate = repaiedate;
+	public void setREPAIEDATE(String rEPAIEDATE) {
+		REPAIEDATE = rEPAIEDATE;
 	}
-	public String getMainperson() {
-		return mainperson;
+	public String getMAINPERSON() {
+		return MAINPERSON;
 	}
-	public void setMainperson(String mainperson) {
-		this.mainperson = mainperson;
+	public void setMAINPERSON(String mAINPERSON) {
+		MAINPERSON = mAINPERSON;
 	}
-	public String getCoordinate() {
-		return coordinate;
+	public String getCOORDINATE() {
+		return COORDINATE;
 	}
-	public void setCoordinate(String coordinate) {
-		this.coordinate = coordinate;
+	public void setCOORDINATE(String cOORDINATE) {
+		COORDINATE = cOORDINATE;
 	}
-	public String getRemark() {
-		return remark;
+	public String getREMARK() {
+		return REMARK;
 	}
-	public void setRemark(String remark) {
-		this.remark = remark;
+	public void setREMARK(String rEMARK) {
+		REMARK = rEMARK;
 	}
-	public String getPcode() {
-		return pcode;
+	public String getPCODE() {
+		return PCODE;
 	}
-	public void setPcode(String pcode) {
-		this.pcode = pcode;
+	public void setPCODE(String pCODE) {
+		PCODE = pCODE;
 	}
-	public String getAssigner() {
-		return assigner;
+	public String getASSIGNER() {
+		return ASSIGNER;
 	}
-	public void setAssigner(String assigner) {
-		this.assigner = assigner;
+	public void setASSIGNER(String aSSIGNER) {
+		ASSIGNER = aSSIGNER;
 	}
-	public String getDealresult() {
-		return dealresult;
+	public String getDEALRESULT() {
+		return DEALRESULT;
 	}
-	public void setDealresult(String dealresult) {
-		this.dealresult = dealresult;
+	public void setDEALRESULT(String dEALRESULT) {
+		DEALRESULT = dEALRESULT;
 	}
-	public String getLeakshape() {
-		return leakshape;
+	public String getLEAKSHAPE() {
+		return LEAKSHAPE;
 	}
-	public void setLeakshape(String leakshape) {
-		this.leakshape = leakshape;
+	public void setLEAKSHAPE(String lEAKSHAPE) {
+		LEAKSHAPE = lEAKSHAPE;
 	}
-	public Double getLeakdia() {
-		return leakdia;
+	public Double getLEAKDIA() {
+		return LEAKDIA;
 	}
-	public void setLeakdia(Double leakdia) {
-		this.leakdia = leakdia;
+	public void setLEAKDIA(Double lEAKDIA) {
+		LEAKDIA = lEAKDIA;
 	}
-	public Double getLeakflow() {
-		return leakflow;
+	public Double getLEAKFLOW() {
+		return LEAKFLOW;
 	}
-	public void setLeakflow(Double leakflow) {
-		this.leakflow = leakflow;
+	public void setLEAKFLOW(Double lEAKFLOW) {
+		LEAKFLOW = lEAKFLOW;
 	}
-	public String getWaterleak() {
-		return waterleak;
+	public String getWATERLEAK() {
+		return WATERLEAK;
 	}
-	public void setWaterleak(String waterleak) {
-		this.waterleak = waterleak;
+	public void setWATERLEAK(String wATERLEAK) {
+		WATERLEAK = wATERLEAK;
 	}
-	public Double getYearpipe() {
-		return yearpipe;
+	public Double getYEARPIPE() {
+		return YEARPIPE;
 	}
-	public void setYearpipe(Double yearpipe) {
-		this.yearpipe = yearpipe;
+	public void setYEARPIPE(Double yEARPIPE) {
+		YEARPIPE = yEARPIPE;
 	}
-	public String getDiametercorrect() {
-		return diametercorrect;
+	public String getDIAMETERCORRECT() {
+		return DIAMETERCORRECT;
 	}
-	public void setDiametercorrect(String diametercorrect) {
-		this.diametercorrect = diametercorrect;
+	public void setDIAMETERCORRECT(String dIAMETERCORRECT) {
+		DIAMETERCORRECT = dIAMETERCORRECT;
 	}
-	public String getMaterialcorrect() {
-		return materialcorrect;
+	public String getMATERIALCORRECT() {
+		return MATERIALCORRECT;
 	}
-	public void setMaterialcorrect(String materialcorrect) {
-		this.materialcorrect = materialcorrect;
+	public void setMATERIALCORRECT(String mATERIALCORRECT) {
+		MATERIALCORRECT = mATERIALCORRECT;
 	}
-	public String getDepthcorrect() {
-		return depthcorrect;
+	public String getDEPTHCORRECT() {
+		return DEPTHCORRECT;
 	}
-	public void setDepthcorrect(String depthcorrect) {
-		this.depthcorrect = depthcorrect;
+	public void setDEPTHCORRECT(String dEPTHCORRECT) {
+		DEPTHCORRECT = dEPTHCORRECT;
 	}
-	public String getEmergencylevel() {
-		return emergencylevel;
+	public String getEMERGENCYLEVEL() {
+		return EMERGENCYLEVEL;
 	}
-	public void setEmergencylevel(String emergencylevel) {
-		this.emergencylevel = emergencylevel;
+	public void setEMERGENCYLEVEL(String eMERGENCYLEVEL) {
+		EMERGENCYLEVEL = eMERGENCYLEVEL;
 	}
-	public String getCutofftime() {
-		return cutofftime;
+	public String getCUTOFFTIME() {
+		return CUTOFFTIME;
 	}
-	public void setCutofftime(String cutofftime) {
-		this.cutofftime = cutofftime;
+	public void setCUTOFFTIME(String cUTOFFTIME) {
+		CUTOFFTIME = cUTOFFTIME;
 	}
-	public String getLeakregion() {
-		return leakregion;
+	public String getLEAKREGION() {
+		return LEAKREGION;
 	}
-	public void setLeakregion(String leakregion) {
-		this.leakregion = leakregion;
+	public void setLEAKREGION(String lEAKREGION) {
+		LEAKREGION = lEAKREGION;
 	}
-	public String getLeakid2() {
-		return leakid2;
+	public String getLEAKID2() {
+		return LEAKID2;
 	}
-	public void setLeakid2(String leakid2) {
-		this.leakid2 = leakid2;
+	public void setLEAKID2(String lEAKID2) {
+		LEAKID2 = lEAKID2;
 	}
+	
+	
 	
 }
