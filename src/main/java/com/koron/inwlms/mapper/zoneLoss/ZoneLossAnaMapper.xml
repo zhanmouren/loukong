@@ -17,7 +17,43 @@
 	
 	<select id="queryBurstLeakList" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryLeakListDTO" 
 		resultType="com.koron.inwlms.bean.VO.zoneLoss.LeakDetailsVO">
-		select * from gis_leak where 1 = 1
+		select "ID" as id,
+		"WORDERID" as worderid,
+		"PATROLMANID" as patrolmanid,
+		"ISLIGORSH" as isligorsh,
+		"FEATID" as featid,
+		"DIAMETER" as diameter,
+		"MATERIAL" as material,
+		"LOCATION" as location,
+		"LEAK_ID" as leakid,
+		"FOUNDTYPE" as foundtype,
+		"PRESSURE" as pressure,
+		"DEPTH" as depth,
+		"LEAKTIME" as leaktime,
+		"LEAKCOND" as leakcond,
+		"REP_DATE" as repdate,
+		"REPORTED" as reported,
+		"EX_DATE" as exdate,
+		"REPAIE_DATE" as repaiedate,
+		"MAIN_PERSON" as mainperson,
+		"COORDINATE" as coordinate,
+		"REMARK" as remark,
+		"P_CODE" as pcode,
+		"ASSIGNER" as assigner,
+		"DEALRESULT" as dealresult,
+		"LEAK_SHAPE" as leakshape,
+		"LEAKDIA" as leakdia,
+		"LEAK_FLOW" as leakflow,
+		"WATER_LEAK" as waterleak,
+		"YEAR_PIPE" as yearpipe,
+		"DIAMETER_CORRECT" as diametercorrect,
+		"MATERIAL_CORRECT" as materialcorrect,
+		"DEPTH_CORRECT" as depthcorrect,
+		"EMERGENCY_LEVEL" as emergencylevel,
+		"CUTOFF_TIME" as cutofftime,
+		"LEAK_REGION" as leakregion,
+		"LEAK_ID2" as leakid2
+ 		from gis_leak where 1 = 1
 		<if test="startSize !='' and startSize !=null">
 			and "LEAKDIA" &gt;= #{startSize}
 		</if>

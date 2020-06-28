@@ -94,13 +94,13 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	@Override
 	public DrTotalVO queryDrTotalData(SessionFactory factory, QueryALDTO queryALDTO,UserVO userVO,String tenantID) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
-		if(queryALDTO.getInitFlag() == 0) {
-			String result = mapper.getDrReportResult(tenantID);
-			if(StringUtil.isEmpty(result)) return null;
-			Gson jsonValue = new Gson();
-			DrTotalVO drTotalVO = jsonValue.fromJson(result, DrTotalVO.class);
-			return drTotalVO;
-		}	
+//		if(queryALDTO.getInitFlag() == 0) {
+//			String result = mapper.getDrReportResult(tenantID);
+//			if(StringUtil.isEmpty(result)) return null;
+//			Gson jsonValue = new Gson();
+//			DrTotalVO drTotalVO = jsonValue.fromJson(result, DrTotalVO.class);
+//			return drTotalVO;
+//		}	
 		
 		DrTotalVO drTotalVO = new DrTotalVO();
 		//查询所有水表信息
@@ -127,7 +127,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drTotalVO.setDrMeterManageVO(drMeterManageVO);
 		drTotalVO.setDrMeterAnaDataVO(drMeterAnaDataVO);
 		drTotalVO.setDrDealAdviseVO(drDealAdviseVO);
-//		mapper.addDrReportResult(tenantID, JSON.toJSONString(drTotalVO));
+		mapper.addDrReportResult(tenantID, JSON.toJSONString(drTotalVO));
 		return drTotalVO;
 	}
 	
