@@ -170,6 +170,13 @@ public class IndexServiceImpl implements IndexService{
 			      }
 			    }
 			    
+			    for(int i=0;i<indBaseIndicMList.size();i++) {
+			    	if(indBaseIndicMList.get(i).getType().equals("A1")) {
+			    		indBaseIndicMList.get(i).setValue(Math.round(indBaseIndicMList.get(i).getValue()/10)/100.0);
+			    	}
+			    }
+			    
+			    
 				//清空条件
 				//indicatorDTO.setCodes(new ArrayList<String>());
 				
@@ -216,7 +223,7 @@ public class IndexServiceImpl implements IndexService{
 				}
 			    
 				for(int i=0;i<indBalanceMList.size();i++) {
-					indBalanceMList.get(i).setValue(Math.round(indBalanceMList.get(i).getValue()/10000)/100.0);
+					indBalanceMList.get(i).setValue(Math.round(indBalanceMList.get(i).getValue()/100)/100.0);
 			    }
 			
 			    //取出数据
@@ -280,6 +287,116 @@ public class IndexServiceImpl implements IndexService{
 				    }
 			    }
 				
+			    
+			  //分区漏损数据 (月)
+				List<String> zoneLossMList=new ArrayList<>();
+				if(areaType==0) {  //全网
+				//产销差率  月 			
+				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_WNMNRR);		
+				//漏损率   月
+				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_WNMWLR);	
+				//漏损量 月
+				zoneLossMList.add(Constant.APPARENT_INDIC_WNMWL);
+				}else if(areaType==1) { //一级分区
+				//产销差率  月 			
+			     zoneLossMList.add(Constant.ZONE_LOSS_INDIC_FLMNRR);		
+			     //漏损率   月
+				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_FLMMNFTDF);	
+				//漏损量 月
+				zoneLossMList.add(Constant.APPARENT_INDIC_FLMWL);
+				}else if(areaType==2) {  //二级分区
+				//产销差率  月 			
+				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_SLMNRR);		
+				//漏损率   月
+				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_SLMMNFTDF);	
+				//漏损量 月
+				zoneLossMList.add(Constant.APPARENT_INDIC_SLMWL);
+				}else {      //DMA
+				//产销差率  月 			
+				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_DMMNRR);		
+				//漏损率   月
+				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_DMMMNFTDF);	
+				//漏损量 月
+				zoneLossMList.add(Constant.APPARENT_INDIC_DMMWL);				
+				}		
+				indicatorDTO.setCodes(zoneLossMList);
+				indicatorDTO.setTimeType(timeTypeMonth);
+				
+				if(areaType==0) {
+					indZoneLossMList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
+				}
+				else {
+					indZoneLossMList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);
+				}
+				
+				
+				
+				//取出数据
+				if(indZoneLossMList!=null && indZoneLossMList.size()>0) {
+					for(int v=0;v<indZoneLossMList.size();v++) {
+						if(areaType==0) {  //全网
+							//产销差率  月 		
+							 if(Constant.ZONE_LOSS_INDIC_WNMNRR.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("D3");
+							 }
+							//漏损率   月
+							 if(Constant.ZONE_LOSS_INDIC_WNMWLR.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("E3");
+							 }
+							//漏损量 月
+							 if(Constant.APPARENT_INDIC_WNMWL.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("E1");
+							 }
+							}else if(areaType==1) { //一级分区
+							//产销差率  月 		
+							 if(Constant.ZONE_LOSS_INDIC_FLMNRR.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("D3");
+							 }
+							//漏损率   月
+							 if(Constant.ZONE_LOSS_INDIC_FLMMNFTDF.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("E3");
+							 }
+							//漏损量 月
+							 if(Constant.APPARENT_INDIC_FLMWL.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("E1");
+							 }
+							}else if(areaType==2) {  //二级分区
+							//产销差率  月 		
+							 if(Constant.ZONE_LOSS_INDIC_SLMNRR.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("D3");
+							 }
+							//漏损率   月
+							 if(Constant.ZONE_LOSS_INDIC_SLMMNFTDF.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("E3");
+							 }
+							//漏损量 月
+							 if(Constant.APPARENT_INDIC_SLMWL.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("E1");
+							 }
+							}else {      //DMA
+							//产销差率  月 		
+							 if(Constant.ZONE_LOSS_INDIC_DMMNRR.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("D3");
+							 }
+							//漏损率   月
+							 if(Constant.ZONE_LOSS_INDIC_DMMMNFTDF.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("E3");
+							 }
+							//漏损量 月
+							 if(Constant.APPARENT_INDIC_DMMWL.equals(indZoneLossMList.get(v).getCode())) {
+								 indZoneLossMList.get(v).setType("E1");
+							 }
+							}		
+					}
+				}
+				
+				for(int i=0;i<indZoneLossMList.size();i++) {
+					if(indZoneLossMList.get(i).getType().equals("E1")) {
+						indZoneLossMList.get(i).setValue(Math.round(indZoneLossMList.get(i).getValue()/100)/100.0);
+					}
+			    }
+			    
+			    
 				//清空条件
 			//	indicatorDTO.setCodes(new ArrayList<String>());			
 				
@@ -329,7 +446,7 @@ public class IndexServiceImpl implements IndexService{
 				}
 			   
 			    for(int i=0;i<indBalanceYList.size();i++) {
-			    	indBalanceYList.get(i).setValue(Math.round(indBalanceYList.get(i).getValue()/10000)/100.0);
+			    	indBalanceYList.get(i).setValue(Math.round(indBalanceYList.get(i).getValue()/100)/100.0);
 			    }
 				
 				
@@ -393,109 +510,6 @@ public class IndexServiceImpl implements IndexService{
 				}
 				//清空条件
 				
-				//分区漏损数据 (月)
-				List<String> zoneLossMList=new ArrayList<>();
-				if(areaType==0) {  //全网
-				//产销差率  月 			
-				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_WNMNRR);		
-				//漏损率   月
-				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_WNMMNFTDF);	
-				//漏损量 月
-				zoneLossMList.add(Constant.APPARENT_INDIC_WNMWL);
-				}else if(areaType==1) { //一级分区
-				//产销差率  月 			
-			     zoneLossMList.add(Constant.ZONE_LOSS_INDIC_FLMNRR);		
-			     //漏损率   月
-				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_FLMMNFTDF);	
-				//漏损量 月
-				zoneLossMList.add(Constant.APPARENT_INDIC_FLMWL);
-				}else if(areaType==2) {  //二级分区
-				//产销差率  月 			
-				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_SLMNRR);		
-				//漏损率   月
-				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_SLMMNFTDF);	
-				//漏损量 月
-				zoneLossMList.add(Constant.APPARENT_INDIC_SLMWL);
-				}else {      //DMA
-				//产销差率  月 			
-				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_DMMNRR);		
-				//漏损率   月
-				zoneLossMList.add(Constant.ZONE_LOSS_INDIC_DMMMNFTDF);	
-				//漏损量 月
-				zoneLossMList.add(Constant.APPARENT_INDIC_DMMWL);				
-				}		
-				indicatorDTO.setCodes(zoneLossMList);
-				indicatorDTO.setTimeType(timeTypeMonth);
-				
-				if(areaType==0) {
-					indZoneLossMList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
-				}
-				else {
-					indZoneLossMList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);
-				}
-				
-				for(int i=0;i<indZoneLossMList.size();i++) {
-					indZoneLossMList.get(i).setValue(Math.round(indZoneLossMList.get(i).getValue()/10000)/100.0);
-			    }
-				
-				//取出数据
-				if(indZoneLossMList!=null && indZoneLossMList.size()>0) {
-					for(int v=0;v<indZoneLossMList.size();v++) {
-						if(areaType==0) {  //全网
-							//产销差率  月 		
-							 if(Constant.ZONE_LOSS_INDIC_WNMNRR.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("D3");
-							 }
-							//漏损率   月
-							 if(Constant.ZONE_LOSS_INDIC_WNMMNFTDF.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("E3");
-							 }
-							//漏损量 月
-							 if(Constant.APPARENT_INDIC_WNMWL.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("E1");
-							 }
-							}else if(areaType==1) { //一级分区
-							//产销差率  月 		
-							 if(Constant.ZONE_LOSS_INDIC_FLMNRR.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("D3");
-							 }
-							//漏损率   月
-							 if(Constant.ZONE_LOSS_INDIC_FLMMNFTDF.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("E3");
-							 }
-							//漏损量 月
-							 if(Constant.APPARENT_INDIC_FLMWL.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("E1");
-							 }
-							}else if(areaType==2) {  //二级分区
-							//产销差率  月 		
-							 if(Constant.ZONE_LOSS_INDIC_SLMNRR.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("D3");
-							 }
-							//漏损率   月
-							 if(Constant.ZONE_LOSS_INDIC_SLMMNFTDF.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("E3");
-							 }
-							//漏损量 月
-							 if(Constant.APPARENT_INDIC_SLMWL.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("E1");
-							 }
-							}else {      //DMA
-							//产销差率  月 		
-							 if(Constant.ZONE_LOSS_INDIC_DMMNRR.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("D3");
-							 }
-							//漏损率   月
-							 if(Constant.ZONE_LOSS_INDIC_DMMMNFTDF.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("E3");
-							 }
-							//漏损量 月
-							 if(Constant.APPARENT_INDIC_DMMWL.equals(indZoneLossMList.get(v).getCode())) {
-								 indZoneLossMList.get(v).setType("E1");
-							 }
-							}		
-					}
-				}
 				
 				//清空条件
 				//indicatorDTO.setCodes(new ArrayList<String>());
@@ -506,14 +520,14 @@ public class IndexServiceImpl implements IndexService{
 				//产销差率  年			
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_WNYNRR);		
 				//漏损率  年
-				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_WNYMNFTDF);	
+				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_WNYWLR);	
 				//漏损量 年		
 				zoneLossYList.add(Constant.APPARENT_INDIC_WNYWL);
 				}else if(areaType==1) { //一级分区
 				//产销差率  年			
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_FLYNRR);		
 				//漏损率  年
-				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_FLYMNFTDF);	
+				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_FLYWLR);	
 				//漏损量 年		
 				zoneLossYList.add(Constant.APPARENT_INDIC_FLYWL);
 					
@@ -521,14 +535,14 @@ public class IndexServiceImpl implements IndexService{
 				//产销差率  年			
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_SLYNRR);		
 				//漏损率  年
-				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_SLYMNFTDF);	
+				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_SLYWLR);	
 				//漏损量 年		
 				zoneLossYList.add(Constant.APPARENT_INDIC_SLYWL);
 				}else {//DMA
 				//产销差率  年			
 				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_DMYNRR);		
 				//漏损率  年
-				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_DMYMNFTDF);	
+				zoneLossYList.add(Constant.ZONE_LOSS_INDIC_DMYWLR);	
 				//漏损量 年		
 				zoneLossYList.add(Constant.APPARENT_INDIC_DMYWL);
 				}
@@ -543,10 +557,6 @@ public class IndexServiceImpl implements IndexService{
 				else {
 					indZoneLossYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
 				}
-			   
-				for(int i=0;i<indZoneLossYList.size();i++) {
-					indZoneLossYList.get(i).setValue(Math.round(indZoneLossYList.get(i).getValue()/10000)/100.0);
-			    }
 				
 				//取出数据
 				if(indZoneLossYList!=null && indZoneLossYList.size()>0) {
@@ -557,7 +567,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossYList.get(c).setType("D4");
 							 }
 							 //漏损率  年
-							 if(Constant.ZONE_LOSS_INDIC_WNYMNFTDF.equals(indZoneLossYList.get(c).getCode())) {
+							 if(Constant.ZONE_LOSS_INDIC_WNYWLR.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("E4");
 							 }
 							 //漏损量 年		
@@ -571,7 +581,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossYList.get(c).setType("D4");
 							 }
 							 //漏损率  年
-							 if(Constant.ZONE_LOSS_INDIC_FLYMNFTDF.equals(indZoneLossYList.get(c).getCode())) {
+							 if(Constant.ZONE_LOSS_INDIC_FLYWLR.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("E4");
 							 }
 							 //漏损量 年		
@@ -585,7 +595,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossYList.get(c).setType("D4");
 							 }
 							 //漏损率  年
-							 if(Constant.ZONE_LOSS_INDIC_SLYMNFTDF.equals(indZoneLossYList.get(c).getCode())) {
+							 if(Constant.ZONE_LOSS_INDIC_SLYWLR.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("E4");
 							 }
 							 //漏损量 年		
@@ -599,7 +609,7 @@ public class IndexServiceImpl implements IndexService{
 								 indZoneLossYList.get(c).setType("D4");
 							 }
 							 //漏损率  年
-							 if(Constant.ZONE_LOSS_INDIC_DMYMNFTDF.equals(indZoneLossYList.get(c).getCode())) {
+							 if(Constant.ZONE_LOSS_INDIC_DMYWLR.equals(indZoneLossYList.get(c).getCode())) {
 								 indZoneLossYList.get(c).setType("E4");
 							 }
 							 //漏损量 年		
@@ -612,6 +622,12 @@ public class IndexServiceImpl implements IndexService{
 						
 					}
 				}
+				
+				for(int i=0;i<indZoneLossYList.size();i++) {
+					if(indZoneLossYList.get(i).getType().equals("E2")) {
+						indZoneLossYList.get(i).setValue(Math.round(indZoneLossYList.get(i).getValue()/100)/100.0);
+					}
+			    }
 				
 				//--查询上个月的数据，上一年的数据--
 				//清空条件
@@ -652,7 +668,7 @@ public class IndexServiceImpl implements IndexService{
 				}
 			   
 				for(int i=0;i<indZoneLossLMList.size();i++) {
-					indZoneLossLMList.get(i).setValue(Math.round(indZoneLossLMList.get(i).getValue()/10000)/100.0);
+					indZoneLossLMList.get(i).setValue(Math.round(indZoneLossLMList.get(i).getValue()/100)/100.0);
 			    }
 				
 				//清空条件
@@ -695,7 +711,7 @@ public class IndexServiceImpl implements IndexService{
 				}
 				
 				for(int i=0;i<indZoneLossLYList.size();i++) {
-					indZoneLossLYList.get(i).setValue(Math.round(indZoneLossLYList.get(i).getValue()/10000)/100.0);
+					indZoneLossLYList.get(i).setValue(Math.round(indZoneLossLYList.get(i).getValue()/100)/100.0);
 			    }
 				
 				//取出产销差率(当月)
@@ -1046,8 +1062,8 @@ public class IndexServiceImpl implements IndexService{
 			  //抄表量
 			  codes.add(Constant.BALANCE_INDIC_WNMBMC);		
 			}else if(indicatorDTO.getType()==3) {
-			  //产销量	
-			  codes.add(Constant.BALANCE_INDIC_WNMNRW);
+			  //产销差率	
+			  codes.add(Constant.ZONE_LOSS_INDIC_WNMNRR);
 			}else if(indicatorDTO.getType()==4) {
 			  //单位户数mnf	
 			  codes.add(Constant.ZONE_LOSS_INDIC_WNMLCA);
@@ -1063,8 +1079,8 @@ public class IndexServiceImpl implements IndexService{
 			 //抄表量(月)
 			 codes.add(Constant.BALANCE_INDIC_FLMBMC);	
 		   }else if(indicatorDTO.getType()==3) {
-			 //产销量	
-			 codes.add(Constant.BALANCE_INDIC_FLMNRW); 
+			 //产销差率	
+			 codes.add(Constant.ZONE_LOSS_INDIC_FLMNRR); 
 		   }else if(indicatorDTO.getType()==4) {
 			 //单位户数mnf	
 			 codes.add(Constant.ZONE_LOSS_INDIC_FLMLCA);
@@ -1081,8 +1097,8 @@ public class IndexServiceImpl implements IndexService{
 			 //抄表量(月)
 			 codes.add(Constant.BALANCE_INDIC_SLMBMC);	
 			}else if(indicatorDTO.getType()==3) {
-			  //产销量	
-			  codes.add(Constant.BALANCE_INDIC_SLMNRW); 
+			  //产销差率
+			  codes.add(Constant.ZONE_LOSS_INDIC_SLMNRR); 
 			 }else if(indicatorDTO.getType()==4) {
 			  //单位户数mnf	
 			  codes.add(Constant.ZONE_LOSS_INDIC_SLMLCA); 
@@ -1099,8 +1115,8 @@ public class IndexServiceImpl implements IndexService{
 			  //抄表量(月)
 			  codes.add(Constant.BALANCE_INDIC_DMMBMC);	
 			 } else if(indicatorDTO.getType()==3) {
-			  //产销量	
-			  codes.add(Constant.BALANCE_INDIC_DMMNRW); 
+			  //产销差率	
+			  codes.add(Constant.ZONE_LOSS_INDIC_DMMNRR); 
 		     }else if(indicatorDTO.getType()==4) {
 			   //单位户数mnf	
 			  codes.add(Constant.ZONE_LOSS_INDIC_DMMLCA); 
@@ -1337,8 +1353,8 @@ public class IndexServiceImpl implements IndexService{
 				  //抄表量
 				  codes.add(Constant.BALANCE_INDIC_WNMBMC);		
 				}else if(indicatorDTO.getType()==3) {
-				  //产销量	
-				  codes.add(Constant.BALANCE_INDIC_WNMNRW);
+				  //产销差率	
+				  codes.add(Constant.ZONE_LOSS_INDIC_WNMNRR);
 				}else if(indicatorDTO.getType()==4) {
 				  //单位户数mnf	
 				  codes.add(Constant.ZONE_LOSS_INDIC_WNMLCA);
@@ -1354,8 +1370,8 @@ public class IndexServiceImpl implements IndexService{
 				 //抄表量(月)
 				 codes.add(Constant.BALANCE_INDIC_FLMBMC);	
 			   }else if(indicatorDTO.getType()==3) {
-				 //产销量	
-				 codes.add(Constant.BALANCE_INDIC_FLMNRW); 
+				 //产销差率	
+				 codes.add(Constant.ZONE_LOSS_INDIC_FLMNRR); 
 			   }else if(indicatorDTO.getType()==4) {
 				 //单位户数mnf	
 				 codes.add(Constant.ZONE_LOSS_INDIC_FLMLCA);
@@ -1372,8 +1388,8 @@ public class IndexServiceImpl implements IndexService{
 				 //抄表量(月)
 				 codes.add(Constant.BALANCE_INDIC_SLMBMC);	
 				}else if(indicatorDTO.getType()==3) {
-				  //产销量	
-				  codes.add(Constant.BALANCE_INDIC_SLMNRW); 
+				  //产销差率
+				  codes.add(Constant.ZONE_LOSS_INDIC_SLMNRR); 
 				 }else if(indicatorDTO.getType()==4) {
 				  //单位户数mnf	
 				  codes.add(Constant.ZONE_LOSS_INDIC_SLMLCA); 
@@ -1390,8 +1406,8 @@ public class IndexServiceImpl implements IndexService{
 				  //抄表量(月)
 				  codes.add(Constant.BALANCE_INDIC_DMMBMC);	
 				 } else if(indicatorDTO.getType()==3) {
-				  //产销量	
-				  codes.add(Constant.BALANCE_INDIC_DMMNRW); 
+				  //产销差率
+				  codes.add(Constant.ZONE_LOSS_INDIC_DMMNRR); 
 			     }else if(indicatorDTO.getType()==4) {
 				   //单位户数mnf	
 				  codes.add(Constant.ZONE_LOSS_INDIC_DMMLCA); 
@@ -1462,8 +1478,8 @@ public class IndexServiceImpl implements IndexService{
 				  //抄表量
 				  codes.add(Constant.BALANCE_INDIC_WNMBMC);		
 				}else if(indicatorDTO.getType()==3) {
-				  //产销量	
-				  codes.add(Constant.BALANCE_INDIC_WNMNRW);
+				  //产销差率	
+				  codes.add(Constant.ZONE_LOSS_INDIC_WNMNRR);
 				}else if(indicatorDTO.getType()==4) {
 				  //单位户数mnf	
 				  codes.add(Constant.ZONE_LOSS_INDIC_WNMLCA);
@@ -1479,8 +1495,8 @@ public class IndexServiceImpl implements IndexService{
 				 //抄表量(月)
 				 codes.add(Constant.BALANCE_INDIC_FLMBMC);	
 			   }else if(indicatorDTO.getType()==3) {
-				 //产销量	
-				 codes.add(Constant.BALANCE_INDIC_FLMNRW); 
+				 //产销差率	
+				 codes.add(Constant.ZONE_LOSS_INDIC_FLMNRR); 
 			   }else if(indicatorDTO.getType()==4) {
 				 //单位户数mnf	
 				 codes.add(Constant.ZONE_LOSS_INDIC_FLMLCA);
@@ -1497,8 +1513,8 @@ public class IndexServiceImpl implements IndexService{
 				 //抄表量(月)
 				 codes.add(Constant.BALANCE_INDIC_SLMBMC);	
 				}else if(indicatorDTO.getType()==3) {
-				  //产销量	
-				  codes.add(Constant.BALANCE_INDIC_SLMNRW); 
+				  //产销差率	
+				  codes.add(Constant.ZONE_LOSS_INDIC_SLMNRR); 
 				 }else if(indicatorDTO.getType()==4) {
 				  //单位户数mnf	
 				  codes.add(Constant.ZONE_LOSS_INDIC_SLMLCA); 
@@ -1515,8 +1531,8 @@ public class IndexServiceImpl implements IndexService{
 				  //抄表量(月)
 				  codes.add(Constant.BALANCE_INDIC_DMMBMC);	
 				 } else if(indicatorDTO.getType()==3) {
-				  //产销量	
-				  codes.add(Constant.BALANCE_INDIC_DMMNRW); 
+				  //产销差率	
+				  codes.add(Constant.ZONE_LOSS_INDIC_DMMNRR); 
 			     }else if(indicatorDTO.getType()==4) {
 				   //单位户数mnf	
 				  codes.add(Constant.ZONE_LOSS_INDIC_DMMLCA); 

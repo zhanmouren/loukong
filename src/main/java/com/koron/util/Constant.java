@@ -805,6 +805,32 @@ public class Constant {
 	public final static String BALANCE_INDIC_DMYNRW="DMYNRW";
 	
 	/**
+	 *  全网月漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_WNMWLR="WNMWLR";
+
+	/**
+	 *  全网年漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_WNYWLR="WNYWLR";
+	
+	/**
+	 * 一级分区年漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_FLYWLR="FLYWLR";
+	
+	/**
+	 * 二级分区年漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_SLYWLR="SLYWLR";
+	
+	/**
+	 * DMA分区年漏损率编码
+	 */
+	public final static String ZONE_LOSS_INDIC_DMYWLR="DMYWLR";
+
+	
+	/**
 	 *  全网月产销差率编码
 	 */
 	public final static String ZONE_LOSS_INDIC_WNMNRR="WNMNRR";
