@@ -170,7 +170,7 @@ public class LeakageControlController {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
 		try {
-			List<PointTypeVO> list = ADOConnection.runTask(user.getEnv(),phds, "queryPointHistoryData", List.class, alarmMessageVO.getCode());
+			List<PointTypeVO> list = ADOConnection.runTask(user.getEnv(),phds, "queryPointHistoryDataType", List.class, alarmMessageVO.getCode());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 		}catch(Exception e) {

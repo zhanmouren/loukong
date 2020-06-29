@@ -94,7 +94,7 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 		return pointDataList;
 	}
 	
-	@TaskAnnotation("queryPointHistoryData")
+	@TaskAnnotation("queryPointHistoryDataType")
 	@Override
 	public List<PointTypeVO> queryPointHistoryDataType(SessionFactory factory,String code) {
 		PointHistoryDataMapper mapper = factory.getMapper(PointHistoryDataMapper.class);
@@ -108,6 +108,8 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 				indexCode = "MOHFDF";
 			}else if(pointSensor.getStype().equals("Q4") && pointSensor.getSname().equals("反向瞬时")) {
 				indexCode = "MOHRF";
+			}else {
+				continue;
 			}
 			if(pointSensor.getStype().equals("Q4")) {
 				flag = true;
