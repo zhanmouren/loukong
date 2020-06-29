@@ -43,6 +43,14 @@ public class VZoneInfoVO {
 	private String address;
 	
 	private String createTime;
+	
+	/**
+	 * 虚拟分区类型，Non二级in一级
+		NonDMA in一级
+		NonDMA in 二级
+		Non子DMA in DMA
+	 */
+	private String virtualZoneType;
 
 	public String getZoneNo() {
 		return zoneNo;
@@ -106,6 +114,14 @@ public class VZoneInfoVO {
 
 	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
+	}
+
+	public String getVirtualZoneType() {
+		return virtualZoneType;
+	}
+
+	public void setVirtualZoneType(String virtualZoneType) {
+		this.virtualZoneType = virtualZoneType;
 	}
 	
 	

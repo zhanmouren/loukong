@@ -139,6 +139,7 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 			VSZoneListVO vSZoneListVO = new VSZoneListVO();
 			vSZoneListVO.setZoneNo(vZoneInfos.get(i).getZoneNo());
 			vSZoneListVO.setZoneName(vZoneInfos.get(i).getZoneName());
+			vSZoneListVO.setVirtualZoneType(vZoneInfos.get(i).getVirtualZoneType());
 //			vSZoneListVO.setZoneRank(Constant.RANK_F);
 			vSZoneListVO.setpZoneNo(vZoneInfos.get(i).getpZoneNo());
 			vSZoneListVO.setpZoneName(vZoneInfos.get(i).getpZoneName());
