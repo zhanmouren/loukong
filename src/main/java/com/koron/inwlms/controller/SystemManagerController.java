@@ -1803,11 +1803,11 @@ public class SystemManagerController {
     @ApiOperation(value = "查询某年某月特征日接口", notes = "查询某年某月特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String querySpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
-		if(specialDayDTO.getSelectYear()==null || StringUtils.isBlank(specialDayDTO.getSelectYear())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日年份不能为空", Integer.class).toJson();
+		if(specialDayDTO.getStartTime()==null || StringUtils.isBlank(specialDayDTO.getStartTime())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日开始时间不能为空", Integer.class).toJson();
 		}
-		if(specialDayDTO.getSelectMonth()==null || StringUtils.isBlank(specialDayDTO.getSelectMonth())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日月份不能为空", Integer.class).toJson();
+		if(specialDayDTO.getEndTime()==null || StringUtils.isBlank(specialDayDTO.getEndTime())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日结束时间不能为空", Integer.class).toJson();
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		//执行查询一个月特征日的操作

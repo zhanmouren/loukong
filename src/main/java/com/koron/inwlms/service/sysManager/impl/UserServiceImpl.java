@@ -693,14 +693,11 @@ public class UserServiceImpl implements UserService{
 				public List<SpecialDayDTO> querySpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					//获取String年份(开始日期 年月,结束日期年月)
-					 String selectYear="";
-					if(specialDayDTO.getSelectYear()!=null) {
-					   selectYear=specialDayDTO.getSelectYear();
-					}
-					String selectMonth="";
-					if(specialDayDTO.getSelectMonth()!=null) {
-					  selectMonth=specialDayDTO.getSelectMonth();	
-					}				
+					 String selectYear="";	
+					  selectYear=specialDayDTO.getStartTime().substring(0,4);
+					   
+				      String selectMonth="";					
+					  selectMonth=specialDayDTO.getEndTime().substring(5,7);			
 			        String endYear="";
 			        String endMonth="";
 			        //如果选择的月份小于10 
@@ -746,16 +743,9 @@ public class UserServiceImpl implements UserService{
 		        		endMonth=String.valueOf(selectMonthInt);		        	
 		        		endYear=selectYear;
 			        }
-					//封装日期数据
-					if(specialDayDTO.getSelectYear()!=null) {
-						specialDayDTO.setSelectYear(selectYear);
-						specialDayDTO.setEndYear(endYear);
-					}if(specialDayDTO.getSelectMonth()!=null) {
-						specialDayDTO.setSelectMonth(selectMonth);
-						specialDayDTO.setEndMonth(endMonth);
-					}
-					String startDate= specialDayDTO.getSelectYear()+"-"+specialDayDTO.getSelectMonth();
-					String endDate= specialDayDTO.getEndYear()+"-"+specialDayDTO.getEndMonth();
+					
+					String startDate= specialDayDTO.getStartTime().substring(0,7);
+					String endDate= endYear+"-"+endMonth;
 					specialDayDTO.setStartTime(startDate);
 					specialDayDTO.setEndTime(endDate);
 					List<SpecialDayDTO> spList=userMapper.querySpecialDate(specialDayDTO);
