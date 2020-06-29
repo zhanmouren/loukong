@@ -538,12 +538,15 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		return list;
 	}
 	
-	
+	/**
+	 * 查询分区树
+	 */
 	@TaskAnnotation("queryZoneTree")
 	@Override
 	public String queryZoneTree(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
 		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
-		TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		//获取树的该节点信息
 		LongTreeBean node = mapper.getBeanByForeignIdType(queryTreeDTO.getType(),queryTreeDTO.getForeignKey());
 		List<TreeVO> list = new ArrayList<>();
 		if(node == null) {  
@@ -551,20 +554,31 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		}
 		else{
 			List<TreeVO> zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+			list.add(zoneList.get(0));
 			if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+//				for(TreeVO treeZoneVO : zoneList) {
+//					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
+//						list.add(treeZoneVO);
+//					}
+//				}
+				
+			}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
 				for(TreeVO treeZoneVO : zoneList) {
+//					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
+//						list.add(treeZoneVO);
+//					}
 					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
 						list.add(treeZoneVO);
 					}
 				}
-				
-			}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
+			}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_DPZONE)) {
 				for(TreeVO treeZoneVO : zoneList) {
 					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
 						list.add(treeZoneVO);
 					}
 				}
 			}
+			//监测点
 		}
 		
 		

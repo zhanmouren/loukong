@@ -1561,7 +1561,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			ADOConnection.runTask(ps, "updatePolicyScheme",Integer.class,policySchemeDTO);
+			ADOConnection.runTask(user.getEnv(),ps, "updatePolicyScheme",Integer.class,policySchemeDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setDescription("修改成功");
 			
