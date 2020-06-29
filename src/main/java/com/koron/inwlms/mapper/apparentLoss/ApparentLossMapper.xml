@@ -384,7 +384,7 @@
 		group by code;
 	</select> -->
 	
-	<select id="queryFSMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO">
+	<!-- <select id="queryFSMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO">
 		select month as date,sum(flux) as value
 		from gdh_month_flux_c001_jc 
 		where month &gt;= #{qaDTO.startTime} || '' and month  &lt;= #{qaDTO.endTime} || ''
@@ -397,6 +397,13 @@
 			</foreach> 
 		</if>
 		group by month order by month ASC;
+	</select> -->
+	
+	<select id="queryFSMeterMFlow" resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterFlowVO">
+		select round(avg(c."REAL_NUM") :: NUMERIC,2) as value,c."MONTH_ID" as date from ( 
+		(select "CTM_NUM","REAL_NUM","MONTH_ID" from rw_fct_cb where "MONTH_ID" &gt;= #{qaDTO.startTime} 
+		and "MONTH_ID" &lt;= #{qaDTO.endTime}) a 
+		left join (select "CTM_NUM" from rw_fct_ctm where "CLASS_ID" = 2) b on a."CTM_NUM" = b."CTM_NUM") c group by c."MONTH_ID"
 	</select>
 	
 	<select id="queryMMeterReadFlow" resultType="java.lang.Double">

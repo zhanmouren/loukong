@@ -58,6 +58,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.MeterQH;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRTimeUnset;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterReadData;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterReadNumInfo;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisTotalDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MonthFlowData;
 import com.koron.inwlms.bean.VO.apparentLoss.TrendAnalysisData;
@@ -94,13 +95,13 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	@Override
 	public DrTotalVO queryDrTotalData(SessionFactory factory, QueryALDTO queryALDTO,UserVO userVO,String tenantID) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
-//		if(queryALDTO.getInitFlag() == 0) {
-//			String result = mapper.getDrReportResult(tenantID);
-//			if(StringUtil.isEmpty(result)) return null;
-//			Gson jsonValue = new Gson();
-//			DrTotalVO drTotalVO = jsonValue.fromJson(result, DrTotalVO.class);
-//			return drTotalVO;
-//		}	
+		if(queryALDTO.getInitFlag() == 0) {
+			String result = mapper.getDrReportResult(tenantID);
+			if(StringUtil.isEmpty(result)) return null;
+			Gson jsonValue = new Gson();
+			DrTotalVO drTotalVO = jsonValue.fromJson(result, DrTotalVO.class);
+			return drTotalVO;
+		}	
 		
 		DrTotalVO drTotalVO = new DrTotalVO();
 		//查询所有水表信息
@@ -127,7 +128,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drTotalVO.setDrMeterManageVO(drMeterManageVO);
 		drTotalVO.setDrMeterAnaDataVO(drMeterAnaDataVO);
 		drTotalVO.setDrDealAdviseVO(drDealAdviseVO);
-		mapper.addDrReportResult(tenantID, JSON.toJSONString(drTotalVO));
+//		mapper.addDrReportResult(tenantID, JSON.toJSONString(drTotalVO));
 		return drTotalVO;
 	}
 	
@@ -422,7 +423,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	 * @param queryALDTO
 	 * @return
 	 */
-	@TaskAnnotation("queryMeterRunAnalysisList")
+//	@TaskAnnotation("queryMeterRunAnalysisList")
 	@Override
 	public List<MeterRunAnalysisVO> queryMeterRunAnalysisList(SessionFactory factory, QueryALDTO queryALDTO,List<MeterInfo> lists) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
@@ -552,11 +553,11 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	/**
 	 * 查询水表分析图表数据
 	 */
-	@TaskAnnotation("queryMeterRunAnalysisMapData")
+//	@TaskAnnotation("queryMeterRunAnalysisMapData")
 	@Override
-	public MeterAnalysisMapVO queryMeterRunAnalysisMapData(SessionFactory factory, QueryALDTO queryALDTO) {
+	public MeterAnalysisMapVO queryMeterRunAnalysisMapData(SessionFactory factory, QueryALDTO queryALDTO,List<MeterRunAnalysisVO> lists,List<MeterInfo> meterInfos) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
-		List<MeterRunAnalysisVO> queryMeterRunAnalysisList = queryMeterRunAnalysisList(factory, queryALDTO,null);
+//		List<MeterRunAnalysisVO> queryMeterRunAnalysisList = queryMeterRunAnalysisList(factory, queryALDTO,null);
 		MeterAnalysisMapVO meterAnalysisMapVO = new MeterAnalysisMapVO();
 		MeterFlowRateData bigDnData = new MeterFlowRateData();
 		MeterFlowRateData smallDnData = new MeterFlowRateData();
@@ -575,7 +576,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		int bigDnNoFSNorFSum = 0; // 大口径（除消防表）正常流量水表数量
 		int bigDnNoFSHighFSum = 0; // 大口径（除消防表）过载流量水表数量
 		// 口径大于等于50的是大口径水表，否则是小口径
-		for (MeterRunAnalysisVO meterRunAnalysisVO : queryMeterRunAnalysisList) {
+		for (MeterRunAnalysisVO meterRunAnalysisVO : lists) {
 			if(meterRunAnalysisVO.getMeterDn() == null || meterRunAnalysisVO.getMeterDn().equals("合计") ) continue;
 			int meterDn = Integer.parseInt(meterRunAnalysisVO.getMeterDn());
 			if (meterDn >= Constant.METER_DN_SIZE) {
@@ -611,10 +612,10 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		bigDnNoFSData.setHighFlowMeterRate(bigDnNoFSHighFSum*1.0);
 
 		//根据分区编号获取水表信息
-		List<MeterInfo> lists = getMeterInfo(factory,queryALDTO);
+//		List<MeterInfo> lists = getMeterInfo(factory,queryALDTO);
 		List<String> date = new ArrayList<>();
 		List<Double> value = new ArrayList<>();
-		List<MeterFlowVO> queryFSMeterMFlow = mapper.queryFSMeterMFlow(queryALDTO, lists);
+		List<MeterFlowVO> queryFSMeterMFlow = mapper.queryFSMeterMFlow(queryALDTO);
 		for (MeterFlowVO meterFlowVO : queryFSMeterMFlow) {
 			date.add(meterFlowVO.getDate());
 			value.add(meterFlowVO.getValue());
@@ -1285,7 +1286,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drMeterAnaDataVO.setMraLists(mralists);
 
 		// 2、大口径，小口径，大口径（除消防表）的运行情况统计
-		MeterAnalysisMapVO meterAnalysisMapVO = queryMeterRunAnalysisMapData(factory, queryALDTO);
+		MeterAnalysisMapVO meterAnalysisMapVO = queryMeterRunAnalysisMapData(factory, queryALDTO,mralists,lists);
 		drMeterAnaDataVO.setMeterAnalysisMapVO(meterAnalysisMapVO);
 
 		// 3、消防水表读数数据
@@ -2194,6 +2195,20 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				monthId = TimeUtil.getPreMonth(qaDTO.getEndTime());
 			}
 		}
-		System.out.println(2223343);
+	}
+
+	@TaskAnnotation("queryMeterRunAnalysisTotalData")
+	@Override
+	public MeterRunAnalysisTotalDataVO queryMeterRunAnalysisTotalData(SessionFactory factory, QueryALDTO queryALDTO) {
+		//查询所有水表信息
+		List<MeterInfo> meterInfos = queryMeterInfoByZoneNo(factory,"");
+		//运行分析列表数据
+		List<MeterRunAnalysisVO> lists = queryMeterRunAnalysisList(factory,queryALDTO,meterInfos);
+		//运行分析图表数据
+		MeterAnalysisMapVO maps = queryMeterRunAnalysisMapData(factory,queryALDTO,lists,meterInfos);
+		MeterRunAnalysisTotalDataVO meterRunAnalysisTotalDataVO = new MeterRunAnalysisTotalDataVO();
+		meterRunAnalysisTotalDataVO.setLists(lists);
+		meterRunAnalysisTotalDataVO.setMaps(maps);
+		return meterRunAnalysisTotalDataVO;
 	}
 }

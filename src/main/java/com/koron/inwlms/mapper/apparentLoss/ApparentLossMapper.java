@@ -102,7 +102,7 @@ public interface ApparentLossMapper {
 	 * @param lists
 	 * @return
 	 */
-	List<MeterFlowVO> queryFSMeterMFlow(@Param("qaDTO") QueryALDTO queryALDTO,@Param("lists") List<MeterInfo> lists);
+	List<MeterFlowVO> queryFSMeterMFlow(@Param("qaDTO") QueryALDTO queryALDTO);
 
 	/**
 	 * 查询水表月抄表水量

@@ -44,6 +44,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrqlSDnZeroFlowDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlSusUseDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisTotalDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -250,11 +251,11 @@ public class ApparentLossController {
 		return null;
 	}
 	
-	@RequestMapping(value = "/queryMeterRunAnalysisList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询水表运行分析列表数据", notes = "查询水表运行分析列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@RequestMapping(value = "/queryMeterRunAnalysisTotalData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询水表运行分析总数据", notes = "查询水表运行分析总数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryMeterRunAnalysisList(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+	public String queryMeterRunAnalysisTotalData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<MeterRunAnalysisTotalDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, MeterRunAnalysisTotalDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
@@ -287,7 +288,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			List<MeterRunAnalysisVO> data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisList", List.class,queryALDTO,null);
+			MeterRunAnalysisTotalDataVO data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisTotalData", MeterRunAnalysisTotalDataVO.class,queryALDTO);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
@@ -296,51 +297,51 @@ public class ApparentLossController {
 		return msg.toJson();	
 	}
 	
-	@RequestMapping(value = "/queryMeterRunAnalysisMapData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询水表运行分析图表数据", notes = "查询水表运行分析图表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
-    @ResponseBody
-	public String queryMeterRunAnalysisMapData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		MessageBean<MeterAnalysisMapVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, MeterAnalysisMapVO.class);
-		if(queryALDTO.getTimeType() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("时间粒度为空");
-			return msg.toJson();
-		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
-			//传参数值不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("时间粒度数值错误");
-			return msg.toJson();
-		}else if(queryALDTO.getStartTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("开始时间为空");
-			return msg.toJson();
-		}else if(queryALDTO.getEndTime() == null) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_NULL);
-			msg.setDescription("结束时间为空");
-			return msg.toJson();
-		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
-			//开始时间不能大于结束时间
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("开始时间大于结束时间");
-			return msg.toJson();
-   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
-			//参数不正确
-			msg.setCode(Constant.MESSAGE_INT_PARAMS);
-			msg.setDescription("分区等级数值错误");
-			return msg.toJson();
-		}
-		try{
-			MeterAnalysisMapVO data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisMapData", MeterAnalysisMapVO.class,queryALDTO);
-			msg.setData(data);
-    	}catch(Exception e){
-    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
-    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
-    	}
-		return msg.toJson();	
-	}
+//	@RequestMapping(value = "/queryMeterRunAnalysisMapData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+//    @ApiOperation(value = "查询水表运行分析图表数据", notes = "查询水表运行分析图表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+//    @ResponseBody
+//	public String queryMeterRunAnalysisMapData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+//		MessageBean<MeterAnalysisMapVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, MeterAnalysisMapVO.class);
+//		if(queryALDTO.getTimeType() == null) {
+//			//参数不正确
+//			msg.setCode(Constant.MESSAGE_INT_NULL);
+//			msg.setDescription("时间粒度为空");
+//			return msg.toJson();
+//		}else if(queryALDTO.getTimeType() < Constant.TIME_TYPE_M || queryALDTO.getTimeType() > Constant.TIME_TYPE_Y) {
+//			//传参数值不正确
+//			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+//			msg.setDescription("时间粒度数值错误");
+//			return msg.toJson();
+//		}else if(queryALDTO.getStartTime() == null) {
+//			//参数不正确
+//			msg.setCode(Constant.MESSAGE_INT_NULL);
+//			msg.setDescription("开始时间为空");
+//			return msg.toJson();
+//		}else if(queryALDTO.getEndTime() == null) {
+//			//参数不正确
+//			msg.setCode(Constant.MESSAGE_INT_NULL);
+//			msg.setDescription("结束时间为空");
+//			return msg.toJson();
+//		}else if(queryALDTO.getStartTime() > queryALDTO.getEndTime()) {
+//			//开始时间不能大于结束时间
+//			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+//			msg.setDescription("开始时间大于结束时间");
+//			return msg.toJson();
+//   	 	}else if(queryALDTO.getZoneRank() != null && (queryALDTO.getZoneRank() < Constant.RANK_F || queryALDTO.getZoneRank() > Constant.RANK_T)) {
+//			//参数不正确
+//			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+//			msg.setDescription("分区等级数值错误");
+//			return msg.toJson();
+//		}
+//		try{
+//			MeterAnalysisMapVO data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisMapData", MeterAnalysisMapVO.class,queryALDTO);
+//			msg.setData(data);
+//    	}catch(Exception e){
+//    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+//    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+//    	}
+//		return msg.toJson();	
+//	}
 	
 	@RequestMapping(value = "/downloadMeterRunAnalysisList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载水表运行分析列表数据", notes = "下载水表运行分析列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")

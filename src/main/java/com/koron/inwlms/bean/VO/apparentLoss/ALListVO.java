@@ -12,6 +12,11 @@ public class ALListVO {
 	 * 分区编号
 	 */
 	private String zoneNo;
+	
+	/**
+	 * 分区名称
+	 */
+	private String zoneName;
 	/**
 	 * 表观漏损量
 	 */
@@ -136,6 +141,14 @@ public class ALListVO {
 
 	public void setOverdueMetersRate(Double overdueMetersRate) {
 		this.overdueMetersRate = overdueMetersRate;
+	}
+
+	public String getZoneName() {
+		return zoneName;
+	}
+
+	public void setZoneName(String zoneName) {
+		this.zoneName = zoneName;
 	}
 	
 }

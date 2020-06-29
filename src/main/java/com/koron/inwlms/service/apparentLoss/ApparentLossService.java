@@ -26,6 +26,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrqlSusUseDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisTotalDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -76,7 +77,7 @@ public interface ApparentLossService {
 	 * @param queryALDTO
 	 * @return
 	 */
-	MeterAnalysisMapVO queryMeterRunAnalysisMapData(SessionFactory factory, QueryALDTO queryALDTO);
+	MeterAnalysisMapVO queryMeterRunAnalysisMapData(SessionFactory factory, QueryALDTO queryALDTO,List<MeterRunAnalysisVO> lists,List<MeterInfo> meterInfos);
 	
 	/**
 	 * 查询诊断报告总体数据
@@ -173,4 +174,12 @@ public interface ApparentLossService {
 	 * @return
 	 */
 	PageListVO<List<DrqlSDnLHFlowDataListVO>> queryDrqlSDnLHFlowDataList(SessionFactory factory, QueryALListDTO qaDTO);
+
+	/**
+	 * 水表运行分析总接口（图跟列表）
+	 * @param factory
+	 * @param queryALDTO
+	 * @return
+	 */
+	MeterRunAnalysisTotalDataVO queryMeterRunAnalysisTotalData(SessionFactory factory, QueryALDTO queryALDTO);
 }
