@@ -3,6 +3,7 @@ package com.koron.inwlms.mapper.zoneLoss;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
 
@@ -54,4 +55,12 @@ public interface ZoneLossAnaMapper {
 	 * @return
 	 */
 	int countBurstLeak(QueryLeakListDTO queryLeakListDTO);
+	
+	/**
+	 * 通过分区编码获取第一级到当前级的编码集合
+	 * @param zoneNo
+	 * @return
+	 */
+	@Select("select foreignkey from tbltree where ((select seq from tbltree where foreignkey = #{zoneNo}) & ~((1::int8 << (62 - parentmask-mask))-1)) = seq and type = 2 order by seq")
+	List<String> queryParentsCodeByNo(@Param("zoneNo") String zoneNo);
 }

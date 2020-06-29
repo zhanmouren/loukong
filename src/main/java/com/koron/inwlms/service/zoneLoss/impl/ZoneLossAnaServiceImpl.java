@@ -319,9 +319,19 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 	@Override
 	public PageListVO<List<SZoneLossListVO>> querySZoneLossList(SessionFactory factory, QuerySZoneLossListDTO querySZoneLossListDTO) {
 		//查询二级分区信息
+		ZoneLossAnaMapper zlMapper = factory.getMapper(ZoneLossAnaMapper.class);
 		GisZoneServiceImpl gzsImpl = new GisZoneServiceImpl();
 		List<String> zoneNos = new ArrayList<>();
 		List<ZoneInfo> zoneInfos = gzsImpl.queryZoneNosByRank(factory, Constant.RANK_S,querySZoneLossListDTO.getZoneNo());
+		for (ZoneInfo zoneInfo : zoneInfos) {
+			List<String> pLists = zlMapper.queryParentsCodeByNo(zoneInfo.getZoneNo());
+			if(pLists != null && pLists.size() >1) {
+				String pZoneNo =  pLists.get(pLists.size()-2);
+				String pZoneName = gzsImpl.queryZoneNameByNo(factory, pZoneNo);
+				zoneInfo.setpZoneNo(pZoneNo);
+				zoneInfo.setpZoneName(pZoneName);
+			}
+		}
 		//判空，及判断分区
 		if(zoneInfos == null || zoneInfos.size()<(querySZoneLossListDTO.getPage()-1)*querySZoneLossListDTO.getPageCount()) return null;
 		for(ZoneInfo zoneInfo : zoneInfos) {

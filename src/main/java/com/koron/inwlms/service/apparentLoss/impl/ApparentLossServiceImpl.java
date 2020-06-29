@@ -220,6 +220,14 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			alLists = mapper.queryYALList(queryALListDTO, lists);
 			
 		}
+		for (ALListVO alListVO : alLists) {
+			for (ZoneInfo zoneInfo : lists) {
+				if(alListVO.getZoneNo().equals(zoneInfo.getZoneNo())) {
+					alListVO.setZoneName(zoneInfo.getZoneName());
+					break;
+				}
+			}
+		}
 		// 返回数据结果
 		PageListVO<List<ALListVO>> result = new PageListVO<>();
 		result.setDataList(alLists);
@@ -333,14 +341,14 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		List<String> mmrOMRzoneName = new ArrayList<>();
 		List<Double> mmrOMRzoneDatas = new ArrayList<>();
 		for (ALListVO alListVO : dataList) {
-			zrALzoneName.add(alListVO.getZoneNo());
-			zrPCAALzoneName.add(alListVO.getZoneNo());
-			zrPALzoneName.add(alListVO.getZoneNo());
-			zrALIzoneName.add(alListVO.getZoneNo());
-			mmrPNMRzoneName.add(alListVO.getZoneNo());
-			mmrMRRzoneName.add(alListVO.getZoneNo());
-			mmrNMRTRzoneName.add(alListVO.getZoneNo());
-			mmrOMRzoneName.add(alListVO.getZoneNo());
+			zrALzoneName.add(alListVO.getZoneName());
+			zrPCAALzoneName.add(alListVO.getZoneName());
+			zrPALzoneName.add(alListVO.getZoneName());
+			zrALIzoneName.add(alListVO.getZoneName());
+			mmrPNMRzoneName.add(alListVO.getZoneName());
+			mmrMRRzoneName.add(alListVO.getZoneName());
+			mmrNMRTRzoneName.add(alListVO.getZoneName());
+			mmrOMRzoneName.add(alListVO.getZoneName());
 			zrALzoneDatas.add(alListVO.getAL());
 			zrPCAALzoneDatas.add(alListVO.getPerCustomerAccAL());
 			zrPALzoneDatas.add(alListVO.getPercentAL());
