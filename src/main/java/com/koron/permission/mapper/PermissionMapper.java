@@ -4,6 +4,7 @@ package com.koron.permission.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.koron.ebs.mybatis.SessionFactory;
 import org.springframework.stereotype.Repository;
 
@@ -29,6 +30,7 @@ import com.koron.permission.bean.VO.TblAppOPVO;
 import com.koron.permission.bean.VO.TblAppVO;
 import com.koron.permission.bean.VO.TblMenusVO;
 import com.koron.permission.bean.VO.TblOpCodeVO;
+import com.koron.permission.bean.VO.TblOperateVO;
 import com.koron.permission.bean.VO.TblRoleMenusVO;
 import com.koron.permission.bean.VO.TblRoleVO;
 import com.koron.permission.bean.VO.TblRoleZoneVO;
@@ -156,4 +158,15 @@ public interface PermissionMapper {
     
     //加载分区树以及打勾的权限
     public List<TblRoleZoneVO> queryRoleZone(TblRoleZoneDTO tblRoleZoneDTO);
+    
+    //查询所有的菜单节点
+    @Select("select tbloperation.code as opCode,tbloperation.name as opName,tbloperation.flag as opFlag,tbloperation.status as opStatus,"
+    		+ " tbltree.mask,tbltree.parentmask,tbltree.childmask "
+    		+ " from tbloperation  left join tbltree on tbltree.foreignkey=tbloperation.code where tbloperation.flag=1 and tbltree.type=1 order by tbltree.seq")
+    public List<TblOperateVO>  queryAllOperation();
+    
+    //获取该节点直接下级节点菜单
+    @Select("select * from tbltree left join  tbloperation on tbltree.foreignkey=tbloperation.code where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
+            + " and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type} and tbloperation.flag=1")
+    List<LongTreeBean> getNextMenuChildren(LongTreeBean bean);
 }

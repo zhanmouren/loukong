@@ -67,7 +67,7 @@ public interface TreeMapper {
     		"	left join  tbloperation as  tblop on tblroleop.operation=tblop.code\r\n" + 
     		"	left join tbltree  on tbltree.foreignkey= tblop.code"
     		+ " where (tbltree.seq & ~((1::int8 << (62 - #{bean.parentMask}-#{bean.mask}))-1)) = #{bean.seq} and tblop.status=0 and tblroleop.role=#{roleCode}"
-            + "and (tbltree.seq & ((1::int8 << (62 - #{bean.parentMask}-#{bean.mask} - #{bean.childMask}))-1)) = 0 and tbltree.type = #{bean.type}"
+            + " and (tbltree.seq & ((1::int8 << (62 - #{bean.parentMask}-#{bean.mask} - #{bean.childMask}))-1)) = 0 and tbltree.type = #{bean.type}"
             )
     List<TblRoleMenusVO> getMenuAndOpChildren(@Param("bean") LongTreeBean bean,@Param("roleCode") String roleCode);
     

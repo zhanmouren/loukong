@@ -44,6 +44,7 @@ import com.koron.permission.bean.VO.TblAppOPVO;
 import com.koron.permission.bean.VO.TblAppVO;
 import com.koron.permission.bean.VO.TblMenusVO;
 import com.koron.permission.bean.VO.TblOpCodeVO;
+import com.koron.permission.bean.VO.TblOperateVO;
 import com.koron.permission.bean.VO.TblOperationVO;
 import com.koron.permission.bean.VO.TblRoleMenusVO;
 import com.koron.permission.bean.VO.TblRoleVO;
@@ -720,6 +721,19 @@ public class PermissionServiceImpl implements PermissionService{
 							finalList.get(i).setOpCodeNameList(finalOpList);
 							
 						}
+						//查询该菜单所有的操作节点
+						List<TblRoleMenusVO> allopList=treeMapper.getAllMenuAndOp(longTreeBean);
+						if(allopList!=null && allopList.size()>0 && !"".equals(allopList.get(0).getOpOwn())) {
+							String[] strArrnew = allopList.get(0).getOpOwn().split(";");
+							List<String> allOpList=new ArrayList<>();
+							for(int f=0;f<strArrnew.length;f++) {
+								allOpList.add(strArrnew[f]);
+							}
+							finalList.get(i).setOpOwnList(allOpList);
+							
+						}else {
+							finalList.get(i).setOpOwnList(new  ArrayList<>());
+						}
 					}
 				}
 		     }
@@ -751,6 +765,104 @@ public class PermissionServiceImpl implements PermissionService{
 				}
 			}		
 			return roleZoneList;
+		}
+		
+		//添加所有菜单节点
+		@TaskAnnotation("addAllOperate")
+		@Override
+		public Integer addAllOperate(SessionFactory factory) {
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);
+			TreeMapper treeMapper = factory.getMapper(TreeMapper.class);
+			//查询所有的菜单节点
+			List<TblOperateVO> tblOperateVOList=mapper.queryAllOperation();
+			if(tblOperateVOList!=null && tblOperateVOList.size()>0) {
+				for(int i=0;i<tblOperateVOList.size();i++) {				
+					LongTreeBean node=treeMapper.getBeanByForeignIdType(1,tblOperateVOList.get(i).getOpCode());
+					if(node!=null) {
+						//获取该节点下是否存在菜单
+						 List<LongTreeBean> treeList=mapper.getNextMenuChildren(node);
+						 
+						 List<TblOperationDTO> tblOperationList=new ArrayList<>();
+						//添加查询节点 
+						 TblOperationDTO tblOperationq=new TblOperationDTO();
+						 tblOperationq.setOpFlag(2);
+						 tblOperationq.setOpStatus(0);
+						 tblOperationq.setForeignkey(tblOperateVOList.get(i).getOpCode());
+						 tblOperationq.setOpName("L102160004");
+						 tblOperationq.setCreator("admin");
+						 
+						 tblOperationList.add(tblOperationq);
+						 if(treeList!=null && treeList.size()>1) {
+							 
+						 }else {						
+							 
+							 //添加查询，添加，删除，修改接口
+							 TblOperationDTO tblOperationa=new TblOperationDTO();
+							 tblOperationa.setOpFlag(2);
+							 tblOperationa.setOpStatus(0);
+							 tblOperationa.setForeignkey(tblOperateVOList.get(i).getOpCode());
+							 tblOperationa.setOpName("L102160001");
+							 tblOperationa.setCreator("admin");
+							 
+							 TblOperationDTO tblOperatione=new TblOperationDTO();
+							 tblOperatione.setOpFlag(2);
+							 tblOperatione.setOpStatus(0);
+							 tblOperatione.setForeignkey(tblOperateVOList.get(i).getOpCode());
+							 tblOperatione.setOpName("L102160002");
+							 tblOperatione.setCreator("admin"); 
+							 
+							 TblOperationDTO tblOperationd=new TblOperationDTO();
+							 tblOperationd.setOpFlag(2);
+							 tblOperationd.setOpStatus(0);
+							 tblOperationd.setForeignkey(tblOperateVOList.get(i).getOpCode());
+							 tblOperationd.setOpName("L102160003");
+							 tblOperatione.setCreator("admin");
+							 
+							 tblOperationList.add(tblOperationa);
+							 tblOperationList.add(tblOperatione);
+							 tblOperationList.add(tblOperationd);
+						 }	
+						 for(int y=0;y<tblOperationList.size();y++) {
+							 addOperateNew(factory,tblOperationList.get(y));
+						 }
+					}
+				}
+			}
+			return 1;			
+		}
+		
+		public static Integer addOperateNew(SessionFactory factory, TblOperationDTO tblOperationDTO) {
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
+			//生成code
+			String opCode=RandomCodeUtil.getUUID32();
+			tblOperationDTO.setOpCode(opCode);
+		    //先生成操作节点
+			Integer addRes=mapper.addOperate(tblOperationDTO);
+			if(addRes==-1) {
+				addRes=-2;
+				return addRes;
+			}
+			//树状关系中插入一条记录
+			TreeService treeService  =new TreeService();
+			 //组装child,主要两个参数，一个type，一个是foreignkey	
+			  LongTreeBean child=new LongTreeBean();
+			  child.setForeignkey(opCode);
+			  child.setType(1);
+			  int type=1;
+			  LongTreeBean parent= treeService.getNode(factory,1,tblOperationDTO.getForeignkey());
+			  if(parent==null) {
+				  addRes=-3;
+				  return addRes;
+			  }else {
+				  //生成子节点
+			      LongTreeBean longTreeBean =treeService.add(factory, parent, child);
+			      if(longTreeBean==null) {
+			    	  addRes=-4;
+			      }else {
+			    	  addRes=1; 
+			      }
+			  }
+			  return addRes;
 		}
 		
 

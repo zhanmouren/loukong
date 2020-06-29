@@ -129,5 +129,8 @@ public interface PermissionService {
     //加载分区树(打勾权限)
     public List<TblRoleZoneVO> queryRoleZone(SessionFactory factory,TblRoleZoneDTO tblRoleZoneDTO);
     
+    //批量生成操作子节点
+    public Integer addAllOperate(SessionFactory factory);
+    
     
 }

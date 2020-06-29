@@ -1326,6 +1326,35 @@ public class PermissionController {
 			     return msg.toJson();
 			}
 			
+	
+			/*
+		     * date:2020-06-01
+		     * function:通过此接口批量生成操作节点。
+		     * author:xiaozhan
+		     */
+			
+			@RequestMapping(value = "/addAllOperate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+		    @ApiOperation(value = "批量生成操作节点接口", notes = "批量生成操作节点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+		    @ResponseBody
+			public String addAllOperate(@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+				 MessageBean<List> msg = MessageBean.create(MESSAGE_INT_SUCCESS, MESSAGE_STRING_SUCCESS, List.class);	       
+				  try{				
+					  Integer addRes=ADOConnection.runTask(user.getEnv(),permissionService, "addAllOperate", Integer.class);	
+					  if(addRes==1) {			 
+						    msg.setCode(MESSAGE_INT_SUCCESS); 
+							msg.setDescription("批量添加操作节点成功"); 				
+					   }else {
+					        msg.setCode(MESSAGE_INT_ADDERROR);
+					        msg.setDescription("批量添加操作节点失败"); 
+					   }		  
+			        }catch(Exception e){
+			        	msg.setCode(MESSAGE_INT_ERROR);
+			            msg.setDescription("批量添加失败");
+			        }
+				
+			     return msg.toJson();
+			}
+			
 		   
 	   
 
