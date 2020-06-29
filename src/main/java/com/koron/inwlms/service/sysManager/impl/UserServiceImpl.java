@@ -692,60 +692,21 @@ public class UserServiceImpl implements UserService{
 				@Override
 				public List<SpecialDayDTO> querySpecialDate(SessionFactory factory, SpecialDayDTO specialDayDTO) {					
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
-					//获取String年份(开始日期 年月,结束日期年月)
-					 String selectYear="";	
-					  selectYear=specialDayDTO.getStartTime().substring(0,4);
-					   
-				      String selectMonth="";					
-					  selectMonth=specialDayDTO.getEndTime().substring(5,7);			
-			        String endYear="";
-			        String endMonth="";
-			        //如果选择的月份小于10 
-			        if(Integer.valueOf(selectMonth)<10) {				        	
-			        	if(Integer.valueOf(selectMonth)==9) {
-			        		//当前选择月
-			        		selectMonth="09";
-			        		//当前选择年
-			        		selectYear=selectYear;
-			        		//下个月
-			        		endMonth="10";			        	
-			        		endYear=selectYear;
-			        	}else {
-			        		//当前选择月
-			        		selectMonth="0"+selectMonth;
-			        		//当前选择年	
-			        		selectYear=selectYear;
-			        		//下一个月份加1
-			        		int selectMonthInt=Integer.parseInt(selectMonth)+1;
-			        		//转化为String
-			        		endMonth="0"+String.valueOf(selectMonthInt);
-			        		endYear=selectYear;
-			        	}		        	 
-			        }else if(Integer.valueOf(selectMonth)==12){
-			        	//当前选择月
-		        		selectMonth="12";
-		        		//当前选择年
-		        		selectYear=selectYear;
-		        		//下个月
-		        		endMonth="01";
-		        		//下一年
-		        		int endYearInt=Integer.parseInt(selectYear)+1;
-		        		//转化为String
-		        		endYear=String.valueOf(endYearInt);
-			        }else {
-			        	//当前选择月
-		        		selectMonth=selectMonth;
-		        		//当前选择年
-		        		selectYear=selectYear;
-		        		//下一个月份加1
-		        		int selectMonthInt=Integer.parseInt(selectMonth)+1;
-		        		//转化为String
-		        		endMonth=String.valueOf(selectMonthInt);		        	
-		        		endYear=selectYear;
-			        }
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+					String endDate="";
+					try {
+					String currentMonth = specialDayDTO.getStartTime().substring(0,7);
+					Date currentDate = sdf.parse(currentMonth);
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(currentDate);
+					//java 根据当前月的"yyyy-MM"获得下一个月“yyyy-MM”
+					calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH)+1);
+					endDate=sdf.format(calendar.getTime());
+					} catch (Exception e) {
+					 e.printStackTrace();
+					}
 					
-					String startDate= specialDayDTO.getStartTime().substring(0,7);
-					String endDate= endYear+"-"+endMonth;
+					String startDate= specialDayDTO.getStartTime().substring(0,7);				  
 					specialDayDTO.setStartTime(startDate);
 					specialDayDTO.setEndTime(endDate);
 					List<SpecialDayDTO> spList=userMapper.querySpecialDate(specialDayDTO);
