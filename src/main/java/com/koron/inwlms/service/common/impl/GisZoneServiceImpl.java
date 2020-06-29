@@ -351,15 +351,10 @@ public class GisZoneServiceImpl implements GisZoneService {
 	@TaskAnnotation("getZoneRankByNo")
 	@Override
 	public Integer getZoneRankByNo(SessionFactory factory, String zoneNo) {
-		if(zoneNo.contains("FL")) {
-			return 1;
-		}else if(zoneNo.contains("SL")) {
-			return 2;
-		}else if(zoneNo.contains("DM")) {
-			return 3;
-		}else {
-			return 0;
-		}
+		GisMapper mapper = factory.getMapper(GisMapper.class);
+		Integer rank = mapper.queryZoneRankByNo(zoneNo);
+		if(rank == null) return 0;
+		return rank;
 	}
 	
 	/**

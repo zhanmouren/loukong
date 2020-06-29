@@ -89,4 +89,11 @@ public interface GisMapper {
 	 */
 	List<GisConfigDetVO> queryGisMapConfig(@Param("moduleNo") String moduleNo);
 	
+	/**
+	 * 根据分区编号查询等级
+	 * @param zoneNo
+	 * @return
+	 */
+	Integer queryZoneRankByNo(@Param("zoneNo") String zoneNo);
+	
 }

@@ -227,7 +227,7 @@ public class WaterBalanceAnaServiceImpl implements WaterBalanceAnaService {
 		//没有子分区，返回
 		if(lists == null || lists.size() == 0) return null;
 		//获取全网水平衡指标编码
-		Integer zoneRank = gisZoneServiceImpl.getZoneRankByNo(factory, zoneNo)+1;
+		int zoneRank = gisZoneServiceImpl.getZoneRankByNo(factory, zoneNo)+1;
 		queryZoneWBLossDTO.setZoneRank(zoneRank);
 		List<String> codes = getZoneWBIndicCodes(queryZoneWBLossDTO.getTimeType(),zoneRank);
 		List<ZoneWBLossVO> result = new ArrayList<>();
