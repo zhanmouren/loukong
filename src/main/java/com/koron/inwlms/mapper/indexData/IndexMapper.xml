@@ -34,6 +34,18 @@
 		order by round( a.value/c.precision :: NUMERIC, 2 ) desc
 	</select>
 	
+	<select id="queryZoneFL" resultType="com.koron.inwlms.bean.VO.common.IndicatorVO"> 
+		select *,p_code as code
+		from gis_exist_zone
+		where rank = 'W101640001'
+	</select>
+	
+	<select id="queryZoneSL" resultType="com.koron.inwlms.bean.VO.common.IndicatorVO"> 
+		select *,p_code as code
+		from gis_exist_zone
+		where rank = 'W101640002'
+	</select>
+	
 	<select id="queryWBBaseIndicData" parameterType="com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO" 
 	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
 		select 

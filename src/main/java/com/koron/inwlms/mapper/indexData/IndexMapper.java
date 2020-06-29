@@ -36,6 +36,21 @@ public interface IndexMapper {
 	 */
 	List<IndicatorVO> queryWBBaseIndicData(IndicatorNewDTO indicatorDTO);
 	
+	
+	/**
+	 * 查询全网下的一级分区
+	 * @param indicatorDTO
+	 * @return
+	 */
+	List<IndicatorVO> queryZoneFL();
+	
+	/**
+	 * 查询全网下的二级分区
+	 * @param indicatorDTO
+	 * @return
+	 */
+	List<IndicatorVO> queryZoneSL();
+	
 	/**
 	 * 查询分区漏损指标数据
 	 * @param indicatorDTO

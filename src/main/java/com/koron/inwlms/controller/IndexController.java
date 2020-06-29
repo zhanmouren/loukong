@@ -26,6 +26,7 @@ import com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO;
 import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
+import com.koron.inwlms.bean.VO.indexData.AreaInfoListVO;
 import com.koron.inwlms.bean.VO.indexData.InfoPageListVO;
 import com.koron.inwlms.bean.VO.indexData.MultParamterIndicatorVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
@@ -524,13 +525,13 @@ public class IndexController {
 		 if(indicatorDTO.getAreaType() == 0){
 				indicatorDTO.setZoneCodes(null);
 		}
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<AreaInfoListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AreaInfoListVO.class);	       
 		  try{
-			  List<IndicatorVO>  infoPageListList=ADOConnection.runTask(user.getEnv(),indexService, "queryAreaRankInfo", List.class,indicatorDTO);		 
-				  if(infoPageListList!=null && infoPageListList.size()>0) {
+			  AreaInfoListVO  infoPageList=ADOConnection.runTask(user.getEnv(),indexService, "queryAreaRankInfo", AreaInfoListVO.class,indicatorDTO);		 
+				  if(infoPageList!=null) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("查询分区下各个分区排名接口成功");
-				    msg.setData(infoPageListList);
+				    msg.setData(infoPageList);
 				  }
 				  else {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -572,13 +573,13 @@ public class IndexController {
 		 if(indicatorDTO.getAreaType() == 0){
 				indicatorDTO.setZoneCodes(null);
 		}
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		 MessageBean<AreaInfoListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AreaInfoListVO.class);	       
 		  try{
-			  List<IndicatorVO>  infoPageListList=ADOConnection.runTask(user.getEnv(),indexService, "queryChildAreaRankInfo", List.class,indicatorDTO);		 
-				  if(infoPageListList!=null && infoPageListList.size()>0) {
+			  AreaInfoListVO  infoPageList=ADOConnection.runTask(user.getEnv(),indexService, "queryChildAreaRankInfo", AreaInfoListVO.class,indicatorDTO);		 
+				  if(infoPageList!=null) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 				    msg.setDescription("查询分区下各个子分区排名接口成功");
-				    msg.setData(infoPageListList);
+				    msg.setData(infoPageList);
 				  }
 				  else {
 			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);

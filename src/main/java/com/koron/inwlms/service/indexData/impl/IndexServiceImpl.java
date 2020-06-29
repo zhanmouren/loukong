@@ -20,6 +20,7 @@ import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
+import com.koron.inwlms.bean.VO.indexData.AreaInfoListVO;
 import com.koron.inwlms.bean.VO.indexData.InfoCompleteRateVO;
 import com.koron.inwlms.bean.VO.indexData.InfoPageListVO;
 import com.koron.inwlms.bean.VO.indexData.MultParamterIndicatorVO;
@@ -1327,7 +1328,7 @@ public class IndexServiceImpl implements IndexService{
 		//查询分区排名  2020-04-29
 		@TaskAnnotation("queryAreaRankInfo")
 		@Override
-		public List<IndicatorVO>  queryAreaRankInfo(SessionFactory factory, IndicatorNewDTO indicatorDTO) {
+		public AreaInfoListVO<List<IndicatorVO>>  queryAreaRankInfo(SessionFactory factory, IndicatorNewDTO indicatorDTO) {
 			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
 			//判断是什么类型，一级分区还是二级分区	
 			int areaType = indicatorDTO.getAreaType()+1;
@@ -1420,7 +1421,14 @@ public class IndexServiceImpl implements IndexService{
 			 indicatorDTO.setTimeType(timeTypeMonth);
 			//查询数据
 			 List<IndicatorVO> currentIndicatorList=new ArrayList<>();
+			 List<String> zoneNo=new ArrayList<>();
+			 AreaInfoListVO<List<IndicatorVO>> result=new AreaInfoListVO<>();
 			 if(areaType == 1) {
+				 List<IndicatorVO> zoneList = indicatorMapper.queryZoneFL();
+				 
+					for(int i = 0;i < zoneList.size(); i++) {
+						zoneNo.add(zoneList.get(i).getCode());
+					}
 				 if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
 					 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 				 }else{
@@ -1436,23 +1444,26 @@ public class IndexServiceImpl implements IndexService{
 				 }
 				 else{
 					List<TreeZoneVO> zoneList=indicatorMapper.queryAllZone(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
-					List<String> zoneNo=new ArrayList<>();
 					for(int i = 0;i < zoneList.size(); i++) {
-						zoneNo.add(zoneList.get(i).getCode());
+						if(!zoneList.get(i).getCode().equals(indicatorDTO.getZoneCodes().get(0)) && zoneList.get(i).getRank().equals("W101640002")) {
+							zoneNo.add(zoneList.get(i).getCode());
+						}
 					}
+					
 					indicatorDTO.setZoneCodes(zoneNo);
 					currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 				 }
 				 
 			 }
-			 
-			return currentIndicatorList;
+			 result.setZoneList(zoneNo);
+			 result.setDataList(currentIndicatorList);
+			return result;
 		}
 		
 		//查询子分区排名  2020-06-11
 		@TaskAnnotation("queryChildAreaRankInfo")
 		@Override
-		public List<IndicatorVO>  queryChildAreaRankInfo(SessionFactory factory, IndicatorNewDTO indicatorDTO) {
+		public AreaInfoListVO<List<IndicatorVO>>  queryChildAreaRankInfo(SessionFactory factory, IndicatorNewDTO indicatorDTO) {
 			IndexMapper indicatorMapper = factory.getMapper(IndexMapper.class);
 			//判断是什么类型，一级分区还是二级分区	
 			int areaType = indicatorDTO.getAreaType()+2;
@@ -1545,7 +1556,16 @@ public class IndexServiceImpl implements IndexService{
 			 indicatorDTO.setTimeType(timeTypeMonth);
 			//查询数据
 			 List<IndicatorVO> currentIndicatorList=new ArrayList<>();
+			 
+			 AreaInfoListVO<List<IndicatorVO>> result=new AreaInfoListVO<>();
+			 List<String> zoneNo=new ArrayList<>();
 			 if(areaType == 2) {
+				 List<IndicatorVO> zoneList = indicatorMapper.queryZoneSL();
+				 
+					for(int i = 0;i < zoneList.size(); i++) {
+						zoneNo.add(zoneList.get(i).getCode());
+					}
+				 
 				 if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
 					 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 				 }else{
@@ -1561,17 +1581,18 @@ public class IndexServiceImpl implements IndexService{
 				 }
 				 else{
 					List<TreeZoneVO> zoneList=indicatorMapper.queryAllZone(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
-					List<String> zoneNo=new ArrayList<>();
 					for(int i = 0;i < zoneList.size(); i++) {
-						zoneNo.add(zoneList.get(i).getCode());
+						if(!zoneList.get(i).getCode().equals(indicatorDTO.getZoneCodes().get(0))&& zoneList.get(i).getRank().equals("W101640003")) {
+							zoneNo.add(zoneList.get(i).getCode());
+						}
 					}
 					indicatorDTO.setZoneCodes(zoneNo);
 					currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 				 }
-				 
 			 }
-			 
-			return currentIndicatorList;
+			 result.setZoneList(zoneNo);
+			 result.setDataList(currentIndicatorList);
+			return result;
 		}
 		
 		
