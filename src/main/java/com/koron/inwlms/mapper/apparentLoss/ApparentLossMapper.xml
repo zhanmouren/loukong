@@ -64,7 +64,7 @@
 			and "zoneNo" = #{zoneNo}
 			</if>
 		) a, lc_app_dim_indicator ind, app_dim_month m where ind.code = a.code 
-		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{qaDTO..startTime} 
+		and m.id = a."yearMonth" and m."yearMonth" &gt;= #{startTime} 
 		and m."yearMonth" &lt;= #{endTime}) b
 		group by b."yearMonth") c
 	</select>
