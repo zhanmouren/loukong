@@ -1139,7 +1139,15 @@ public class IndexServiceImpl implements IndexService{
 				  currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
 			}
 			
-			
+			for(int i=0;i<currentIndicatorList.size();i++) {
+				if(currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_WNMFWSSITDF)
+					||currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_WNMBMC)
+					||currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_FLMFWSSITDF)
+					||currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_FLMBMC)) {
+					currentIndicatorList.get(i).setValue(Math.round(currentIndicatorList.get(i).getValue()/100)/100.0);
+				}
+				
+		    }
 			
 			
 			//上年的
@@ -1154,7 +1162,15 @@ public class IndexServiceImpl implements IndexService{
 				lastIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
 			}
 			
-			
+			for(int i=0;i<lastIndicatorList.size();i++) {
+				if(lastIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_WNMFWSSITDF)
+					||lastIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_WNMBMC)
+					||lastIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_FLMFWSSITDF)
+					||lastIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_FLMBMC)) {
+					lastIndicatorList.get(i).setValue(Math.round(lastIndicatorList.get(i).getValue()/100)/100.0);
+				}
+				
+		    }
 			
 			double currentValue=0.0;
 			double lastValue=0.0;
@@ -1455,6 +1471,18 @@ public class IndexServiceImpl implements IndexService{
 				 }
 				 
 			 }
+			 
+			 for(int i=0;i<currentIndicatorList.size();i++) {
+					if(currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_WNMFWSSITDF)
+						||currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_WNMBMC)
+						||currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_FLMFWSSITDF)
+						||currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_FLMBMC)) {
+						currentIndicatorList.get(i).setValue(Math.round(currentIndicatorList.get(i).getValue()/100)/100.0);
+					}
+					
+			    }
+			 
+			 
 			 result.setZoneList(zoneNo);
 			 result.setDataList(currentIndicatorList);
 			return result;
@@ -1590,6 +1618,18 @@ public class IndexServiceImpl implements IndexService{
 					currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 				 }
 			 }
+			 
+			 for(int i=0;i<currentIndicatorList.size();i++) {
+					if(currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_SLMFWSSITDF)
+						||currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_SLMBMC)
+						||currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_DMMFWSSITDF)
+						||currentIndicatorList.get(i).getCode().equals(Constant.BALANCE_INDIC_DMMBMC)) {
+						currentIndicatorList.get(i).setValue(Math.round(currentIndicatorList.get(i).getValue()/100)/100.0);
+					}
+					
+			    }
+			 
+			 
 			 result.setZoneList(zoneNo);
 			 result.setDataList(currentIndicatorList);
 			return result;
