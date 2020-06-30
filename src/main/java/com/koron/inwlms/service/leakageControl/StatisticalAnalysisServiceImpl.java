@@ -122,6 +122,9 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 			  List<DataDicVO> dataDicList = new ArrayList<>();
 			  for(AlarmProcessVO alarmProcessVO : alarmProcessList) {
 				  String state = alarmProcessVO.getState();
+				  //查询预警信息
+				  
+				  
 				  if(state.equals("0")) {
 					  //处理中
 					  loadNum = loadNum + 1;
@@ -189,7 +192,7 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		//TODO 3.2分区节约水量改造成本
 		
 		
-		return null;
+		return processingStatisticsVO;
 	}
 
 }

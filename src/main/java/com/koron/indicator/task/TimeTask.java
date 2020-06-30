@@ -181,7 +181,7 @@ public class TimeTask {
 		//爆管/渗漏指标				
 	}
 	
-	@Scheduled(cron = "0 16 * * * ?")// 整点5分执行
+	@Scheduled(cron = "0 47 * * * ?")// 整点5分执行
 	public void calPointAlarmTask() {
 		AlarmMessageServiceImpl ams = new AlarmMessageServiceImpl();
 		WarningMessageProduceService wmps = new WarningMessageProduceServiceImpl();
@@ -193,6 +193,7 @@ public class TimeTask {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:00:00");
 		Date nowDate = new Date();
 		String nowDateStr = format.format(nowDate);
+		nowDateStr = "2020-05-28 07:00:00";
 		try {
 			nowDate = format.parse(nowDateStr);
 		} catch (ParseException e) {

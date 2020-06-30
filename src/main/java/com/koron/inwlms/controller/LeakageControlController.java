@@ -1578,14 +1578,16 @@ public class LeakageControlController {
     @ResponseBody
     public String updatePolicy(@RequestBody PolicyDTO policyDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+
+		if(policyDTO.getPolicySchemeDTO().getCode() == null || policyDTO.getPolicySchemeDTO().getCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("方案编码为空"); 
+	        return msg.toJson();
+		}
 		
 		try {
 			for(PolicySettingDTO policySettingDTO : policyDTO.getPolicySettingDTOList()) {
-				if(policySettingDTO.getPolicyCode() == null || policySettingDTO.getPolicyCode().equals("")) {
-					msg.setCode(Constant.MESSAGE_INT_ERROR);
-			        msg.setDescription("方案编码为空"); 
-			        return msg.toJson();
-				}
+				policySettingDTO.setPolicyCode(policyDTO.getPolicySchemeDTO().getCode());
 			}
 			Integer num = ADOConnection.runTask(user.getEnv(),ps, "updatePolicySetting",Integer.class,policyDTO.getPolicySettingDTOList());
 			if(num > 0) {

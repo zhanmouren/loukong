@@ -22,7 +22,7 @@ public interface CommonMapper {
 
 	List<SysConfigVO> querySysConfig();
 	
-	@Select("select * from \"LC_APP_Dim_Indicator\" where code = #{code}")
+	@Select("select * from lc_app_dim_indicator where code = #{code}")
 	Indicator queryIndicatorByCode(@Param("code") String code); 
 	
 	List<DataDicNewVO> queryAllDataDic();

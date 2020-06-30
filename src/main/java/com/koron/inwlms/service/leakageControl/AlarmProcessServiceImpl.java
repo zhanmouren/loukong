@@ -576,9 +576,13 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
 						list.add(treeZoneVO);
 					}
-				}
+				} 
 			}
 			//监测点
+			else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_PFPIONT)) {
+				
+			}
+			
 		}
 		
 		
