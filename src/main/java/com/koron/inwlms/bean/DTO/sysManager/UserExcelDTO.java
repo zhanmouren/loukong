@@ -22,10 +22,6 @@ public class UserExcelDTO {
 	  @ImportExcelUtil.ExcelColumn("邮箱")
       @ImportExcelUtil.RequiredColumn
 	  private String email;
-	  //职员职位	
-	  @ImportExcelUtil.ExcelColumn("职位")
-      @ImportExcelUtil.RequiredColumn
-	  private String positionStr;
 	  
 	  //职员性别
 	  @ImportExcelUtil.ExcelColumn("性别")
@@ -37,8 +33,7 @@ public class UserExcelDTO {
       @ImportExcelUtil.RequiredColumn	  
 	  private String workNo;
 
-	  private Integer sex;
-	  private Integer position;
+	  private String sex;
 	  //职员照片
 	  private String photo;
 	  //微信Id
@@ -173,13 +168,6 @@ public class UserExcelDTO {
 		this.email = email;
 	}
 
-	public String getPositionStr() {
-		return positionStr;
-	}
-
-	public void setPositionStr(String positionStr) {
-		this.positionStr = positionStr;
-	}
 
 	public String getSexStr() {
 		return sexStr;
@@ -189,21 +177,15 @@ public class UserExcelDTO {
 		this.sexStr = sexStr;
 	}
 
-	public Integer getSex() {
+	
+	public String getSex() {
 		return sex;
 	}
 
-	public void setSex(Integer sex) {
+	public void setSex(String sex) {
 		this.sex = sex;
 	}
 
-	public Integer getPosition() {
-		return position;
-	}
-
-	public void setPosition(Integer position) {
-		this.position = position;
-	}
 
 	public String getWorkNo() {
 		return workNo;

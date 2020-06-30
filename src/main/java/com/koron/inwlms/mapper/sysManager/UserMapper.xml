@@ -24,7 +24,7 @@
    	    <if test="code != null"> and "user".code = #{code}</if> 
    	    <if test="loginName != null"> and "user"."loginName" = #{loginName}</if> 
    	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if> 
-   	    <if test="code != null"> and "user"."code" = #{code}</if>         
+   	    <if test="code != null"> and "user"."code" = #{code}</if>        
 	  </trim>
 	   group by "user".id ,"user"."loginName","user".phone,"user"."email",
 		"user".name,"position".name,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
@@ -77,7 +77,7 @@
    	    <if test="whetUse != null"> and "user"."whetUse" ='${whetUse}'</if>
    	    <if test="code != null"> and "user".code = #{code}</if> 
    	    <if test="loginName != null"> and "user"."loginName" = #{loginName}</if> 
-   	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if>           
+   	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if>              
 	  </trim>
     </select>
     
@@ -972,9 +972,9 @@
       
       <!-- 批量导入用户 -->
     <insert id="addManyUser" parameterType="java.util.List">  
-        insert into sm_user("loginName",passWord,phone,"email",name,position,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code") values
+        insert into sm_user("loginName",passWord,phone,"email",name,sex,photo,"openID",status,"workNo","whetUse","createBy","createTime","updateBy","updateTime","code") values
         <foreach collection="list" index="index" separator="," item="item">
-           (#{item.loginName},#{item.password},#{item.phone},#{item.email},#{item.name},#{item.position},#{item.sex},#{item.photo},#{item.openID},0,#{item.workNo},0,#{item.createBy},Now(),#{item.updateBy},Now(),#{item.code})   
+           (#{item.loginName},#{item.password},#{item.phone},#{item.email},#{item.name},#{item.sex},#{item.photo},#{item.openID},0,#{item.workNo},0,#{item.createBy},Now(),#{item.updateBy},Now(),#{item.code})   
         </foreach>      
     </insert>
     

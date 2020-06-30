@@ -2720,7 +2720,6 @@ public class SystemManagerController {
 	        		"	        {titleName:\"工号(必填)\",titleValue:\"workNo\",changeValue:\"1000\"}," + 
 	        		"	        {titleName:\"性别\",titleValue:\"sex\",changeValue:\"1000\"}," + 
 	        		"	        {titleName:\"手机号\",titleValue:\"photo\",changeValue:\"1000\"}," + 
-	        		"	        {titleName:\"职位\",titleValue:\"position\",changeValue:\"1000\"}," + 
 	        		"	        {titleName:\"邮箱\",titleValue:\"email\",changeValue:\"1000\"}" + 
 	        		"	        ]		";
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {}.getType());								

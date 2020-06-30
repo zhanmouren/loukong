@@ -1420,13 +1420,13 @@ public class UserServiceImpl implements UserService{
 					//String转类型
 					for(int j=0;j<userList.size();j++) {
 					    if("男".equals(userList.get(j).getSexStr())) {
-					    	userList.get(j).setSex(0);
+					    	userList.get(j).setSex("L102080001");
 					    }else if("女".equals(userList.get(j).getSexStr())) {
-					    	userList.get(j).setSex(1);
+					    	userList.get(j).setSex("L102080002");
 					    }else {
-					    	userList.get(j).setSex(-1);
+					    	userList.get(j).setSex("L102080001");
 					    }				    
-					    userList.get(j).setPosition(1);
+					  
 					}					
 					List<UserExcelDTO> collect=userList.stream().filter(distinctByKey(UserExcelDTO::getLoginName)).collect(Collectors.toList());
 					if(collect.size()<userList.size()) {
