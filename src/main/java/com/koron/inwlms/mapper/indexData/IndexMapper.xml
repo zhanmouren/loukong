@@ -347,7 +347,7 @@
 		</if>
 		<if test="timeType != null and timeType == 1">
 			and b."yearMonth" &gt;= #{startTime} and b."yearMonth" &lt;= #{endTime}
-		   order by round( a.value/c.precision :: NUMERIC, 2 ) desc
+		   order by b."yearMonth" asc
 		</if>
 	</select>
 	
