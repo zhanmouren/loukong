@@ -328,6 +328,7 @@ public class IndexServiceImpl implements IndexService{
 				}
 				else {
 					indZoneLossMList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);
+					indZoneLossMList.addAll(indicatorMapper.queryWBBaseIndicData(indicatorDTO));
 				}
 				
 				
@@ -556,7 +557,8 @@ public class IndexServiceImpl implements IndexService{
 					indZoneLossYList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
 				}
 				else {
-					indZoneLossYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
+					indZoneLossYList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);
+					indZoneLossYList.addAll(indicatorMapper.queryWBBaseIndicData(indicatorDTO));
 				}
 				
 				//取出数据
@@ -1133,7 +1135,7 @@ public class IndexServiceImpl implements IndexService{
 			if(areaType==0) {
 				currentIndicatorList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
 			}
-			else if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3){
+			else if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 ){
 				currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 			}else{
 				  currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
@@ -1156,7 +1158,7 @@ public class IndexServiceImpl implements IndexService{
 			if(areaType==0) {
 				lastIndicatorList=indicatorMapper.queryCompanyIndicData(indicatorDTO);
 			}
-			else if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3){
+			else if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 ){
 				lastIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);
 			}else{
 				lastIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
@@ -1445,10 +1447,10 @@ public class IndexServiceImpl implements IndexService{
 					for(int i = 0;i < zoneList.size(); i++) {
 						zoneNo.add(zoneList.get(i).getCode());
 					}
-				 if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
+				 if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 ) {
 					 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
 				 }else{
-					 currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
+					 currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);	
 				}
 			 }else {
 				 int type = 2;
@@ -1467,7 +1469,11 @@ public class IndexServiceImpl implements IndexService{
 					}
 					
 					indicatorDTO.setZoneCodes(zoneNo);
-					currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+					if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 ) {
+						 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+					 }else{
+						 currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
+					}	
 				 }
 				 
 			 }
@@ -1615,7 +1621,11 @@ public class IndexServiceImpl implements IndexService{
 						}
 					}
 					indicatorDTO.setZoneCodes(zoneNo);
-					currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+					if(indicatorDTO.getType()==1 || indicatorDTO.getType()==2 || indicatorDTO.getType()==3) {
+						 currentIndicatorList=indicatorMapper.queryWBBaseIndicData(indicatorDTO);	
+					 }else{
+						 currentIndicatorList=indicatorMapper.queryZoneLossIndicData(indicatorDTO);		
+					}	
 				 }
 			 }
 			 
