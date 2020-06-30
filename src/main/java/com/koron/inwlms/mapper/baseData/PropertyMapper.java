@@ -152,6 +152,13 @@ public interface PropertyMapper {
     Integer updateZoneMeterDet(ZoneMeterDTO zoneMeterDTO);
 
     /**
+     * 删除分区与监测点数据
+     * @param refID
+     * @return
+     */
+    Integer deleteZonePointByRef(@Param("refID") Integer refID);
+
+    /**
      * 删除分区与户表数据
      * @param refID
      * @return

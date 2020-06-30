@@ -131,6 +131,14 @@ public interface ZoneConfigService {
     public Integer updateZoneMeterDet(SessionFactory factory, ZoneMeterDTO zoneMeterDTO);
 
     /**
+     * 删除分区与监测点关系数据
+     * @param factory
+     * @param refID
+     * @return
+     */
+    public Integer deleteZonePointByRef(SessionFactory factory, Integer refID);
+
+    /**
      * 删除分区与户表关系数据
      * @param factory
      * @param refID

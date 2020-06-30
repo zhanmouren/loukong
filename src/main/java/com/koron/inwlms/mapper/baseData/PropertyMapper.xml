@@ -2,6 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.baseData.PropertyMapper">
 
+    <select id="queryLastMonitorDataList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
+            select
+            "pointID",
+            sum(case when stype='Q4' then value else 0 end) as "flowRate",
+            sum(case when stype='P1' then value else 0 end) as "upstreamPressure"
+            from (
+            select ods_rw_gdh_realtime_hi.station as "pointID",nw_gdh_ssensor.stype,value  from ods_rw_gdh_realtime_hi join gis_scada_station on ods_rw_gdh_realtime_hi.station = gis_scada_station.p_code join nw_gdh_ssensor on nw_gdh_ssensor.station=ods_rw_gdh_realtime_hi.station and ods_rw_gdh_realtime_hi.code = nw_gdh_ssensor.code
+            where nw_gdh_ssensor.stype in ('Q4','P1')
+            )t group by "pointID"
+    </select>
+
+    <select id="queryMaxZoneNo" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
+        select
+    </select>
+
     <select id="queryFlows"  resultType="com.koron.inwlms.bean.VO.baseInf.PointAccountVO">
         select type,"pointNo" from gis_zone_point where type is not null group by type ,"pointNo" order by type
     </select>
@@ -126,6 +141,9 @@
             <if test="type != null and type != ''">
                 and type=#{type}
             </if>
+            <if test="batchNo != null and batchNo != ''">
+                and "BatchNo"=#{batchNo}
+            </if>
             <if test="pageCount !=null and page !=null">
                 limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
             </if>
@@ -138,6 +156,9 @@
         </if>
         <if test="pointNo != null and pointNo != ''">
             and "pointNo"=#{pointNo}
+        </if>
+        <if test="batchNo != null and batchNo != ''">
+            and "BatchNo"=#{batchNo}
         </if>
         <if test="type != null and type != ''">
             and type=#{type}
@@ -198,6 +219,10 @@
            delete from gis_zone_meter where id = #{refID}
      </delete>
 
+    <delete id="deleteZonePointByRef">
+           delete from gis_zone_point where id = #{refID}
+     </delete>
+
     <delete id="deleteZonePointByBatch">
            delete from gis_zoneconfhistory where "BatchNo" = #{BatchNo} and type = 'L103500001';
            delete from gis_zonepointrelation where "BatchNo" = #{BatchNo}
@@ -218,6 +243,9 @@
             <if test="type != null and type != ''">
                 and type=#{type}
             </if>
+            <if test="batchNo != null and batchNo != ''">
+                and "BatchNo"=#{batchNo}
+            </if>
         <if test="pageCount !=null and page !=null">
             limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         </if>
@@ -233,6 +261,9 @@
             </if>
             <if test="type != null and type != ''">
                 and type=#{type}
+            </if>
+            <if test="batchNo != null and batchNo != ''">
+                and "BatchNo"=#{batchNo}
             </if>
     </select>
 

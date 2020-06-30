@@ -14,6 +14,11 @@ import java.util.List;
 public interface IMDataMapper {
 
     /**
+     * 按批次删除监测数据
+     */
+    Integer deleteMonitorDataByBatchNo(@Param("BatchNo")String BatchNo);
+
+    /**
      * 批量删除抄表数据
      * @param refID
      * @return

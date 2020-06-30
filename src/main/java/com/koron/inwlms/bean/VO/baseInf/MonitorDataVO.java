@@ -104,6 +104,18 @@ public class MonitorDataVO {
      */
     private String useType;
 
+    /**
+     * 通道名称
+     * @return
+     */
+    private String stype;
+
+    /**
+     * 名称
+     * @return
+     */
+    private String sname;
+
     public String getUseType() {
         return useType;
     }

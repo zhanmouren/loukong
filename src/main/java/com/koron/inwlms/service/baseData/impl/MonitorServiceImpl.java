@@ -3,11 +3,10 @@ package com.koron.inwlms.service.baseData.impl;
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO;
 import com.koron.inwlms.bean.DTO.baseInf.MonitorDataExcelBean;
 import com.koron.inwlms.bean.VO.baseInf.DataQualityVO;
-import com.koron.inwlms.bean.VO.baseInf.MonitorDataVO;
 import com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO;
+import com.koron.inwlms.bean.VO.baseInf.MonitorDataVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
-import com.koron.inwlms.mapper.baseData.DataQualityMapper;
 import com.koron.inwlms.mapper.baseData.IMDataMapper;
 import com.koron.inwlms.mapper.baseData.PropertyMapper;
 import com.koron.inwlms.service.baseData.MonitorService;
@@ -25,6 +24,20 @@ import java.util.List;
  */
 @Service
 public class MonitorServiceImpl implements MonitorService {
+
+    /**
+     * 按批次删除监测数据
+     * @param factory
+     * @param BatchNo
+     * @return
+     */
+    @TaskAnnotation("deleteMonitorDataByBatchNo")
+    @Override
+    public Integer deleteMonitorDataByBatchNo(SessionFactory factory,String BatchNo){
+        IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
+        Integer ret = mapper.deleteMonitorDataByBatchNo(BatchNo);
+        return ret;
+    }
 
     /**
      * 查询监测点最新监测数据

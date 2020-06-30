@@ -13,6 +13,14 @@ import java.util.List;
 public interface MonitorService {
 
     /**
+     * 批量删除监测数据
+     * @param factory
+     * @param BatchNo
+     * @return
+     */
+   public Integer deleteMonitorDataByBatchNo(SessionFactory factory,String BatchNo);
+
+    /**
      * 查询监测点最新监测数据
      */
     public List<MonitorDataVO> queryLastMonitorDataList(SessionFactory factory,MonitorDataDTO monitorDataDTO);

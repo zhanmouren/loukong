@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.baseData.IMDataMapper">
 
+    <delete id="deleteMonitorDataByBatchNo" parameterType="java.lang.String">
+        delete from mi_monitordata where "BatchNo" =#{BatchNo};
+        delete from mi_importdatahistory where "BatchNo" =#{BatchNo}
+    </delete>
+
     <delete id="deleteMeterData">
         delete from mi_readwaterinfo where "id" =#{refID}
     </delete>
@@ -117,7 +122,7 @@
 
     <select id="queryPressureFlowList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
         select * from(
-        select 0 as rows,mi_monitordata.id,status,"pointID",gis_scada_station.name,mi_monitordata.type,"lastTime",noise,threshold,"flowRate",mi_monitordata."createBy",to_char(mi_monitordata."createTime",'YYYY-MM-DD HH:MM:SS') as "createTime","queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType" from mi_monitordata
+        select 0 as rows,mi_monitordata.id,status,"pointID",gis_scada_station.name,mi_monitordata.type,"lastTime","upstreamPressure","downstreamPressure","flowRate",mi_monitordata."createBy",to_char(mi_monitordata."createTime",'YYYY-MM-DD HH:MM:SS') as "createTime","queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType" from mi_monitordata
         left join gis_scada_station on mi_monitordata."pointID" = gis_scada_station.p_code
         left join gis_zone_point on mi_monitordata."pointID" = gis_zone_point."pointNo"
         left join tbltree on gis_zone_point."zoneNo" = tbltree.foreignkey
@@ -133,25 +138,74 @@
             <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
             <if test=" 1==1 "> and mi_monitordata.type='1' </if>
         </trim>
+        <!--监测数据-->
+        union all
+        select distinct 0 as rows,0 as id,'0',nw_gdh_raw.station as pointID,nw_gdh_raw.name,'' as type,to_char(to_timestamp(nw_gdh_raw.datatime), 'YYYY-MM-DD HH24:MI:SS') as "lastTime",
+        sum(case when nw_gdh_ssensor.stype='P1' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "upstreamPressure",
+        0 as downstreamPressure,
+        sum(case when nw_gdh_ssensor.stype='Q4' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "flowRate",'','',
+        '' as "firstZoon",'' as "useType"
+        from
+        (select nw_gdh_raw.station,nw_gdh_raw."value",nw_gdh_raw.code,nw_gdh_raw.datatime,gis_scada_station."name" from nw_gdh_raw
+        join gis_scada_station on nw_gdh_raw.station = gis_scada_station.p_code
+        limit #{pageCount}*#{page}
+        )nw_gdh_raw
+
+        join nw_gdh_ssensor on nw_gdh_ssensor.station=nw_gdh_raw.station and nw_gdh_raw.code = nw_gdh_ssensor.code
+        group by nw_gdh_raw.station,nw_gdh_raw.name,nw_gdh_raw.datatime
+        <!--
+        union all
+        select distinct 0 as rows,0 as id,'0',nw_gdh_raw.station as pointID,nw_gdh_raw.name,'' as type,to_char(to_timestamp(nw_gdh_raw.datatime), 'YYYY-MM-DD HH24:MI:SS') as "lastTime",
+        sum(case when nw_gdh_ssensor.stype='P1' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "upstreamPressure",
+        0 as downstreamPressure,
+        sum(case when nw_gdh_ssensor.stype='Q4' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "flowRate",'','',
+        "queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType"
+        from
+        (select nw_gdh_raw.station,nw_gdh_raw."value",nw_gdh_raw.code,nw_gdh_raw.datatime,gis_scada_station."name" from nw_gdh_raw
+        join gis_scada_station on nw_gdh_raw.station = gis_scada_station.p_code
+        limit #{pageCount}*#{page}
+        )nw_gdh_raw
+
+        join nw_gdh_ssensor on nw_gdh_ssensor.station=nw_gdh_raw.station and nw_gdh_raw.code = nw_gdh_ssensor.code
+        left join gis_zone_point on nw_gdh_raw.station = gis_zone_point."pointNo"
+        left join tbltree on gis_zone_point."zoneNo" = tbltree.foreignkey
+        group by nw_gdh_raw.station,nw_gdh_raw.name,nw_gdh_raw.datatime,tbltree.seq,gis_zone_point.type
+        -->
+        <!--end-->
         <if test="pageCount !=null and page !=null">
             limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         </if>
         )t
         union all
-        select count(*) as rows,0,'','','','','',0.0,0.0,0.0,'','','',''
+        select count(*) as rows,0 as id,'' as status,'' as "pointID",'' as name,'' as type,'' as "lastTime",0.0 as "upstreamPressure",0.0 as "downstreamPressure",0.0 as "flowRate",'' as "createBy",'' as "createTime",'' as "firstZoon",'' as "useType"
+        from(
+        select count(*) as rows,0 as id,'' as status,'' as "pointID",'' as name,'' as type,'' as "lastTime",0.0 as
+        "upstreamPressure",0.0 as "downstreamPressure",0.0 as "flowRate",'' as "createBy",'' as "createTime",'' as
+        "firstZoon",'' as "useType"
         from mi_monitordata
-        <trim prefix="where" prefixOverrides="and|or">
-            <if test="status != null and status != '' "> and status = #{status}</if>
-            <if test="dmaType != null and dmaType != '' "> </if>
-            <if test="use != null and use != '' "> </if>
-            <if test="pointID != null and pointID != '' "> and "pointID" like '%'||#{pointID}||'%'</if>
-            <if test="first != null and first != '' "> </if>
-            <if test="second != null and second != '' "> </if>
-            <if test="DMA != null and DMA != '' "> </if>
-            <if test="begD != null and begD != '' "> and "lastTime" &gt;=#{begD} </if>
-            <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
-            <if test=" 1==1 "> and mi_monitordata.type='1' </if>
-        </trim>
+            <trim prefix="where" prefixOverrides="and|or">
+                <if test="status != null and status != '' "> and status = #{status}</if>
+                <if test="dmaType != null and dmaType != '' "> </if>
+                <if test="use != null and use != '' "> </if>
+                <if test="pointID != null and pointID != '' "> and "pointID" like '%'||#{pointID}||'%'</if>
+                <if test="first != null and first != '' "> </if>
+                <if test="second != null and second != '' "> </if>
+                <if test="DMA != null and DMA != '' "> </if>
+                <if test="begD != null and begD != '' "> and "lastTime" &gt;=#{begD} </if>
+                <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
+                <if test=" 1==1 "> and mi_monitordata.type='1' </if>
+            </trim>
+            <!--监测数据-->
+            union all
+            select count(*) as rows,0 as id,'' as status,'' as "pointID",'' as name,'' as type,'' as "lastTime",0.0 as "upstreamPressure",0.0 as "downstreamPressure",0.0 as "flowRate",'' as "createBy",'' as "createTime",'' as "firstZoon",'' as "useType"
+            from
+            (select nw_gdh_raw.station,nw_gdh_raw."value",nw_gdh_raw.code,nw_gdh_raw.datatime,gis_scada_station."name" from nw_gdh_raw
+            join gis_scada_station on nw_gdh_raw.station = gis_scada_station.p_code
+            limit 1000
+            )nw_gdh_raw
+            group by nw_gdh_raw.station,nw_gdh_raw.name,nw_gdh_raw.datatime
+            <!--end-->
+            )s
     </select>
 
     <select id="queryPressureFlowDet"   resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">

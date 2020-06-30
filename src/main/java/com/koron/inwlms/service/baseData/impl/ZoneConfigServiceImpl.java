@@ -335,6 +335,21 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
     }
 
     /**
+     * 删除分区与监测点数据
+     *
+     * @param factory
+     * @param refID
+     * @return
+     */
+    @TaskAnnotation("deleteZonePointByRef")
+    @Override
+    public Integer deleteZonePointByRef(SessionFactory factory, Integer refID){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer result = mapper.deleteZonePointByRef(refID);
+        return result;
+    }
+
+    /**
      * 删除分区与户表数据
      *
      * @param factory

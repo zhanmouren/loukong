@@ -888,6 +888,26 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @RequestMapping("/deleteZonePointByRef/{refID}")
+    @ApiOperation(value = "删除分区与监测点数据", notes = "删除分区与监测点数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteZonePointByRef(@PathVariable("refID") Integer refID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        MessageBean msg = new MessageBean();
+        //TODO:校验是否有删除权限
+
+
+        //TODO:返回数据
+        Integer ret = ADOConnection.runTask(user.getEnv(),zcs, "deleteZonePointByRef", Integer.class,refID);
+        if(ret>=0){
+            msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+            msg.setDescription("操作成功");
+        }else{
+            msg.setCode(Constant.MESSAGE_INT_ERROR);
+            msg.setDescription("操作失败");
+        }
+        return msg.toJson();
+    }
+
     @RequestMapping("/deleteZoneMeterRel/{refID}")
     @ApiOperation(value = "删除分区与户表数据", notes = "删除分区与户表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -962,7 +982,7 @@ public class BaseDataController {
         if(BatchNo==null || "".equals(BatchNo)){
             msg.setCode(Constant.MESSAGE_INT_NULL);
             msg.setDescription("批号不能为空");
-            return msg.toString();
+            return msg.toJson();
         }
 
         //TODO:Excel数据读取校验完整性，一致性，准确性
@@ -1073,6 +1093,23 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @RequestMapping(value = "/deleteMonitorDataByBatchNo/{BatchNo}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "按批次删除监测数据接口", notes = "按批次删除监测数据接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteMonitorDataByBatchNo(@PathVariable("BatchNo")String BatchNo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        MessageBean msg = new MessageBean();
+        //TODO:权限校验是否有查询权限
+
+        //TODO:校验参数
+
+        //List<MonitorDataVO> mds = null;
+        Integer ret = ADOConnection.runTask(user.getEnv(),ms, "deleteMonitorDataByBatchNo", Integer.class, BatchNo);
+
+        msg.setCode(0);
+        msg.setData(ret);
+        return msg.toJson();
+    }
+
     @RequestMapping(value = "/queryLastMonitorDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询最新监测数据接口", notes = "查询最新监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -1083,7 +1120,6 @@ public class BaseDataController {
         msg.setData(ret);
         return msg.toJson();
     }
-
 
     @RequestMapping(value = "/queryMonitorDataByBatchNo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据批次查询监测数据列表接口", notes = "根据批次查询监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
