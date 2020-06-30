@@ -14,7 +14,7 @@ import com.koron.inwlms.bean.DTO.common.BaseDTO;
 
 
 public class UserDTO{
-  //存储多个用户code的List
+//存储多个用户code的List
   private List<String> userCodeList;
   //职员编码
   private String code;

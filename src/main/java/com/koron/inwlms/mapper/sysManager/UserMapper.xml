@@ -539,7 +539,7 @@
     </select>
      <!-- 插入组织部门表中-->
      <insert id="addOrgDept" parameterType="com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO">  
-        insert into "SM_orgDept"("orgCode","deptCode","createBy","createTime","updateBy","updateTime")
+        insert into sm_orgdept("orgCode","deptCode","createBy","createTime","updateBy","updateTime")
         values(#{orgCode},#{depCode},#{createBy},Now(),#{updateBy},Now())       
      </insert>
       <!--部门下添加部门-->

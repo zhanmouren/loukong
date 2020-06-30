@@ -63,7 +63,9 @@ public class SystemManagerController {
 		}
 		if(userDTO.getWorkNo()==null || StringUtils.isBlank(userDTO.getWorkNo())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "工号不能为空", Integer.class).toJson();
-		}		
+		}	
+		userDTO.setCreateBy(user.getLoginName());
+		userDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行插入职员的操作
 		  try{
@@ -183,6 +185,8 @@ public class SystemManagerController {
 		if(userDTO.getSex()==null || StringUtils.isBlank(userDTO.getSex())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "性别不能为空", Integer.class).toJson();
 		}
+		userDTO.setCreateBy(user.getLoginName());
+		userDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行修改职员的操作
 		  try{
@@ -300,6 +304,8 @@ public class SystemManagerController {
 		}	
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行插入角色的操作
+		 roleDTO.setCreateBy(user.getLoginName());
+		 roleDTO.setUpdateBy(user.getLoginName());
 		  try{
 			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addNewRole", Integer.class, roleDTO);		 
 				  if(insertRes==1) {
@@ -341,7 +347,8 @@ public class SystemManagerController {
 		if(roleDTO.getRoleName()==null || StringUtils.isBlank(roleDTO.getRoleName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色名称不能为空", Integer.class).toJson();
 		}	
-		
+		roleDTO.setCreateBy(user.getLoginName());
+		roleDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
 			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateRoleAttr", Integer.class, roleDTO);		 
@@ -479,6 +486,8 @@ public class SystemManagerController {
 		if(roleUserDTO.getUserCodeList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
 		}
+		roleUserDTO.setCreateBy(user.getLoginName());
+		roleUserDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加用户和角色关系的操作
 		  try{
@@ -634,6 +643,8 @@ public class SystemManagerController {
 		if(deptUserDTO.getUserCodeList().size()<1) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "用户编码列表不能为空", Integer.class).toJson();
 		}
+		deptUserDTO.setCreateBy(user.getLoginName());
+		deptUserDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加用户和部门关系的操作
 		  try{
@@ -725,7 +736,8 @@ public class SystemManagerController {
 		if(integrationConfDTO.getStatus()==null || "".equals(integrationConfDTO.getStatus())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "状态不能为空", Integer.class).toJson();
 		}
-		
+		integrationConfDTO.setCreateBy(user.getLoginName());
+		integrationConfDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行集成配置添加功能的操作
 		  try{
@@ -772,6 +784,8 @@ public class SystemManagerController {
 		if(tableMapperDTO.getTableName()==null || "".equals(tableMapperDTO.getTableName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格名称不能为空", Integer.class).toJson();
 		}
+		tableMapperDTO.setCreateBy(user.getLoginName());
+		tableMapperDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
 			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addTableMapper", Integer.class, tableMapperDTO);		 		  
@@ -822,7 +836,9 @@ public class SystemManagerController {
 		}
 		if(fieldMapperDTO.getValue()==null || "".equals(fieldMapperDTO.getValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "code值不能为空", Integer.class).toJson();
-		}				
+		}		
+		fieldMapperDTO.setCreateBy(user.getLoginName());
+		fieldMapperDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
 			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addFieldMapper", Integer.class, fieldMapperDTO);		 		  
@@ -862,6 +878,8 @@ public class SystemManagerController {
 		if(enumMapperDTO.getMapper()==null || "".equals(enumMapperDTO.getMapper())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "映射方式不能为空", Integer.class).toJson();
 		}
+		enumMapperDTO.setCreateBy(user.getLoginName());
+		enumMapperDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
 			  Integer insertRes=ADOConnection.runTask(user.getEnv(),userService, "addEnumMapper", Integer.class, enumMapperDTO);		 		  
@@ -1094,6 +1112,8 @@ public class SystemManagerController {
 		if(tableMapperDTO.getTableName()==null || "".equals(tableMapperDTO.getTableName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "我方表格名称不能为空", Integer.class).toJson();
 		}
+		tableMapperDTO.setCreateBy(user.getLoginName());
+		tableMapperDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
 			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateTableMapper", Integer.class,tableMapperDTO);		 		  
@@ -1132,6 +1152,8 @@ public class SystemManagerController {
 		if(enumMapperDTO.getMapper()==null || "".equals(enumMapperDTO.getMapper())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "映射方式不能为空", Integer.class).toJson();
 		}
+		enumMapperDTO.setCreateBy(user.getLoginName());
+		enumMapperDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
 			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateEnumMapper", Integer.class,enumMapperDTO);		 		  
@@ -1183,6 +1205,8 @@ public class SystemManagerController {
 		if(fieldMapperDTO.getValue()==null || "".equals(fieldMapperDTO.getValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "code值不能为空", Integer.class).toJson();
 		}	
+		fieldMapperDTO.setCreateBy(user.getLoginName());
+		fieldMapperDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{
 			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateFieldMapper", Integer.class,fieldMapperDTO);		 		  
@@ -1341,7 +1365,8 @@ public class SystemManagerController {
 				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典繁文值不能为空", Integer.class).toJson();
 			}
 		}
-			
+		dataDicDTO.setCreateBy(user.getLoginName());
+		dataDicDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
@@ -1390,7 +1415,9 @@ public class SystemManagerController {
 		}
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
-		}			
+		}	
+		dataDicDTO.setCreateBy(user.getLoginName());
+		dataDicDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
@@ -1478,7 +1505,8 @@ public class SystemManagerController {
 		if(dataDicDTO.getDicTcValue()==null || StringUtils.isBlank(dataDicDTO.getDicTcValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典繁体值不能为空", Integer.class).toJson();
 		}
-			
+		dataDicDTO.setCreateBy(user.getLoginName());
+		dataDicDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行新数据字典功能的操作
 		  try{
@@ -1597,6 +1625,8 @@ public class SystemManagerController {
 		if(dataDicDTO.getDicTc()==null ||  StringUtils.isBlank(dataDicDTO.getDicTc())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表繁体文名称不能为空", Integer.class).toJson();
 		}
+		dataDicDTO.setCreateBy(user.getLoginName());
+		dataDicDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行查询数据字典
 		 try {
@@ -1684,7 +1714,8 @@ public class SystemManagerController {
 		if(dataDicDTO.getDicTcValue()==null || StringUtils.isBlank(dataDicDTO.getDicTcValue())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典繁体值不能为空", Integer.class).toJson();
 		}
-				
+		dataDicDTO.setCreateBy(user.getLoginName());	
+		dataDicDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		 //执行修改数据字典明细
 		 try {
@@ -1762,7 +1793,8 @@ public class SystemManagerController {
 		if(specialDayDTO.getSpDate()==null || StringUtils.isBlank(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
 		}
-			
+		specialDayDTO.setCreateBy(user.getLoginName());
+		specialDayDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//执行添加特征日的操作
 		  try{
@@ -1924,6 +1956,8 @@ public class SystemManagerController {
 		if(specialDayDTO.getSpName()==null || "".equals(specialDayDTO.getSpName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
 		}	
+		specialDayDTO.setCreateBy(user.getLoginName());
+		specialDayDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		//根据id执行修改特征日的操作
 		  try{
@@ -2014,7 +2048,9 @@ public class SystemManagerController {
 				  //组织下添加部门的话，先插入SM_department，SM_orgDept表数据		
 			      OrgAndDeptDTO orgDeptDTO=new OrgAndDeptDTO();
 			      orgDeptDTO.setOrgCode(parentBean.getForeignKey());
-			      orgDeptDTO.setDepName(parentBean.getDepName());	
+			      orgDeptDTO.setDepName(parentBean.getDepName());
+			      orgDeptDTO.setCreateBy(user.getLoginName());
+			      orgDeptDTO.setUpdateBy(user.getLoginName());
 			      Integer finalRes=null;
 			      if(parentBean.getAddType()==0) {
 			    	finalRes=ADOConnection.runTask(user.getEnv(),userService, "addTreeDept", Integer.class, orgDeptDTO,parentBean.getType().intValue(),parentBean.getForeignKey());
@@ -2108,7 +2144,9 @@ public class SystemManagerController {
 		}
 		if(deptDTO.getDepName()==null || "".equals(deptDTO.getDepName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
-		}		
+		}
+		deptDTO.setCreateBy(user.getLoginName());
+		deptDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{				
 			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateTreeDept", Integer.class, deptDTO);	
@@ -2231,7 +2269,7 @@ public class SystemManagerController {
 		Matcher number = pattern.matcher(fields);
 		if (!number.matches()) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块菜单顺序只能填入数字", Integer.class).toJson();
-		 }
+		 }	
 		 MessageBean<MenuDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MenuDTO.class);
 		  try{
 			  MenuDTO addRes=ADOConnection.runTask(user.getEnv(),userService, "addMenu", MenuDTO.class,menuTreeDTO);
@@ -2423,6 +2461,8 @@ public class SystemManagerController {
 			}
 			
 		}
+		roleMenuDTO.setCreateBy(user.getLoginName());
+		roleMenuDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
 		  try{				
 			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateRoleMenuByRoleCode", Integer.class,roleMenuDTO);	
@@ -2720,7 +2760,9 @@ public class SystemManagerController {
 					}
 					if(userList.get(i).getWorkNo()==null || StringUtils.isBlank(userList.get(i).getWorkNo())) {
 						return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "工号不能为空", Integer.class).toJson();
-					}					
+					}
+					userList.get(i).setCreateBy(user.getLoginName());
+					userList.get(i).setUpdateBy(user.getLoginName());
 			  }
 			  ImportUserResVO importUserRes=ADOConnection.runTask(user.getEnv(),userService, "addImportUserDataExcel", ImportUserResVO.class,userList);	
 			  if(importUserRes.getResult()==0) {			 
@@ -2772,7 +2814,9 @@ public class SystemManagerController {
 		}
 		if(updateWordDTO.getSurePassWord()==null || "".equals(updateWordDTO.getSurePassWord())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "旧密码不能为空", Integer.class).toJson();
-		}		
+		}	
+		updateWordDTO.setCreateBy(user.getLoginName());
+		updateWordDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       		
 		  try{
 			  Integer updateRes=ADOConnection.runTask(user.getEnv(),userService, "updateMyPassword", Integer.class, updateWordDTO);		 
@@ -2820,7 +2864,7 @@ public class SystemManagerController {
 	} 		
    	 MessageBean<UploadFileVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, UploadFileVO.class);	         	
 	 try {
-		 Integer addRes=ADOConnection.runTask(user.getEnv(),userService, "uploadHeadPortrait", Integer.class, file);
+		 Integer addRes=ADOConnection.runTask(user.getEnv(),userService, "uploadHeadPortrait", Integer.class, file,user);
 		 if(addRes==-2) {
 			 msg.setCode(Constant.MESSAGE_INT_ADDERROR);
 		     msg.setDescription("删除之前头像失败"); 
@@ -2852,7 +2896,7 @@ public class SystemManagerController {
 	public String queryHeadPortrait(@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		 try {
-			 List<UploadFileNewVO> fileList=ADOConnection.runTask(user.getEnv(),userService, "queryHeadPortrait", List.class);
+			 List<UploadFileNewVO> fileList=ADOConnection.runTask(user.getEnv(),userService, "queryHeadPortrait", List.class,user);
 			 if(fileList!=null && fileList.size()>0) {
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关头像信息"); 

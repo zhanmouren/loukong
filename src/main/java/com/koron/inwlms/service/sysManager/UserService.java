@@ -210,10 +210,10 @@ public interface UserService {
 		  Integer updateMyPassword(SessionFactory factory,UpdateWordDTO updateWordDTO);
 		  
 		  //上传头像2020/04/30
-		  Integer uploadHeadPortrait(SessionFactory factory,MultipartFile file);
+		  Integer uploadHeadPortrait(SessionFactory factory,MultipartFile file,UserVO user);
 		  
 		  //根据登录名查询头像信息
-		  List<UploadFileNewVO> queryHeadPortrait(SessionFactory factory);
+		  List<UploadFileNewVO> queryHeadPortrait(SessionFactory factory,UserVO user);
 		  	 
 		  
 		 

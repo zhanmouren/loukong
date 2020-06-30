@@ -62,7 +62,6 @@ public class TreeService {
 	 */
 	@TaskAnnotation("addNode")
 	public static synchronized LongTreeBean add(SessionFactory factory, LongTreeBean parent, LongTreeBean child) {
-		System.out.println("11111111111111111111111111111111");
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
 		Timestamp timeNow = new Timestamp(System.currentTimeMillis());
 		if (parent == null) {
@@ -81,7 +80,6 @@ public class TreeService {
 			}
 		long seq = occupySeq(mapper, parent, child);
 		child.setSeq(seq);
-		System.out.println("2222222222222222222222222222");
 		return child;
 	}
 	/**
@@ -207,8 +205,7 @@ public class TreeService {
 		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);			
 	
 		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
-		//TODO 测试使用，默认userCode
-		//String userCode="c545d2c156834f1b9eea9136620726b3";
+		
 		String userName=userListVO.getLoginName();
 		//根据登录的用户名查询Code
 		QueryUserDTO queryUserDTO=new QueryUserDTO();

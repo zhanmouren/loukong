@@ -12,6 +12,23 @@ public class UpdateWordDTO {
      private String newPassWord;
      //确认密码
      private String surePassWord;
+     //创建人
+     private String createBy;
+     //修改人
+     private String updateBy;
+     
+	public String getCreateBy() {
+		return createBy;
+	}
+	public String getUpdateBy() {
+		return updateBy;
+	}
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
+	public void setUpdateBy(String updateBy) {
+		this.updateBy = updateBy;
+	}
 	public String getOldPassWord() {
 		return oldPassWord;
 	}
