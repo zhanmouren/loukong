@@ -354,14 +354,14 @@ public class CommonController {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		 try {
 			 List<VirtualZoneVO> result=ADOConnection.runTask(user.getEnv(),virtualZoneService, "queryVirtualZone", List.class, queryVSZoneListDTO);
-			 if(result.size()>0) {
+			 if(result == null) {
+				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			     msg.setDescription("没有查询到相关虚拟分区"); 
+			 }else if(result.size()>0){
+			   //没查询到数据
 				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			     msg.setDescription("查询到相关虚拟分区"); 
 			     msg.setData(result);
-			 }else if(result == null){
-			   //没查询到数据
-				 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			     msg.setDescription("没有查询到相关虚拟分区"); 
 			 }
 		 }catch(Exception e){
 	     	//查询失败
