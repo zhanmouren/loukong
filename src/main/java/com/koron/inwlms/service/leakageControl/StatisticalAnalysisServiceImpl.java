@@ -38,15 +38,23 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 	@Override
 	public ProcessingStatisticsAllDataVO queryProcessingStatistics(SessionFactory factory,ProcessingStatisticsDTO processingStatisticsDTO) throws ParseException {
 		IndicatorMapper indicatorMapper = factory.getMapper(IndicatorMapper.class);
+		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
+		TreeMapper treemapper = factory.getMapper(TreeMapper.class);
 		ProcessingStatisticsAllDataVO psad = new ProcessingStatisticsAllDataVO();
 		ProcessingStatisticsVO processingStatisticsVO = new ProcessingStatisticsVO();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		//1获取漏损变化 
 		//获取指标编码 
 		  //TODO 查询分区级别,判断分区级别获取对应指标编码
 		String areaCode = "";
+		List<TreeVO> areaCodeList = new ArrayList<>();
 		if(processingStatisticsDTO.getDmaCode() != null && !processingStatisticsDTO.getDmaCode().equals("")) {
 			areaCode = processingStatisticsDTO.getDmaCode();
+			//获取树的该节点信息
+			LongTreeBean node = treemapper.getBeanByForeignIdType(2,areaCode);
+			if(node != null) {
+				areaCodeList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+			}
 		}else {
 			if(processingStatisticsDTO.getFirstPartion() != null && !processingStatisticsDTO.getFirstPartion().equals("")) {
 				if(processingStatisticsDTO.getSeconPartion() != null && !processingStatisticsDTO.getSeconPartion().equals("")) {
@@ -54,16 +62,15 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 				}else {
 					areaCode = processingStatisticsDTO.getFirstPartion();
 				}
+				//获取树的该节点信息
+				LongTreeBean node = treemapper.getBeanByForeignIdType(2,areaCode);
+				if(node != null) {
+					areaCodeList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+				}
 			}
 		}
-		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
-		TreeMapper treemapper = factory.getMapper(TreeMapper.class);
-		//获取树的该节点信息
-		LongTreeBean node = treemapper.getBeanByForeignIdType(2,areaCode);
-		List<TreeVO> areaCodeList = new ArrayList<>();
-		if(node != null) {
-			areaCodeList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
-		}
+		
+		
 		
 		String minNightFlowCode = "";
 		List<String> zoneCodeList = new ArrayList<>();
@@ -86,6 +93,7 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 			lossFlowCode = "WNDWL";
 			allFlowCode = "WNMFWSSITDF";
 			minFlowCode = "WNDMNF";
+			
 		}
 		
 		
@@ -109,7 +117,12 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		  mnfFlowDTO.setStartTime(start);
 		  mnfFlowDTO.setTimeType(timeType);
 		  mnfFlowDTO.setZoneCodes(zoneCodeList);
-		  List<IndicatorVO> mnfIndicatorList = indicatorMapper.queryZoneLossIndicData(mnfFlowDTO);
+		  List<IndicatorVO> mnfIndicatorList = new ArrayList<>();
+		  if(minFlowCode.equals("WNDMNF")) {
+			  mnfIndicatorList = indicatorMapper.queryCompanyIndicData(mnfFlowDTO);
+		  }else {
+			  mnfIndicatorList = indicatorMapper.queryZoneLossIndicData(mnfFlowDTO);
+		  }
 		  if(mnfIndicatorList != null && mnfIndicatorList.size() != 0) {
 			  psad.setMnfBefor(mnfIndicatorList.get(0).getValue());
 		  }else {
@@ -117,7 +130,12 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		  }
 		  mnfFlowDTO.setEndTime(end);
 		  mnfFlowDTO.setStartTime(end);
-		  List<IndicatorVO> mnfIndicatorList1 = indicatorMapper.queryZoneLossIndicData(mnfFlowDTO);
+		  List<IndicatorVO> mnfIndicatorList1 = new ArrayList<>();
+		  if(minFlowCode.equals("WNDMNF")) {
+			  mnfIndicatorList1 = indicatorMapper.queryCompanyIndicData(mnfFlowDTO);
+		  }else {
+			  mnfIndicatorList1 = indicatorMapper.queryZoneLossIndicData(mnfFlowDTO);
+		  }
 		  if(mnfIndicatorList1 != null && mnfIndicatorList1.size() != 0) {
 			  psad.setMnfBefor(mnfIndicatorList1.get(0).getValue());
 		  }else {
@@ -134,7 +152,12 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		  lossFlowDTO.setStartTime(start);
 		  lossFlowDTO.setTimeType(timeType);
 		  lossFlowDTO.setZoneCodes(zoneCodeList);
-		  List<IndicatorVO> lossIndicatorList = indicatorMapper.queryWBBaseIndicData(lossFlowDTO);
+		  List<IndicatorVO> lossIndicatorList = new ArrayList<>();
+		  if(lossFlowCode.equals("WNDWL")) {
+			  lossIndicatorList = indicatorMapper.queryCompanyIndicData(mnfFlowDTO);
+		  }else {
+			  lossIndicatorList = indicatorMapper.queryWBBaseIndicData(lossFlowDTO);
+		  }
 		  if(lossIndicatorList != null && lossIndicatorList.size() != 0) {
 			  psad.setLossFlowBefor(lossIndicatorList.get(0).getValue());
 		  }else {
@@ -142,7 +165,12 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		  }
 		  lossFlowDTO.setEndTime(end);
 		  lossFlowDTO.setStartTime(end);
-		  List<IndicatorVO> lossIndicatorList1 = indicatorMapper.queryWBBaseIndicData(lossFlowDTO);
+		  List<IndicatorVO> lossIndicatorList1 = new ArrayList<>();
+		  if(lossFlowCode.equals("WNDWL")) {
+			  lossIndicatorList1 = indicatorMapper.queryCompanyIndicData(mnfFlowDTO);
+		  }else {
+			  lossIndicatorList1 = indicatorMapper.queryWBBaseIndicData(lossFlowDTO);
+		  }
 		  if(lossIndicatorList1 != null && lossIndicatorList1.size() != 0) {
 			  psad.setLossFlowAfther(lossIndicatorList1.get(0).getValue());
 		  }else {
@@ -251,7 +279,12 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 			  lossFlowIndicatorDTO.setEndTime(start);
 			  lossFlowIndicatorDTO.setStartTime(start);
 			  lossFlowIndicatorDTO.setTimeType(timeType);
-			  List<IndicatorVO> lossFlowList = indicatorMapper.queryWBBaseIndicData(lossFlowIndicatorDTO);
+			  List<IndicatorVO> lossFlowList = new ArrayList<>();
+			  if(lossFlowCode.equals("WNDWL")) {
+				  lossFlowList = indicatorMapper.queryCompanyIndicData(lossFlowIndicatorDTO);
+			  }else {
+				  lossFlowList = indicatorMapper.queryWBBaseIndicData(lossFlowIndicatorDTO);
+			  }
 			  
 			  IndicatorDTO allFlowIndicatorDTO = new IndicatorDTO();
 			  List<String> allFlowCodeList = new ArrayList<>();
@@ -260,18 +293,29 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 			  allFlowIndicatorDTO.setEndTime(start);
 			  allFlowIndicatorDTO.setStartTime(start);
 			  allFlowIndicatorDTO.setTimeType(timeType);
-			  List<IndicatorVO> allFlowList = indicatorMapper.queryWBBaseIndicData(allFlowIndicatorDTO);
+			  List<IndicatorVO> allFlowList = new ArrayList<>();
+			  if(allFlowCode.equals("WNMFWSSITDF")) {
+				  allFlowList = indicatorMapper.queryCompanyIndicData(allFlowIndicatorDTO);
+			  }else {
+				  allFlowList = indicatorMapper.queryWBBaseIndicData(allFlowIndicatorDTO);
+			  }
 			  if(lossFlowList == null || lossFlowList.size() == 0) {
 				  if(allFlowList == null || allFlowList.size() == 0) {
 					  proStat.setLossFlowNum(0.0);
 					  proStat.setAllFlowNum(0.0);
 				  }else {
-					  proStat.setLossFlowNum(Math.abs(lossFlowList.get(0).getValue())/(Math.abs(lossFlowList.get(0).getValue()) + Math.abs(allFlowList.get(0).getValue())));
-					  proStat.setAllFlowNum(Math.abs(allFlowList.get(0).getValue())/(Math.abs(lossFlowList.get(0).getValue()) + Math.abs(allFlowList.get(0).getValue())));  
+					  proStat.setLossFlowNum(Math.abs(0)/(0 + Math.abs(allFlowList.get(0).getValue())));
+					  proStat.setAllFlowNum(Math.abs(allFlowList.get(0).getValue())/(0 + Math.abs(allFlowList.get(0).getValue())));  
 				  }
 			  }else {
-				  proStat.setLossFlowNum(Math.abs(lossFlowList.get(0).getValue())/(Math.abs(lossFlowList.get(0).getValue()) + Math.abs(allFlowList.get(0).getValue())));
-				  proStat.setAllFlowNum(Math.abs(allFlowList.get(0).getValue())/(Math.abs(lossFlowList.get(0).getValue()) + Math.abs(allFlowList.get(0).getValue())));
+				  if(allFlowList == null || allFlowList.size() == 0) {
+					  proStat.setLossFlowNum(Math.abs(lossFlowList.get(0).getValue())/(Math.abs(lossFlowList.get(0).getValue()) + 0));
+					  proStat.setAllFlowNum(Math.abs(0)/(Math.abs(lossFlowList.get(0).getValue()) + 0));
+				  }else {
+					  proStat.setLossFlowNum(Math.abs(lossFlowList.get(0).getValue())/(Math.abs(lossFlowList.get(0).getValue()) + Math.abs(allFlowList.get(0).getValue())));
+					  proStat.setAllFlowNum(Math.abs(allFlowList.get(0).getValue())/(Math.abs(lossFlowList.get(0).getValue()) + Math.abs(allFlowList.get(0).getValue()))); 
+				  }
+				  
 			  }
 			  
 			  
