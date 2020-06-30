@@ -22,6 +22,35 @@ import java.util.List;
 @Service
 public class ZoneConfigServiceImpl implements ZoneConfigService {
 
+    /**
+     * 添加分区数据
+     * @param factory
+     * @param zoneDTO
+     * @return
+     */
+    @TaskAnnotation("addZone")
+    @Override
+    public Integer addZone(SessionFactory factory, ZoneDTO zoneDTO){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer ret = mapper.addZone(zoneDTO);
+        if(ret>0){
+
+        }
+        return ret;
+    }
+
+    /**
+     * 获取最大分区编号
+     * @param factory
+     * @return
+     */
+    @TaskAnnotation("queryMaxZoneNo")
+    @Override
+    public ZoneVO queryMaxZoneNo(SessionFactory factory,ZoneDTO zoneDTO){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        ZoneVO ret = mapper.queryMaxZoneNo(zoneDTO);
+        return ret;
+    }
 
     /**
      * 添加负责分区数据

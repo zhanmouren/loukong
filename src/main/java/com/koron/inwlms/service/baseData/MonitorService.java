@@ -13,6 +13,11 @@ import java.util.List;
 public interface MonitorService {
 
     /**
+     * 查询监测点最新监测数据
+     */
+    public List<MonitorDataVO> queryLastMonitorDataList(SessionFactory factory,MonitorDataDTO monitorDataDTO);
+
+    /**
      * 批量插入监测数据
      * @param factory
      * @param excelBeans

@@ -75,13 +75,25 @@ public class BaseDataController {
     @ApiOperation(value = "查询数据接口", notes = "查询数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryPGData(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        MessageBean msg = new MessageBean();
+        List<String[]> pipes = ADOConnection.runTask(user.getEnv(),pipesvr, "queryALList", List.class);
+        msg.setCode(0);
+        msg.setData(pipes);
+        return msg.toJson();
+    }
+
+    /*
+    @RequestMapping(value = "/queryPGData.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询数据接口", notes = "查询数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPGData(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
       MessageBean msg = new MessageBean();
       List<DataVO> pipes = ADOConnection.runTask(user.getEnv(),pipesvr, "queryALList", List.class);
       msg.setCode(0);
       msg.setData(pipes);
       return msg.toJson();
     }
-
+*/
 
     @RequestMapping(value = "/queryPipeList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询管线信息接口", notes = "查询管线信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -455,6 +467,31 @@ public class BaseDataController {
         return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
     }
 
+    @RequestMapping(value = "/addZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "添加分区接口", notes = "添加分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String addZone(@RequestBody ZoneDTO zoneDTO,@PathVariable("tenantID") String tenantID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        MessageBean msg = new MessageBean();
+        Gson gson = new Gson();
+        Map data = new HashMap();
+        data.put("name",zoneDTO.getName());
+        data.put("type",zoneDTO.getType());
+        data.put("rank",zoneDTO.getRank());
+        data.put("geometry",zoneDTO.getGeometry());
+
+        //***获取当前最大分区号
+        ZoneVO zv = ADOConnection.runTask(user.getEnv(),zcs, "queryMaxZoneNo", ZoneVO.class,zoneDTO);
+
+        String url = gis+"/"+tenantID+"/dmaPosition/add.htm";
+        JsonObject ret = InterfaceUtil.interfaceOfPostUtil(url,gson.toJson(data));
+        msg = gson.fromJson(ret, new TypeToken<MessageBean>(){}.getType());
+        if(msg.getCode()==0){
+            //*****添加分区并根据父分区添加分区树节点
+
+        }
+        return msg.toJson();
+    }
+
     @RequestMapping(value = "/queryZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区列表接口", notes = "查询分区列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -739,6 +776,8 @@ public class BaseDataController {
                     Integer r = ADOConnection.runTask(user.getEnv(),dqs, "addZoneConfDataQuality", Integer.class, dq);
                 }
                 */
+               msg.setCode(0);
+                msg.setDescription("导入成功");
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
                 msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
@@ -928,9 +967,7 @@ public class BaseDataController {
 
         //TODO:Excel数据读取校验完整性，一致性，准确性
         List<ZoneMeterExcelBean> excelBeans = ImportExcelUtil.readExcel(file, ZoneMeterExcelBean.class);
-        for(ZoneMeterExcelBean bean : excelBeans){
-            bean.setBatchNo(BatchNo);
-        }
+
         if (excelBeans == null || excelBeans.size()==0) {
             msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
             msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
@@ -944,22 +981,22 @@ public class BaseDataController {
                 Integer validNum = 0;
                 for(ZoneMeterExcelBean bean : excelBeans){
                     boolean isZoonNo = true;
-                    boolean isPointNo = true;
+                    boolean isMeterNo = true;
                     boolean isType = true;
                     bean.setBatchNo(BatchNo);
                     if(bean.getZoneNo()==null || "".equals(bean.getZoneNo())){
-                        zoonNum++;
+                        ++zoonNum;
                         isZoonNo = false;
                     }
                     if(bean.getMeterNo() == null || "".equals(bean.getMeterNo())){
-                        meterNum++;
-                        isPointNo = false;
+                        ++meterNum;
+                        isMeterNo = false;
                     }
                     if(bean.getType()== null || "".equals(bean.getType())){
-                        typeNum++;
+                        ++typeNum;
                         isType = false;
                     }
-                    if(isZoonNo && isPointNo && isType){
+                    if(isZoonNo && isMeterNo && isType){
                         validNum++;
                     }
                 }
@@ -974,6 +1011,7 @@ public class BaseDataController {
                 dq.setCreateBy(user.getLoginName());
                 dq.setType("L103500002");
                 Integer ret = ADOConnection.runTask(user.getEnv(),zcs, "addBatchZoneMeter", Integer.class, excelBeans, dq);
+                msg.setCode(0);
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
                 msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
@@ -1034,6 +1072,18 @@ public class BaseDataController {
         msg.setData(mds);
         return msg.toJson();
     }
+
+    @RequestMapping(value = "/queryLastMonitorDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询最新监测数据接口", notes = "查询最新监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryLastMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user){
+        MessageBean msg = new MessageBean();
+        List<MonitorDataVO> ret= ADOConnection.runTask(user.getEnv(),ms, "queryLastMonitorDataList", List.class, monitorDataDTO);
+        msg.setCode(0);
+        msg.setData(ret);
+        return msg.toJson();
+    }
+
 
     @RequestMapping(value = "/queryMonitorDataByBatchNo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据批次查询监测数据列表接口", notes = "根据批次查询监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")

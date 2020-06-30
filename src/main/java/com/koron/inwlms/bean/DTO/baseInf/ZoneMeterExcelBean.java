@@ -21,9 +21,9 @@ public class ZoneMeterExcelBean {
     private String zoneNo;
 
     /**
-     * 监测点编号
+     * 水表编号
      */
-    @ImportExcelUtil.ExcelColumn("监测点编号")
+    @ImportExcelUtil.ExcelColumn("水表编号")
     @ImportExcelUtil.RequiredColumn
     private String meterNo;
 

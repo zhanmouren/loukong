@@ -1,7 +1,5 @@
 package com.koron.inwlms.bean.VO.baseInf;
 
-import com.koron.inwlms.util.ImportExcelUtil;
-
 /**
  * @auother:zhongweibin
  * @date:2020-05-12
@@ -22,100 +20,53 @@ public class MonitorDataVO {
     /**
      * 报警状态
      */
-    @ImportExcelUtil.ExcelColumn("报警状态")
-    @ImportExcelUtil.RequiredColumn
     private String status;
 
     /**
      * 监测点ID
      */
-    @ImportExcelUtil.ExcelColumn("监测点ID")
-    @ImportExcelUtil.RequiredColumn
     private String pointID;
 
     /**
      * 监测点名称
      */
-    @ImportExcelUtil.ExcelColumn("监测点名称")
-    @ImportExcelUtil.RequiredColumn
     private String name;
 
     /**
      * 监测数据类型
      */
-    @ImportExcelUtil.ExcelColumn("监测点类型")
-    @ImportExcelUtil.RequiredColumn
     private String type;
 
     /**
      * 最近记录数据时间
      */
-    @ImportExcelUtil.ExcelColumn("最近记录时间")
-    @ImportExcelUtil.RequiredColumn
     private String lastTime;
 
     /**
      * 噪声（dB)
      */
-    @ImportExcelUtil.ExcelColumn("噪声（dB）")
-    @ImportExcelUtil.RequiredColumn
     private Double noise;
 
     /**
      * 阈值（dB)
      */
-    @ImportExcelUtil.ExcelColumn("阈值（dB）")
-    @ImportExcelUtil.RequiredColumn
     private Double threshold;
-
-    /**
-     * 流量
-     */
-    @ImportExcelUtil.ExcelColumn("流量")
-    @ImportExcelUtil.RequiredColumn
-    private Double flow;
-
-    /**
-     * 正向流量
-     */
-    @ImportExcelUtil.ExcelColumn("正向流量")
-    @ImportExcelUtil.RequiredColumn
-    private Double forwardFlowRate;
-
-    /**
-     * 反向流量
-     */
-    @ImportExcelUtil.ExcelColumn("反向流量")
-    @ImportExcelUtil.RequiredColumn
-    private Double reverseFlowRate;
 
     /**
      * 瞬时流量
      */
-    @ImportExcelUtil.ExcelColumn("瞬时流量")
-    @ImportExcelUtil.RequiredColumn
     private Double flowRate;
 
     /**
-     * 阀前压力
+     * 压力p1
      */
-    @ImportExcelUtil.ExcelColumn("阀前压力")
-    @ImportExcelUtil.RequiredColumn
     private Double upstreamPressure;
 
     /**
-     * 阀后压力
+     * 压力p2
      */
-    @ImportExcelUtil.ExcelColumn("阀后压力")
-    @ImportExcelUtil.RequiredColumn
     private Double downstreamPressure;
 
-    /**
-     * 最不利点压力
-     */
-    @ImportExcelUtil.ExcelColumn("最不利点压力")
-    @ImportExcelUtil.RequiredColumn
-    private Double unfavorPressure;
 
     /**
      * 一级分区
@@ -241,30 +192,6 @@ public class MonitorDataVO {
         this.lastTime = lastTime;
     }
 
-    public Double getFlow() {
-        return flow;
-    }
-
-    public void setFlow(Double flow) {
-        this.flow = flow;
-    }
-
-    public Double getForwardFlowRate() {
-        return forwardFlowRate;
-    }
-
-    public void setForwardFlowRate(Double forwardFlowRate) {
-        this.forwardFlowRate = forwardFlowRate;
-    }
-
-    public Double getReverseFlowRate() {
-        return reverseFlowRate;
-    }
-
-    public void setReverseFlowRate(Double reverseFlowRate) {
-        this.reverseFlowRate = reverseFlowRate;
-    }
-
     public Double getFlowRate() {
         return flowRate;
     }
@@ -287,14 +214,6 @@ public class MonitorDataVO {
 
     public void setDownstreamPressure(Double downstreamPressure) {
         this.downstreamPressure = downstreamPressure;
-    }
-
-    public Double getUnfavorPressure() {
-        return unfavorPressure;
-    }
-
-    public void setUnfavorPressure(Double unfavorPressure) {
-        this.unfavorPressure = unfavorPressure;
     }
 
     public String getBatchNo() {

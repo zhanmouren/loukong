@@ -29,11 +29,11 @@
 
     <insert id="addBatchMointorData" >
         insert into mi_monitordata(
-             status,"pointID",type,"lastTime",flow,"forwardFlowRate","reverseFlowRate","flowRate","upstreamPressure","downstreamPressure","unfavorPressure",noise,threshold,"BatchNo","createBy","createTime"
+             status,"pointID",type,"lastTime","flowRate","upstreamPressure","downstreamPressure",noise,threshold,"BatchNo","createBy","createTime"
         )values
         <if test="excelBeans != null and excelBeans.size > 0">
             <foreach collection="excelBeans" item="item" index="" separator=",">
-					(#{item.status},#{item.pointID},#{item.type},#{item.lastTime},cast(#{item.flow} as numeric),cast(#{item.forwardFlowRate} as numeric),cast(#{item.reverseFlowRate} as numeric),cast(#{item.flowRate} as numeric),cast(#{item.upstreamPressure} as numeric),cast(#{item.downstreamPressure} as numeric),cast(#{item.unfavorPressure} as numeric),cast(#{item.noise} as numeric),cast(#{item.threshold} as numeric),#{item.BatchNo},#{item.createBy},#{item.createTime})
+					(#{item.status},#{item.pointID},#{item.type},#{item.lastTime},cast(#{item.flowRate} as numeric),cast(#{item.upstreamPressure} as numeric),cast(#{item.downstreamPressure} as numeric),cast(#{item.noise} as numeric),cast(#{item.threshold} as numeric),#{item.BatchNo},#{item.createBy},#{item.createTime})
             </foreach>
         </if>
 
@@ -82,14 +82,14 @@
 
     <select id="queryMonitorDataByBatchNo"   resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
         select * from(
-            select 0 as rows,mi_monitordata.id,status,"pointID",type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char("createTime",'YYYY-MM-DD HH:MM:SS') as createTime from mi_monitordata
+            select 0 as rows,mi_monitordata.id,status,"pointID",type,"lastTime",noise,threshold,"flowRate",mi_monitordata."createBy",to_char("createTime",'YYYY-MM-DD HH:MM:SS') as createTime from mi_monitordata
             <trim prefix="where" prefixOverrides="and|or">
                 <if test="batchNo != null "> and "BatchNo" = #{batchNo}</if>
             </trim>
             limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         )t
         union all
-        select count(*) as rows,0,'','','','',0.0,0.0,0.0,0.0,'',''
+        select count(*) as rows,0,'','','','',0.0,0.0,0.0,'',''
         from mi_monitordata
         <trim prefix="where" prefixOverrides="and|or">
                 <if test="batchNo != null "> and "BatchNo" = #{batchNo}</if>
@@ -117,7 +117,7 @@
 
     <select id="queryPressureFlowList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
         select * from(
-        select 0 as rows,mi_monitordata.id,status,"pointID",gis_scada_station.name,mi_monitordata.type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char(mi_monitordata."createTime",'YYYY-MM-DD HH:MM:SS') as "createTime","queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType" from mi_monitordata
+        select 0 as rows,mi_monitordata.id,status,"pointID",gis_scada_station.name,mi_monitordata.type,"lastTime",noise,threshold,"flowRate",mi_monitordata."createBy",to_char(mi_monitordata."createTime",'YYYY-MM-DD HH:MM:SS') as "createTime","queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType" from mi_monitordata
         left join gis_scada_station on mi_monitordata."pointID" = gis_scada_station.p_code
         left join gis_zone_point on mi_monitordata."pointID" = gis_zone_point."pointNo"
         left join tbltree on gis_zone_point."zoneNo" = tbltree.foreignkey
@@ -129,6 +129,8 @@
             <if test="first != null and first != '' "> </if>
             <if test="second != null and second != '' "> </if>
             <if test="DMA != null and DMA != '' "> </if>
+            <if test="begD != null and begD != '' "> and "lastTime" &gt;=#{begD} </if>
+            <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
             <if test=" 1==1 "> and mi_monitordata.type='1' </if>
         </trim>
         <if test="pageCount !=null and page !=null">
@@ -136,7 +138,7 @@
         </if>
         )t
         union all
-        select count(*) as rows,0,'','','','','',0.0,0.0,0.0,0.0,'','','',''
+        select count(*) as rows,0,'','','','','',0.0,0.0,0.0,'','','',''
         from mi_monitordata
         <trim prefix="where" prefixOverrides="and|or">
             <if test="status != null and status != '' "> and status = #{status}</if>
@@ -146,12 +148,14 @@
             <if test="first != null and first != '' "> </if>
             <if test="second != null and second != '' "> </if>
             <if test="DMA != null and DMA != '' "> </if>
+            <if test="begD != null and begD != '' "> and "lastTime" &gt;=#{begD} </if>
+            <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
             <if test=" 1==1 "> and mi_monitordata.type='1' </if>
         </trim>
     </select>
 
     <select id="queryPressureFlowDet"   resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
-        select id,"pointID","lastTime",flow,"forwardFlowRate","reverseFlowRate","flowRate","upstreamPressure","downstreamPressure","unfavorPressure",name,status from mi_monitordata
+        select id,"pointID","lastTime","flowRate","upstreamPressure","downstreamPressure",name,status from mi_monitordata
         <trim prefix="where" prefixOverrides="and|or">
             <if test="id != null ">and  id = #{id}</if>
         </trim>
@@ -159,7 +163,7 @@
 
     <select id="queryNoiseList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
        select * from(
-        select 0 as rows,mi_monitordata.id,status,"pointID",gis_scada_station.name,mi_monitordata.type,"lastTime",noise,threshold,flow,"forwardFlowRate",mi_monitordata."createBy",to_char(mi_monitordata."createTime",'YYYY-MM-DD HH:MM:SS') as createTime,"queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType" from mi_monitordata
+        select 0 as rows,mi_monitordata.id,status,"pointID",gis_scada_station.name,mi_monitordata.type,"lastTime",noise,threshold,mi_monitordata."createBy",to_char(mi_monitordata."createTime",'YYYY-MM-DD HH:MM:SS') as createTime,"queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType" from mi_monitordata
         left join gis_scada_station on mi_monitordata."pointID" = gis_scada_station.p_code
         left join gis_zone_point on mi_monitordata."pointID" = gis_zone_point."pointNo"
         left join tbltree on gis_zone_point."zoneNo" = tbltree.foreignkey
@@ -171,6 +175,8 @@
             <if test="first != null and first != '' "> </if>
             <if test="second != null and second != '' "> </if>
             <if test="DMA != null and DMA != '' "> </if>
+            <if test="begD != null and begD != '' "> and "lastTime" &gt;=#{begD} </if>
+            <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
             <if test=" 1==1 "> and mi_monitordata.type='2' </if>
         </trim>
         <if test="pageCount !=null and page !=null">
@@ -178,7 +184,7 @@
         </if>
         )t
         union all
-        select count(*) as rows,0,'','','','','',0.0,0.0,0.0,0.0,'','','',''
+        select count(*) as rows,0,'','','','','',0.0,0.0,'','','',''
         from mi_monitordata
         <trim prefix="where" prefixOverrides="and|or">
             <if test="status != null and status != '' "> and status = #{status}</if>
@@ -188,12 +194,14 @@
             <if test="first != null and first != '' "> </if>
             <if test="second != null and second != '' "> </if>
             <if test="DMA != null and DMA != '' "> </if>
+            <if test="begD != null and begD != '' "> and "lastTime" &gt;=#{begD} </if>
+            <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
             <if test=" 1==1 "> and mi_monitordata.type='2' </if>
         </trim>
     </select>
 
     <select id="queryNoiseDet"   resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
-        select id,"pointID","lastTime",noise,threshold,flow,name,status from mi_monitordata
+        select id,"pointID","lastTime",noise,threshold,name,status from mi_monitordata
         <trim prefix="where" prefixOverrides="and|or">
             <if test="id != null ">and  id = #{id}</if>
         </trim>

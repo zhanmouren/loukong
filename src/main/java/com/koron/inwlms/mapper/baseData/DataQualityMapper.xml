@@ -2,6 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.baseData.DataQualityMapper">
 
+    <insert id="addZoneConfDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO" >
+        insert into gis_zoneconfhistory("BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy","createTime",type)
+        values(#{BatchNo},#{originRow},#{row},#{integrity},#{accuracy},#{availability},#{timely},#{consistency},#{status},#{createBy},now(),#{type})
+    </insert>
+
     <select id="queryMonitoringQuantity" parameterType="com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MonitorQuantityVO">
 
          select * from(

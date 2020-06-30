@@ -1,44 +1,13 @@
  package com.koron.inwlms.service.intellectPartition;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
-import org.koron.ebs.mybatis.SessionFactory;
-import org.koron.ebs.mybatis.TaskAnnotation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
-import com.koron.inwlms.bean.DTO.intellectPartition.AutomaticPartitionDTO;
-import com.koron.inwlms.bean.DTO.intellectPartition.GisAllPipeDTO;
-import com.koron.inwlms.bean.DTO.intellectPartition.GisZoneData;
-import com.koron.inwlms.bean.DTO.intellectPartition.GisZonePipeData;
-import com.koron.inwlms.bean.DTO.intellectPartition.KafkaReturnData;
-import com.koron.inwlms.bean.DTO.intellectPartition.LayerData;
-import com.koron.inwlms.bean.DTO.intellectPartition.PipePreZoneRelationDTO;
-import com.koron.inwlms.bean.DTO.intellectPartition.PreZoneRelationDTO;
-import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
-import com.koron.inwlms.bean.DTO.intellectPartition.ZoneSchemeData;
+import com.koron.inwlms.bean.DTO.intellectPartition.*;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
-import com.koron.inwlms.bean.VO.intellectPartition.GisZonePipeDateVO;
-import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
-import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
-import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
-import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDetReturn;
-import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDetVO;
-import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeData;
-import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeDataReturn;
-import com.koron.inwlms.bean.VO.intellectPartition.ZoneRange;
-import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
+import com.koron.inwlms.bean.VO.intellectPartition.*;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.intellectPartition.PartitionSchemeMapper;
@@ -47,6 +16,18 @@ import com.koron.inwlms.util.InterfaceUtil;
 import com.koron.inwlms.util.TimeUtil;
 import com.koron.inwlms.util.kafka.ZoneKafkaConsumer;
 import com.koron.util.Constant;
+import org.koron.ebs.mybatis.SessionFactory;
+import org.koron.ebs.mybatis.TaskAnnotation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 
 @Service
@@ -268,9 +249,13 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			gisZonePipeData.setLayerFour(0);
 			
 			//测试数据
+			/*
 			gisZonePipeData.setPoint_c(0.0);
 			gisZonePipeData.setPoint_z(0.0);
-			
+			*/
+			gisZonePipeData.setPoint_c(1.0);
+			gisZonePipeData.setPoint_z(1.0);
+
 			if(gisZonePipeDataVO.getPip_value().equals("W101510001")) {
 				gisZonePipeData.setPip_value(1); 
 			}else {
@@ -378,7 +363,17 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 //		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
 //		String mlPath1 = "http://10.13.1.11:7500/estimate/receiveEstimateModel";
 //		JsonObject mlResultData1 = InterfaceUtil.interfaceOfPostUtil(mlPath1, data101);
-				
+
+
+		List<String> test = new ArrayList<>();
+		/******输出入参数据*******/
+		System.out.println(">>>>>>>>>>>>>>开始》>>>>>>>>>>>>>>>>");
+		for(GisZonePipeData gisZonePipeData : pipeinfo){
+			test.add(gisZonePipeData.getPip_obj_code());
+		}
+		System.out.println(gson.toJson(test));
+		System.out.println(">>>>>>>>>>>>>>结束》>>>>>>>>>>>>>>>>");
+
 		//TODO 调用模型算法接口推送数据，等待模型返回已接收信号时
 		GisZoneData gisZoneData = new GisZoneData();
 		gisZoneData.setPip_info(pipeinfo);

@@ -62,6 +62,59 @@ public class ZoneDTO extends BaseDTO {
      */
     private String rank;
 
+    /**
+     * 分区名称
+     */
+    private String name;
+
+    /**
+     * 父级分区
+     */
+    private String parent;
+
+    /**
+     * 类型
+     */
+    private String type;
+
+    /**
+     * 矢量坐标
+     * @return
+     */
+    private Object geometry;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getParent() {
+        return parent;
+    }
+
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Object getGeometry() {
+        return geometry;
+    }
+
+    public void setGeometry(Object geometry) {
+        this.geometry = geometry;
+    }
+
     public String getRank() {
         return rank;
     }

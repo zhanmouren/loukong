@@ -9,6 +9,7 @@ import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.mapper.baseData.DataQualityMapper;
 import com.koron.inwlms.mapper.baseData.IMDataMapper;
+import com.koron.inwlms.mapper.baseData.PropertyMapper;
 import com.koron.inwlms.service.baseData.MonitorService;
 import com.koron.inwlms.util.PageUtil;
 import org.koron.ebs.mybatis.SessionFactory;
@@ -24,6 +25,21 @@ import java.util.List;
  */
 @Service
 public class MonitorServiceImpl implements MonitorService {
+
+    /**
+     * 查询监测点最新监测数据
+     * @param factory
+     * @param monitorDataDTO
+     * @return
+     */
+    @TaskAnnotation("queryLastMonitorDataList")
+    @Override
+    public List<MonitorDataVO> queryLastMonitorDataList(SessionFactory factory,MonitorDataDTO monitorDataDTO){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        List<MonitorDataVO> ret = mapper.queryLastMonitorDataList(monitorDataDTO);
+        return  ret;
+
+    }
 
     /**
      * 批量插入监测数据

@@ -10,6 +10,16 @@ import java.util.List;
 public interface ZoneConfigService {
 
     /**
+     * 添加分区
+     */
+    public Integer addZone(SessionFactory factory, ZoneDTO zoneDTO);
+
+    /**
+     * 获取最大分区编号
+     */
+    public ZoneVO queryMaxZoneNo(SessionFactory factory,ZoneDTO zoneDTO);
+
+    /**
      * 添加负责分区
      */
     public Integer addChargeZones(SessionFactory factory, ZoneDTO zoneDTO);

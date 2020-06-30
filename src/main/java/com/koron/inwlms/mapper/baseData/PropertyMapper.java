@@ -16,6 +16,26 @@ public interface PropertyMapper {
     List<DataVO> queryALList();
 
     /**
+     * 添加分区
+     * @param zoneDTO
+     * @return
+     */
+    Integer addZone(ZoneDTO zoneDTO);
+
+    /**
+     * 获取最大分区编号
+     * @param zoneDTO
+     * @return
+     */
+    ZoneVO queryMaxZoneNo(ZoneDTO zoneDTO);
+
+    /**
+     * 获取监测点最近监测数据
+     * @return
+     */
+    List<MonitorDataVO> queryLastMonitorDataList(MonitorDataDTO monitorDataDTO);
+
+    /**
      * 查询户表类型汇总数
       * @return
      */

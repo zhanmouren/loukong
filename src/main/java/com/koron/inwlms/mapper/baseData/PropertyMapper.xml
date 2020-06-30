@@ -33,7 +33,7 @@
         )values
         <if test="excelBeans != null and excelBeans.size > 0">
             <foreach collection="excelBeans" item="item" index="" separator=",">
-                (#{item.zoneNo},#{item.pointNo},#{item.type},#{item.BatchNo},#{item.createBy},#{item.createTime})
+                (#{item.zoneNo},#{item.pointNo},"queryZoonPointTypeKey"(#{item.type}),#{item.BatchNo},#{item.createBy},#{item.createTime})
             </foreach>
         </if>
     </insert>
@@ -43,7 +43,7 @@
         )values
         <if test="excelBeans != null and excelBeans.size > 0">
             <foreach collection="excelBeans" item="item" index="" separator=",">
-                (#{item.zoneNo},#{item.meterNo},#{item.type},#{item.BatchNo},#{item.createBy},#{item.createTime})
+                (#{item.zoneNo},#{item.meterNo},"queryZoonMeterTypeKey"(#{item.type}),#{item.BatchNo},#{item.createBy},#{item.createTime})
             </foreach>
         </if>
     </insert>
@@ -199,7 +199,7 @@
      </delete>
 
     <delete id="deleteZonePointByBatch">
-           delete from gis_zoneconfhistory where "BatchNo" = #{BatchNo} and type = 'L103500001'
+           delete from gis_zoneconfhistory where "BatchNo" = #{BatchNo} and type = 'L103500001';
            delete from gis_zonepointrelation where "BatchNo" = #{BatchNo}
      </delete>
 
@@ -289,7 +289,7 @@
     </update>
 
     <delete id="deleteZoneMeterByBatchNo">
-           delete from gis_zoneconfhistory where "BatchNo" = #{BatchNo} and type ='L103500002'
+           delete from gis_zoneconfhistory where "BatchNo" = #{BatchNo} and type ='L103500002';
            delete from gis_zone_meter where "BatchNo" = #{BatchNo}
      </delete>
 
