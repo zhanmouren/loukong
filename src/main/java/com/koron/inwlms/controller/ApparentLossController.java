@@ -254,7 +254,7 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryMeterRunAnalysisTotalData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询水表运行分析总数据", notes = "查询水表运行分析总数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryMeterRunAnalysisTotalData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	public String queryMeterRunAnalysisTotalData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
 		MessageBean<MeterRunAnalysisTotalDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, MeterRunAnalysisTotalDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -288,7 +288,7 @@ public class ApparentLossController {
 			return msg.toJson();
 		}
 		try{
-			MeterRunAnalysisTotalDataVO data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisTotalData", MeterRunAnalysisTotalDataVO.class,queryALDTO);
+			MeterRunAnalysisTotalDataVO data = ADOConnection.runTask(user.getEnv(),als, "queryMeterRunAnalysisTotalData", MeterRunAnalysisTotalDataVO.class,queryALDTO,tenantID);
 			msg.setData(data);
     	}catch(Exception e){
     		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);

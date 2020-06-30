@@ -96,7 +96,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	public DrTotalVO queryDrTotalData(SessionFactory factory, QueryALDTO queryALDTO,UserVO userVO,String tenantID) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		if(queryALDTO.getInitFlag() == 0) {
-			String result = mapper.getDrReportResult(tenantID);
+			String result = mapper.getDrReportResult(Constant.DR_RES_CACHE_KEY+tenantID);
 			if(StringUtil.isEmpty(result)) return null;
 			Gson jsonValue = new Gson();
 			DrTotalVO drTotalVO = jsonValue.fromJson(result, DrTotalVO.class);
@@ -2207,7 +2207,15 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 
 	@TaskAnnotation("queryMeterRunAnalysisTotalData")
 	@Override
-	public MeterRunAnalysisTotalDataVO queryMeterRunAnalysisTotalData(SessionFactory factory, QueryALDTO queryALDTO) {
+	public MeterRunAnalysisTotalDataVO queryMeterRunAnalysisTotalData(SessionFactory factory, QueryALDTO queryALDTO,String tenantID) {
+		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
+		if(queryALDTO.getInitFlag() == 0) {
+			String result = mapper.getDrReportResult(Constant.RA_RES_CACHE_KEY+tenantID);
+			if(StringUtil.isEmpty(result)) return null;
+			Gson jsonValue = new Gson();
+			MeterRunAnalysisTotalDataVO meterRunAnalysisTotalDataVO = jsonValue.fromJson(result, MeterRunAnalysisTotalDataVO.class);
+			return meterRunAnalysisTotalDataVO;
+		}
 		//查询所有水表信息
 		List<MeterInfo> meterInfos = queryMeterInfoByZoneNo(factory,"");
 		//运行分析列表数据
@@ -2217,6 +2225,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		MeterRunAnalysisTotalDataVO meterRunAnalysisTotalDataVO = new MeterRunAnalysisTotalDataVO();
 		meterRunAnalysisTotalDataVO.setLists(lists);
 		meterRunAnalysisTotalDataVO.setMaps(maps);
+		mapper.addDrReportResult(Constant.RA_RES_CACHE_KEY+tenantID, JSON.toJSONString(meterRunAnalysisTotalDataVO));
 		return meterRunAnalysisTotalDataVO;
 	}
 }

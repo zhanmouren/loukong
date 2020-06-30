@@ -7,7 +7,7 @@
 		sum(case when b.code='WNMFWSSITDF' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "totalMeterFlow",
 		sum(case when b.code='WNMBC' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "meterReadFlow",
 		sum(case when b.code='WNMWL' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossFlow",
-		avg(case when b.code='WNMWLR' then round( value/b.precision :: NUMERIC, 2 ) else 0 end) as "lossRate"
+		avg(case when b.code='WNMWLR' then round( value/b.precision :: NUMERIC, 2 ) end) as "lossRate"
 		from
 		(select a.id,m."yearMonth",a.code,a.value,ind.precision as precision
 		from (

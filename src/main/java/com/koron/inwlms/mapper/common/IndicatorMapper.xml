@@ -8,8 +8,8 @@
 		select 
 		<if test="(timeType != null and timeType == 3) or (timeType != null and timeType == 2)">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,b."yearMonth" as "timeId",a."zoneNo"
-			from ana_base_month a left join (
-				select id,"yearMonth" from app_dim_month
+			from ana_base_month a inner join (
+				select id,"yearMonth" from lc_app_dim_month
 				where "yearMonth" &gt;= #{startTime} 
 				and "yearMonth" &lt;= #{endTime}
 			) b on a."yearMonth" = b.id
@@ -49,8 +49,8 @@
 		<if test="timeType != null and timeType == 3">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value, 
 			b."yearMonth" as "timeId", a."zoneNo"
-			from ana_zone_balance_month a left join(
-				select id,"yearMonth" from app_dim_month
+			from ana_zone_balance_month a inner join(
+				select id,"yearMonth" from lc_app_dim_month
 				where "yearMonth" &gt;= #{startTime} 
 				and "yearMonth" &lt;= #{endTime}
 			) b on a."yearMonth" = b.id 
@@ -90,8 +90,8 @@
 		<if test="timeType != null and timeType == 3">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
 			b."yearMonth" as "timeId",a."zoneNo"
-			from ana_zone_month a left join(
-				select id,"yearMonth" from app_dim_month
+			from ana_zone_month a inner join(
+				select id,"yearMonth" from lc_app_dim_month
 				where "yearMonth" &gt;= #{startTime} 
 				and "yearMonth" &lt;= #{endTime}
 			) b on a."yearMonth" = b.id 
@@ -129,7 +129,7 @@
 		<if test="timeType != null and timeType == 3">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
 			b."yearMonth" as "timeId",a."zoneNo"
-			from ana_zone_moni_month a left join(
+			from ana_zone_moni_month a inner join(
 				select id,"yearMonth" from app_dim_month
 				where "yearMonth" &gt;= #{startTime} 
 				and "yearMonth" &lt;= #{endTime}
@@ -168,8 +168,8 @@
 		<if test="timeType != null and timeType == 3">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
 			b."yearMonth" as "timeId",a."zoneNo"
-			from ana_leak_month a left join(
-				select id,"yearMonth" from app_dim_month
+			from ana_leak_month a inner join(
+				select id,"yearMonth" from lc_app_dim_month
 				where "yearMonth" &gt;= #{startTime} 
 				and "yearMonth" &lt;= #{endTime}
 			) b on a."yearMonth" = b.id 
@@ -207,8 +207,8 @@
 		<if test="timeType != null and timeType == 3">
 			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
 			b."yearMonth" as "timeId"
-			from ana_company_month a left join(
-				select id,"yearMonth" from app_dim_month
+			from ana_company_month a inner join(
+				select id,"yearMonth" from lc_app_dim_month
 				where "yearMonth" &gt;= #{startTime} 
 				and "yearMonth" &lt;= #{endTime}
 			) b on a."yearMonth" = b.id 

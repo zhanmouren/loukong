@@ -181,5 +181,5 @@ public interface ApparentLossService {
 	 * @param queryALDTO
 	 * @return
 	 */
-	MeterRunAnalysisTotalDataVO queryMeterRunAnalysisTotalData(SessionFactory factory, QueryALDTO queryALDTO);
+	MeterRunAnalysisTotalDataVO queryMeterRunAnalysisTotalData(SessionFactory factory, QueryALDTO queryALDTO,String tenantID);
 }

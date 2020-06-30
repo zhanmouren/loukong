@@ -1177,4 +1177,13 @@ public class Constant {
 	 */
 	public final static Integer RANK_VZ = 4;
 	
+	/**
+	 * 诊断报告结果缓存KEY
+	 */
+	public final static String DR_RES_CACHE_KEY = "DR_RES";
+
+	/**
+	 * 运行分析结果缓存KEY
+	 */
+	public final static String RA_RES_CACHE_KEY = "RA_RES";
 }

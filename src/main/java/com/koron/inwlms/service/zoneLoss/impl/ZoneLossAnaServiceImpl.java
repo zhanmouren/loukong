@@ -289,11 +289,11 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			}
 			
 			fZoneLossListVO.setMeterNum(meterNum/timeNum);
-			fZoneLossListVO.setPipeLength(Double.parseDouble(df.format(pipeLength/timeNum)));
-			fZoneLossListVO.setFlow(flow);
-			fZoneLossListVO.setUseFlow(useFlow);
-			fZoneLossListVO.setLossFlow(lossFlow);
-			fZoneLossListVO.setNrw(Double.parseDouble(df.format(nrw)));
+			fZoneLossListVO.setPipeLength(Double.parseDouble(df.format(pipeLength/timeNum/1000)));
+			fZoneLossListVO.setFlow(Double.parseDouble(df.format(flow/10000)));
+			fZoneLossListVO.setUseFlow(Double.parseDouble(df.format(useFlow/10000)));
+			fZoneLossListVO.setLossFlow(Double.parseDouble(df.format(lossFlow/10000)));
+			fZoneLossListVO.setNrw(Double.parseDouble(df.format(nrw/10000)));
 			fZoneLossListVO.setPerUserLossFlow(Double.parseDouble(df.format(perUserLossFlow/timeNum)));
 			fZoneLossListVO.setPerLengthLossFlow(Double.parseDouble(df.format(perLengthLossFlow/timeNum)));
 			fZoneLossListVO.setLossRate(Double.parseDouble(df.format(lossRate/timeNum)));
@@ -391,7 +391,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
+		DecimalFormat df = new DecimalFormat("#.0000");
 		List<SZoneLossListVO> dataList = new ArrayList<>();
 		for (int i = 0; i<zoneInfos.size(); i++) {
 			if(i < (querySZoneLossListDTO.getPage()-1)*querySZoneLossListDTO.getPageCount()) continue;
@@ -483,10 +483,10 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 				}
 			}
 			sZoneLossListVO.setMeterNum(meterNum/timeNum);
-			sZoneLossListVO.setPipeLength(pipeLength/timeNum);
-			sZoneLossListVO.setFlow(flow);
-			sZoneLossListVO.setUseFlow(useFlow);
-			sZoneLossListVO.setLossFlow(lossFlow);
+			sZoneLossListVO.setPipeLength(Double.parseDouble(df.format(pipeLength/timeNum/1000)));
+			sZoneLossListVO.setFlow(Double.parseDouble(df.format(flow/10000)));
+			sZoneLossListVO.setUseFlow(Double.parseDouble(df.format(useFlow/10000)));
+			sZoneLossListVO.setLossFlow(Double.parseDouble(df.format(lossFlow/10000)));
 			sZoneLossListVO.setPerUserLossFlow(perUserLossFlow/timeNum);
 			sZoneLossListVO.setPerLengthLossFlow(perLengthLossFlow/timeNum);
 			sZoneLossListVO.setLossRate(lossRate/timeNum);
@@ -574,7 +574,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
+		DecimalFormat df = new DecimalFormat("#.0000");
 		List<DmaZoneLossListVO> dataList = new ArrayList<>();
 		for (int i = 0;i<zoneInfos.size();i++) {
 			if(i < (queryDmaZoneLossListDTO.getPage()-1)*queryDmaZoneLossListDTO.getPageCount()) continue;
@@ -666,10 +666,10 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 				}
 			}
 			dmaZoneLossListVO.setMeterNum(meterNum/timeNum);
-			dmaZoneLossListVO.setPipeLength(pipeLength/timeNum);
-			dmaZoneLossListVO.setFlow(flow);
-			dmaZoneLossListVO.setUseFlow(useFlow);
-			dmaZoneLossListVO.setLossFlow(lossFlow);
+			dmaZoneLossListVO.setPipeLength(Double.parseDouble(df.format(pipeLength/timeNum/1000)));
+			dmaZoneLossListVO.setFlow(Double.parseDouble(df.format(flow/10000)));
+			dmaZoneLossListVO.setUseFlow(Double.parseDouble(df.format(useFlow/10000)));
+			dmaZoneLossListVO.setLossFlow(Double.parseDouble(df.format(lossFlow/10000)));
 			dmaZoneLossListVO.setPerUserLossFlow(perUserLossFlow/timeNum);
 			dmaZoneLossListVO.setPerLengthLossFlow(perLengthLossFlow/timeNum);
 			dmaZoneLossListVO.setLossRate(lossRate/timeNum);
@@ -1499,7 +1499,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				Map<Object,Object> map = new HashMap<Object, Object>();
-				map.put(itemCode, values);
+				map.put(itemCode, df.format(values/10000));
 				maps.put(zoneNo, map);
 			}
 		}else if(Constant.ZONE_LOSS_INDIC.contains(itemCode)) {
@@ -1522,6 +1522,11 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					map.put(itemCode, null);
 				} else{
 					map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
+					if(itemCode.contains("WL")) {
+						map.put(itemCode, df.format(values/timeNum/10000));
+					}else{
+						map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
+					}
 				}
 				maps.put(zoneNo, map);
 			}
