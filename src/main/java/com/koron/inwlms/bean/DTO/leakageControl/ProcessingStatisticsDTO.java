@@ -22,10 +22,20 @@ public class ProcessingStatisticsDTO {
 	 */
 	private String dmaCode;
 	
+	private Integer type;
 	
 	private String startTime;
 	
 	private String endTime;
+
+	
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
 
 	public String getFirstPartion() {
 		return firstPartion;

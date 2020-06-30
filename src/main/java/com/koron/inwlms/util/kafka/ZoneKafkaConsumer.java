@@ -64,8 +64,11 @@ public class ZoneKafkaConsumer {
 	                Gson jsonValue = new Gson();
 	                String value = record.value();
 	                KafkaReturnData kafkaReturnData = jsonValue.fromJson(value, KafkaReturnData.class);
-	                //数据入库
-	                ADOConnection.runTask(user.getEnv(),new PartitionSchemeDetServiceImpl(), "addKafkaData", Integer.class, kafkaReturnData);
+	                if(kafkaReturnData.getIs_end() == 2 || kafkaReturnData.getIs_end() == 1) {
+	                	//数据入库
+		                ADOConnection.runTask(user.getEnv(),new PartitionSchemeDetServiceImpl(), "addKafkaData", Integer.class, kafkaReturnData);
+	                }
+	                
 	                     
 	            });
 	        }

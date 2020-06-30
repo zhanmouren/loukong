@@ -31,9 +31,18 @@ public class ProcessingStatisticsVO {
 
 	private List<ProcessingStatisticsVO> proStatList;
 	
+	private StrategyStatistics strategy;
 	
 	
 	
+	public StrategyStatistics getStrategy() {
+		return strategy;
+	}
+
+	public void setStrategy(StrategyStatistics strategy) {
+		this.strategy = strategy;
+	}
+
 	public Double getLossFlowNum() {
 		return lossFlowNum;
 	}

@@ -37,7 +37,7 @@ public class KafkaController {
 		     user.setName("xiaozhanq");
 		     user.setPassword("123456q");
 	        kafkaProducer.sendUserMessage(user);
-	  }
+	  } 
 	 
 	 @RequestMapping("/readMsg")
 	 public void readMsg(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {

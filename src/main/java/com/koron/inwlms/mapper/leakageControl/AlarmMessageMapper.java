@@ -40,5 +40,7 @@ public interface AlarmMessageMapper {
 	
 	@Update("update from app_warningtask set state = #{state} and \"updateTime\" = #{updateTime}")
 	Integer updateWarningTask(@Param("state") Integer state,@Param("updateTime") Date updateTime);
+	
+	AlarmMessageVO queryAlarmMessageByCode(String code);
 
 }

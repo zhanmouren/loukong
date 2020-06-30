@@ -70,11 +70,8 @@
   values(#{type}, #{time}, #{state}, Now(), Now())
   </insert>
 
-  <select id="" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
-  select * from app_warninginf
-  <trim prefix="where" prefixOverrides="and|or">
-   <if test="code != null and code != '' ">and code = #{code}</if> 
-  </trim>
+  <select id="queryAlarmMessageByCode" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO">
+  select * from app_warninginf where code = #{code}
   </select>
   
 </mapper>

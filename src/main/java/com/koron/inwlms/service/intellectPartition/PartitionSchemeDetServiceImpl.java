@@ -227,7 +227,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			GisZonePipeData gisZonePipeData = new GisZonePipeData();
 			if(gisZonePipeDataVO.getPip_p() == null || gisZonePipeDataVO.getPip_p_pre() == null || gisZonePipeDataVO.getPip_obj_code() == null || gisZonePipeDataVO.getPip_len() == null) {
 				System.out.print(1);
-			}else if(gisZonePipeDataVO.getPoint_a() == null || gisZonePipeDataVO.getPoint_b() == null || gisZonePipeDataVO.getPip_d() == null) {
+			}else if(gisZonePipeDataVO.getPoint_a() == null || gisZonePipeDataVO.getPoint_b() == null || gisZonePipeDataVO.getPip_d() == null || gisZonePipeDataVO.getPip_value() == null) {
 				System.out.print(1);
 			}
 			gisZonePipeData.setPip_p(gisZonePipeDataVO.getPip_p());
