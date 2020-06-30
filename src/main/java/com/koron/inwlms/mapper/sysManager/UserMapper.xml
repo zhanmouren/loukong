@@ -188,7 +188,7 @@
        left join sm_user as "user" on "userRela"."userCode"="user".code
        left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
 	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
-       where "userRela"."roleCode"=#{roleCode}     
+       where "userRela"."roleCode"=#{roleCode} and "user"."whetUse"=0     
     </select>
     
     <!--查询所有角色列表 -->
