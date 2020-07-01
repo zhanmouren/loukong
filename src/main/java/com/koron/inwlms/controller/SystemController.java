@@ -89,8 +89,14 @@ public class SystemController {
 			String env = tenantID+ EnvSource.DEFAULT;
 
 			if(envMap.get(tenantID)==null || "".equals(envMap.get(tenantID))) {
+				String token = "";
 				//调用云管平台接口获取租户数据
-				String token = getTenantToken(Constant.APPID, tenantID);
+				if("mz".equals(tenantID)){
+					token = getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4");
+				}else if("cp".equals(tenantID)){
+					token = getTenantToken(Constant.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85");
+				}
+
 				if (token != null) {
 					//***获取租户相关信息
 
@@ -131,9 +137,9 @@ public class SystemController {
 				if(userVO.getPassword().equals(userLoginDTO.getPassword())) {
 
 					//****TODO:临时处理-定义用户所属组织
-					if("4a1e7e2df9134cd297d03bbbc26df7f4".equals(tenantID)){
+					if("mz".equals(tenantID)){
 						userVO.setOrg("梅州水司");
-					}else if("565ee7bdd75a4c6e937ce9b406b3aa85".equals(tenantID)){
+					}else if("cp".equals(tenantID)){
 						userVO.setOrg("常平水司");
 					}
 					//***end
