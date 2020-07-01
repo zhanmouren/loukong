@@ -1131,7 +1131,7 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		} else if (queryZoneHstDataDTO.getTimeType() < Constant.TIME_TYPE_M
+		} else if (queryZoneHstDataDTO.getTimeType() < Constant.TIME_TYPE_D
 				|| queryZoneHstDataDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			// 传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);

@@ -114,6 +114,21 @@ public class VSZoneListVO {
 		Non子DMA in DMA
 	 */
 	private String virtualZoneType;
+	
+	/**
+	 * 主实际分区
+	 */
+	private String masCode;
+	
+	/**
+	 * 子实际分区字符串
+	 */
+	private String secCode;
+	
+	/**
+	 * 子实际分区集合
+	 */
+	private String[] secCodes;
 
 	public String getZoneNo() {
 		return zoneNo;
@@ -282,6 +297,30 @@ public class VSZoneListVO {
 
 	public void setVirtualZoneType(String virtualZoneType) {
 		this.virtualZoneType = virtualZoneType;
+	}
+
+	public String getMasCode() {
+		return masCode;
+	}
+
+	public void setMasCode(String masCode) {
+		this.masCode = masCode;
+	}
+
+	public String getSecCode() {
+		return secCode;
+	}
+
+	public void setSecCode(String secCode) {
+		this.secCode = secCode;
+	}
+
+	public String[] getSecCodes() {
+		return secCodes;
+	}
+
+	public void setSecCodes(String[] secCodes) {
+		this.secCodes = secCodes;
 	}
 
 	

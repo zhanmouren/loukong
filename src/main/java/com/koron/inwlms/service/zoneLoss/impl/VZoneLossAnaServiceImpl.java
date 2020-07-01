@@ -55,7 +55,11 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 		if(vZoneInfos == null || vZoneInfos.size()<(queryVSZoneListDTO.getPage()-1)*queryVSZoneListDTO.getPageCount()) {
 			return null;
 		} 
-		
+		//将子实际分区转成数组
+		for (VZoneInfoVO vZoneInfoVO : vZoneInfos) {
+			if(StringUtil.isEmpty(vZoneInfoVO.getSecCode())) continue;
+			vZoneInfoVO.setSecCodes(vZoneInfoVO.getSecCode().split(","));
+		}
 		for(int i = 0;i<vZoneInfos.size();i++) {
 			vZoneCodes.add(vZoneInfos.get(i).getZoneNo());
 		}
@@ -140,6 +144,8 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 			vSZoneListVO.setZoneNo(vZoneInfos.get(i).getZoneNo());
 			vSZoneListVO.setZoneName(vZoneInfos.get(i).getZoneName());
 			vSZoneListVO.setVirtualZoneType(vZoneInfos.get(i).getVirtualZoneType());
+			vSZoneListVO.setMasCode(vZoneInfos.get(i).getMasCode());
+			vSZoneListVO.setSecCodes(vZoneInfos.get(i).getSecCodes());
 //			vSZoneListVO.setZoneRank(Constant.RANK_F);
 			vSZoneListVO.setpZoneNo(vZoneInfos.get(i).getpZoneNo());
 			vSZoneListVO.setpZoneName(vZoneInfos.get(i).getpZoneName());

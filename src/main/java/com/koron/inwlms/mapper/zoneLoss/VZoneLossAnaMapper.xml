@@ -35,7 +35,7 @@
 	
 	<select id="queryVZoneInfo" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO"
 	resultType="com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO">
-	select "pCode" as zoneNo, name as zoneName,"virtualZoneType","createTime" from gis_exist_vzone
+	select "pCode" as zoneNo, name as zoneName,"masCode","secCode","virtualZoneType","createTime" from gis_exist_vzone
 	where "vType" = #{zoneType}
 	<if test="zoneNo != null and zoneNo != ''">
 		and "pCode" = #{zoneNo}
