@@ -19,6 +19,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.PolicyTypeNum;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsAllDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.StrategyStatistics;
@@ -189,6 +190,7 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		   
 		  
 		  List<ProcessingStatisticsVO> proStatList = new ArrayList<>();
+		  PolicyTypeNum ptn = new PolicyTypeNum();
 		  while(start <= end) {
 			  Calendar calendar = Calendar.getInstance();
 			  calendar.setTime(startDate);
@@ -208,7 +210,6 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 			  List<AlarmProcessVO> alarmProcessList = mapper.queryAlarmProcess(alarmProcessDTO);		  
 			  //控制策略统计
 			  List<DataDicVO> dataDicList = new ArrayList<>();
-			  StrategyStatistics strategyst = new StrategyStatistics();
 			  if(alarmProcessList != null && alarmProcessList.size() != 0) {
 				  for(AlarmProcessVO alarmProcessVO : alarmProcessList) {
 					  String state = alarmProcessVO.getState();
@@ -234,7 +235,7 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 									  }
 								  }
 								  
-								  strategyst = getStrategyStatistics(alarmProcessVO.getRecommendStrategy(),strategyst);
+								  ptn = getStrategyStatistics(alarmProcessVO.getRecommendStrategy(),ptn);
 							  }  
 						  }else {
 							  if(state.equals("0")) {
@@ -249,7 +250,7 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 								  //未处理
 								  untreatedNum = untreatedNum + 1;
 							  }
-							  strategyst = getStrategyStatistics(alarmProcessVO.getRecommendStrategy(),strategyst);
+							  ptn = getStrategyStatistics(alarmProcessVO.getRecommendStrategy(),ptn);
 						  }
 						  
 					  }
@@ -320,7 +321,6 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 			  
 			  
 			  proStat.setMonth(start);
-			  proStat.setStrategy(strategyst);
 			  proStatList.add(proStat);
 			  //循环增加，开始时间改变
 			  i = i + 1;
@@ -350,80 +350,80 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		//TODO 3获取漏损处理优先级分析
 		//TODO 3.1分区节约水量和占比
 		//TODO 3.2分区节约水量改造成本
-		
+			psad.setPtn(ptn);
 			psad.setPsv(processingStatisticsVO);
 		return psad;
 	}
 	
-	public StrategyStatistics getStrategyStatistics(String Strategy,StrategyStatistics Strategyst) {
+	public PolicyTypeNum getStrategyStatistics(String Strategy,PolicyTypeNum ptn) {
 		if(Strategy.equals(Constant.DATADICTIONARY_PCSTRA)) {
-			if(Strategyst.getP() == null) {
-				Strategyst.setP(0);
+			if(ptn.getP1() == null) {
+				ptn.setP1(0);
 			}
-			Integer num = Strategyst.getP() + 1;
-			Strategyst.setP(num);
+			Integer num = ptn.getP1() + 1;
+			ptn.setP1(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_PNLDETECTION)) {
-			if(Strategyst.getL() == null) {
-				Strategyst.setL(0);
+			if(ptn.getP2() == null) {
+				ptn.setP2(0);
 			}
-			Integer num = Strategyst.getL() + 1;
-			Strategyst.setL(num);
+			Integer num = ptn.getP2() + 1;
+			ptn.setP2(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_FLOWCHANGE)) {
-			if(Strategyst.getF() == null) {
-				Strategyst.setF(0);
+			if(ptn.getP3() == null) {
+				ptn.setP3(0);
 			}
-			Integer num = Strategyst.getF() + 1;
-			Strategyst.setF(num);
+			Integer num = ptn.getP3() + 1;
+			ptn.setP3(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_PNCHANGE)) {
-			if(Strategyst.getR() == null) {
-				Strategyst.setR(0);
+			if(ptn.getP4() == null) {
+				ptn.setP4(0);
 			}
-			Integer num = Strategyst.getR() + 1;
-			Strategyst.setR(num);
+			Integer num = ptn.getP4() + 1;
+			ptn.setP4(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_PCANDPN)) {
-			if(Strategyst.getPr() == null) {
-				Strategyst.setPr(0);
+			if(ptn.getP5() == null) {
+				ptn.setP5(0);
 			}
-			Integer num = Strategyst.getPr() + 1;
-			Strategyst.setPr(num);
+			Integer num = ptn.getP5() + 1;
+			ptn.setP5(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_PCANDPNLD)) {
-			if(Strategyst.getPl() == null) {
-				Strategyst.setPl(0);
+			if(ptn.getP6() == null) {
+				ptn.setP6(0);
 			}
-			Integer num = Strategyst.getPl() + 1;
-			Strategyst.setPl(num);
+			Integer num = ptn.getP6() + 1;
+			ptn.setP6(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_PCANDFLOWC)) {
-			if(Strategyst.getPf() == null) {
-				Strategyst.setPf(0);
+			if(ptn.getP7() == null) {
+				ptn.setP7(0);
 			}
-			Integer num = Strategyst.getPf() + 1;
-			Strategyst.setPf(num);
+			Integer num = ptn.getP7() + 1;
+			ptn.setP7(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_FLOWCANDPNLD)) {
-			if(Strategyst.getLf() == null) {
-				Strategyst.setLf(0);
+			if(ptn.getP8() == null) {
+				ptn.setP8(0);
 			}
-			Integer num = Strategyst.getLf() + 1;
-			Strategyst.setLf(num);
+			Integer num = ptn.getP8() + 1;
+			ptn.setP8(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_PNANDFLOWC)) {
-			if(Strategyst.getRf() == null) {
-				Strategyst.setRf(0);
+			if(ptn.getP9() == null) {
+				ptn.setP9(0);
 			}
-			Integer num = Strategyst.getRf() + 1;
-			Strategyst.setRf(num);
+			Integer num = ptn.getP9() + 1;
+			ptn.setP9(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_PCANDPNANDFC)) {
-			if(Strategyst.getPrf() == null) {
-				Strategyst.setPrf(0);
+			if(ptn.getP10() == null) {
+				ptn.setP10(0);
 			}
-			Integer num = Strategyst.getPrf() + 1;
-			Strategyst.setPrf(num);
+			Integer num = ptn.getP10() + 1;
+			ptn.setP10(num);
 		}else if(Strategy.equals(Constant.DATADICTIONARY_PCANDPNLDANDFC)) {
-			if(Strategyst.getPlf() == null) {
-				Strategyst.setPlf(0);
+			if(ptn.getP11() == null) {
+				ptn.setP11(0);
 			}
-			Integer num = Strategyst.getPlf() + 1;
-			Strategyst.setPlf(num);
+			Integer num = ptn.getP11() + 1;
+			ptn.setP11(num);
 		}
-		return Strategyst;
+		return ptn;
 	}
 
 }
