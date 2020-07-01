@@ -164,7 +164,7 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 		  }else {
 			  psad.setLossFlowBefor(0.0);
 		  }
-		  lossFlowDTO.setEndTime(end);
+		  lossFlowDTO.setEndTime(end); 
 		  lossFlowDTO.setStartTime(end);
 		  List<IndicatorVO> lossIndicatorList1 = new ArrayList<>();
 		  if(lossFlowCode.equals("WNDWL")) {

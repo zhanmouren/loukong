@@ -171,7 +171,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		if(!code1.equals("0")) {
 			return null;
 		}
-		JsonArray gisdata = gisResultData.getAsJsonArray("data");
+		JsonObject gisdata = gisResultData.getAsJsonObject("data");
 		GisDmaIsolatedPipeVO  gisDmaIsolatedPipeVO = gson.fromJson(gisdata, new TypeToken<GisDmaIsolatedPipeVO>(){}.getType());
 		List<GisZonePipeDateVO> gisZonePipeDateVO = gisDmaIsolatedPipeVO.getNormalList();
 
