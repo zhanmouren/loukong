@@ -181,7 +181,7 @@ public class TimeTask {
 		//爆管/渗漏指标				
 	}
 	
-	@Scheduled(cron = "0 47 * * * ?")// 整点5分执行
+	@Scheduled(cron = "0 48 * * * ?")// 整点5分执行
 	public void calPointAlarmTask() {
 		AlarmMessageServiceImpl ams = new AlarmMessageServiceImpl();
 		WarningMessageProduceService wmps = new WarningMessageProduceServiceImpl();

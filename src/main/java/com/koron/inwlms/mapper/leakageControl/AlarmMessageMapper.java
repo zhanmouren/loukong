@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
 
 /**
@@ -23,6 +24,8 @@ import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
 public interface AlarmMessageMapper {
 	
 	List<AlarmMessageVO> queryAlarmMessage(WarningInfDTO warningInfDTO);
+	
+	List<AlarmProcessVO> queryProcessByAlarmCode(String code);
 	
 	@Select("select * from app_warninginf where \"pointCode\" = #{code}")
 	List<AlarmMessageVO> queryAlarmMessageByPointCode(@Param("code") String code);

@@ -128,7 +128,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 								
 								//判断是否需要产生预警信息处理任务
 								
-								if(alertNoticeSchemeList != null || alertNoticeSchemeList.size() != 0) {
+								if(alertNoticeSchemeList != null && alertNoticeSchemeList.size() != 0) {
 									//产生预警信息处理任务编码
 									AlarmProcessVO alarmProcessVO = new AlarmProcessVO();
 									alarmProcessVO.setWarningCode(warningCode);

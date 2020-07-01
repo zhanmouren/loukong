@@ -15,6 +15,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByType;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
+import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
@@ -36,6 +37,14 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 		}
 		
 		List<AlarmMessageVO> list = mapper.queryAlarmMessage(warningInfDTO);
+		for(AlarmMessageVO alarmMessageVO : list) {
+			List<AlarmProcessVO> processList = mapper.queryProcessByAlarmCode(alarmMessageVO.getCode());
+			if(processList != null && processList.size() != 0) {
+				alarmMessageVO.setTaskCode(processList.get(0).getTaskCode());
+				alarmMessageVO.setTaskState(processList.get(0).getState());
+				alarmMessageVO.setExecutorCode(processList.get(0).getExecutorCode());
+			}
+		}
 		Integer totalNumber = mapper.queryAlarmMessageTotalNumber(warningInfDTO);
 		AlarmMessageReturnVO alarmMessageReturnVO = new AlarmMessageReturnVO();
 		alarmMessageReturnVO.setAlarmMessageList(list);

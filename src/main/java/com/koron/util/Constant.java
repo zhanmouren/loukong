@@ -431,7 +431,7 @@ public class Constant {
 	/**
 	 * 对象类型数据字典编码-压力流量
 	 */
-	public final static String DATADICTIONARY_OBJECTTYPE = "L101170001";
+	public final static String DATADICTIONARY_OBJECTTYPE = "L101940001";
 	
 	/**
 	 * 任务状态未处理-数据字典
@@ -573,11 +573,11 @@ public class Constant {
 	/**
 	 * 正向瞬时流速-指标编码
 	 */
-	public final static String INDICATOR_FORWARDSPEED = "MOHFV";
+	public final static String INDICATOR_FORWARDSPEED = "MOHFDF";
 	/**
 	 * 反向瞬时流速-指标编码
 	 */
-	public final static String INDICATOR_REVERSESPEED = "MOHRV";
+	public final static String INDICATOR_REVERSESPEED = "MOHRF";
 	/**
 	 * 压力1-指标编码
 	 */
