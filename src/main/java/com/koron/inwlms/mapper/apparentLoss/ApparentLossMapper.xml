@@ -520,9 +520,21 @@
 	
 	<select id="queryMeterInfoByZoneNo" parameterType="java.lang.String"
 	resultType="com.koron.inwlms.bean.VO.apparentLoss.MeterInfo">
-		select "CTM_NUM" as accNo,"CTM_NAME" as accName,"TBL_NUM" as meterNo,
+		select "CTM_NUM" as accNo,"CTM_NAME" as accName,"TBL_NUM" as meterNo,b."zoneNo",
 		"BORE_VALUE" as meterDn,"CLASS_ID" as meterType,"CTM_ADDR" address,"YS_NAME" as useType,
-		"CB_DAY" mReadDate,DATE_PART('days',now()-to_date((case when "CHANGE_DATE" is null then "KAI_DATE" else "CHANGE_DATE" end),'YYYY-MM-DD'))/356 as useYear from rw_fct_ctm  
+		"CB_DAY" mReadDate,DATE_PART('days',now()-to_date((case when "CHANGE_DATE" is null then "KAI_DATE" else "CHANGE_DATE" end),'YYYY-MM-DD'))/356 as useYear 
+		from rw_fct_ctm a inner join gis_zone_meter b on a."BOOK_NUM" = b."meterNo" 
+		where 1=1
+		<if test="zoneNo != null and zoneNo !=''">
+			<if test="zoneRank != null and zoneRank !='' and zoneRank == 1">
+			and b."zoneNo" in (select foreignkey from tbltree where (seq &amp; ~((1::int8 &lt;&lt; (62 - 
+				(select parentMask+mask from tbltree where foreignkey=#{zoneNo})
+				))-1)) = (select seq from tbltree where foreignkey=#{zoneNo}) and type = 2 and foreignkey != #{zoneNo} order by seq )
+			</if>
+			<if test="zoneRank != null and zoneRank !='' and zoneRank == 2">
+			and b."zoneNo" = #{zoneNo}
+			</if>
+		</if>
 	</select>
 	
 	<select id="queryWNMMeterReadFlow" resultType="java.lang.Double">

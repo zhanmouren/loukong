@@ -178,7 +178,7 @@ public interface ApparentLossMapper {
 	 * @param zoneNo
 	 * @return
 	 */
-	List<MeterInfo> queryMeterInfoByZoneNo(@Param("zoneNo") String zoneNo);
+	List<MeterInfo> queryMeterInfoByZoneNo(@Param("zoneNo") String zoneNo,@Param("zoneRank") Integer zoneRank);
 	
 	/**
 	 * 查询全网水表月抄表水量

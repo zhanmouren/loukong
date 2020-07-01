@@ -105,7 +105,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		
 		DrTotalVO drTotalVO = new DrTotalVO();
 		//查询所有水表信息
-		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory,"");
+		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory,queryALDTO.getZoneNo(),queryALDTO.getZoneRank());
 		
 		//查询水表qh信息
 		List<MeterQH> queryMeterQH = mapper.queryMeterQH(queryALDTO, lists);
@@ -440,7 +440,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		Integer endTime = queryALDTO.getEndTime();
 		//调用gis接口获取分区的水表信息
 		if(lists == null) {
-			lists = queryMeterInfoByZoneNo(factory, "");
+			lists = queryMeterInfoByZoneNo(factory, queryALDTO.getZoneNo(),queryALDTO.getZoneRank());
 		}
 		// 根据时间类型转换开始时间和结束时间
 		if (Constant.TIME_TYPE_Y.equals(timeType)) {
@@ -1868,9 +1868,9 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	 * @param zoneNo
 	 * @return
 	 */
-	List<MeterInfo> queryMeterInfoByZoneNo(SessionFactory factory, String zoneNo) {
+	List<MeterInfo> queryMeterInfoByZoneNo(SessionFactory factory, String zoneNo,Integer zoneRank) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
-		List<MeterInfo> result = mapper.queryMeterInfoByZoneNo(zoneNo);
+		List<MeterInfo> result = mapper.queryMeterInfoByZoneNo(zoneNo,zoneRank);
 		return result;
 	}
 
@@ -2056,7 +2056,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			QueryALListDTO qaDTO) {
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
 		//查询所有水表信息
-		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory,"");
+		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory,qaDTO.getZoneNo(),qaDTO.getZoneRank());
 		List<DrqlSusUseDataListVO> drqlSusUseDataList = new ArrayList<>();		
 		String[] priKeySplit1 = Constant.USE_PRI1.split(",");
 		String[] priKeySplit2 = Constant.USE_PRI2.split(",");
@@ -2217,7 +2217,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			return meterRunAnalysisTotalDataVO;
 		}
 		//查询所有水表信息
-		List<MeterInfo> meterInfos = queryMeterInfoByZoneNo(factory,"");
+		List<MeterInfo> meterInfos = queryMeterInfoByZoneNo(factory,queryALDTO.getZoneNo(),queryALDTO.getZoneRank());
 		//运行分析列表数据
 		List<MeterRunAnalysisVO> lists = queryMeterRunAnalysisList(factory,queryALDTO,meterInfos);
 		//运行分析图表数据
@@ -2225,7 +2225,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		MeterRunAnalysisTotalDataVO meterRunAnalysisTotalDataVO = new MeterRunAnalysisTotalDataVO();
 		meterRunAnalysisTotalDataVO.setLists(lists);
 		meterRunAnalysisTotalDataVO.setMaps(maps);
-		mapper.addDrReportResult(Constant.RA_RES_CACHE_KEY+tenantID, JSON.toJSONString(meterRunAnalysisTotalDataVO));
+//		mapper.addDrReportResult(Constant.RA_RES_CACHE_KEY+tenantID, JSON.toJSONString(meterRunAnalysisTotalDataVO));
 		return meterRunAnalysisTotalDataVO;
 	}
 }
