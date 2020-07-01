@@ -32,7 +32,9 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 		//TODO 查询分区编码
 		if(warningInfDTO.getFirstPartion() != null && !warningInfDTO.getFirstPartion().equals("")) {
 			if(warningInfDTO.getSecondPartition() != null && !warningInfDTO.getSecondPartition().equals("")) {
-				 
+				warningInfDTO.setAreaCode(warningInfDTO.getSecondPartition());
+			}else {
+				warningInfDTO.setAreaCode(warningInfDTO.getFirstPartion());
 			}
 		}
 		
