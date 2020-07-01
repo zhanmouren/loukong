@@ -92,7 +92,7 @@ import com.koron.util.SessionUtil;
 public class UserServiceImpl implements UserService{
 	
 	private Integer mainDeptFlag=0;
-	private Integer secDeptFlag=-1;
+	private Integer secDeptFlag=1;
 	
 	private String myOrgCode="org001";
 	
