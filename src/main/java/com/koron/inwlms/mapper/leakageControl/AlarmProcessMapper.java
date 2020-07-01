@@ -48,5 +48,8 @@ public interface AlarmProcessMapper {
 	
 	List<AlarmProcessLog> queryAlarmProcessLog(String taskCode);
 	Integer addAlarmProcessLog(AlarmProcessLog alarmProcessLog);
+	
+	@Select("select name from sm_user where code = #{code}")
+	String queryUserNameByCode(@Param("code") String code);
 
 }

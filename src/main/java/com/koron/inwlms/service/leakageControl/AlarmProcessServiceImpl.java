@@ -535,6 +535,12 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	public List<AlarmProcessLog> queryAlarmProcessLog(SessionFactory factory,String taskCode) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		List<AlarmProcessLog> list = mapper.queryAlarmProcessLog(taskCode);
+		for(AlarmProcessLog alarmProcessLog : list) {
+			if(alarmProcessLog.getCreateBy() != null && !alarmProcessLog.getCreateBy().equals("")) {
+				String name = mapper.queryUserNameByCode(alarmProcessLog.getCreateBy());
+				alarmProcessLog.setCreateBy(name);
+			}
+		}
 		return list;
 	}
 	
