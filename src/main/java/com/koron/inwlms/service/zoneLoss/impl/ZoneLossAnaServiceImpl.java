@@ -304,6 +304,16 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			inputSum++;
 			
 		}
+		
+		//查询警报信息
+		ZoneLossAnaMapper zMapper = factory.getMapper(ZoneLossAnaMapper.class);
+		for (FZoneLossListVO data : dataList) {
+			if(StringUtil.isEmpty(data.getZoneNo())) continue;
+			Integer warnCount = zMapper.queryZoneWarningInfo(data.getZoneNo());
+			if(warnCount != null && warnCount>0) {
+				data.setAlarmStatus(1);
+			}
+		}
 		PageListVO<List<FZoneLossListVO>> result = new PageListVO<>();
 		result.setDataList(dataList);
 		// 插入分页信息

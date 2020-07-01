@@ -63,4 +63,12 @@ public interface ZoneLossAnaMapper {
 	 */
 	@Select("select foreignkey from tbltree where ((select seq from tbltree where foreignkey = #{zoneNo}) & ~((1::int8 << (62 - parentmask-mask))-1)) = seq and type = 2 order by seq")
 	List<String> queryParentsCodeByNo(@Param("zoneNo") String zoneNo);
+	
+	/**
+	 * 查询分区警报信息
+	 * @param zoneNo
+	 * @return
+	 */
+	@Select("select count(*) from app_warninginf where \"areaCode\" = #{zoneNo}")
+	Integer queryZoneWarningInfo(@Param("zoneNo") String zoneNo);
 }
