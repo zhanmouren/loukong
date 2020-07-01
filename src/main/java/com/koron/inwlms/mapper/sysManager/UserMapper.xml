@@ -92,7 +92,9 @@
              <if test="updateBy != null and updateBy!=''" >  "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if>  
              <if test="status != null" > status = #{status},  </if>  
-             <if test="position != null" > position = #{position},  </if>             
+             <if test="position != null" > position = #{position},  </if> 
+             <if test="workNo != null" > "workNo" = #{workNo},  </if>   
+             <if test="phone != null" > phone = #{phone},  </if>            
 		</set>
 		where code=#{code}
      </update>
@@ -277,6 +279,7 @@
 	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
 	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from sm_userdept as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
 	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
+	     <if test="1==1"> and "user"."loginName"  !='admin'</if>
 	   </trim>
 	    group by "user".id ,"user"."loginName","user".phone,"user"."email",
 		"user".name,"user".position,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
@@ -295,7 +298,8 @@
 	     <if test="loginName != null"> and "user"."loginName" like  '%'||#{loginName}||'%'</if> 
 	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
 	     <if test="depCode != null">  and  "user".code not in(select "deptuser"."userCode" from sm_userdept as "deptuser" where "deptuser"."deptCode" =#{depCode})	</if> 
-	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
+	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if> 
+	     <if test="1==1"> and "user"."loginName"  !='admin'</if> 
 	   </trim>
      </select>
      
@@ -589,7 +593,7 @@
       
         <!-- 根据部门Code查询部门人员-->
       <select id="queryDeptUser"  parameterType="com.koron.inwlms.bean.DTO.sysManager.DeptDTO" resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
-          select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."email" is null then '' else "user"."email" end,"user".name,case when "user".position is null then '' else "user".position end,case when "user".sex is null then '' else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
+          select "user".code as code,"user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end ,case when "user"."email" is null then '' else "user"."email" end,"user".name,case when "user".position is null then '' else "user".position end,case when "user".sex is null then '' else "user".sex end,"user".photo,"user"."openID","user".status,"user"."workNo",
 		  "user"."whetUse","user"."createBy","user"."createTime","user"."updateBy","user"."updateTime",case when "dept".name is null then '' else "dept".name end as "depname"      
 		   from sm_department as "dept"     
 		   left join sm_userdept as "userdept" on "userdept"."deptCode"="dept".code    
