@@ -370,6 +370,9 @@ public interface UserMapper {
 		public List<UploadFileNewVO> queryHeadPortrait(UploadFileNewDTO uploadFileNewDTO);
 		
 		//修改该节点顺序值(同级而且不能重复)
-		Integer updateMenuPeersSeq(MenuSeqDTO menuSeqDTO);
+		public Integer updateMenuPeersSeq(MenuSeqDTO menuSeqDTO);
+		
+		//根据用户code删除用户部门中间表 标志为0的
+		public Integer  deleteUserDeptByCode(@Param("code") String code);
 		
 }

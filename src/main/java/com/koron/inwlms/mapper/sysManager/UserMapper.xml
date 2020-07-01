@@ -12,7 +12,7 @@
 	  "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
        else string_agg(distinct("dept".name),';') end as "depname","user".code  as code    
 	   from sm_user as "user"       
-	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".Code   and "userdept"."mainDeptFlag"=0
 	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
 	   left join sm_position as "position" on "user".position = "position".code      
        <trim prefix="where" prefixOverrides="and|or">
@@ -24,7 +24,7 @@
    	    <if test="code != null"> and "user".code = #{code}</if> 
    	    <if test="loginName != null"> and "user"."loginName" = #{loginName}</if> 
    	    <if test="workNo != null"> and "user"."workNo" = #{workNo}</if> 
-   	    <if test="code != null"> and "user"."code" = #{code}</if>        
+   	    <if test="code != null"> and "user"."code" = #{code}</if>      
 	  </trim>
 	   group by "user".id ,"user"."loginName","user".phone,"user"."email",
 		"user".name,"position".name,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
@@ -1076,5 +1076,12 @@
               set sequence=#{sequence} 
               where code= #{foreignkey}
        </update>
+       
+       
+           <!--删除该用户那条数据mainDeptFlag=0-->
+        <delete id="deleteUserDeptByCode">
+         delete from sm_userdept
+          where "userCode"=#{code} and "mainDeptFlag"=0
+        </delete>
 	    
 </mapper>
