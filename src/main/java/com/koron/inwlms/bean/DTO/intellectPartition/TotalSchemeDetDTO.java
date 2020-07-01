@@ -34,8 +34,20 @@ public class TotalSchemeDetDTO extends BaseDTO{
 	 * 分区类型（实际分区1或者虚拟分区0）
 	 */
 	private Integer zoneType;
+	
+	private String createBy;
+	
+	
 
 	
+	public String getCreateBy() {
+		return createBy;
+	}
+
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
+
 	public String getSubId() {
 		return subId;
 	}

@@ -92,6 +92,7 @@ public class IntellectPartitionController {
 		totalSchemeDet.setMaxZone(automaticPartitionDTO.getMaxZone());
 		totalSchemeDet.setMinZone(automaticPartitionDTO.getMinZone());
 		totalSchemeDet.setZoneType(automaticPartitionDTO.getZoneType());
+		totalSchemeDet.setCreateBy(user.getCode());
 		if(automaticPartitionDTO.getZoneGrade() != null) {
 			totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
 		}
@@ -159,6 +160,7 @@ public class IntellectPartitionController {
 		}
 		
 		try {
+			totalSchemeDetDTO.setCreateBy(user.getCode());
 			TotalSchemeDetReturn list = ADOConnection.runTask(user.getEnv(),psds, "queryTotalSchemeDet", TotalSchemeDetReturn.class,totalSchemeDetDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);

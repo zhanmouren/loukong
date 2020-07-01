@@ -102,28 +102,30 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		TotalSchemeDetReturn totalSchemeDetReturn = new TotalSchemeDetReturn();
 		List<TotalSchemeDetVO> totalSchemeDetVOList = new ArrayList<>();
 		List<TotalSchemeDet> list = mapper.queryTotalSchemeDet(totalSchemeDetDTO);
-		for(TotalSchemeDet totalSchemeDet : list) {
-			TotalSchemeDetVO totalSchemeDetVO = new TotalSchemeDetVO();
-			totalSchemeDetVO.setCode(totalSchemeDet.getCode());
-			totalSchemeDetVO.setMaxZone(totalSchemeDet.getMaxZone());
-			totalSchemeDetVO.setMinZone(totalSchemeDet.getMinZone());
-			totalSchemeDetVO.setZoneCode(totalSchemeDet.getZoneCode());
-			if(totalSchemeDet.getZoneGrade() != null) {
-				totalSchemeDetVO.setZoneGrade(totalSchemeDet.getZoneGrade());
+		if(list != null && list.size() != 0) {
+			for(TotalSchemeDet totalSchemeDet : list) {
+				TotalSchemeDetVO totalSchemeDetVO = new TotalSchemeDetVO();
+				totalSchemeDetVO.setCode(totalSchemeDet.getCode());
+				totalSchemeDetVO.setMaxZone(totalSchemeDet.getMaxZone());
+				totalSchemeDetVO.setMinZone(totalSchemeDet.getMinZone());
+				totalSchemeDetVO.setZoneCode(totalSchemeDet.getZoneCode());
+				if(totalSchemeDet.getZoneGrade() != null) {
+					totalSchemeDetVO.setZoneGrade(totalSchemeDet.getZoneGrade());
+				}
+				if(totalSchemeDet.getZoneType() != null) {
+					totalSchemeDetVO.setZoneType(totalSchemeDet.getZoneType());
+				}
+				if(totalSchemeDet.getAmbientLayer() != null) {
+					List<LayerData> ambientLayerList = gson.fromJson(totalSchemeDet.getAmbientLayer(), new TypeToken<List<LayerData>>(){}.getType());
+					totalSchemeDetVO.setAmbientLayer(ambientLayerList);
+				}
+				if(totalSchemeDet.getFlowLayer() != null) {
+					List<LayerData> flowLayerList = gson.fromJson(totalSchemeDet.getFlowLayer(), new TypeToken<List<LayerData>>(){}.getType());
+					totalSchemeDetVO.setFlowLayer(flowLayerList);
+				}
+				
+				totalSchemeDetVOList.add(totalSchemeDetVO);
 			}
-			if(totalSchemeDet.getZoneType() != null) {
-				totalSchemeDetVO.setZoneType(totalSchemeDet.getZoneType());
-			}
-			if(totalSchemeDet.getAmbientLayer() != null) {
-				List<LayerData> ambientLayerList = gson.fromJson(totalSchemeDet.getAmbientLayer(), new TypeToken<List<LayerData>>(){}.getType());
-				totalSchemeDetVO.setAmbientLayer(ambientLayerList);
-			}
-			if(totalSchemeDet.getFlowLayer() != null) {
-				List<LayerData> flowLayerList = gson.fromJson(totalSchemeDet.getFlowLayer(), new TypeToken<List<LayerData>>(){}.getType());
-				totalSchemeDetVO.setFlowLayer(flowLayerList);
-			}
-			
-			totalSchemeDetVOList.add(totalSchemeDetVO);
 		}
 		totalSchemeDetReturn.setTotalSchemeDetList(totalSchemeDetVOList);
 		return totalSchemeDetReturn;
