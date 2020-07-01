@@ -156,7 +156,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		List<LayerData> flowLayerList = automaticPartitionDTO.getFlowLayerList();
 		
 		//调用gis接口，获取所选分区管线数据(不包括图层信息)
-		String gisPath = "http://10.13.1.11:8888/"+tenantID+"/getDmaAllPipe.htm";
+		String gisPath = "http://10.13.1.11:8888/"+tenantID+"/getDmaIsolatedPipe.htm";
 		GisAllPipeDTO gisAllPipeDTO = new GisAllPipeDTO();
 		List<String> cutRegion = new ArrayList<>();
 		gisAllPipeDTO.setBaseRegion(automaticPartitionDTO.getZoneCode());
@@ -172,7 +172,8 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			return null;
 		}
 		JsonArray gisdata = gisResultData.getAsJsonArray("data");
-		List<GisZonePipeDateVO>  gisZonePipeDateVO= gson.fromJson(gisdata, new TypeToken<List<GisZonePipeDateVO>>(){}.getType());
+		GisDmaIsolatedPipeVO  gisDmaIsolatedPipeVO = gson.fromJson(gisdata, new TypeToken<GisDmaIsolatedPipeVO>(){}.getType());
+		List<GisZonePipeDateVO> gisZonePipeDateVO = gisDmaIsolatedPipeVO.getNormalList();
 
 		if(ambientLayerList != null && ambientLayerList.size() != 0) {
 			for(LayerData layerData : ambientLayerList) {
