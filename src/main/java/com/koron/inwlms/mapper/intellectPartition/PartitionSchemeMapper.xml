@@ -43,10 +43,10 @@
  </foreach>
  </update>
 
- <update id="updateSchemeDet" parameterType="java.lang.String">
- update app_schemedet set state = 1 where "totalSchemeCode" in
- <foreach item="codeitem" collection="list" open="(" separator="," close=")">
- #{codeitem}
+ <update id="updateSchemeDet" parameterType="java.lang.Integer">
+ update app_schemedet set state = 1 where id in
+ <foreach item="iditem" collection="list" open="(" separator="," close=")">
+ #{iditem}
  </foreach>
  </update>
  

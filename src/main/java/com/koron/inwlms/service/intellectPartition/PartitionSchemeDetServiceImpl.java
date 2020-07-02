@@ -133,10 +133,10 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	
 	@TaskAnnotation("changeSchemeDet")
 	@Override
-	public Integer changeSchemeDet(SessionFactory factory,Integer state,List<String> codes) {
+	public Integer changeSchemeDet(SessionFactory factory,List<String> codes,List<Integer> ids) {
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
 		mapper.updateTotalSchemeDet(codes);
-		Integer num = mapper.updateSchemeDet(codes);
+		Integer num = mapper.updateSchemeDet(ids);
 		return num;
 	}
 	
@@ -524,6 +524,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
         SchemeDet.setTightness(kafkaReturnData.getTightness());
         SchemeDet.setEcomony(kafkaReturnData.getEconomy());
         SchemeDet.setRegionNum(kafkaReturnData.getPartition_no().intValue());
+        SchemeDet.setState(0);
 		Integer schemeDetId = mapper.addSchemeDet(SchemeDet);
 		
 		for(ZoneSchemeData zoneSchemeData : kafkaReturnData.getPartition_detail()) {

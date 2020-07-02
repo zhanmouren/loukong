@@ -35,7 +35,7 @@ public interface PartitionSchemeMapper {
 	
 	Integer updateTotalSchemeDet(List<String> codes);
 	
-	Integer updateSchemeDet(List<String> codes);
+	Integer updateSchemeDet(List<Integer> ids);
 	
 	Integer addSchemeDet(SchemeDet schemeDet);
 	

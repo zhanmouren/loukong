@@ -29,7 +29,7 @@ public interface PartitionSchemeDetService {
 
 	TotalSchemeDetReturn queryTotalSchemeDet(SessionFactory factory, TotalSchemeDetDTO totalSchemeDetDTO);
 
-	Integer changeSchemeDet(SessionFactory factory, Integer state, List<String> codes);
+	Integer changeSchemeDet(SessionFactory factory,List<String> codes,List<Integer> ids);
 
 	ModelReturn getModelReturnData(SessionFactory factory, AutomaticPartitionDTO automaticPartitionDTO,
 			TotalSchemeDet totalSchemeDet,String tenantID);
