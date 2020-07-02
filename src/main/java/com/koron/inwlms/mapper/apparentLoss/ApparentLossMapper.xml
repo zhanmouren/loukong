@@ -489,7 +489,7 @@
 	    group by code;
 	</select> -->
 	
-	<select id="queryMeterMMaxFlow" resultType="java.lang.Double">
+	<!-- <select id="queryMeterMMaxFlow" resultType="java.lang.Double">
 		select 
 		round( max(flux) :: NUMERIC, 2 ) as flux
 		from gdh_month_flux_c001_jc where
@@ -501,7 +501,7 @@
 			</foreach> 
 		</if>
 	    group by code;
-	</select>
+	</select> -->
 	
 	<!-- <select id="queryMeterErrUseData" resultType="com.koron.inwlms.bean.VO.apparentLoss.DrqlMeterErrUseData">
 		select code as meterNo,
@@ -803,5 +803,19 @@
 	
 	<select id = "getDrReportResult" resultType = "java.lang.String">
 		select result from app_dr_report_result where tenantid = #{tenantid}
+	</select>
+	
+	<select id="queryMeterMMaxFlow" resultType="java.lang.Double">
+		select 
+		round( max("REAL_NUM")/100 :: NUMERIC, 2 ) as value
+		from rw_fct_cb where
+		"MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
+		<if test="lists != null and lists.size > 0">
+			and "CTM_NUM" in 
+			<foreach item="item" collection="lists" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+	    group by "CTM_NUM";
 	</select>
 </mapper> 

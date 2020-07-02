@@ -10,53 +10,54 @@ public class MeterAnalysisData {
 	/**
 	 * 低流量占比
 	 */
-	private double lowFlowMeterRate;
+	private Integer lowFlowMeterRate;
 	
 	/**
 	 * 零流量占比
 	 */
-	private double zeroFlowMeterRate;
+	private Integer zeroFlowMeterRate;
 	
 	/**
 	 * 正常流量占比
 	 */
-	private double normalFlowMeterRate;
+	private Integer normalFlowMeterRate;
 	
 	/**
 	 * 高流量占比
 	 */
-	private double highFlowMeterRate;
+	private Integer highFlowMeterRate;
 
-	public Double getLowFlowMeterRate() {
+	public Integer getLowFlowMeterRate() {
 		return lowFlowMeterRate;
 	}
 
-	public Double getZeroFlowMeterRate() {
-		return zeroFlowMeterRate;
-	}
-
-	public Double getNormalFlowMeterRate() {
-		return normalFlowMeterRate;
-	}
-
-	public Double getHighFlowMeterRate() {
-		return highFlowMeterRate;
-	}
-
-	public void setLowFlowMeterRate(Double lowFlowMeterRate) {
+	public void setLowFlowMeterRate(Integer lowFlowMeterRate) {
 		this.lowFlowMeterRate = lowFlowMeterRate;
 	}
 
-	public void setZeroFlowMeterRate(Double zeroFlowMeterRate) {
+	public Integer getZeroFlowMeterRate() {
+		return zeroFlowMeterRate;
+	}
+
+	public void setZeroFlowMeterRate(Integer zeroFlowMeterRate) {
 		this.zeroFlowMeterRate = zeroFlowMeterRate;
 	}
 
-	public void setNormalFlowMeterRate(Double normalFlowMeterRate) {
+	public Integer getNormalFlowMeterRate() {
+		return normalFlowMeterRate;
+	}
+
+	public void setNormalFlowMeterRate(Integer normalFlowMeterRate) {
 		this.normalFlowMeterRate = normalFlowMeterRate;
 	}
 
-	public void setHighFlowMeterRate(Double highFlowMeterRate) {
+	public Integer getHighFlowMeterRate() {
+		return highFlowMeterRate;
+	}
+
+	public void setHighFlowMeterRate(Integer highFlowMeterRate) {
 		this.highFlowMeterRate = highFlowMeterRate;
 	}
+
 	
 }
