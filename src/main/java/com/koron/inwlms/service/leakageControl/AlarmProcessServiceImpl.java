@@ -56,6 +56,10 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		List<AlarmProcessVO> list = mapper.queryAlarmProcess(alarmProcessDTO);
 		//查询报警信息
 		for(AlarmProcessVO alarmProcessVO : list) {
+			if(alarmProcessVO.getLeadingCadre() != null && !alarmProcessVO.getLeadingCadre().equals("")) {
+				String name = mapper.queryUserNameByCode(alarmProcessVO.getLeadingCadre());
+				alarmProcessVO.setLeadingCadre(name);
+			}
 			if(alarmProcessVO.getWarningCode() != null && !alarmProcessVO.getWarningCode().equals("")) {
 				List<AlarmProcessVO> alarmProcessVO1List = mapper.queryAlarmMessageByP(alarmProcessDTO);
 				if(alarmProcessVO1List != null && alarmProcessVO1List.size() != 0) {
@@ -112,6 +116,10 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		List<AlarmProcessVO> list = mapper.queryAlarmProcessByTaskCode(taskCode);
 		
 		for(AlarmProcessVO alarmProcessVO : list) {
+			if(alarmProcessVO.getLeadingCadre() != null && !alarmProcessVO.getLeadingCadre().equals("")) {
+				String name = mapper.queryUserNameByCode(alarmProcessVO.getLeadingCadre());
+				alarmProcessVO.setLeadingCadre(name);
+			}
 			if(alarmProcessVO.getWarningCode() != null) {
 				AlarmProcessVO alarmProcessVO1 = mapper.queryAlarmMessageByCode(alarmProcessVO.getWarningCode());
 				if(alarmProcessVO1 != null) {
@@ -169,6 +177,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	@Override
 	public String addAlarmProcess(SessionFactory factory,AlarmProcessVO alarmProcessVO, UserVO user) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		alarmProcessVO.setLeadingCadre(user.getCode());
 		String num = "";
 		//判断报警类型
 		if(alarmProcessVO.getAlarmType().equals(Constant.DATADICTIONARY_TRENDCHANGE)) { 
