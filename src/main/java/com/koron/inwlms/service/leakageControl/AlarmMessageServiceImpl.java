@@ -17,8 +17,10 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
+import com.koron.inwlms.bean.VO.leakageControl.ZoneAndPoint;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
+import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.util.Constant;
 
@@ -250,6 +252,13 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
 		Integer num = mapper.updateWarningTask(state, updateTime);
 		return num;
+	}
+	
+	@TaskAnnotation("queryPointByZoneCode")
+	@Override
+	public List<ZoneAndPoint> queryPointByZoneCode(SessionFactory factory) {
+		BasicDataMapper mapper = factory.getMapper(BasicDataMapper.class);
+		return null;
 	}
 	
 }

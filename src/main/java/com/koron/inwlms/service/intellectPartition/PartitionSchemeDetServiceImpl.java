@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -93,14 +95,20 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	
 	/**
 	 * 查询方案总表数据
+	 * @throws ParseException 
 	 */
 	@TaskAnnotation("queryTotalSchemeDet")
 	@Override
-	public TotalSchemeDetReturn queryTotalSchemeDet(SessionFactory factory,TotalSchemeDetDTO totalSchemeDetDTO){
+	public TotalSchemeDetReturn queryTotalSchemeDet(SessionFactory factory,TotalSchemeDetDTO totalSchemeDetDTO) throws ParseException{
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
 		Gson gson = new Gson();
 		TotalSchemeDetReturn totalSchemeDetReturn = new TotalSchemeDetReturn();
 		List<TotalSchemeDetVO> totalSchemeDetVOList = new ArrayList<>();
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		Date end = format.parse(totalSchemeDetDTO.getEndTime());
+		end = TimeUtil.addDay(end, 1);
+		String endTime = format.format(end);
+		totalSchemeDetDTO.setEndTime(endTime);
 		List<TotalSchemeDet> list = mapper.queryTotalSchemeDet(totalSchemeDetDTO);
 		if(list != null && list.size() != 0) {
 			for(TotalSchemeDet totalSchemeDet : list) {
@@ -152,9 +160,10 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		List<String> riverList = new ArrayList<>();
 		List<String> xzqList = new ArrayList<>(); 
 		List<String> scadaList = new ArrayList<>(); 
-		List<LayerData> ambientLayerList = automaticPartitionDTO.getAmbientLayerList();
-		List<LayerData> flowLayerList = automaticPartitionDTO.getFlowLayerList();
-		
+		//List<LayerData> ambientLayerList = automaticPartitionDTO.getAmbientLayerList();
+		List<LayerData> ambientLayerList = new ArrayList<>();
+		//List<LayerData> flowLayerList = automaticPartitionDTO.getFlowLayerList();
+		List<LayerData> flowLayerList = new ArrayList<>();
 		//调用gis接口，获取所选分区管线数据(不包括图层信息)
 		String gisPath = "http://10.13.1.11:8888/"+tenantID+"/getDmaIsolatedPipe.htm";
 		GisAllPipeDTO gisAllPipeDTO = new GisAllPipeDTO();
@@ -185,7 +194,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 					if(!code2.equals("0")) {
 						return null;
 					}
-					JsonArray gisdata1 = gisResultData.getAsJsonArray("data");
+					JsonArray gisdata1 = (JsonArray) gisResultData.getAsJsonObject().get("data");
 					railwayList = gson.fromJson(gisdata1, new TypeToken<List<String>>(){}.getType());
 				}else if(layerData.getCode().equals("BASE_RIVER")) {
 					//调用gis接口，查询河流图层信息

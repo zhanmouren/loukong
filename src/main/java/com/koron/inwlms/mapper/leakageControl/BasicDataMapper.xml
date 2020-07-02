@@ -15,6 +15,5 @@
   a.method as method from nw_monitorpoint_hour a left join lc_app_dim_indicator b on a.code = b.code where a."stationCode" = #{stationCode} and 
   a."analysisDate"  between '${startTime}' and '${endTime}'
   </select>
-  
 
 </mapper>

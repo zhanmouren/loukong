@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
+import com.koron.inwlms.bean.VO.leakageControl.ZoneAndPoint;
 
 public interface AlarmMessageService {
 
@@ -37,5 +38,8 @@ public interface AlarmMessageService {
 
 
 	Integer updateWarningTask(SessionFactory factory, Integer state, Date updateTime);
+
+
+	List<ZoneAndPoint> queryPointByZoneCode(SessionFactory factory);
 
 }

@@ -1,5 +1,6 @@
 package com.koron.inwlms.service.intellectPartition;
 
+import java.text.ParseException;
 import java.util.List;
 
 import org.koron.ebs.mybatis.SessionFactory;
@@ -27,7 +28,7 @@ public interface PartitionSchemeDetService {
 
 	String addTotalSchemeDet(SessionFactory factory, TotalSchemeDet totalSchemeDet);
 
-	TotalSchemeDetReturn queryTotalSchemeDet(SessionFactory factory, TotalSchemeDetDTO totalSchemeDetDTO);
+	TotalSchemeDetReturn queryTotalSchemeDet(SessionFactory factory, TotalSchemeDetDTO totalSchemeDetDTO) throws ParseException;
 
 	Integer changeSchemeDet(SessionFactory factory,List<String> codes,List<Integer> ids);
 

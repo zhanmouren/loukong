@@ -266,5 +266,11 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 		
 		return alertNoticeMessageList;
 	}
+	
+	public String getEnvelopeData() {
+		//查询去年同月数据
+		
+		return null;
+	}
 
 }

@@ -82,12 +82,12 @@ public class IntellectPartitionController {
 		
 		//接收到信号，开始存储方案总表信息
 		TotalSchemeDet totalSchemeDet = new TotalSchemeDet();
-		if(automaticPartitionDTO.getAmbientLayerList() != null && automaticPartitionDTO.getAmbientLayerList().size() != 0) {
-			totalSchemeDet.setAmbientLayer(automaticPartitionDTO.getAmbientLayerList().toString());
-		}
-		if(automaticPartitionDTO.getFlowLayerList() != null && automaticPartitionDTO.getFlowLayerList().size() != 0) {
-			totalSchemeDet.setFlowLayer(automaticPartitionDTO.getFlowLayerList().toString());
-		}
+//		if(automaticPartitionDTO.getAmbientLayerList() != null && automaticPartitionDTO.getAmbientLayerList().size() != 0) {
+//			totalSchemeDet.setAmbientLayer(automaticPartitionDTO.getAmbientLayerList().toString());
+//		}
+//		if(automaticPartitionDTO.getFlowLayerList() != null && automaticPartitionDTO.getFlowLayerList().size() != 0) {
+//			totalSchemeDet.setFlowLayer(automaticPartitionDTO.getFlowLayerList().toString());
+//		}
 		
 		totalSchemeDet.setMaxZone(automaticPartitionDTO.getMaxZone());
 		totalSchemeDet.setMinZone(automaticPartitionDTO.getMinZone());
