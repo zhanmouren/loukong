@@ -256,9 +256,10 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 	
 	@TaskAnnotation("queryPointByZoneCode")
 	@Override
-	public List<ZoneAndPoint> queryPointByZoneCode(SessionFactory factory) {
+	public List<ZoneAndPoint> queryPointByZoneCode(SessionFactory factory, String code) {
 		BasicDataMapper mapper = factory.getMapper(BasicDataMapper.class);
-		return null;
+		List<ZoneAndPoint> list = mapper.queryPointByZoneCode(code);
+		return list;
 	}
 	
 }

@@ -40,6 +40,6 @@ public interface AlarmMessageService {
 	Integer updateWarningTask(SessionFactory factory, Integer state, Date updateTime);
 
 
-	List<ZoneAndPoint> queryPointByZoneCode(SessionFactory factory);
+	List<ZoneAndPoint> queryPointByZoneCode(SessionFactory factory,String code);
 
 }
