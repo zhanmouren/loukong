@@ -3,14 +3,24 @@
 <mapper namespace="com.koron.inwlms.mapper.baseData.PropertyMapper">
 
     <select id="queryLastMonitorDataList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
-            select
-            "pointID",
-            sum(case when stype='Q4' then value else 0 end) as "flowRate",
-            sum(case when stype='P1' then value else 0 end) as "upstreamPressure"
-            from (
-            select ods_rw_gdh_realtime_hi.station as "pointID",nw_gdh_ssensor.stype,value  from ods_rw_gdh_realtime_hi join gis_scada_station on ods_rw_gdh_realtime_hi.station = gis_scada_station.p_code join nw_gdh_ssensor on nw_gdh_ssensor.station=ods_rw_gdh_realtime_hi.station and ods_rw_gdh_realtime_hi.code = nw_gdh_ssensor.code
-            where nw_gdh_ssensor.stype in ('Q4','P1')
-            )t group by "pointID"
+
+ select m.*,(case when n.status is null then 0 else 1 end)status from(
+                select
+                "pointID",
+                sum(case when stype='Q4' then value else 0 end) as "flowRate",
+                sum(case when stype='P1' then value else 0 end) as "upstreamPressure"
+                from (
+                select ods_scada_gdh_realtime_hi.station as "pointID",nw_gdh_ssensor.stype,value  from ods_scada_gdh_realtime_hi join gis_scada_station on ods_scada_gdh_realtime_hi.station = gis_scada_station.p_code join nw_gdh_ssensor on nw_gdh_ssensor.station=ods_scada_gdh_realtime_hi.station and ods_scada_gdh_realtime_hi.code = nw_gdh_ssensor.code
+                where nw_gdh_ssensor.stype in ('Q4','P1')
+                )t group by "pointID"
+             )m left join (
+                 select "objectCode",(case when count(0)>1 then 1 else 0 end) status from
+                app_warninginf
+                join app_warningprocessing on app_warninginf.code = app_warningprocessing."warningCode"
+                where state = 'L101990001'
+                group by "objectCode"
+             )n  on m."pointID" = n."objectCode"
+
     </select>
 
     <select id="queryMaxZoneNo" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">

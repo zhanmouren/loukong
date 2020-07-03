@@ -141,9 +141,9 @@
         <!--监测数据-->
         union all
         select distinct 0 as rows,0 as id,'0',nw_gdh_raw.station as pointID,nw_gdh_raw.name,'' as type,to_char(to_timestamp(nw_gdh_raw.datatime), 'YYYY-MM-DD HH24:MI:SS') as "lastTime",
-        sum(case when nw_gdh_ssensor.stype='P1' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "upstreamPressure",
+        sum(case when gis_ssensor.stype='P1' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "upstreamPressure",
         0 as downstreamPressure,
-        sum(case when nw_gdh_ssensor.stype='Q4' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "flowRate",'','',
+        sum(case when gis_ssensor.stype='Q4' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "flowRate",'','',
         '' as "firstZoon",'' as "useType"
         from
         (select nw_gdh_raw.station,nw_gdh_raw."value",nw_gdh_raw.code,nw_gdh_raw.datatime,gis_scada_station."name" from nw_gdh_raw
@@ -151,14 +151,14 @@
         limit #{pageCount}*#{page}
         )nw_gdh_raw
 
-        join nw_gdh_ssensor on nw_gdh_ssensor.station=nw_gdh_raw.station and nw_gdh_raw.code = nw_gdh_ssensor.code
+        join gis_ssensor on gis_ssensor.station=nw_gdh_raw.station and nw_gdh_raw.code = gis_ssensor.code
         group by nw_gdh_raw.station,nw_gdh_raw.name,nw_gdh_raw.datatime
         <!--
         union all
         select distinct 0 as rows,0 as id,'0',nw_gdh_raw.station as pointID,nw_gdh_raw.name,'' as type,to_char(to_timestamp(nw_gdh_raw.datatime), 'YYYY-MM-DD HH24:MI:SS') as "lastTime",
-        sum(case when nw_gdh_ssensor.stype='P1' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "upstreamPressure",
+        sum(case when gis_ssensor.stype='P1' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "upstreamPressure",
         0 as downstreamPressure,
-        sum(case when nw_gdh_ssensor.stype='Q4' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "flowRate",'','',
+        sum(case when gis_ssensor.stype='Q4' then cast(nw_gdh_raw."value" as numeric(18,2)) else 0 end) as "flowRate",'','',
         "queryFirstZoon"(tbltree.seq) as "firstZoon",gis_zone_point.type as "useType"
         from
         (select nw_gdh_raw.station,nw_gdh_raw."value",nw_gdh_raw.code,nw_gdh_raw.datatime,gis_scada_station."name" from nw_gdh_raw
@@ -166,7 +166,7 @@
         limit #{pageCount}*#{page}
         )nw_gdh_raw
 
-        join nw_gdh_ssensor on nw_gdh_ssensor.station=nw_gdh_raw.station and nw_gdh_raw.code = nw_gdh_ssensor.code
+        join gis_ssensor on gis_ssensor.station=nw_gdh_raw.station and nw_gdh_raw.code = gis_ssensor.code
         left join gis_zone_point on nw_gdh_raw.station = gis_zone_point."pointNo"
         left join tbltree on gis_zone_point."zoneNo" = tbltree.foreignkey
         group by nw_gdh_raw.station,nw_gdh_raw.name,nw_gdh_raw.datatime,tbltree.seq,gis_zone_point.type
