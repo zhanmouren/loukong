@@ -288,7 +288,7 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 						int day = (new Double(alarmRuleDTO.getConstant())).intValue();
 						//TODO 获取数天内日总流量或者最小夜间流量的平均值
 						IndicatorMapper indMapper = factory.getMapper(IndicatorMapper.class);
-						double oldDayFlow = getHisAvgData(dataCode,alarmIndexFlag,indMapper,day);
+						double oldDayFlow = getHisAvgData(dataCode,zoneDayData.getZoneCode(),alarmIndexFlag,indMapper,day);
 						increase = (zoneFlow - oldDayFlow)/oldDayFlow;
 						increase = increase * 100;
 						
@@ -825,24 +825,45 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 		return endFlag;
 	}
 	
-	public Double getHisAvgData(String code,int flag,IndicatorMapper indicMapper,int day) {
+	public Double getHisAvgData(String code,String areaCode,int flag,IndicatorMapper indicMapper,int day) {
 		//计算时间
 		Date start = new Date();
 		Date end = TimeUtil.addDay(start, -day);
+		
+		//获取指标的时间格式
+		Integer sYear = TimeUtil.getYears(start);
+		Integer sMonth = TimeUtil.getMonth(start);
+		Integer sDay = TimeUtil.getDays(start);
+		Integer sInt = sYear*10000 + sMonth*100 + sDay;
+		
+		Integer eYear = TimeUtil.getYears(end);
+		Integer eMonth = TimeUtil.getMonth(end);
+		Integer eDay = TimeUtil.getDays(end);
+		Integer eInt = eYear*10000 + eMonth*100 + eDay;
 		
 		List<String> codes = new ArrayList<>();
 		codes.add(code);
 		IndicatorDTO indicatorDTO = new IndicatorDTO();
 		indicatorDTO.setCodes(codes);
 		indicatorDTO.setTimeType(2);
+		indicatorDTO.setStartTime(sInt);
+		indicatorDTO.setEndTime(eInt);
+		List<String> areaCodes = new ArrayList<>();
+		areaCodes.add(areaCode);
+		indicatorDTO.setZoneCodes(areaCodes);
 		
+		List<IndicatorVO> dataList = new ArrayList<>();
 		if(flag == 1) {
-			List<IndicatorVO> dataList = indicMapper.queryWBBaseIndicData(indicatorDTO);
-			
+			dataList = indicMapper.queryWBBaseIndicData(indicatorDTO);
+		}else {
+			dataList = indicMapper.queryZoneLossIndicData(indicatorDTO);
 		}
-		
-		
-		return null;
+		double totalValue = 0.0;
+		for(IndicatorVO indicatorVO : dataList) {
+			totalValue = totalValue + indicatorVO.getValue();
+		}
+		double avgValue = totalValue/dataList.size();
+		return avgValue;
 	}
 	
 }

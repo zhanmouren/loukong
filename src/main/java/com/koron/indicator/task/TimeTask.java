@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 
 import com.koron.indicator.bean.CalZoneInfos;
 import com.koron.indicator.service.ZoneLossIndicatorService;
+import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.service.common.impl.PointHistoryDataServiceImpl;
@@ -181,9 +183,9 @@ public class TimeTask {
 		//爆管/渗漏指标				
 	}
 	
-	@Scheduled(cron = "0 48 * * * ?")// 整点5分执行
+	//@Scheduled(cron = "0 48 * * * ?")// 整点5分执行
 	public void calPointAlarmTask() {
-		AlarmMessageServiceImpl ams = new AlarmMessageServiceImpl();
+ 		AlarmMessageServiceImpl ams = new AlarmMessageServiceImpl();
 		WarningMessageProduceService wmps = new WarningMessageProduceServiceImpl();
 		PointHistoryDataServiceImpl phds = new PointHistoryDataServiceImpl();
 		
@@ -230,7 +232,7 @@ public class TimeTask {
 		}
 	}
 	
-	@Scheduled(cron = "0 30 0  * * ?")// 整点5分执行
+	//@Scheduled(cron = "0 30 0  * * ?")// 整点5分执行
 	public void calZoneAlarmTask() {
 		
 		AlarmMessageServiceImpl ams = new AlarmMessageServiceImpl();
@@ -242,7 +244,14 @@ public class TimeTask {
 			//报警
 		}
 		//获取分区日总流量数据
-		
+		List<String> codes = new ArrayList<>();
+		codes.add("");
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		indicatorDTO.setCodes(codes);
+		indicatorDTO.setTimeType(2);
+//		indicatorDTO.setStartTime(sInt);
+//		indicatorDTO.setEndTime(eInt);
+//		List<IndicatorVO> dataList = indicMapper.queryWBBaseIndicData(indicatorDTO);
 		//获取分区日最小夜间流量数据
 		
 		

@@ -117,12 +117,6 @@ public class IntellectPartitionController {
     public String getZoneRange(@RequestBody AutomaticPartitionDTO automaticPartitionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ZoneRange> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ZoneRange.class);
 		
-		if(automaticPartitionDTO.getZoneCode() == null || automaticPartitionDTO.getZoneCode().equals("")) {
-			msg.setCode(Constant.MESSAGE_INT_ERROR);
-			msg.setDescription("分区 编码为空");
-			return msg.toJson();
-		}
-		
 		if(automaticPartitionDTO.getZoneType() == null ) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 			msg.setDescription("分区 类型为空");

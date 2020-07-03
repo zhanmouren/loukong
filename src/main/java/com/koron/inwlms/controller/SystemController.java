@@ -107,6 +107,7 @@ public class SystemController {
 						prop.put(SessionFactory.PROPERTY_URL, dbd.getUrl());
 						prop.put(SessionFactory.PROPERTY_USER, dbd.getUser());
 						prop.put(SessionFactory.PROPERTY_PASSWORD, dbd.getPassword());
+						prop.put("commandTimeout", 120);
 						new ADOSessionImpl().registeDBMap(env, prop);
 						//设置到envMap里面
 						envMap.put(tenantID, tenantID);

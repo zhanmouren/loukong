@@ -429,6 +429,9 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 			if(automaticPartitionDTO.getZoneGrade() == 1) {
 				max = 20;
 				min = 2;
+			}else if(automaticPartitionDTO.getZoneGrade() == 0) {
+				max = 20;
+				min = 2;
 			}else if(automaticPartitionDTO.getZoneGrade() == 2) {
 				max = 20;
 				min = 2;
@@ -541,12 +544,20 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		for(ZoneSchemeData zoneSchemeData : kafkaReturnData.getPartition_detail()) {
 			String code = UUID.randomUUID().toString();
 			List<PipePreZoneRelationDTO> preZoneList = new ArrayList<>();
+			List<PipePreZoneRelationDTO> nullList = new ArrayList<>();
+			int num = 0;
 			for(String pipeCode : zoneSchemeData.getList()) {
 				PipePreZoneRelationDTO preZone = new PipePreZoneRelationDTO();		
 				preZone.setPipeCode(pipeCode);
 				preZone.setrCode(code);	
 				preZone.setIsBorder(Constant.IS_BORDER_F);
 				preZoneList.add(preZone);
+				num = num + 1;
+				if(num == 6400) {
+					mapper.addPipePreZone(preZoneList);
+					preZoneList = nullList;
+					num = 0;
+				}
 			}
 			PreZoneRelationDTO preZoneRelationDTO = new PreZoneRelationDTO();
 			preZoneRelationDTO.setrCode(code);
