@@ -123,14 +123,16 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 				if(totalSchemeDet.getZoneType() != null) {
 					totalSchemeDetVO.setZoneType(totalSchemeDet.getZoneType());
 				}
+				List<LayerData> ambientLayerList = new ArrayList<>();
 				if(totalSchemeDet.getAmbientLayer() != null) {
-					List<LayerData> ambientLayerList = gson.fromJson(totalSchemeDet.getAmbientLayer(), new TypeToken<List<LayerData>>(){}.getType());
-					totalSchemeDetVO.setAmbientLayer(ambientLayerList);
+					ambientLayerList = gson.fromJson(totalSchemeDet.getAmbientLayer(), new TypeToken<List<LayerData>>(){}.getType());
 				}
+				totalSchemeDetVO.setAmbientLayer(ambientLayerList);
+				List<LayerData> flowLayerList = new ArrayList<>();
 				if(totalSchemeDet.getFlowLayer() != null) {
-					List<LayerData> flowLayerList = gson.fromJson(totalSchemeDet.getFlowLayer(), new TypeToken<List<LayerData>>(){}.getType());
-					totalSchemeDetVO.setFlowLayer(flowLayerList);
+					flowLayerList = gson.fromJson(totalSchemeDet.getFlowLayer(), new TypeToken<List<LayerData>>(){}.getType());
 				}
+				totalSchemeDetVO.setFlowLayer(flowLayerList);
 				
 				totalSchemeDetVOList.add(totalSchemeDetVO);
 			}

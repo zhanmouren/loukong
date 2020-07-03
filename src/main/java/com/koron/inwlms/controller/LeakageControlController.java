@@ -35,6 +35,7 @@ import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
 import com.koron.inwlms.bean.DTO.leakageControl.EventInfoDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventSubTypeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.EventTypeDTO;
@@ -82,6 +83,7 @@ import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.ZoneAndPoint;
 import com.koron.inwlms.bean.VO.leakageControl.ZoneSaveWaterData;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -1970,6 +1972,29 @@ public class LeakageControlController {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@RequestMapping(value = "/queryPointByZoneCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区下的监测点", notes = "查询分区下的监测点", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryPointByZoneCode(@RequestBody BasicDataParam basicDataParam,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(basicDataParam.getCode() == null || basicDataParam.getCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("分区编码为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			List<ZoneAndPoint> list = ADOConnection.runTask(user.getEnv(),ams, "queryPointByZoneCode", List.class, basicDataParam.getCode());
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
 	}
 	
 }
