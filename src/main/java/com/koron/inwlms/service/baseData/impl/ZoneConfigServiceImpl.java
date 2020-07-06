@@ -1,5 +1,7 @@
 package com.koron.inwlms.service.baseData.impl;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.baseInf.*;
 import com.koron.inwlms.bean.VO.baseInf.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -34,7 +36,20 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
         Integer ret = mapper.addZone(zoneDTO);
         if(ret>0){
-
+        	LongTreeBean child=new LongTreeBean();
+        	child.setType(2);
+        	child.setForeignkey(zoneDTO.getZoneNo());
+        	
+        	TreeService treeService  =new TreeService();
+        	LongTreeBean parent= treeService.getNode(factory, 2, zoneDTO.getParent());
+        	if(parent!=null) {
+        		LongTreeBean longTreeBean =treeService.add(factory, parent, child);
+        		if(longTreeBean!=null) {
+        			ret=1;
+				}else {
+					ret=-1;
+				}
+        	}
         }
         return ret;
     }
