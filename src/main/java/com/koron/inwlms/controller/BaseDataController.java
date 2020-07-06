@@ -491,7 +491,7 @@ public class BaseDataController {
             String url = gis+"/"+tenantID+"/dmaPosition/add.htm";
             JsonObject ret = InterfaceUtil.interfaceOfPostUtil(url,gson.toJson(data));
             msg = gson.fromJson(ret, new TypeToken<MessageBean>(){}.getType());
-            if(msg.getCode()!=0){
+            if(msg.getCode()==0){
                 //*****添加分区并根据父分区添加分区树节点
             	Integer addResult = ADOConnection.runTask(user.getEnv(),zcs, "addZone", Integer.class,zoneDTO);
             	if(addResult!=null) {
