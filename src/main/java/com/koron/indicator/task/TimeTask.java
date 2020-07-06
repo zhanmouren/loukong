@@ -243,9 +243,12 @@ public class TimeTask {
 			
 			//报警
 		}
-		//获取分区日总流量数据
 		List<String> codes = new ArrayList<>();
+		//一级分区日总流量数据
 		codes.add("");
+		//二级分区日总流量数据
+		//一级分区最小夜间流量数据
+		//二级分区最小夜间流量数据
 		IndicatorDTO indicatorDTO = new IndicatorDTO();
 		indicatorDTO.setCodes(codes);
 		indicatorDTO.setTimeType(2);

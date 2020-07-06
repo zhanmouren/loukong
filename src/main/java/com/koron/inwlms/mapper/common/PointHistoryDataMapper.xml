@@ -5,5 +5,4 @@
 <mapper namespace="com.koron.inwlms.mapper.common.PointHistoryDataMapper">
 
 
-
 </mapper>
