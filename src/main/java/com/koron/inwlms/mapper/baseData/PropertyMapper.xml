@@ -24,7 +24,8 @@
     </select>
 
    <select id="queryMaxZoneNo" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneVO">
-        select *  from gis_exist_zone 
+        select * ,p_code as "zoneNo" 
+        from gis_exist_zone 
 		where p_code like  'U%' 
 		order by p_code desc 
 		limit 1
@@ -47,8 +48,8 @@
     </insert>
 
 	 <insert id="addZone" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
-        insert into gis_exist_zone("p_code",name,rank,"dmaType")
-        values(#{zoneNo},#{name},#{rank},#{type})
+        insert into gis_exist_zone(smid,"p_code",name,rank,"dmaType")
+        values(0,#{zoneNo},#{name},#{rank},#{type})
     </insert>
     
     <insert id="addZoneConfDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO">

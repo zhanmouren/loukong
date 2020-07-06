@@ -17,6 +17,7 @@ import org.swan.bean.MessageBean;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
+import com.koron.inwlms.aspect.OperateAspect;
 import com.koron.inwlms.bean.DTO.sysManager.PositionDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -78,6 +79,7 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/queryPositionDetail.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "查询职位详情接口",notes = "查询职位详情接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "zwgl")
 	public String queryPositionDetail(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
@@ -134,6 +136,7 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/addPosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "添加职位接口",notes = "添加职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "zwgl")
 	public String addPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		positionDTO.setCreateBy(user.getLoginName());
 		positionDTO.setUpdateBy(user.getLoginName());

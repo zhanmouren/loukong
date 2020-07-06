@@ -482,10 +482,10 @@ public class BaseDataController {
         	//***获取当前最大分区号
             ZoneVO zv = ADOConnection.runTask(user.getEnv(),zcs, "queryMaxZoneNo", ZoneVO.class,zoneDTO);
             if(zv == null) {
-            	zoneDTO.setZoneNo("u00000");
+            	zoneDTO.setZoneNo("U00001");
             }else {
             	Integer newZoneNo = Integer.valueOf(zv.getZoneNo().toString().substring(1)) + 1;
-            	zoneDTO.setZoneNo("u"+newZoneNo);
+            	zoneDTO.setZoneNo("U"+String.format("%05d", newZoneNo));
             }
            data.put("zoneNo", zoneDTO.getZoneNo());
             String url = gis+"/"+tenantID+"/dmaPosition/add.htm";
