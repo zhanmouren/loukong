@@ -478,7 +478,6 @@ public class BaseDataController {
         data.put("type",zoneDTO.getType());
         data.put("rank",zoneDTO.getRank());
         data.put("geometry",zoneDTO.getGeometry());
-
         try {
         	//***获取当前最大分区号
             ZoneVO zv = ADOConnection.runTask(user.getEnv(),zcs, "queryMaxZoneNo", ZoneVO.class,zoneDTO);
@@ -492,7 +491,7 @@ public class BaseDataController {
             String url = gis+"/"+tenantID+"/dmaPosition/add.htm";
             JsonObject ret = InterfaceUtil.interfaceOfPostUtil(url,gson.toJson(data));
             msg = gson.fromJson(ret, new TypeToken<MessageBean>(){}.getType());
-            if(msg.getCode()==0){
+            if(msg.getCode()!=0){
                 //*****添加分区并根据父分区添加分区树节点
             	Integer addResult = ADOConnection.runTask(user.getEnv(),zcs, "addZone", Integer.class,zoneDTO);
             	if(addResult!=null) {

@@ -47,8 +47,8 @@
     </insert>
 
 	 <insert id="addZone" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
-        insert into gis_exist_zone("zoneNo",name,rank,"dmaType","createBy","createTime")
-        values(#{zoneNo},#{name},#{rank},#{type},#{createBy},now())
+        insert into gis_exist_zone("p_code",name,rank,"dmaType")
+        values(#{zoneNo},#{name},#{rank},#{type})
     </insert>
     
     <insert id="addZoneConfDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO">
