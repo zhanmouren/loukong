@@ -484,13 +484,13 @@
     
      <!-- 插入特征日表信息一条记录 -->
     <insert id="addSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO">  
-        insert into sm_specialday(name,remark,"spDate","createBy","createTime","updateBy","updateTime")values
-         (#{spName},#{spRemark},#{spDate},#{createBy},Now(),#{updateBy},Now())
+        insert into sm_specialday(name,"enName","tcName",remark,"spDate","createBy","createTime","updateBy","updateTime")values
+         (#{cnName},#{enName},#{tcName},#{spRemark},#{spDate},#{createBy},Now(),#{updateBy},Now())
     </insert>
     
      <!-- 查询特征日 是否已经存在该特征日的信息-->
       <select id="queryExistSp"  parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.SpecialDayVO">
-          select "sp".id as spId,"sp".name as spName,"sp".remark as spRemark,"sp"."spDate" as spDate,"sp"."createBy" as createBy,"sp"."createTime" as createTime,"sp"."updateBy" as updateBy,"sp"."updateTime" as updateTime 
+          select "sp".id as spId,"sp".name as cnName,"sp"."enName" as enName,"sp"."tcName" as tcName,"sp".remark as spRemark,"sp"."spDate" as spDate,"sp"."createBy" as createBy,"sp"."createTime" as createTime,"sp"."updateBy" as updateBy,"sp"."updateTime" as updateTime 
           from sm_specialday as "sp"
 	      <trim prefix="where" prefixOverrides="and|or">
 			<if test="spDate != null"> and "sp"."spDate" = '${spDate}'</if>          
@@ -499,7 +499,10 @@
       
        <!-- 查询某年某月特征日-->
       <select id="querySpecialDate"  parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.SpecialDayVO">
-        select yearmonth.orderdate as "spDate",case when sp.name is null then '' else sp.name end as "spName",case when sp.remark is null then '' else sp.remark end as "spRemark" from 
+        select yearmonth.orderdate as "spDate",case when sp.name is null then '' else sp.name end as "cnName",
+        case when sp."enName" is null then '' else sp."enName" end as "enName",
+         case when sp."tcName" is null then '' else sp."tcName" end as "tcName",
+         case when sp.remark is null then '' else sp.remark end as "spRemark" from 
 		(select to_char(tt.day, 'yyyy-mm-dd') as orderDate
 		from (select generate_series(cast(to_char(to_date('${startTime}', 'YYYY-MM'), 'yyyy-mm') || '-01' as date),
 		                             cast(
@@ -511,7 +514,7 @@
       
         <!-- 查询根据某日日期查询特征日信息-->
       <select id="querySpecialDateByDay"  parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.SpecialDayVO">
-         select "sp".id as "spId","sp".Name as "spName",case when "sp".remark is null then '' else "sp".remark end as "spRemark","sp"."spDate" as "spDate"
+         select "sp".id as "spId","sp".name as cnName,"sp"."enName" as enName,"sp"."tcName" as tcName,case when "sp".remark is null then '' else "sp".remark end as "spRemark","sp"."spDate" as "spDate"
          from sm_specialday as "sp"
          where "sp"."spDate" =#{spDate}
       </select>

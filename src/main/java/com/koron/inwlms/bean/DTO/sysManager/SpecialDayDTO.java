@@ -23,8 +23,14 @@ public class SpecialDayDTO {
 	private String endTime;
 	//特征日Id
 	private Integer spId;
-	//特征日名称
-	private String spName;
+	//特征日中文名称
+	private String cnName;
+	
+	//特征日英文名称
+	private String enName;
+	//繁文
+	private String tcName;
+	
 	//特征日描述
 	private String spRemark;
 	//特征日日期
@@ -104,11 +110,24 @@ public class SpecialDayDTO {
 	public void setSpId(Integer spId) {
 		this.spId = spId;
 	}
-	public String getSpName() {
-		return spName;
+	
+	public String getCnName() {
+		return cnName;
 	}
-	public void setSpName(String spName) {
-		this.spName = spName;
+	public String getEnName() {
+		return enName;
+	}
+	public String getTcName() {
+		return tcName;
+	}
+	public void setCnName(String cnName) {
+		this.cnName = cnName;
+	}
+	public void setEnName(String enName) {
+		this.enName = enName;
+	}
+	public void setTcName(String tcName) {
+		this.tcName = tcName;
 	}
 	public String getSpRemark() {
 		return spRemark;
