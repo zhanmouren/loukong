@@ -529,7 +529,9 @@
        <update id="updateSpecialDate" parameterType="com.koron.inwlms.bean.DTO.sysManager.SpecialDayDTO">   
 		update sm_specialday 
 		<set>	                                 
-             <if test="spName != null" > name= #{spName},</if>            
+             <if test="cnName != null" > name= #{cnName},</if> 
+             <if test="tcName != null" > "tcName"= #{tcName},</if>   
+              <if test="enName != null" > "enName"= #{enName},</if>         
              <if test="spRemark != null" > remark= #{spRemark},</if> 
              <if test="updateBy != null" > "updateBy" = #{updateBy},</if>                        
              <if test="updateBy != null" > "updateTime" = Now(),</if> 
