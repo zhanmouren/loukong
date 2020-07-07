@@ -116,6 +116,14 @@ public class MonitorDataVO {
      */
     private String sname;
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getUseType() {
         return useType;
     }
@@ -164,12 +172,21 @@ public class MonitorDataVO {
         this.threshold = threshold;
     }
 
-    public String getStatus() {
-        return status;
+
+    public String getStype() {
+        return stype;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStype(String stype) {
+        this.stype = stype;
+    }
+
+    public String getSname() {
+        return sname;
+    }
+
+    public void setSname(String sname) {
+        this.sname = sname;
     }
 
     public String getPointID() {

@@ -16,6 +16,11 @@
         delete from mi_importdatahistory where "BatchNo" =#{BatchNo} and type = '2'
     </delete>
 
+    <insert id="addImportDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO">
+        insert into mi_importdatahistory("BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy","createTime",type)
+        values(#{BatchNo},#{originRow},#{row},#{integrity},#{accuracy},#{availability},#{timely},#{consistency},#{status},#{createBy},now(),#{type})
+    </insert>
+
     <insert id="addZoneConfDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO">
         insert into mi_importdatahistory("BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy","createTime",type)
         values(#{BatchNo},#{originRow},#{row},#{integrity},#{accuracy},#{availability},#{timely},#{consistency},#{status},#{createBy},now(),#{type})
