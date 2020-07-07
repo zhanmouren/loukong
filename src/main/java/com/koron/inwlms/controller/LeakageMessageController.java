@@ -48,10 +48,7 @@ public class LeakageMessageController {
     public String queryMessage(String loginName,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<LeakageMessageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LeakageMessageListVO.class);
 		try {
-			Gson jsonValue = new Gson();
-			// 查询条件字符串转对象，查询数据结果
-			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-			loginName = userListVO.getLoginName();
+			loginName = user.getLoginName();
 			LeakageMessageListVO leakageMessageList = ADOConnection.runTask(user.getEnv(),leakageMessageService, "queryMessage", LeakageMessageListVO.class, loginName);
 			if(leakageMessageList != null ) {
 				msg.setCode(Constant.MESSAGE_INT_SUCCESS);

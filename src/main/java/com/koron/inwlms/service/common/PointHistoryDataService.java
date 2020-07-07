@@ -12,7 +12,7 @@ import com.koron.inwlms.bean.VO.common.PointTypeVO;
 
 public interface PointHistoryDataService {
 
-	List<PointDataVO> queryPointHistoryData(SessionFactory factory, String code, Date alarmDate) throws ParseException;
+	List<PointDataVO> queryPointHistoryData(SessionFactory factory, String code, Date alarmDate,String stationCode) throws ParseException;
 
 	List<MinMonitorPoint> queryPointHourData(SessionFactory factory, Date datatime);
 

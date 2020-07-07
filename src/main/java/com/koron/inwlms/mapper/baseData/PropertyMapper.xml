@@ -23,9 +23,14 @@
 
     </select>
 
-    <select id="queryMaxZoneNo" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
-        select
+   <select id="queryMaxZoneNo" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneVO">
+        select * ,p_code as "zoneNo" 
+        from gis_exist_zone 
+		where p_code like  'U%' 
+		order by p_code desc 
+		limit 1
     </select>
+
 
     <select id="queryFlows"  resultType="com.koron.inwlms.bean.VO.baseInf.PointAccountVO">
         select type,"pointNo" from gis_zone_point where type is not null group by type ,"pointNo" order by type
@@ -42,6 +47,11 @@
         </if>
     </insert>
 
+	 <insert id="addZone" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
+        insert into gis_exist_zone(smid,"p_code",name,rank,"dmaType")
+        values(0,#{zoneNo},#{name},#{rank},#{type})
+    </insert>
+    
     <insert id="addZoneConfDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO">
         insert into gis_zoneconfhistory("BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy","createTime",type)
         values(#{BatchNo},#{originRow},#{row},#{integrity},#{accuracy},#{availability},#{timely},#{consistency},#{status},#{createBy},now(),#{type})

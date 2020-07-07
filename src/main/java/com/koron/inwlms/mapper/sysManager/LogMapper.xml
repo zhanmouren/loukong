@@ -64,7 +64,7 @@
 	</trim>
     </select>
     
-    <insert id="addOperateLog" parameterType="com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO" useGeneratedKeys="true" keyProperty="id">  
+    <insert id="addOperateLog" parameterType="com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO">  
  		insert into sm_operateLog("operateType","operateModuleNo","operateTime","operateUserCode",result,"createBy","createTime","updateBy","updateTime")
  		values(#{operateType},#{operateModuleNo},now(),#{operateUserCode},#{result},#{createBy},now(),#{updateBy},now())
     </insert>

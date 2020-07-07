@@ -23,12 +23,12 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 
 	@TaskAnnotation("queryPointHistoryData")
 	@Override
-	public List<PointDataVO> queryPointHistoryData(SessionFactory factory,String code,Date alarmDate) throws ParseException {
+	public List<PointDataVO> queryPointHistoryData(SessionFactory factory,String code,Date alarmDate,String stationCode) throws ParseException {
 		//SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		//Date alarmDate = format.parse(alarmTime);
 		Date nowDate = new Date();
 		Date endDate = TimeUtil.addDay(alarmDate, 3);
-		int start = 0;
+		//int start = 0;
 		int end = (int)endDate.getTime();
 		int nowTime = (int)nowDate.getTime();
 		//判断前后7天范围是否超过当前日期
@@ -37,16 +37,16 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 			startDate = TimeUtil.addDay(nowDate, -7);
 			endDate = nowDate;
 			end = nowTime;
-			start = (int)startDate.getTime();
+			//start = (int)startDate.getTime();
 		}else {
 			startDate = TimeUtil.addDay(alarmDate, -3);
-			start = (int)startDate.getTime();
+			//start = (int)startDate.getTime();
 		}
 		PointHistoryDataMapper mapper = factory.getMapper(PointHistoryDataMapper.class);
 		
 		//查询监测点小时表
 		List<PointDataVO> pointDataList = new ArrayList<>();
-		List<MinMonitorPoint> minMonitorPointList = mapper.queryPointHourDataByDay(code, startDate, endDate);
+		List<MinMonitorPoint> minMonitorPointList = mapper.queryPointHourDataByDay(code, startDate, endDate, stationCode);
 		for(MinMonitorPoint minMonitorPoint : minMonitorPointList) {
 			PointDataVO pointDataVO = new PointDataVO();
 			pointDataVO.setValue(minMonitorPoint.getValue().doubleValue());

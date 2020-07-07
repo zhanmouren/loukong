@@ -83,7 +83,7 @@ public class ZoneDTO extends BaseDTO {
      */
     private Object geometry;
 
-    public String getName() {
+	public String getName() {
         return name;
     }
 

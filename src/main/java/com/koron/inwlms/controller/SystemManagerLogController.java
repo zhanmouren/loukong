@@ -281,44 +281,44 @@ public class SystemManagerLogController {
 	}
 	
 	
-	/*
-     * 添加操作日志接口
-     * date:2020-04-01
-     */  
-	@RequestMapping(value = "/addSysOperateLog.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
-	@ApiOperation(value = "添加操作日志接口",notes = "添加操作日志接口", httpMethod = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
-	@ResponseBody
-	public String addOperateLog(@RequestBody OperateLogDTO operateLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		if(operateLogDTO.getOperateModuleNo()==null || StringUtils.isBlank(operateLogDTO.getOperateModuleNo())) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作对象不能为空", Integer.class).toJson();
-		}
-		if(operateLogDTO.getOperateType()==null || StringUtils.isBlank(operateLogDTO.getOperateType())) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型不能为空", Integer.class).toJson();
-		}else if(!operateLogDTO.getOperateType().equals("L102120002") && !operateLogDTO.getOperateType().equals("L102120003") && 
-				!operateLogDTO.getOperateType().equals("L102120004") && !operateLogDTO.getOperateType().equals("查询")) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“增加、删除、修改”", Integer.class).toJson();
-		} 
-		MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);
-		try {
-			Integer insertRes = ADOConnection.runTask(user.getEnv(),logService, "addOperateLog",Integer.class,operateLogDTO);
-			if(insertRes!=null) {
-				if(insertRes==1) {
-					//添加操作日志成功
-					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-					msg.setDescription("添加操作日志成功");
-				}else {
-					//添加操作日志失败
-					msg.setCode(Constant.MESSAGE_INT_ADDERROR);
-					msg.setDescription("添加操作日志失败");
-				}
-			}
-		}catch(Exception e) {
-			//添加操作日志失败
-			msg.setCode(Constant.MESSAGE_INT_ERROR);
-			msg.setDescription("添加操作日志失败");
-		}
-		return msg.toJson();
-	}
+//	/*
+//     * 添加操作日志接口
+//     * date:2020-04-01
+//     */  
+//	@RequestMapping(value = "/addSysOperateLog.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
+//	@ApiOperation(value = "添加操作日志接口",notes = "添加操作日志接口", httpMethod = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+//	@ResponseBody
+//	public String addOperateLog(@RequestBody OperateLogDTO operateLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+//		if(operateLogDTO.getOperateModuleNo()==null || StringUtils.isBlank(operateLogDTO.getOperateModuleNo())) {
+//			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作对象不能为空", Integer.class).toJson();
+//		}
+//		if(operateLogDTO.getOperateType()==null || StringUtils.isBlank(operateLogDTO.getOperateType())) {
+//			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型不能为空", Integer.class).toJson();
+//		}else if(!operateLogDTO.getOperateType().equals("L102120002") && !operateLogDTO.getOperateType().equals("L102120003") && 
+//				!operateLogDTO.getOperateType().equals("L102120004") && !operateLogDTO.getOperateType().equals("查询")) {
+//			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!操作类型必须是“增加、删除、修改”", Integer.class).toJson();
+//		} 
+//		MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);
+//		try {
+//			Integer insertRes = ADOConnection.runTask(user.getEnv(),logService, "addOperateLog",Integer.class,operateLogDTO);
+//			if(insertRes!=null) {
+//				if(insertRes==1) {
+//					//添加操作日志成功
+//					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+//					msg.setDescription("添加操作日志成功");
+//				}else {
+//					//添加操作日志失败
+//					msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+//					msg.setDescription("添加操作日志失败");
+//				}
+//			}
+//		}catch(Exception e) {
+//			//添加操作日志失败
+//			msg.setCode(Constant.MESSAGE_INT_ERROR);
+//			msg.setDescription("添加操作日志失败");
+//		}
+//		return msg.toJson();
+//	}
 	
 	
 	/*

@@ -189,8 +189,24 @@ public class LeakageControlController {
     public String queryPointHistoryData(@RequestBody AlarmMessageVO alarmMessageVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
+		if(alarmMessageVO.getCode() == null || alarmMessageVO.getCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!指标编码为空");
+	        return msg.toJson();
+		}
+		if(alarmMessageVO.getAlarmTime() == null) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!报警时间为空");
+	        return msg.toJson();
+		}
+		if(alarmMessageVO.getObjectCode() == null || alarmMessageVO.getObjectCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!监测编码为空");
+	        return msg.toJson();
+		}
+		
 		try {
-			List<PointDataVO> list = ADOConnection.runTask(user.getEnv(),phds, "queryPointHistoryData", List.class, alarmMessageVO.getCode(),alarmMessageVO.getAlarmTime());
+			List<PointDataVO> list = ADOConnection.runTask(user.getEnv(),phds, "queryPointHistoryData", List.class, alarmMessageVO.getCode(),alarmMessageVO.getAlarmTime(),alarmMessageVO.getObjectCode());
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 		}catch(Exception e) {

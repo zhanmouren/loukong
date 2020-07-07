@@ -478,17 +478,42 @@ public class BaseDataController {
         data.put("type",zoneDTO.getType());
         data.put("rank",zoneDTO.getRank());
         data.put("geometry",zoneDTO.getGeometry());
-
-        //***获取当前最大分区号
-        ZoneVO zv = ADOConnection.runTask(user.getEnv(),zcs, "queryMaxZoneNo", ZoneVO.class,zoneDTO);
-
-        String url = gis+"/"+tenantID+"/dmaPosition/add.htm";
-        JsonObject ret = InterfaceUtil.interfaceOfPostUtil(url,gson.toJson(data));
-        msg = gson.fromJson(ret, new TypeToken<MessageBean>(){}.getType());
-        if(msg.getCode()==0){
-            //*****添加分区并根据父分区添加分区树节点
-
+        try {
+        	//***获取当前最大分区号
+            ZoneVO zv = ADOConnection.runTask(user.getEnv(),zcs, "queryMaxZoneNo", ZoneVO.class,zoneDTO);
+            if(zv == null) {
+            	zoneDTO.setZoneNo("U00001");
+            }else {
+            	Integer newZoneNo = Integer.valueOf(zv.getZoneNo().toString().substring(1)) + 1;
+            	zoneDTO.setZoneNo("U"+String.format("%05d", newZoneNo));
+            }
+           data.put("zoneNo", zoneDTO.getZoneNo());
+            String url = gis+"/"+tenantID+"/dmaPosition/add.htm";
+            JsonObject ret = InterfaceUtil.interfaceOfPostUtil(url,gson.toJson(data));
+            msg = gson.fromJson(ret, new TypeToken<MessageBean>(){}.getType());
+            if(msg.getCode()==0){
+                //*****添加分区并根据父分区添加分区树节点
+            	Integer addResult = ADOConnection.runTask(user.getEnv(),zcs, "addZone", Integer.class,zoneDTO);
+            	if(addResult!=null) {
+    				if(addResult==1) {
+    					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+    					msg.setDescription("添加分区成功");
+    				}else {
+    					msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+    					msg.setDescription("添加分区失败");
+    				}
+            	}else {
+            		
+            	}
+            }else {
+            	msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+        		msg.setDescription("添加分区失败(Gis添加失败)");
+            }
+        }catch(Exception e) {
+        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+        	msg.setDescription("添加分区失败");
         }
+        
         return msg.toJson();
     }
 

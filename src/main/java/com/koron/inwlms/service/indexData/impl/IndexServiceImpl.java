@@ -1185,7 +1185,7 @@ public class IndexServiceImpl implements IndexService{
 					currentValue=currentValue+currentIndicatorList.get(i).getValue();
 					
 				}
-				avgCurrentValue=currentValue/12;
+				avgCurrentValue=currentValue/Integer.valueOf(startMidDate);
 			}else {
 				avgCurrentValue=0;
 			}

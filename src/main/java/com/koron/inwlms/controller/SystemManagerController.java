@@ -1787,11 +1787,17 @@ public class SystemManagerController {
     @ApiOperation(value = "新建特征日接口", notes = "新建特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String addSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
-		if(specialDayDTO.getSpName()==null || StringUtils.isBlank(specialDayDTO.getSpName())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
+		if(specialDayDTO.getCnName()==null || StringUtils.isBlank(specialDayDTO.getCnName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日中文名称不能为空", Integer.class).toJson();
+		}
+		if(specialDayDTO.getEnName()==null || StringUtils.isBlank(specialDayDTO.getEnName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日中文名称不能为空", Integer.class).toJson();
+		}
+		if(specialDayDTO.getTcName()==null || StringUtils.isBlank(specialDayDTO.getTcName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日中文名称不能为空", Integer.class).toJson();
 		}
 		if(specialDayDTO.getSpDate()==null || StringUtils.isBlank(specialDayDTO.getSpDate())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}
 		specialDayDTO.setCreateBy(user.getLoginName());
 		specialDayDTO.setUpdateBy(user.getLoginName());
@@ -1953,9 +1959,15 @@ public class SystemManagerController {
 		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}	
-		if(specialDayDTO.getSpName()==null || "".equals(specialDayDTO.getSpName())) {
-			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日名称不能为空", Integer.class).toJson();
-		}	
+		if(specialDayDTO.getCnName()==null || StringUtils.isBlank(specialDayDTO.getCnName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日中文名称不能为空", Integer.class).toJson();
+		}
+		if(specialDayDTO.getEnName()==null || StringUtils.isBlank(specialDayDTO.getEnName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日中文名称不能为空", Integer.class).toJson();
+		}
+		if(specialDayDTO.getTcName()==null || StringUtils.isBlank(specialDayDTO.getTcName())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日中文名称不能为空", Integer.class).toJson();
+		}
 		specialDayDTO.setCreateBy(user.getLoginName());
 		specialDayDTO.setUpdateBy(user.getLoginName());
 		 MessageBean<Integer> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Integer.class);	       
