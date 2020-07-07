@@ -55,7 +55,7 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     /**
-     * 批量插入监测数据
+     * 批量插入压力流量监测数据
      * @param factory
      * @param excelBeans
      * @return
@@ -65,6 +65,25 @@ public class MonitorServiceImpl implements MonitorService {
     public Integer addBatchMointorData(SessionFactory factory, List<MonitorDataExcelBean> excelBeans, DataQualityVO dq){
         IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
         Integer result = mapper.addBatchMointorData(excelBeans);
+        if(result>0){
+            Integer ret = mapper.addImportDataQuality(dq);
+            return ret;
+        }else{
+            return result;
+        }
+    }
+    
+    /**
+     * 批量插入噪声监测数据
+     * @param factory
+     * @param excelBeans
+     * @return
+     */
+    @TaskAnnotation("addBatchNoiseData")
+    @Override
+    public Integer addBatchNoiseData(SessionFactory factory, List<MonitorDataExcelBean> excelBeans, DataQualityVO dq){
+        IMDataMapper mapper = factory.getMapper(IMDataMapper.class);
+        Integer result = mapper.addBatchNoiseData(excelBeans);
         if(result>0){
             Integer ret = mapper.addImportDataQuality(dq);
             return ret;

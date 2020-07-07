@@ -1286,10 +1286,20 @@ public class BaseDataController {
                 DataQualityVO dq = _checkMonitorDataQuality(excelBeans,type);
                 for(MonitorDataExcelBean bean : excelBeans) {
                     bean.setBatchNo(BatchNo);
+                    bean.setType(type);
                 }
                 dq.setBatchNo(BatchNo);
                 dq.setCreateBy(user.getLoginName());
-                Integer ret = ADOConnection.runTask(user.getEnv(),ms, "addBatchMointorData", Integer.class, excelBeans,dq);
+                Integer ret = 0;
+                if("1".equals(type)){
+                	ret = ADOConnection.runTask(user.getEnv(),ms, "addBatchMointorData", Integer.class, excelBeans,dq);
+                }else {
+                	ret = ADOConnection.runTask(user.getEnv(),ms, "addBatchNoiseData", Integer.class, excelBeans,dq);
+                }
+                if(ret < 1) {
+                	msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
+                    msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
+                }
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
                 msg.setDescription(Constant.MESSAGE_STRING_UPLOADERROR);
@@ -1595,7 +1605,7 @@ public class BaseDataController {
 
         DataQualityVO dq = new DataQualityVO();
 
-        if("L104000001".equals(type)){
+        if("1".equals(type)){
             Integer flowNum = 0;
             Integer forwardFlowRateNum = 0;
             Integer reverseFlowRateNum = 0;

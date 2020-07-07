@@ -33,12 +33,20 @@ public interface IMDataMapper {
     Integer deleteMeterDataByBatch(@Param("BatchNo")String BatchNo);
 
     /**
-     * 批量添加监测数据
+     * 批量添加压力流量监测数据
      * @param excelBeans
      * @return
      */
     Integer addBatchMointorData(@Param("excelBeans") List<MonitorDataExcelBean> excelBeans);
 
+    /**
+     * 批量添加噪声监测数据
+     * @param excelBeans
+     * @return
+     */
+    Integer addBatchNoiseData(@Param("excelBeans") List<MonitorDataExcelBean> excelBeans);
+
+    
     /**
      * 查询监测压力/流量数据列表数据
      * @param monitorDataDTO
