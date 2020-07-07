@@ -326,7 +326,13 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 		List<VZoneInfoVO> vZoneInfos = vzoneMapper.queryVZoneInfo(queryVZoneInfoDTO);
 		//判空，及判断分页
 		if(vZoneInfos == null || vZoneInfos.size()<(queryVCZoneListDTO.getPage()-1)*queryVCZoneListDTO.getPageCount()) return null;
-				
+			
+		//将子实际分区转成数组
+		for (VZoneInfoVO vZoneInfoVO : vZoneInfos) {
+			if(StringUtil.isEmpty(vZoneInfoVO.getSecCode())) continue;
+			vZoneInfoVO.setSecCodes(vZoneInfoVO.getSecCode().split(","));
+		}
+		
 		for(VZoneInfoVO zoneInfo : vZoneInfos) {
 			vZoneCodes.add(zoneInfo.getZoneNo());
 		}
@@ -411,6 +417,7 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 			vCZoneListVO.setZoneNo(vZoneInfos.get(i).getZoneNo());
 			vCZoneListVO.setZoneName(vZoneInfos.get(i).getZoneName());
 //			vCZoneListVO.setZoneRank(Constant.RANK_F);
+			vCZoneListVO.setSecCodes(vZoneInfos.get(i).getSecCodes());
 			vCZoneListVO.setpZoneNo(vZoneInfos.get(i).getpZoneNo());
 			vCZoneListVO.setpZoneName(vZoneInfos.get(i).getpZoneName());
 			vCZoneListVO.setAddress(vZoneInfos.get(i).getAddress());

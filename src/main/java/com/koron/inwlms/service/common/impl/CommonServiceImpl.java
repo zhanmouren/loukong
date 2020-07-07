@@ -105,15 +105,15 @@ public class CommonServiceImpl implements CommonService {
 		List<ZoneInfo> lists = new ArrayList<ZoneInfo>();
 		ZoneInfo zoneInfo = new ZoneInfo();
 		zoneInfo.setZoneNo("C02100201");
-		zoneInfo.setZoneName("漏控分区一");
+		zoneInfo.setZoneName("江北区");
 		lists.add(zoneInfo);
 		ZoneInfo zoneInfo1 = new ZoneInfo();
 		zoneInfo1.setZoneNo("C02100202");
-		zoneInfo1.setZoneName("漏控分区二");
+		zoneInfo1.setZoneName("梅县区");
 		lists.add(zoneInfo1);
 		ZoneInfo zoneInfo2 = new ZoneInfo();
 		zoneInfo2.setZoneNo("C02100203");
-		zoneInfo2.setZoneName("漏控分区三");
+		zoneInfo2.setZoneName("江南区");
 		lists.add(zoneInfo2);
 		return lists;
 	}

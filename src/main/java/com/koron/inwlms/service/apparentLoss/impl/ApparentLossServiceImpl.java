@@ -486,18 +486,17 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		resLists.add(meterRunAnalysisVO7);
 		resLists.add(meterRunAnalysisVO8);
 		resLists.add(meterRunAnalysisVO9);
-//		for (MeterInfo meterInfo : lists) {
-//			Integer meterDn = meterInfo.getMeterDn();
-//			if (!dnLists.contains(meterDn)) {
-//				MeterRunAnalysisVO meterRunAnalysisVO = new MeterRunAnalysisVO();
-//				meterRunAnalysisVO.setMeterDn(meterInfo.getMeterDn());
-//				meterRunAnalysisVO.setMeterType(meterInfo.getMeterType());
-//				resLists.add(meterRunAnalysisVO);
-//				dnLists.add(meterDn);
-//			}
-//		}
 		// 获取配置信息表数据
 		Map<String, Double> qhMaxMinMap = getQhMaxMinMap(factory);
+		List<String> lowFlowMeterNumList = new ArrayList<>();
+		List<String> fsLowFlowMeterNumList = new ArrayList<>();
+		List<String> zeroFlowMeterNumList = new ArrayList<>();
+		List<String> fsZeroFlowMeterNumList = new ArrayList<>();
+		List<String> normalFlowMeterNumList = new ArrayList<>();
+		List<String> fsNormalFlowMeterNumList = new ArrayList<>();
+		List<String> highFlowMeterNumList = new ArrayList<>();
+		List<String> fsHighFlowMeterNumList = new ArrayList<>();
+		
 		// 获取口径的最大/最小参数流量
 		// 计算所有水表的QH值,
 		// 计算流量异常情况，零流量/低流量/正常/过载
@@ -510,21 +509,48 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				if (mraVO.getMeterDn().equals(meterQH.getMeterDn()+"")) {
 					// 判断流量QH是否小0.001，是则为零流量水表
 					if (qh < 0.001) {
-						if(meterQH.getMeterType() == 2) mraVO.setFsZeroFlowMeterNum(mraVO.getFsZeroFlowMeterNum()+1);
-						mraVO.setZeroFlowMeterNum(mraVO.getZeroFlowMeterNum() + 1);
+						if(meterQH.getMeterType() == 2 && !fsZeroFlowMeterNumList.contains(meterQH.getAccNo())) {
+							fsZeroFlowMeterNumList.add(meterQH.getAccNo());
+							mraVO.setFsZeroFlowMeterNum(mraVO.getFsZeroFlowMeterNum()+1);
+						}
+						if(!zeroFlowMeterNumList.contains(meterQH.getAccNo())) {
+							zeroFlowMeterNumList.add(meterQH.getAccNo());
+							mraVO.setZeroFlowMeterNum(mraVO.getZeroFlowMeterNum() + 1);
+						}
+						
 					} else {
 						// 计算低流量/正常/过载水表
 						MeterDNParam meterDNParam = getMeterDNParam(qhMaxMinMap, meterQH.getMeterDn());
 						if(meterDNParam.getMaxQ() == null || meterDNParam.getMinQ() == null) break;
 						if (qh < Double.parseDouble(meterDNParam.getMinQ())) {
-							if(meterQH.getMeterType() == 2) mraVO.setFsLowFlowMeterNum(mraVO.getFsLowFlowMeterNum()+1);
-							mraVO.setLowFlowMeterNum(mraVO.getLowFlowMeterNum() + 1);
+							if(meterQH.getMeterType() == 2 && !fsLowFlowMeterNumList.contains(meterQH.getAccNo())) {
+								fsLowFlowMeterNumList.add(meterQH.getAccNo());
+								mraVO.setFsLowFlowMeterNum(mraVO.getFsLowFlowMeterNum()+1);
+							} 
+							if(!lowFlowMeterNumList.contains(meterQH.getAccNo())) {
+								lowFlowMeterNumList.add(meterQH.getAccNo());
+								mraVO.setLowFlowMeterNum(mraVO.getLowFlowMeterNum() + 1);
+							}
+							
 						} else if (qh < Double.parseDouble(meterDNParam.getMaxQ())) {
-							if(meterQH.getMeterType() == 2) mraVO.setFsNormalFlowMeterNum(mraVO.getFsNormalFlowMeterNum()+1);
-							mraVO.setNormalFlowMeterNum(mraVO.getNormalFlowMeterNum() + 1);
+							if(meterQH.getMeterType() == 2 && !fsNormalFlowMeterNumList.contains(meterQH.getAccNo())) {
+								fsNormalFlowMeterNumList.add(meterQH.getAccNo());
+								mraVO.setFsNormalFlowMeterNum(mraVO.getFsNormalFlowMeterNum()+1);
+							} 
+							if(!normalFlowMeterNumList.contains(meterQH.getAccNo())) {
+								normalFlowMeterNumList.add(meterQH.getAccNo());
+								mraVO.setNormalFlowMeterNum(mraVO.getNormalFlowMeterNum() + 1);
+							}
+							
 						} else {
-							if(meterQH.getMeterType() == 2) mraVO.setFsHighFlowMeterNum(mraVO.getFsHighFlowMeterNum()+1);
-							mraVO.setHighFlowMeterNum(mraVO.getHighFlowMeterNum() + 1);
+							if(meterQH.getMeterType() == 2 && !fsHighFlowMeterNumList.contains(meterQH.getAccNo())) {
+								fsHighFlowMeterNumList.add(meterQH.getAccNo());
+								mraVO.setFsHighFlowMeterNum(mraVO.getFsHighFlowMeterNum()+1);
+							}
+							if(!highFlowMeterNumList.contains(meterQH.getAccNo())) {
+								highFlowMeterNumList.add(meterQH.getAccNo());
+								mraVO.setHighFlowMeterNum(mraVO.getHighFlowMeterNum() + 1);
+							}
 						}
 					}
 					mraVO.setMeterNum(mraVO.getMeterNum() + 1);
@@ -702,7 +728,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 			List<String> zrALIzoneName = new ArrayList<>();
 			List<Double> zrALIzoneDatas = new ArrayList<>();
 			for (ALListVO alListVO : dataList) {
-				zrALIzoneName.add(alListVO.getZoneNo());
+				zrALIzoneName.add(alListVO.getZoneName());
 				zrALIzoneDatas.add(alListVO.getALI());
 			}
 			// 对分区数据进行排序
@@ -733,10 +759,10 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		for (ALOverviewDataVO list : idLists) {
 			if (list == null)
 				continue;
-			percentALList.add(list.getPercentAL());
-			aLIList.add(list.getALI());
-			nonBasicInfoMeterRateList.add(list.getNonBasicInfoMeterRate());
-			overdueMetersRateList.add(list.getOverdueMetersRate());
+			percentALList.add(list.getPercentAL() == null?null:list.getPercentAL());
+			aLIList.add(list.getALI() == null?null:list.getALI());
+			nonBasicInfoMeterRateList.add(list.getNonBasicInfoMeterRate()== null?null:list.getNonBasicInfoMeterRate());
+			overdueMetersRateList.add(list.getOverdueMetersRate()== null?null:list.getOverdueMetersRate());
 		}
 		taData.setDate(timeList);
 		taData.setALIList(aLIList);
