@@ -9,6 +9,7 @@ import com.koron.inwlms.bean.DTO.common.PointParamDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryVSZoneListDTO;
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.common.GisScadaStation;
@@ -18,6 +19,7 @@ import com.koron.inwlms.bean.VO.sysManager.DataDicNewVO;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.VirtualZoneVO;
 import com.koron.inwlms.service.common.PointHistoryDataService;
 import com.koron.inwlms.service.common.impl.CommonServiceImpl;
@@ -413,6 +415,39 @@ public class CommonController {
 	        msg.setDescription("查询监测点失败");
 		}
 		
+		return msg.toJson();
+	}
+	
+	/**
+	 * （临时接口）
+	 * 根据指定的分区编号查询所有子分区编号
+	 * @param zoneNo 分区编号
+	 * @return 
+	 */
+	@RequestMapping(value = "/queryVZoneInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询虚拟分区信息", notes = "查询虚拟分区信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryVZoneInfo(@RequestBody QueryVZoneInfoDTO queryVZoneInfoDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(queryVZoneInfoDTO.getZoneType() == null) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("分区类型为空");
+			return msg.toJson();
+		}
+		if(queryVZoneInfoDTO.getZoneType() != null && (queryVZoneInfoDTO.getZoneType() < 1 || queryVZoneInfoDTO.getZoneType() > 2)) {
+			//参数不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("分区类型数值错误");
+			return msg.toJson();
+		}
+		try{
+			List<VZoneInfoVO> data = ADOConnection.runTask(user.getEnv(),new GisZoneServiceImpl(), "queryVZoneInfo", List.class,queryVZoneInfoDTO);
+			msg.setData(data);
+    	}catch(Exception e){
+    		msg.setCode(Constant.MESSAGE_INT_SELECTERROR);
+    		msg.setDescription(Constant.MESSAGE_STRING_SELECTERROR);
+    	}
 		return msg.toJson();
 	}
 	

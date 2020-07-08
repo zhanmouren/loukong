@@ -1439,12 +1439,12 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 
 	@TaskAnnotation("queryZoneThematicValue")
 	@Override
-	public Map<String, Map<Object, Double>> queryZoneThematicValue(SessionFactory factory,
+	public Map<String, Map<String, Double>> queryZoneThematicValue(SessionFactory factory,
 			ZoneThematicValueDTO zoneThematicValueDTO) {
 		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
 		List<String> codes = new ArrayList<>();
 		List<String> zoneNos = new ArrayList<>();
-		Map<String, Map<Object, Double>> maps = new HashMap<>();
+		Map<String, Map<String, Double>> maps = new HashMap<>();
 		DecimalFormat df = new DecimalFormat("#.0000");
 		//根据分区类型获取所有分区编号
 		GisZoneServiceImpl gisZoneServiceImpl = new GisZoneServiceImpl();
@@ -1477,7 +1477,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						timeNum++;
 					}
 				}
-				Map<Object,Double> map = new HashMap<Object, Double>();
+				Map<String,Double> map = new HashMap<String, Double>();
 				if(itemCode.contains("MRR") || itemCode.contains("DCPL") || itemCode.contains("DCCA")) {
 					//管道更新率指标，DMA覆盖率（管长），DMA覆盖率（户数），计算平均值
 					if(timeNum == 0) {
@@ -1508,7 +1508,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						values += indicatorVO1.getValue();
 					}
 				}
-				Map<Object,Double> map = new HashMap<Object, Double>();
+				Map<String,Double> map = new HashMap<String, Double>();
 				map.put(itemCode, values/10000<0.0001?0:Double.parseDouble(df.format(values/10000)));
 				maps.put(zoneNo, map);
 			}
@@ -1527,7 +1527,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						timeNum++;
 					}
 				}
-				Map<Object,Double> map = new HashMap<Object, Double>();
+				Map<String,Double> map = new HashMap<String, Double>();
 				if(timeNum == 0) {
 					map.put(itemCode, null);
 				} else{
@@ -1556,7 +1556,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						timeNum++;
 					}
 				}
-				Map<Object,Double> map = new HashMap<Object, Double>();
+				Map<String,Double> map = new HashMap<String, Double>();
 				if(itemCode.contains("MRR") || itemCode.contains("DCPL") || itemCode.contains("DCCA")) {
 					//管道更新率指标，DMA覆盖率（管长），DMA覆盖率（户数），计算平均值
 					if(timeNum == 0) {
