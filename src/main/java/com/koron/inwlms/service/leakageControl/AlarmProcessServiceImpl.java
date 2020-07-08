@@ -20,6 +20,9 @@ import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.QueryTreeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisData;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisDataParam;
+import com.koron.inwlms.bean.VO.common.GisScadaStation;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
@@ -35,6 +38,7 @@ import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
+import com.koron.inwlms.mapper.common.PointHistoryDataMapper;
 import com.koron.inwlms.mapper.indexData.IndexMapper;
 import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
@@ -327,18 +331,21 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		
 		//查询分区分级
 		GisExistZoneVO gisExistZoneVO = mapper.queryGisZone(zoneCode);
-		if(gisExistZoneVO.getRemark().equals(Constant.DMAZONELEVEL_ONE)) {
-			zonecodeM = "FLMWL";
-			mnfCode = "FLDMNF";
-			zonecodeD = "FLDWL";
-		}else if(gisExistZoneVO.getRemark().equals(Constant.DMAZONELEVEL_TWO)) {
-			zonecodeM = "SLMWL";
-			mnfCode = "SLDMNF";
-		}else if(gisExistZoneVO.getRemark().equals(Constant.DMAZONELEVEL_THREE)) {
-			zonecodeM = "DLMWL";
-			mnfCode = "DMDMNF";
-			zonecodeD = "DMDWL";
+		if(gisExistZoneVO != null) {
+			if(gisExistZoneVO.getRemark().equals(Constant.DMAZONELEVEL_ONE)) {
+				zonecodeM = "FLMWL";
+				mnfCode = "FLDMNF";
+				zonecodeD = "FLDWL";
+			}else if(gisExistZoneVO.getRemark().equals(Constant.DMAZONELEVEL_TWO)) {
+				zonecodeM = "SLMWL";
+				mnfCode = "SLDMNF";
+			}else if(gisExistZoneVO.getRemark().equals(Constant.DMAZONELEVEL_THREE)) {
+				zonecodeM = "DLMWL";
+				mnfCode = "DMDMNF";
+				zonecodeD = "DMDWL";
+			}
 		}
+		
 		
 		TreatmentEffectVO treatmentEffectVO = new TreatmentEffectVO();
 		IndicatorMapper indMapper = factory.getMapper(IndicatorMapper.class);
@@ -387,21 +394,26 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		indicatorDTO.setStartTime(dateStartL);
 		indicatorDTO.setEndTime(dateEndL);
 		List<IndicatorVO> indicatorData = indMapper.queryZoneLossIndicData(indicatorDTO);
-		for(IndicatorVO indicatorVO : indicatorData) {
-			TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
-			timeAndFlowData.setFlow(indicatorVO.getValue());
-			timeAndFlowData.setTimeNum(indicatorVO.getTimeId());
-			lossFlowList.add(timeAndFlowData);
+		if(indicatorData != null && indicatorData.size() != 0) {
+			for(IndicatorVO indicatorVO : indicatorData) {
+				TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
+				timeAndFlowData.setFlow(indicatorVO.getValue());
+				timeAndFlowData.setTimeNum(indicatorVO.getTimeId());
+				lossFlowList.add(timeAndFlowData);
+			}
 		}
+		
 		//添加当前月数据
 		if(dateEndL <= dateNow) {
 			indicatorDTO.setStartTime(dateNow);
 			indicatorDTO.setEndTime(dateNow);
 			List<IndicatorVO> indicatorData1 = indMapper.queryZoneLossIndicData(indicatorDTO);
-			TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
-			timeAndFlowData.setFlow(indicatorData1.get(0).getValue());
-			timeAndFlowData.setTimeNum(indicatorData1.get(0).getTimeId());
-			lossFlowList.add(timeAndFlowData);
+			if(indicatorData1 != null && indicatorData1.size() != 0) {
+				TimeAndFlowData timeAndFlowData = new TimeAndFlowData();
+				timeAndFlowData.setFlow(indicatorData1.get(0).getValue());
+				timeAndFlowData.setTimeNum(indicatorData1.get(0).getTimeId());
+				lossFlowList.add(timeAndFlowData);
+			}
 		}
 		treatmentEffectVO.setLossFlow(lossFlowList);
 		
@@ -435,27 +447,32 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		indicatorDTO.setStartTime(startf7);
 		indicatorDTO.setEndTime(startf);
 		double mflowB = 0.0;
+		double mnfFlow7 = 0.0;
 		List<IndicatorVO> indicatorData2 = indMapper.queryZoneLossIndicData(indicatorDTO);
-		for(IndicatorVO indicatorVO : indicatorData2) {
-			mflowB = mflowB + indicatorVO.getValue();
+		if(indicatorData2 != null && indicatorData2.size() != 0) {
+			for(IndicatorVO indicatorVO : indicatorData2) {
+				mflowB = mflowB + indicatorVO.getValue();
+			}
+			if(mflowB != 0.0) {
+				mnfFlow7 = mflowB/indicatorData2.size();	
+			}
 		}
-		if(mflowB != 0.0) {
-			double mnfFlow7 = mflowB/indicatorData2.size();
-			treatmentEffectVO.setMnfBefore(mnfFlow7);
-		}
+		treatmentEffectVO.setMnfBefore(mnfFlow7);
+		
 		indicatorDTO.setStartTime(endf);
 		indicatorDTO.setEndTime(endf7);
 		double mflowA = 0.0;
+		mnfFlow7 = 0.0;
 		List<IndicatorVO> indicatorData3 = indMapper.queryZoneLossIndicData(indicatorDTO);
-		for(IndicatorVO indicatorVO : indicatorData3) {
-			mflowA = mflowA + indicatorVO.getValue();
+		if(indicatorData3 != null && indicatorData3.size() != 0) {
+			for(IndicatorVO indicatorVO : indicatorData3) {
+				mflowA = mflowA + indicatorVO.getValue();
+			}
+			if(mflowA != 0.0) {
+				mnfFlow7 = mflowA/indicatorData3.size();
+			}
 		}
-		if(mflowA != 0.0) {
-			double mnfFlow7 = mflowA/indicatorData3.size();
-			treatmentEffectVO.setMnfAfther(mnfFlow7);
-		}
-		
-		
+		treatmentEffectVO.setMnfAfther(mnfFlow7);
 		
 		//漏损流量
 		List<String> zoneDCodes = new ArrayList<>();
@@ -464,25 +481,32 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		indicatorDTO.setStartTime(startf7);
 		indicatorDTO.setEndTime(startf);
 		double lossFlowB = 0.0;
+		double lossFlow7 = 0.0;
 		List<IndicatorVO> indicatorData4 = indMapper.queryZoneLossIndicData(indicatorDTO);
-		for(IndicatorVO indicatorVO : indicatorData4) {
-			lossFlowB = lossFlowB + indicatorVO.getValue();
+		if(indicatorData4 != null && indicatorData4.size() != 0) {
+			for(IndicatorVO indicatorVO : indicatorData4) {
+				lossFlowB = lossFlowB + indicatorVO.getValue();
+			}
+			if(lossFlowB != 0.0) {
+				lossFlow7 = lossFlowB/indicatorData4.size();
+			}
 		}
-		if(lossFlowB != 0.0) {
-			double lossFlow7 = lossFlowB/indicatorData4.size();
-			treatmentEffectVO.setLossFlowBefore(lossFlow7);
-		}
+		treatmentEffectVO.setLossFlowBefore(lossFlow7);
+		
 		indicatorDTO.setStartTime(endf);
 		indicatorDTO.setEndTime(endf7);
 		double lossFlowA = 0.0;
+		lossFlow7 = 0.0;
 		List<IndicatorVO> indicatorData5 = indMapper.queryZoneLossIndicData(indicatorDTO);
-		for(IndicatorVO indicatorVO : indicatorData5) {
-			lossFlowA = lossFlowA + indicatorVO.getValue();
+		if(indicatorData5 != null && indicatorData5.size() != 0) {
+			for(IndicatorVO indicatorVO : indicatorData5) {
+				lossFlowA = lossFlowA + indicatorVO.getValue();
+			}
+			if(lossFlowA != 0.0) {
+				lossFlow7 = lossFlowA/indicatorData5.size();
+			}
 		}
-		if(lossFlowA != 0.0) {
-			double lossFlow7 = lossFlowA/indicatorData5.size();
-			treatmentEffectVO.setLossFlowAfther(lossFlow7); 
-		}
+		treatmentEffectVO.setLossFlowAfther(lossFlow7); 
 		
 		//供水量统计 
 		//查询分区下的监测点
@@ -494,24 +518,27 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		Date beforfDay = TimeUtil.addDay(createDate, -1);
 		BasicDataMapper basDataMapper = factory.getMapper(BasicDataMapper.class);
 		List<GisZonePointVO> pointList = basDataMapper.queryZonePoint(zoneCode);
-		//工单前一日供水量
-		List<TimeAndFlowData> beforAllFlowList = getZoneHourData(pointList,beforfDay,basDataMapper);
-		treatmentEffectVO.setAllFlowBList(beforAllFlowList);
-		//工单开始至结束中间日的供水量
-		long avgLong = Math.round((list.get(0).getCreateTime().getTime() + list.get(0).getUpdateTime().getTime())/2);
-		Date avgDate = new Date(avgLong);
-		String avgDateStr = sf.format(avgDate);
-		avgDate = sf.parse(avgDateStr);
-		List<TimeAndFlowData> avgAllFlowList = getZoneHourData(pointList,avgDate,basDataMapper);
-		treatmentEffectVO.setAllFlowRList(avgAllFlowList);
-		//工单结束日的供水量
-		Date endFDate = list.get(0).getUpdateTime();
-		String endFDateStr = sf.format(endFDate);
-		endFDate = sf.parse(endFDateStr);
-		List<TimeAndFlowData> endAllFlowList = getZoneHourData(pointList,endFDate,basDataMapper);
-		treatmentEffectVO.setAllFlowAList(endAllFlowList);
-		List<TimeAndFlowData> nowAllFlowList = getZoneHourData(pointList,nowDate,basDataMapper);
-		treatmentEffectVO.setAllFlowNList(nowAllFlowList);
+		if(pointList != null && pointList.size() != 0) {
+			//工单前一日供水量
+			List<TimeAndFlowData> beforAllFlowList = getZoneHourData(pointList,beforfDay,basDataMapper);
+			treatmentEffectVO.setAllFlowBList(beforAllFlowList);
+			//工单开始至结束中间日的供水量
+			long avgLong = Math.round((list.get(0).getCreateTime().getTime() + list.get(0).getUpdateTime().getTime())/2);
+			Date avgDate = new Date(avgLong);
+			String avgDateStr = sf.format(avgDate);
+			avgDate = sf.parse(avgDateStr);
+			List<TimeAndFlowData> avgAllFlowList = getZoneHourData(pointList,avgDate,basDataMapper);
+			treatmentEffectVO.setAllFlowRList(avgAllFlowList);
+			//工单结束日的供水量
+			Date endFDate = list.get(0).getUpdateTime();
+			String endFDateStr = sf.format(endFDate);
+			endFDate = sf.parse(endFDateStr);
+			List<TimeAndFlowData> endAllFlowList = getZoneHourData(pointList,endFDate,basDataMapper);
+			treatmentEffectVO.setAllFlowAList(endAllFlowList);
+			List<TimeAndFlowData> nowAllFlowList = getZoneHourData(pointList,nowDate,basDataMapper);
+			treatmentEffectVO.setAllFlowNList(nowAllFlowList);
+		}
+		
 		return treatmentEffectVO;
 	}
 	
@@ -561,6 +588,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	public String queryZoneTree(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
 		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		PointHistoryDataMapper phdMapper = factory.getMapper(PointHistoryDataMapper.class);
 		//获取树的该节点信息
 		LongTreeBean node = mapper.getBeanByForeignIdType(queryTreeDTO.getType(),queryTreeDTO.getForeignKey());
 		List<TreeVO> list = new ArrayList<>();
@@ -595,13 +623,135 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			}
 			//监测点
 			else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_PFPIONT)) {
-				
+				//查询所有监测点
+				List<GisScadaStation> pointList = phdMapper.queryAllPointMessage();
+				//遍历监测点，在分区树插入监测点
+				for(GisScadaStation gsPoint : pointList) {
+					List<TreeVO> newList = new ArrayList<>();
+					for(TreeVO treeVO : zoneList) {
+						if(treeVO.getCode().equals(gsPoint.getZoneNo())) {
+							newList.add(treeVO);
+							TreeVO treeVO1 = new TreeVO();
+							treeVO1.setCode(gsPoint.getPointNo());
+							treeVO1.setParentmask(treeVO.getParentmask() + 1);
+							newList.add(treeVO1);
+						}else {
+							newList.add(treeVO);
+						}
+					}
+					zoneList = newList;
+				}
+				list = zoneList;
 			}
 			
 		}
 		
 		
 		return null;
+	}
+	
+	@TaskAnnotation("getEnvelopeData")
+	@Override
+	public List<WarningSchemeHisData> getEnvelopeData(SessionFactory factory,WarningSchemeHisDataParam warningSchemeHisDataParam) {
+		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
+		List<WarningSchemeHisData> dataList = new ArrayList<>();
+		List<String> zoneCodes = new ArrayList<>();
+		zoneCodes.add(warningSchemeHisDataParam.getZoneCode());
+		//获取去年同月时间
+		Date nowDate = new Date();
+		
+		//查询指标编码
+		String code = "";
+		for(int j = 0;j < 3;j++) { 
+			nowDate = TimeUtil.addMonth(nowDate, j);
+			
+			Date endDate = TimeUtil.addMonth(nowDate, 1);
+			int nYear = TimeUtil.getYears(nowDate);
+			int nMonth = TimeUtil.getMonth(nowDate);
+			int endYear = TimeUtil.getYears(endDate);
+			int endMonth = TimeUtil.getMonth(endDate);
+			int old = (nYear - 1)*10000 + nMonth*100 + 1;
+			int end = (endYear - 1)*10000 + endMonth*100 + 1;
+			 
+			IndicatorDTO indicatorDTO = new IndicatorDTO();
+			indicatorDTO.setTimeType(2);
+			indicatorDTO.setStartTime(old);
+			indicatorDTO.setEndTime(end);
+			indicatorDTO.setZoneCodes(zoneCodes);
+			List<String> codes = new ArrayList<>();
+			List<IndicatorVO> indicatorVOList = new ArrayList<>();
+			if(warningSchemeHisDataParam.getIndexCode().equals(Constant.DATADICTIONARY_DAYFLOW)) {
+				//日流量
+				//判断分区分级
+				if(warningSchemeHisDataParam.getZoneGrade().equals("1")) {
+					code = "FLMFWSSITDF";
+				}else if(warningSchemeHisDataParam.getZoneGrade().equals("2")) {
+				}else {
+					code = "DMMFWSSITDF";
+				}
+				codes.add(code);
+				indicatorDTO.setCodes(codes);
+				indicatorVOList = indicMapper.queryWBBaseIndicData(indicatorDTO);
+			}else if(warningSchemeHisDataParam.getIndexCode().equals(Constant.DATADICTIONARY_MINNIGFLOW)) {
+				//最小夜间流量
+				if(warningSchemeHisDataParam.getZoneGrade().equals("1")) {
+					code = "FLMMNF";
+				}else if(warningSchemeHisDataParam.getZoneGrade().equals("2")) {
+					code = "SLMMNF";
+				}else {
+					code = "DMMMNF";
+				}
+				
+				codes.add(code);
+				indicatorDTO.setCodes(codes);
+				indicatorVOList = indicMapper.queryZoneLossIndicData(indicatorDTO);
+			}
+			
+			double sum = 0.0;
+			for(int i = 0;i < indicatorVOList.size();i++) {
+				sum +=  indicatorVOList.get(i).getValue();
+			}
+			double avg = sum/indicatorVOList.size();
+			
+			double total = 0;
+			for(int i = 0; i < indicatorVOList.size();i++) {
+				total += (indicatorVOList.get(i).getValue() - avg)*(indicatorVOList.get(i).getValue() - avg);
+			}
+			double standardDeviation = Math.sqrt(total/indicatorVOList.size());
+			double oldMax = avg + standardDeviation*3;
+			double oldMin = avg - standardDeviation*3;
+			WarningSchemeHisData warningSchemeHisData = new WarningSchemeHisData();
+			warningSchemeHisData.setOldMax(oldMax);
+			warningSchemeHisData.setOldMin(oldMin);
+			if(warningSchemeHisDataParam.getMaxFlag() == 0) {
+				warningSchemeHisData.setMax(oldMax + warningSchemeHisDataParam.getMaxIndex());
+			}else if(warningSchemeHisDataParam.getMaxFlag() == 1) {
+				warningSchemeHisData.setMax(oldMax - warningSchemeHisDataParam.getMaxIndex());
+			}else if(warningSchemeHisDataParam.getMaxFlag() == 2) {
+				warningSchemeHisData.setMax(oldMax*warningSchemeHisDataParam.getMaxIndex());
+			}else if(warningSchemeHisDataParam.getMaxFlag() == 3) {
+				warningSchemeHisData.setMax(oldMax/warningSchemeHisDataParam.getMaxIndex());
+			}else if(warningSchemeHisDataParam.getMinFlag() == 0) {
+				warningSchemeHisData.setMin(oldMin + warningSchemeHisDataParam.getMinIndex());
+			}else if(warningSchemeHisDataParam.getMinFlag() == 1) {
+				warningSchemeHisData.setMin(oldMin - warningSchemeHisDataParam.getMinIndex());
+			}else if(warningSchemeHisDataParam.getMinFlag() == 2) {
+				warningSchemeHisData.setMin(oldMin*warningSchemeHisDataParam.getMinIndex());
+			}else if(warningSchemeHisDataParam.getMinFlag() == 3) {
+				warningSchemeHisData.setMin(oldMin/warningSchemeHisDataParam.getMinIndex());
+			}
+			warningSchemeHisData.setTime((nYear*100+nMonth));
+			
+			dataList.add(warningSchemeHisData);
+		}
+		
+		
+		
+		
+		//查询去年同月数据
+		
+		
+		return dataList;
 	}
 	
 	

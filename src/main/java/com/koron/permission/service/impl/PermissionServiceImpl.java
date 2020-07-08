@@ -788,7 +788,7 @@ public class PermissionServiceImpl implements PermissionService{
 						 tblOperationq.setOpFlag(2);
 						 tblOperationq.setOpStatus(0);
 						 tblOperationq.setForeignkey(tblOperateVOList.get(i).getOpCode());
-						 tblOperationq.setOpName("L102160004");
+						 tblOperationq.setOpName("L102180004");
 						 tblOperationq.setCreator("admin");
 						 
 						 tblOperationList.add(tblOperationq);
@@ -801,21 +801,21 @@ public class PermissionServiceImpl implements PermissionService{
 							 tblOperationa.setOpFlag(2);
 							 tblOperationa.setOpStatus(0);
 							 tblOperationa.setForeignkey(tblOperateVOList.get(i).getOpCode());
-							 tblOperationa.setOpName("L102160001");
+							 tblOperationa.setOpName("L102180001");
 							 tblOperationa.setCreator("admin");
 							 
 							 TblOperationDTO tblOperatione=new TblOperationDTO();
 							 tblOperatione.setOpFlag(2);
 							 tblOperatione.setOpStatus(0);
 							 tblOperatione.setForeignkey(tblOperateVOList.get(i).getOpCode());
-							 tblOperatione.setOpName("L102160002");
+							 tblOperatione.setOpName("L102180002");
 							 tblOperatione.setCreator("admin"); 
 							 
 							 TblOperationDTO tblOperationd=new TblOperationDTO();
 							 tblOperationd.setOpFlag(2);
 							 tblOperationd.setOpStatus(0);
 							 tblOperationd.setForeignkey(tblOperateVOList.get(i).getOpCode());
-							 tblOperationd.setOpName("L102160003");
+							 tblOperationd.setOpName("L102180003");
 							 tblOperatione.setCreator("admin");
 							 
 							 tblOperationList.add(tblOperationa);

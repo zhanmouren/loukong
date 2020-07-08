@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryZoneInfoDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.intellectPartition.GisConfigDetVO;
 import com.koron.inwlms.bean.VO.zoneLoss.PositionInfoVO;
+import com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO;
 import com.koron.inwlms.bean.VO.zoneLoss.ZoneDetailInfoVO;
 
 /**
@@ -66,7 +68,7 @@ public interface GisMapper {
 	 * @param queryZoneInfoDTO
 	 * @return
 	 */
-	List<ZoneInfo> queryFuzzyZoneInfo(@Param("rank") String rank,@Param("zoneNo") String zoneNo);
+	List<ZoneInfo> queryFuzzyZoneInfo(@Param("rank") String rank,@Param("zoneNo") String zoneNo,@Param("zoneName") String zoneName);
 
 	/**
 	 * 根据分区编号获取等级
@@ -96,4 +98,10 @@ public interface GisMapper {
 	 */
 	Integer queryZoneRankByNo(@Param("zoneNo") String zoneNo);
 	
+	/**
+	 * 查询虚拟分区信息
+	 * @param queryVZoneInfoDTO
+	 * @return
+	 */
+	List<VZoneInfoVO> queryVZoneInfo(QueryVZoneInfoDTO queryVZoneInfoDTO);
 }

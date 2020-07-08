@@ -26,13 +26,21 @@ public interface MonitorService {
     public List<MonitorDataVO> queryLastMonitorDataList(SessionFactory factory,MonitorDataDTO monitorDataDTO);
 
     /**
-     * 批量插入监测数据
+     * 批量插入压力流量监测数据
      * @param factory
      * @param excelBeans
      * @return
      */
     public Integer addBatchMointorData(SessionFactory factory, List<MonitorDataExcelBean> excelBeans, DataQualityVO dq);
 
+    /**
+     * 批量插入噪声监测数据
+     * @param factory
+     * @param excelBeans
+     * @return
+     */
+    public Integer addBatchNoiseData(SessionFactory factory, List<MonitorDataExcelBean> excelBeans, DataQualityVO dq);
+    
     /**
      * 查询压力/流量监测列表数据
      * @param factory
@@ -90,6 +98,8 @@ public interface MonitorService {
      * @return
      */
     public boolean updateMonitorDet(SessionFactory factory, MonitorDataDTO monitorDataDTO);
+
+	
 
 
 

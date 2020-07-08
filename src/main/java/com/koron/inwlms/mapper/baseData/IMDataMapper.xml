@@ -16,6 +16,11 @@
         delete from mi_importdatahistory where "BatchNo" =#{BatchNo} and type = '2'
     </delete>
 
+    <insert id="addImportDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO">
+        insert into mi_importdatahistory("BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy","createTime",type)
+        values(#{BatchNo},#{originRow},#{row},#{integrity},#{accuracy},#{availability},#{timely},#{consistency},#{status},#{createBy},now(),#{type})
+    </insert>
+
     <insert id="addZoneConfDataQuality" parameterType="com.koron.inwlms.bean.VO.baseInf.DataQualityVO">
         insert into mi_importdatahistory("BatchNo","originRow",row,integrity,accuracy,availability,timely,consistency,status,"createBy","createTime",type)
         values(#{BatchNo},#{originRow},#{row},#{integrity},#{accuracy},#{availability},#{timely},#{consistency},#{status},#{createBy},now(),#{type})
@@ -34,15 +39,26 @@
 
     <insert id="addBatchMointorData" >
         insert into mi_monitordata(
-             status,"pointID",type,"lastTime","flowRate","upstreamPressure","downstreamPressure",noise,threshold,"BatchNo","createBy","createTime"
+             status,"pointID",type,"lastTime","flowRate","upstreamPressure","downstreamPressure","BatchNo","createBy","createTime"
         )values
         <if test="excelBeans != null and excelBeans.size > 0">
             <foreach collection="excelBeans" item="item" index="" separator=",">
-					(#{item.status},#{item.pointID},#{item.type},#{item.lastTime},cast(#{item.flowRate} as numeric),cast(#{item.upstreamPressure} as numeric),cast(#{item.downstreamPressure} as numeric),cast(#{item.noise} as numeric),cast(#{item.threshold} as numeric),#{item.BatchNo},#{item.createBy},#{item.createTime})
+					(#{item.status},#{item.pointID},#{item.type},#{item.lastTime},cast(#{item.flowRate} as numeric),cast(#{item.upstreamPressure} as numeric),cast(#{item.downstreamPressure} as numeric),#{item.BatchNo},#{item.createBy},#{item.createTime})
             </foreach>
         </if>
-
     </insert>
+    
+    <insert id="addBatchNoiseData" >
+        insert into mi_monitordata(
+             status,"pointID",type,"lastTime",noise,threshold,"BatchNo","createBy","createTime"
+        )values
+        <if test="excelBeans != null and excelBeans.size > 0">
+            <foreach collection="excelBeans" item="item" index="" separator=",">
+					(#{item.status},#{item.pointID},#{item.type},#{item.lastTime},cast(#{item.noise} as numeric),cast(#{item.threshold} as numeric),#{item.BatchNo},#{item.createBy},#{item.createTime})
+            </foreach>
+        </if>
+    </insert>
+    
 
     <select id="queryMonitorDataHistoryList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataHisVO">
         select * from(
@@ -136,7 +152,7 @@
             <if test="DMA != null and DMA != '' "> </if>
             <if test="begD != null and begD != '' "> and "lastTime" &gt;=#{begD} </if>
             <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
-            <if test=" 1==1 "> and mi_monitordata.type='1' </if>
+            <if test=" 1==1 "> and mi_monitordata.type= #{type} </if>
         </trim>
         <!--监测数据-->
         union all

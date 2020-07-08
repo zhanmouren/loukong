@@ -27,6 +27,7 @@ import org.swan.bean.MessageBean;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
+import com.koron.inwlms.aspect.OperateAspect;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
@@ -50,6 +51,8 @@ import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisData;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisDataParam;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -316,7 +319,7 @@ public class LeakageControlController {
 				msg.setDescription("未查询到数据");
 			}
 			
-		}catch(Exception e) {
+		}catch(Exception e) { 
 			//查询失败
 	     	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询预警信息处理任务失败");
@@ -2012,5 +2015,25 @@ public class LeakageControlController {
 		
 		return msg.toJson();
 	}
+	
+	@RequestMapping(value = "/queryEnvelopeData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询历史数据", notes = "查询历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryEnvelopeData(@RequestBody WarningSchemeHisDataParam warningSchemeHisDataParam,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		try {
+			List<WarningSchemeHisData> list = ADOConnection.runTask(user.getEnv(),aps, "getEnvelopeData", List.class, warningSchemeHisDataParam);
+			msg.setData(list);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
+	}
+	
+	
 	
 }

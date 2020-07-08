@@ -11,7 +11,9 @@ import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
+import com.koron.inwlms.bean.DTO.common.PointParamDTO;
 import com.koron.inwlms.bean.VO.common.GdhRaw;
+import com.koron.inwlms.bean.VO.common.GisScadaStation;
 import com.koron.inwlms.bean.VO.common.PointDataVO;
 import com.koron.inwlms.bean.VO.common.PointSensor;
 import com.koron.inwlms.bean.VO.common.PointTypeVO;
@@ -146,6 +148,15 @@ public class PointHistoryDataServiceImpl implements PointHistoryDataService {
 	public List<MinMonitorPoint> queryPointHourData(SessionFactory factory,Date datatime){
 		PointHistoryDataMapper mapper = factory.getMapper(PointHistoryDataMapper.class);
 		List<MinMonitorPoint> list = mapper.queryPointHourData(datatime);
+		return list;
+		
+	}
+	
+	@TaskAnnotation("queryPointMessageByName")
+	@Override
+	public List<GisScadaStation> queryPointMessageByName(SessionFactory factory,PointParamDTO pointParamDTO){
+		PointHistoryDataMapper mapper = factory.getMapper(PointHistoryDataMapper.class);
+		List<GisScadaStation> list = mapper.queryPointMessageByName(pointParamDTO);
 		return list;
 		
 	}

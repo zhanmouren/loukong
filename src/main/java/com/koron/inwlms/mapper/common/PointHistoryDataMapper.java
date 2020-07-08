@@ -7,7 +7,9 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
+import com.koron.inwlms.bean.DTO.common.PointParamDTO;
 import com.koron.inwlms.bean.VO.common.GdhRaw;
+import com.koron.inwlms.bean.VO.common.GisScadaStation;
 import com.koron.inwlms.bean.VO.common.PointSensor;
 
 /**
@@ -30,4 +32,10 @@ public interface PointHistoryDataMapper {
 			"from nw_monitorpoint_hour a left join lc_app_dim_indicator b on a.code = b.code where a.code = #{code} and a.\"analysisDate\" between '${start}' and '${end}'\r\n" + 
 			" and a.\"stationCode\"  = #{stationCode}")
 	List<MinMonitorPoint> queryPointHourDataByDay(@Param("code") String code,@Param("start") Date start, @Param("end") Date end,@Param("stationCode") String stationCode);
+	
+	@Select("select * from gis_scada_station")
+	List<GisScadaStation> queryAllPointMessage();
+	
+	List<GisScadaStation> queryPointMessageByName(PointParamDTO pointParamDTO);
+	
 }

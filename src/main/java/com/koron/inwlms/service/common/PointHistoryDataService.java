@@ -7,6 +7,8 @@ import java.util.List;
 import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
+import com.koron.inwlms.bean.DTO.common.PointParamDTO;
+import com.koron.inwlms.bean.VO.common.GisScadaStation;
 import com.koron.inwlms.bean.VO.common.PointDataVO;
 import com.koron.inwlms.bean.VO.common.PointTypeVO;
 
@@ -17,6 +19,8 @@ public interface PointHistoryDataService {
 	List<MinMonitorPoint> queryPointHourData(SessionFactory factory, Date datatime);
 
 	List<PointTypeVO> queryPointHistoryDataType(SessionFactory factory, String code);
+
+	List<GisScadaStation> queryPointMessageByName(SessionFactory factory, PointParamDTO pointParamDTO);
 	
 
 }

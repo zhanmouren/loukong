@@ -111,6 +111,16 @@ public class VCZoneListVO {
 	 * 创建时间
 	 */
 	private String createTime;
+	
+	/**
+	 * 子实际分区字符串
+	 */
+	private String secCode;
+	
+	/**
+	 * 子实际分区集合
+	 */
+	private String[] secCodes;
 
 	public String getZoneNo() {
 		return zoneNo;
@@ -279,6 +289,22 @@ public class VCZoneListVO {
 
 	public void setMnfTime(Integer mnfTime) {
 		this.mnfTime = mnfTime;
+	}
+
+	public String getSecCode() {
+		return secCode;
+	}
+
+	public void setSecCode(String secCode) {
+		this.secCode = secCode;
+	}
+
+	public String[] getSecCodes() {
+		return secCodes;
+	}
+
+	public void setSecCodes(String[] secCodes) {
+		this.secCodes = secCodes;
 	}
 	
 }

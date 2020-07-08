@@ -267,30 +267,6 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 		return alertNoticeMessageList;
 	}
 	
-	public String getEnvelopeData(SessionFactory factory, String indexCode,String zoneGrade) {
-		//查询指标编码
-		String code = "";
-		if(indexCode.equals(Constant.DATADICTIONARY_DAYFLOW)) {
-			//判断分区分级
-			if(zoneGrade.equals("1")) {
-				code = "FLMFWSSITDF";
-			}else if(zoneGrade.equals("2")) {
-			}else {
-				code = "DMMFWSSITDF";
-			}
-		}else if(indexCode.equals(Constant.DATADICTIONARY_MINNIGFLOW)) {
-			if(zoneGrade.equals("1")) {
-				code = "FLMMNF";
-			}else if(zoneGrade.equals("2")) {
-				code = "SLMMNF";
-			}else {
-				code = "DMMMNF";
-			}
-		}
-		
-		//查询去年同月数据
-		
-		return null;
-	}
+	
 
 }

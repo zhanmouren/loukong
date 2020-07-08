@@ -10,6 +10,8 @@ import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.QueryTreeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisData;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisDataParam;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
@@ -38,6 +40,9 @@ public interface AlarmProcessService {
 	List<AlarmProcessLog> queryAlarmProcessLog(SessionFactory factory, String taskCode);
 
 	String queryZoneTree(SessionFactory factory, QueryTreeDTO queryTreeDTO);
+
+	List<WarningSchemeHisData> getEnvelopeData(SessionFactory factory,
+			WarningSchemeHisDataParam warningSchemeHisDataParam);
 
 
 }
