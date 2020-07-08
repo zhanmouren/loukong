@@ -498,6 +498,7 @@ public class BaseDataController {
     				if(addResult==1) {
     					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
     					msg.setDescription("添加分区成功");
+    					msg.setData(data);
     				}else {
     					msg.setCode(Constant.MESSAGE_INT_ADDERROR);
     					msg.setDescription("添加分区失败");
