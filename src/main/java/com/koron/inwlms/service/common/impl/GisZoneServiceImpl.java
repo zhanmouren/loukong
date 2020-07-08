@@ -286,7 +286,7 @@ public class GisZoneServiceImpl implements GisZoneService {
 		}else if(Constant.RANK_T == zoneType) {
 			rank = Constant.DMAZONELEVEL_THREE;
 		}
-		List<ZoneInfo> lists = mapper.queryFuzzyZoneInfo(rank,queryZoneInfoDTO.getZoneNo());
+		List<ZoneInfo> lists = mapper.queryFuzzyZoneInfo(rank,queryZoneInfoDTO.getZoneNo(),queryZoneInfoDTO.getZoneName());
 //		List<ZoneInfo> lists = new ArrayList<>();
 //		ZoneInfo zoneInfo = new ZoneInfo();
 //		zoneInfo.setZoneNo("FL01");

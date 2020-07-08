@@ -42,6 +42,9 @@
 	<if test="zoneNo != null and zoneNo != ''">
 		and p_code like  '%'||#{zoneNo}||'%'
 	</if>
+	<if test="zoneName != null and zoneName != ''">
+		and name like  '%'||#{zoneName}||'%'
+	</if>
 	</select>
 	
 	<select id="queryVZoneDetailInfo"

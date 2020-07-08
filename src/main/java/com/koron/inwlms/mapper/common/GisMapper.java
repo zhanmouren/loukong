@@ -66,7 +66,7 @@ public interface GisMapper {
 	 * @param queryZoneInfoDTO
 	 * @return
 	 */
-	List<ZoneInfo> queryFuzzyZoneInfo(@Param("rank") String rank,@Param("zoneNo") String zoneNo);
+	List<ZoneInfo> queryFuzzyZoneInfo(@Param("rank") String rank,@Param("zoneNo") String zoneNo,@Param("zoneName") String zoneName);
 
 	/**
 	 * 根据分区编号获取等级
