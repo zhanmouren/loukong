@@ -65,4 +65,16 @@
 				when rank = 'W101640003' then 3
 			else 0 end) as rank from gis_exist_zone where p_code = #{zoneNo}
 	</select>
+	
+	<select id="queryVZoneInfo" parameterType="com.koron.inwlms.bean.DTO.zoneLoss.QueryVZoneInfoDTO"
+	resultType="com.koron.inwlms.bean.VO.zoneLoss.VZoneInfoVO">
+	select "pCode" as zoneNo, name as zoneName from gis_exist_vzone
+	where "vType" = #{zoneType}
+	<if test="zoneNo != null and zoneNo != ''">
+		and "pCode" like  '%'||#{zoneNo}||'%'
+	</if>
+	<if test="zoneName != null and zoneName != ''">
+		and name like  '%'||#{zoneName}||'%'
+	</if>
+	</select>
 </mapper>

@@ -302,45 +302,9 @@ public class GisZoneServiceImpl implements GisZoneService {
 	@TaskAnnotation("queryVZoneInfo")
 	@Override
 	public List<VZoneInfoVO> queryVZoneInfo(SessionFactory factory, QueryVZoneInfoDTO queryVZoneInfoDTO) {
-		List<VZoneInfoVO> lists = new ArrayList<>();
-		if(queryVZoneInfoDTO.getZoneType().equals(1)) {
-			//虚拟分区（合并）
-			VZoneInfoVO vZoneInfoVO = new VZoneInfoVO();
-			vZoneInfoVO.setZoneNo("VCZ001");
-			vZoneInfoVO.setZoneName("合并虚拟分区001");
-			vZoneInfoVO.setAddress("地址001");
-			vZoneInfoVO.setcZoneNo("AT001,AT002");
-			vZoneInfoVO.setpZoneNo("Z003");
-			vZoneInfoVO.setpZoneName("实际分区003");
-			VZoneInfoVO vZoneInfoVO1 = new VZoneInfoVO();
-			vZoneInfoVO1.setZoneNo("VCZ002");
-			vZoneInfoVO1.setZoneName("合并虚拟分区002");
-			vZoneInfoVO1.setAddress("地址002");
-			vZoneInfoVO1.setcZoneNo("AT003,AT004");
-			vZoneInfoVO1.setpZoneNo("Z004");
-			vZoneInfoVO1.setpZoneName("实际分区004");
-			lists.add(vZoneInfoVO);
-			lists.add(vZoneInfoVO1);
-		}else if(queryVZoneInfoDTO.getZoneType().equals(2)){
-			//虚拟分区（相减）
-			VZoneInfoVO vZoneInfoVO = new VZoneInfoVO();
-			vZoneInfoVO.setZoneNo("VSZ001");
-			vZoneInfoVO.setZoneName("相减虚拟分区001");
-			vZoneInfoVO.setAddress("地址001");
-			vZoneInfoVO.setcZoneNo("AT001,AT002");
-			vZoneInfoVO.setpZoneNo("Z001");
-			vZoneInfoVO.setpZoneName("实际分区001");
-			VZoneInfoVO vZoneInfoVO1 = new VZoneInfoVO();
-			vZoneInfoVO1.setZoneNo("VSZ002");
-			vZoneInfoVO1.setZoneName("相减虚拟分区002");
-			vZoneInfoVO1.setAddress("地址002");
-			vZoneInfoVO1.setcZoneNo("AT003,AT004");
-			vZoneInfoVO1.setpZoneNo("Z002");
-			vZoneInfoVO1.setpZoneName("实际分区002");
-			lists.add(vZoneInfoVO);
-			lists.add(vZoneInfoVO1);
-		}
-		return lists;
+		GisMapper mapper = factory.getMapper(GisMapper.class);
+		List<VZoneInfoVO> result = mapper.queryVZoneInfo(queryVZoneInfoDTO);
+		return result;
 	}
 	
 	/**
