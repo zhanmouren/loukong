@@ -136,7 +136,6 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/addPosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "添加职位接口",notes = "添加职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	@OperateAspect(operateModule = "zwgl")
 	public String addPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		positionDTO.setCreateBy(user.getLoginName());
 		positionDTO.setUpdateBy(user.getLoginName());
