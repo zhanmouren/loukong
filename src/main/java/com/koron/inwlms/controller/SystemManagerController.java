@@ -3,8 +3,10 @@ package com.koron.inwlms.controller;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
+import com.koron.common.permission.SPIAccountAnno;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.service.TreeService;
+import com.koron.inwlms.aspect.OperateAspect;
 import com.koron.inwlms.bean.DTO.common.FileConfigInfo;
 import com.koron.inwlms.bean.DTO.sysManager.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -13,6 +15,7 @@ import com.koron.inwlms.bean.VO.sysManager.*;
 import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.ImportExcelUtil;
+import com.koron.permission.authority.OPSPIMethod;
 import com.koron.util.Constant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,10 +54,13 @@ public class SystemManagerController {
      * funtion:管理员添加新职员接口
      * author:xiaozhan
      */
+
+    @OPSPIMethod("yhgl001")
+    @OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/addUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "管理员添加新职员接口", notes = "管理员添加新职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addUser(@RequestBody UserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String addUser(@RequestBody UserDTO userDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(userDTO.getName()==null || StringUtils.isBlank(userDTO.getName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员名不能为空", Integer.class).toJson();
 		}
@@ -101,10 +107,12 @@ public class SystemManagerController {
      * funtion:查询职员接口，通过此接口可以通过职员名或部门或者Id称查询职员的基本信息
      * author:xiaozhan
      */
+    @OPSPIMethod("yhgl004")
+    @OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/queryUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询职员接口", notes = "查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryUser(@RequestBody QueryUserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryUser(@RequestBody QueryUserDTO userDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询职员
 		 try {
@@ -132,10 +140,12 @@ public class SystemManagerController {
      * funtion:查询职员详情信息接口
      * author:lzy
      */
+    @OPSPIMethod("yhgl004")
+    @OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/queryUserDetail.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询职员接口", notes = "查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "查询职员详情接口", notes = "查询职员详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryUserDetail(@RequestBody QueryUserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryUserDetail(@RequestBody QueryUserDTO userDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(userDTO.getCode() == null || StringUtils.isBlank(userDTO.getCode())) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员code不能为空", Integer.class).toJson();
 		 }
@@ -165,11 +175,13 @@ public class SystemManagerController {
      * date:2020-03-20
      * funtion:修改新职员接口
      * author:xiaozhan
-     */  	
+     */  
+	@OPSPIMethod("yhgl002")
+	@OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/updateUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改职员信息接口", notes = "修改职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateUser(@RequestBody UserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String updateUser(@RequestBody UserDTO userDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(userDTO.getCode()==null || StringUtils.isBlank(userDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员编码不能为空", Integer.class).toJson();
 		}
@@ -226,7 +238,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/updateUserPassword.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量重置职员密码接口", notes = "批量重置职员密码接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateUserPassword(@RequestBody UserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String updateUserPassword(@RequestBody UserDTO userDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(userDTO.getUserCodeList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员编码列表参数不能为空", Integer.class).toJson();
 		}
@@ -258,11 +270,13 @@ public class SystemManagerController {
      * date:2020-03-23
      * funtion:删除新职员接口
      * author:xiaozhan
-     */  	
+     */ 
+	@OPSPIMethod("yhgl003")
+	@OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/deleteUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除职员信息接口", notes = "删除职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String  deleteUser(@RequestBody UserDTO userDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String  deleteUser(@RequestBody UserDTO userDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(userDTO.getCode()==null || "".equals(userDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "职员的编码不能为空", Integer.class).toJson();
 		}
@@ -596,10 +610,12 @@ public class SystemManagerController {
      * funtion:给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员)
      * author:xiaozhan
      */
+	@OPSPIMethod("zzgl001")
+	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/queryExceptDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询部门其他职员接口", notes = "查询部门其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryExceptDeptUser(@RequestBody DeptAndUserDTO deptUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryExceptDeptUser(@RequestBody DeptAndUserDTO deptUserDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(deptUserDTO.getDepCode()==null || "".equals(deptUserDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
@@ -629,11 +645,13 @@ public class SystemManagerController {
      * date:2020-03-25
      * funtion:插入职员(批量)和部门的关系
      * author:xiaozhan
-     */  	
+     */
+	@OPSPIMethod("zzgl001")
+	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/addDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "插入职员(批量)和部门的关系", notes = "插入职员(批量)和部门的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addDeptUser(@RequestBody DeptAndUserDTO deptUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
+	public String addDeptUser(@RequestBody DeptAndUserDTO deptUserDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(deptUserDTO.getDepCode()==null  || "".equals(deptUserDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
@@ -678,11 +696,13 @@ public class SystemManagerController {
      * date:2020-03-24
      * funtion:删除部门中职员(批量)接口
      * author:xiaozhan
-     */  	
+     */
+	@OPSPIMethod("zzgl003")
+	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/deleteDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除部门中职员接口", notes = "删除部门中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDeptUser(@RequestBody DeptAndUserDTO deptUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
+	public String deleteDeptUser(@RequestBody DeptAndUserDTO deptUserDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(deptUserDTO.getDepCode()==null || "".equals(deptUserDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
 		}
@@ -722,11 +742,13 @@ public class SystemManagerController {
      * date:2020-04-16
      * funtion:添加集成配置功能
      * author:xiaozhan
-     */  
+     */
+	@OPSPIMethod("zzgl001")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/addIntegration.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "插入集成配置功能接口", notes = "插入集成配置功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addIntegration(@RequestBody IntegrationConfDTO integrationConfDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String addIntegration(@RequestBody IntegrationConfDTO integrationConfDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(integrationConfDTO.getOtherJDBC()==null || StringUtils.isBlank(integrationConfDTO.getOtherJDBC())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "对方JDBC不能为空", Integer.class).toJson();
 		}
@@ -764,11 +786,13 @@ public class SystemManagerController {
      * date:2020-04-16
      * funtion:添加表格映射
      * author:xiaozhan
-     */  
+     */ 
+	@OPSPIMethod("zzgl001")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/addTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加表格映射功能接口", notes = "添加表格映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+	public String addTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@SPIAccountAnno  @StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(tableMapperDTO.getConfigCode()==null || "".equals(tableMapperDTO.getConfigCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置编码不能为空", Integer.class).toJson();
 		}
@@ -808,11 +832,13 @@ public class SystemManagerController {
      * date:2020-04-16
      * funtion:添加表格字段映射
      * author:xiaozhan
-     */  
+     */
+	@OPSPIMethod("zzgl001")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/addFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加表格字段映射功能接口", notes = "添加表格字段映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+	public String addFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(fieldMapperDTO.getTableCode()==null || "".equals(fieldMapperDTO.getTableCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
 		}	
@@ -861,11 +887,13 @@ public class SystemManagerController {
      * date:2020-04-16
      * funtion:添加枚举值映射明细
      * author:xiaozhan
-     */  
+     */ 
+	@OPSPIMethod("zzgl001")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/addEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加枚举值映射明细接口", notes = "添加枚举值映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+	public String addEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(enumMapperDTO.getConfCode()==null || "".equals(enumMapperDTO.getConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置编码不能为空", Integer.class).toJson();
 		}
@@ -902,11 +930,13 @@ public class SystemManagerController {
      * date:2020-04-16
      * funtion:查询集成配置列表信息
      * author:xiaozhan
-     */  
+     */
+	@OPSPIMethod("zzgl004")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryIntegration.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询集成配置列表信息接口", notes = "查询集成配置列表信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryIntegration(@RequestBody IntegrationConfDTO integrationConfDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+	public String queryIntegration(@RequestBody IntegrationConfDTO integrationConfDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		  try{
 			  PageListVO pageListVO=ADOConnection.runTask(user.getEnv(),userService, "queryIntegration", PageListVO.class,integrationConfDTO);		 		  
@@ -930,11 +960,13 @@ public class SystemManagerController {
      * date:2020-04-16
      * funtion:根据code查询集成配置信息
      * author:xiaozhan
-     */  
+     */
+	@OPSPIMethod("zzgl004")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryIntegrationByCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据code查询集成配置信息接口", notes = "根据code查询集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryIntegrationByCode(@RequestBody IntegrationConfDTO integrationConfDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryIntegrationByCode(@RequestBody IntegrationConfDTO integrationConfDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(integrationConfDTO.getInteConfCode()==null || "".equals(integrationConfDTO.getInteConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
 		}
@@ -962,10 +994,12 @@ public class SystemManagerController {
      * funtion:根据配置主表Code查询表格映射明细列表
      * author:xiaozhan
      */  
+	@OPSPIMethod("zzgl004")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据配置主表Code查询表格映射明细列表接口", notes = "根据配置主表Code查询表格映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(tableMapperDTO.getConfigCode()==null || "".equals(tableMapperDTO.getConfigCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
 		}
@@ -992,11 +1026,13 @@ public class SystemManagerController {
      * date:2020-04-17
      * funtion:根据配置主表Code查询枚举值映射明细列表
      * author:xiaozhan
-     */  
+     */ 
+	@OPSPIMethod("zzgl004")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据配置主表Code查询枚举值映射明细列表接口", notes = "根据配置主表Code查询枚举值映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(enumMapperDTO.getConfCode()==null || "".equals(enumMapperDTO.getConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "集成配置code不能为空", Integer.class).toJson();
 		}
@@ -1023,11 +1059,13 @@ public class SystemManagerController {
      * date:2020-04-17
      * funtion:根据表格Code查询表格字段映射明细列表
      * author:xiaozhan
-     */  
+     */ 
+	@OPSPIMethod("zzgl004")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据表格Code查询表格字段映射明细列表接口", notes = "根据表格Code查询表格字段映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(fieldMapperDTO.getTableCode()==null || "".equals(fieldMapperDTO.getTableCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细code不能为空", Integer.class).toJson();
 		}
@@ -1055,10 +1093,12 @@ public class SystemManagerController {
      * funtion:根据code修改集成配置信息
      * author:xiaozhan
      */  
+	@OPSPIMethod("zzgl002")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/updateConf.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据code修改集成配置信息接口", notes = "根据code修改集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateConf(@RequestBody IntegrationConfDTO integrationConfDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String updateConf(@RequestBody IntegrationConfDTO integrationConfDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(integrationConfDTO.getInteConfCode()==null || "".equals(integrationConfDTO.getInteConfCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "配置编码不能为空", Integer.class).toJson();
 		}
@@ -1092,11 +1132,13 @@ public class SystemManagerController {
      * date:2020-04-17
      * funtion:根据code修改表格映射明细信息
      * author:xiaozhan
-     */  
+     */
+	@OPSPIMethod("zzgl002")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/updateTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据code修改表格映射明细信息接口", notes = "根据code修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String updateTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
         if(tableMapperDTO.getTableMapperCode()==null || "".equals(tableMapperDTO.getTableMapperCode())) {
         	return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
         }	
@@ -1135,11 +1177,13 @@ public class SystemManagerController {
      * date:2020-04-17
      * funtion:根据Id修改枚举明细映射接口
      * author:xiaozhan
-     */  
+     */ 
+	@OPSPIMethod("zzgl002")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/updateEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据id修改表格映射明细信息接口", notes = "根据id修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String updateEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(enumMapperDTO.getId()==null || "".equals(enumMapperDTO.getId())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "id不能为空", Integer.class).toJson();
 		}
@@ -1176,11 +1220,13 @@ public class SystemManagerController {
      * date:2020-04-20
      * funtion:根据Code修改表格字段映射明细
      * author:xiaozhan
-     */  
+     */
+	@OPSPIMethod("zzgl002")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/updateFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据Code修改表格字段映射明细接口", notes = "根据Code修改表格字段映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String updateFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(fieldMapperDTO.getFieldMapperCode()==null || "".equals(fieldMapperDTO.getFieldMapperCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "字段映射明细编码不能为空", Integer.class).toJson();
 		}	
@@ -1229,11 +1275,13 @@ public class SystemManagerController {
      * date:2020-04-20
      * funtion:根据Code删除表格映射
      * author:xiaozhan
-     */  
+     */ 
+	@OPSPIMethod("zzgl003")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/deleteTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据Code删除表格映射接口", notes = "根据Code删除表格映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String deleteTableMapper(@RequestBody TableMapperDTO tableMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(tableMapperDTO.getCodeList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格映射明细编码不能为空", Integer.class).toJson();
 		}
@@ -1262,11 +1310,13 @@ public class SystemManagerController {
      * date:2020-04-20
      * funtion:根据Code删除表格字段映射
      * author:xiaozhan
-     */  
+     */ 
+	@OPSPIMethod("zzgl003")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/deleteFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据Code删除表格映字段射接口", notes = "根据Code删除表格字段映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String deleteFieldMapper(@RequestBody FieldMapperDTO fieldMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(fieldMapperDTO.getCodeList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "表格字段明细编码不能为空", Integer.class).toJson();
 		}
@@ -1295,11 +1345,13 @@ public class SystemManagerController {
      * date:2020-04-20
      * funtion:根据id删除枚举值映射明细
      * author:xiaozhan
-     */  
+     */
+	@OPSPIMethod("zzgl003")
+	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/deleteEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据id删除枚举值映射明细接口", notes = "根据id删除枚举值映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String deleteEnumMapper(@RequestBody EnumMapperDTO enumMapperDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(enumMapperDTO.getIdList()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "枚举值映射id不能为空", Integer.class).toJson();
 		}
@@ -1329,10 +1381,12 @@ public class SystemManagerController {
      * funtion:新建数据字典(主明细信息同时插入)
      * author:xiaozhan
      */  
+	@OPSPIMethod("sjzd001")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/addDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典接口", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String addDataDic(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicCn()==null || StringUtils.isBlank(dataDicDTO.getDicCn())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表中文名称不能为空", Integer.class).toJson();
 		}
@@ -1400,10 +1454,12 @@ public class SystemManagerController {
      * funtion:新建数据字典(主表)(type 0代表系统的数据字典，1代表是用户自建的数据字典)
      * author:xiaozhan
      */  
+	@OPSPIMethod("sjzd001")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/addMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典接口(主表)", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addMainDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String addMainDataDic(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicCn()==null || StringUtils.isBlank(dataDicDTO.getDicCn())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表中文名称不能为空", Integer.class).toJson();
 		}
@@ -1450,11 +1506,13 @@ public class SystemManagerController {
      * date:2020-03-25
      * funtion:生成数据字典Key
      * author:xiaozhan
-     */  
+     */
+	@OPSPIMethod("sjzd001")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/createDataKey.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典接口(主表)", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String createDataKey(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
+	public String createDataKey(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
 		}			
@@ -1486,10 +1544,12 @@ public class SystemManagerController {
      * funtion:新建数据字典(明细信息)
      * author:xiaozhan
      */  
+	@OPSPIMethod("sjzd001")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/addDetDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典明细接口", notes = "新建数据字典明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addDetDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String addDetDataDic(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicParent()==null || StringUtils.isBlank(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表标识不能为空", Integer.class).toJson();
 		}
@@ -1540,10 +1600,12 @@ public class SystemManagerController {
      * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是明细信息)
      * author:xiaozhan
      */
+	@OPSPIMethod("sjzd004")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/queryDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询数据字典接口(明细信息)", notes = "查询数据字典接口(明细信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryDataDic(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	 
 		 if(dataDicDTO.getDicParent()==null || "".equals(dataDicDTO.getDicParent())) {
 			 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -1578,10 +1640,12 @@ public class SystemManagerController {
     * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是主表信息) 分页
     * author:xiaozhan
     */
+	@OPSPIMethod("sjzd002")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/queryMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
    @ApiOperation(value = "查询数据字典接口(主表信息)", notes = "查询数据字典接口(主表信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
    @ResponseBody
-	public String queryMainDataDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryMainDataDic(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
 		 //执行查询数据字典
 		 try {
@@ -1609,10 +1673,12 @@ public class SystemManagerController {
      * funtion:通过字典主表parent修改数据字典接口(主表信息))说明
      * author:xiaozhan
      */
+	@OPSPIMethod("sjzd002")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/updateDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "通过字典主表parent修改数据字典接口(主表信息))接口", notes = "通过字典主表parent修改数据字典接口(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateDic(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+	public String updateDic(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(dataDicDTO.getDicParent()==null || "".equals(dataDicDTO.getDicParent())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域不能为空", Integer.class).toJson();
 		}
@@ -1656,10 +1722,12 @@ public class SystemManagerController {
      * funtion:通过字典主表Parent删除数据字典接口(主表信息)(批量)说明
      * author:xiaozhan
      */
+	@OPSPIMethod("sjzd003")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/deleteDicByParent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "主表parent删除数据字典详情(主表信息)接口", notes = "主表parent删除数据字典详情(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDicByParent(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
+	public String deleteDicByParent(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(dataDicDTO.getDicParentList()==null) {
 			  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表值域参数不能为空", Integer.class).toJson();
 			}	
@@ -1695,10 +1763,12 @@ public class SystemManagerController {
      * funtion:通过字典主表id修改数据字典明细接口(明细信息))说明
      * author:xiaozhan
      */
+	@OPSPIMethod("sjzd003")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/updateDicDetById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "通过字典主表id修改数据字典接口(明细信息))接口", notes = "通过字典主表id修改数据字典接口(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateDicDetById(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String updateDicDetById(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicId()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表ID不能为空", Integer.class).toJson();
 		}
@@ -1745,10 +1815,12 @@ public class SystemManagerController {
      * funtion:通过字典主表key删除数据字典接口(明细信息)(批量)说明(通过Key等等)
      * author:xiaozhan
      */
+	@OPSPIMethod("sjzd004")
+	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/deleteDetDicByKey.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "主表key删除数据字典详情(明细信息)接口", notes = "主表key删除数据字典详情(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteDetDicByKey(@RequestBody DataDicDTO dataDicDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String deleteDetDicByKey(@RequestBody DataDicDTO dataDicDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(dataDicDTO.getDicKeyList()==null) {
 			  return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "数据字典主表key参数不能为空", Integer.class).toJson();
 			}	
@@ -1783,10 +1855,12 @@ public class SystemManagerController {
      * funtion:新建特征日接口功能描述
      * author:xiaozhan
      */
+	@OPSPIMethod("dzrpz001")
+	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/addSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建特征日接口", notes = "新建特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String addSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getCnName()==null || StringUtils.isBlank(specialDayDTO.getCnName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日中文名称不能为空", Integer.class).toJson();
 		}
@@ -1837,10 +1911,12 @@ public class SystemManagerController {
      * funtion:查询某年某月特征日接口功能描述
      * author:xiaozhan
      */
+	@OPSPIMethod("dzrpz004")
+	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/querySpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询某年某月特征日接口", notes = "查询某年某月特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String querySpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String querySpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getStartTime()==null || StringUtils.isBlank(specialDayDTO.getStartTime())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日开始时间不能为空", Integer.class).toJson();
 		}
@@ -1876,10 +1952,12 @@ public class SystemManagerController {
      * funtion:根据日期查询特征日接口
      * author:xiaozhan
      */
+	@OPSPIMethod("dzrpz004")
+	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/querySpecialDateByDay.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据日期查询特征日接口", notes = "根据日期查询特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String querySpecialDateByDay(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String querySpecialDateByDay(@RequestBody SpecialDayDTO specialDayDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}
@@ -1911,10 +1989,12 @@ public class SystemManagerController {
      * funtion:删除特征日接口功能描述
      * author:xiaozhan
      */
+	@OPSPIMethod("dzrpz003")
+	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/deleteSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除特征日接口", notes = "删除特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String deleteSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}			
@@ -1952,10 +2032,12 @@ public class SystemManagerController {
      * funtion:修改特征日接口功能描述
      * author:xiaozhan
      */
+	@OPSPIMethod("dzrpz002")
+	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/updateSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改特征日接口", notes = "修改特征日接口接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String updateSpecialDate(@RequestBody SpecialDayDTO specialDayDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(specialDayDTO.getSpDate()==null || "".equals(specialDayDTO.getSpDate())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "特征日日期不能为空", Integer.class).toJson();
 		}	
@@ -2038,10 +2120,12 @@ public class SystemManagerController {
      * funtion:组织下添加部门,部门下添加部门
      * author:xiaozhan
      */
+	@OPSPIMethod("zzgl001")
+	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/addTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加部门接口", notes = "添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addTreeDept(@RequestBody  TreeDTO parentBean,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
+	public String addTreeDept(@RequestBody  TreeDTO parentBean,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {	
 		if(parentBean.getDepName()==null || "".equals(parentBean.getDepName())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}
@@ -2096,11 +2180,13 @@ public class SystemManagerController {
      * date:2020-03-30
      * funtion:删除树结构的部门
      * author:xiaozhan
-     */
+     */	
+	@OPSPIMethod("zzgl003")
+	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/deleteTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除树结构的部门接口", notes = "删除树结构的部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String deleteTreeDept(@RequestBody  TreeDTO longTreeBean,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String deleteTreeDept(@RequestBody  TreeDTO longTreeBean,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		Integer type=Integer.valueOf(longTreeBean.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson();
@@ -2146,10 +2232,12 @@ public class SystemManagerController {
      * funtion:修改树结构的部门
      * author:xiaozhan
      */
+	@OPSPIMethod("zzgl002")
+	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/updateTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改树结构的部门接口", notes = "修改树结构的部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateTreeDept(@RequestBody DeptDTO deptDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String updateTreeDept(@RequestBody DeptDTO deptDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		//修改的只有部门名称
 		if(deptDTO.getDepCode()==null || "".equals(deptDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门编码不能为空", Integer.class).toJson();
@@ -2185,10 +2273,12 @@ public class SystemManagerController {
      * funtion:查看组织树结构(展开所有)
      * author:xiaozhan
      */
+	@OPSPIMethod("zzgl004")
+	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/queryTreeOrg.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看组织树接口", notes = "查看组织树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryTreeOrg(@RequestBody TreeDTO treeDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String queryTreeOrg(@RequestBody TreeDTO treeDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		Integer type=Integer.valueOf(treeDTO.getType());
 		if(type==null || "".equals(type)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
@@ -2221,10 +2311,12 @@ public class SystemManagerController {
      * funtion:根据部门Code查询部门职员 分页
      * author:xiaozhan
      */
+	@OPSPIMethod("zzgl004")
+	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/queryDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据部门Code查询职员接口", notes = "根据部门Code查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDeptUser(@RequestBody DeptDTO deptDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+	public String queryDeptUser(@RequestBody DeptDTO deptDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		if(deptDTO.getDepCode()==null || "".equals(deptDTO.getDepCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "部门名称不能为空", Integer.class).toJson();
 		}		
@@ -2501,10 +2593,12 @@ public class SystemManagerController {
      * funtion:模糊查询部门接口
      * author:xiaozhan
      */	
+	@OPSPIMethod("zzgl004")
+	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/queryDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDept(@RequestBody DeptDTO deptDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+	public String queryDept(@RequestBody DeptDTO deptDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
 			  List<DeptVO> deptList=ADOConnection.runTask(user.getEnv(),userService, "queryDept", List.class,deptDTO);	
@@ -2534,7 +2628,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/queryPosition.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询职位接口", notes = "查询职位接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
+	public String queryPosition(@RequestBody PositionDTO positionDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
 			  List<PositionVO> positionList=ADOConnection.runTask(user.getEnv(),userService, "queryPosition", List.class,positionDTO);	
@@ -2638,7 +2732,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/downUserDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载部门职员数据导出到Excel", notes = "下载部门职员数据导出到Excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public HttpEntity<?> downUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -2667,7 +2761,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/downRoleUserDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载角色职员数据导出到Excel", notes = "下载角色职员数据导出到Excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downRoleUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public HttpEntity<?> downRoleUserDataExcel(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -2698,7 +2792,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/downRoleDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载角色数据导出到Excel", notes = "下载角色数据导出到Excel", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downRoleDataExcel(@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public HttpEntity<?> downRoleDataExcel(@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询到导出数据结果
@@ -2755,7 +2849,7 @@ public class SystemManagerController {
 	@RequestMapping(value = "/addImportUserDataExcel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加excel导入用户数据接口", notes = "添加excel导入数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String addImportUserDataExcel(MultipartFile file,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+	public String addImportUserDataExcel(MultipartFile file,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 MessageBean<ImportUserResVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ImportUserResVO.class);	       
 		  try{		
 			  List<UserExcelDTO> userList=ImportExcelUtil.readExcel(file,UserExcelDTO.class);
