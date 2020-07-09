@@ -20,6 +20,7 @@ import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
@@ -878,6 +879,28 @@ public class PermissionServiceImpl implements PermissionService{
 			      }
 			  }
 			  return addRes;
+		}
+		
+		//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员) 2020/03/24  分页
+		@TaskAnnotation("queryExceptRoleUserNew")
+		@Override
+		public PageListVO<List<UserVO>> queryExceptRoleUserNew(SessionFactory factory, RoleAndUserDTO roleUserDTO) {		
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);	
+			roleUserDTO.setWhetUse(0);
+			List<UserVO> userList=mapper.queryExceptRoleUserNew(roleUserDTO);
+			//查询总条数
+			int rowNumber = mapper.getExceptRoleUserCountNew(roleUserDTO);
+			// 返回数据结果
+			PageListVO<List<UserVO>> result = new PageListVO<>();
+			result.setDataList(userList);
+			// 插入分页信息
+			PageVO pageVO = PageUtil.getPageBean(roleUserDTO.getPage(), roleUserDTO.getPageCount(), rowNumber);
+			result.setTotalPage(pageVO.getTotalPage());
+			result.setRowNumber(pageVO.getRowNumber());
+			result.setPageCount(pageVO.getPageCount());
+			result.setPage(pageVO.getPage());
+			return result;		
+			
 		}
 		
 

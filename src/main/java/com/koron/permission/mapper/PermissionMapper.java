@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -169,4 +170,11 @@ public interface PermissionMapper {
     @Select("select * from tbltree left join  tbloperation on tbltree.foreignkey=tbloperation.code where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} "
             + " and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type} and tbloperation.flag=1")
     List<LongTreeBean> getNextMenuChildren(LongTreeBean bean);
+    
+    
+  //给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
+  	public List<UserVO> queryExceptRoleUserNew(RoleAndUserDTO roleUserDTO);
+  	
+  	//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员) 查询总条数
+  	public int getExceptRoleUserCountNew(RoleAndUserDTO roleUserDTO);
 }

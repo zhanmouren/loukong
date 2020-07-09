@@ -341,5 +341,40 @@
 	     where tbltree.type=2 
          order by tbltree.seq
 	    </select>
+	    
+	    
+	     <!-- 角色弹窗选择职员 -->
+     <select id="queryExceptRoleUserNew"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="com.koron.inwlms.bean.VO.sysManager.UserVO">
+       select "user".id as "userId","user"."loginName",case when "user".phone is null then '' else "user".phone end,"user"."email","user".name,"user".position,"user".sex,"user".photo,"user"."openID","user".status,"user"."workNo",
+	   "user"."whetUse","user"."createBy","user"."createTime",case when string_agg(distinct("dept".name),';') is null then '' 
+       else string_agg(distinct("dept".name),';') end as "depname","user".code as code     
+	   from sm_user as "user"       
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode"
+	   <trim prefix="where" prefixOverrides="and|or"> 
+	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
+	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%' </if> 
+	     <if test="roleCode != null">  and "user".code not in(select "userrela"."user" from tblrole_user as "userrela" where "userrela"."role" =#{roleCode})	</if> 
+	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
+	   </trim>
+	    group by "user".id ,"user"."loginName","user".phone,"user"."email",
+		"user".name,"user".position,"user".sex,"user"."openID","user".status,"user"."workNo", "user"."whetUse",
+		"user"."createBy","user"."createTime" 
+	   order by "user"."createTime" desc 
+	   limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+     </select>
+     <!-- 角色弹窗选择职员 查询总条数 -->
+     <select id="getExceptRoleUserCountNew"  parameterType="com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO"  resultType="java.lang.Integer">
+       select count(distinct("user"."loginName")) 
+	   from sm_user as "user"       
+	   left join sm_userdept as "userdept" on "userdept"."userCode"="user".code    
+	   left join sm_department as "dept"   on "dept".code="userdept"."deptCode" 
+	   <trim prefix="where" prefixOverrides="and|or"> 
+	     <if test="loginName != null"> and "user"."loginName" like '%'||#{loginName}||'%'</if> 
+	     <if test="name != null"> and "user"."name" like '%'||#{name}||'%'</if> 
+	     <if test="roleCode != null">  and "user".code not in(select "userrela"."user" from tblrole_user as "userrela" where "userrela"."role" =#{roleCode})	</if> 
+	     <if test="whetUse != null">  and "user"."whetUse"=#{whetUse}</if>  
+	   </trim>   
+     </select>
 	   
 </mapper>
