@@ -850,7 +850,7 @@ public class PermissionServiceImpl implements PermissionService{
 			}else{
 				 opCode=tblOperationDTO.getForeignkey()+"003";
 			}
-			
+			tblOperationDTO.setOpCode(opCode);			
 		    //先生成操作节点
 			Integer addRes=mapper.addOperate(tblOperationDTO);
 			if(addRes==-1) {
