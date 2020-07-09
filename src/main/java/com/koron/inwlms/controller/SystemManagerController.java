@@ -2275,6 +2275,9 @@ public class SystemManagerController {
 		if(menuTreeDTO.getSequence()==null || "".equals(menuTreeDTO.getSequence())) {
 		    return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块菜单顺序不能为空", Integer.class).toJson();
 		}
+		if(menuTreeDTO.getModuleCode()==null || "".equals(menuTreeDTO.getModuleCode())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "模块编码不能为空", Integer.class).toJson();
+		}
 		String fields =menuTreeDTO.getSequence().toString();
 		//菜单顺序只能数字
 		Pattern pattern = Pattern.compile("[0-9]*");

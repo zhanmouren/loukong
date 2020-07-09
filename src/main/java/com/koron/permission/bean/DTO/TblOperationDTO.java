@@ -37,8 +37,19 @@ public class TblOperationDTO{
      //修改环境
      private String env;
      
+     //增删改查标识
+     private Integer crduFlag;
+     
+     
+     
      
    
+	public Integer getCrduFlag() {
+		return crduFlag;
+	}
+	public void setCrduFlag(Integer crduFlag) {
+		this.crduFlag = crduFlag;
+	}
 	public String getEnv() {
 		return env;
 	}

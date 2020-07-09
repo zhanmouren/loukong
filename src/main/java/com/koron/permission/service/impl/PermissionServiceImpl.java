@@ -790,6 +790,7 @@ public class PermissionServiceImpl implements PermissionService{
 						 tblOperationq.setForeignkey(tblOperateVOList.get(i).getOpCode());
 						 tblOperationq.setOpName("L102180004");
 						 tblOperationq.setCreator("admin");
+						 tblOperationq.setCrduFlag(4);
 						 
 						 tblOperationList.add(tblOperationq);
 						 if(treeList!=null && treeList.size()>1) {
@@ -803,6 +804,7 @@ public class PermissionServiceImpl implements PermissionService{
 							 tblOperationa.setForeignkey(tblOperateVOList.get(i).getOpCode());
 							 tblOperationa.setOpName("L102180001");
 							 tblOperationa.setCreator("admin");
+							 tblOperationa.setCrduFlag(1);
 							 
 							 TblOperationDTO tblOperatione=new TblOperationDTO();
 							 tblOperatione.setOpFlag(2);
@@ -810,13 +812,15 @@ public class PermissionServiceImpl implements PermissionService{
 							 tblOperatione.setForeignkey(tblOperateVOList.get(i).getOpCode());
 							 tblOperatione.setOpName("L102180002");
 							 tblOperatione.setCreator("admin"); 
+							 tblOperatione.setCrduFlag(2);
 							 
 							 TblOperationDTO tblOperationd=new TblOperationDTO();
 							 tblOperationd.setOpFlag(2);
 							 tblOperationd.setOpStatus(0);
 							 tblOperationd.setForeignkey(tblOperateVOList.get(i).getOpCode());
 							 tblOperationd.setOpName("L102180003");
-							 tblOperatione.setCreator("admin");
+							 tblOperationd.setCreator("admin");
+							 tblOperationd.setCrduFlag(3);
 							 
 							 tblOperationList.add(tblOperationa);
 							 tblOperationList.add(tblOperatione);
@@ -834,8 +838,19 @@ public class PermissionServiceImpl implements PermissionService{
 		public static Integer addOperateNew(SessionFactory factory, TblOperationDTO tblOperationDTO) {
 			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 			//生成code
-			String opCode=RandomCodeUtil.getUUID32();
-			tblOperationDTO.setOpCode(opCode);
+			//String opCode=RandomCodeUtil.getUUID32();
+			//tblOperationDTO.setOpCode(opCode);
+			String opCode=tblOperationDTO.getForeignkey()+"004";
+			if(tblOperationDTO.getCrduFlag()==4) {
+				 opCode=tblOperationDTO.getForeignkey()+"004";
+			}else if(tblOperationDTO.getCrduFlag()==1) {
+				 opCode=tblOperationDTO.getForeignkey()+"001";
+			}else if(tblOperationDTO.getCrduFlag()==2) {
+				 opCode=tblOperationDTO.getForeignkey()+"002";
+			}else{
+				 opCode=tblOperationDTO.getForeignkey()+"003";
+			}
+			
 		    //先生成操作节点
 			Integer addRes=mapper.addOperate(tblOperationDTO);
 			if(addRes==-1) {

@@ -16,6 +16,7 @@ import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuOPDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OrgAndDeptDTO;
@@ -374,5 +375,8 @@ public interface UserMapper {
 		
 		//根据用户code删除用户部门中间表 标志为0的
 		public Integer  deleteUserDeptByCode(@Param("code") String code);
+		
+		//操作表中生成一条菜单节点记录
+		public  Integer addOneMenuOP(MenuOPDTO menuOPDTO);
 		
 }

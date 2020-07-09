@@ -1088,5 +1088,12 @@
          delete from sm_userdept
           where "userCode"=#{code} and "mainDeptFlag"=0
         </delete>
+        
+        
+          <!--添加菜单的操作节点-->
+         <insert id="addOneMenuOP" parameterType="com.koron.inwlms.bean.DTO.sysManager.MenuOPDTO" >  
+           insert into tbloperation (code,creator,create_time,modifier,modify_time,name,status,weight,flag)
+           values(#{code},#{createBy},#{createTime},#{updateBy},#{updateTime},#{name},#{status},#{weight},#{flag})
+         </insert>
 	    
 </mapper>
