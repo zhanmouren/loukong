@@ -7,6 +7,24 @@ import java.util.HashMap;
 
 @Component
 public class Constant {
+
+	/**
+	 * 添加标识
+	 */
+	public static final String ADD = "001";
+	/**
+	 * 修改标识
+	 */
+	public static final String UPDATE = "002";
+	/**
+	 * 删除标识
+	 */
+	public static final String DELETE = "003";
+	/**
+	 * 查询标识
+	 */
+	public static final String QUERY = "004";
+
 	/**
 	 * 登录用户在SESSION里的储存KEY
 	 */
