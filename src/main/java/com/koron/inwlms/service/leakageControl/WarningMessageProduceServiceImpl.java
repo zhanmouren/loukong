@@ -239,6 +239,8 @@ public class WarningMessageProduceServiceImpl implements WarningMessageProduceSe
 	 * 漏损报警
 	 * @throws ParseException 
 	 */
+	@TaskAnnotation("startZoneWarning")
+	@Override
 	public String startZoneWarning(SessionFactory factory,ZoneDayData zoneDayData) throws ParseException {
 		//获取分区数据
 		double zoneFlow = 0.0;

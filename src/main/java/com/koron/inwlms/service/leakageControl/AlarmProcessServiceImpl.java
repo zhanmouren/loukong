@@ -518,26 +518,30 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		Date beforfDay = TimeUtil.addDay(createDate, -1);
 		BasicDataMapper basDataMapper = factory.getMapper(BasicDataMapper.class);
 		List<GisZonePointVO> pointList = basDataMapper.queryZonePoint(zoneCode);
+		List<TimeAndFlowData> beforAllFlowList = new ArrayList<>();
+		List<TimeAndFlowData> avgAllFlowList = new ArrayList<>();
+		List<TimeAndFlowData> endAllFlowList = new ArrayList<>();
+		List<TimeAndFlowData> nowAllFlowList = new ArrayList<>();
 		if(pointList != null && pointList.size() != 0) {
 			//工单前一日供水量
-			List<TimeAndFlowData> beforAllFlowList = getZoneHourData(pointList,beforfDay,basDataMapper);
-			treatmentEffectVO.setAllFlowBList(beforAllFlowList);
+			beforAllFlowList = getZoneHourData(pointList,beforfDay,basDataMapper);
 			//工单开始至结束中间日的供水量
 			long avgLong = Math.round((list.get(0).getCreateTime().getTime() + list.get(0).getUpdateTime().getTime())/2);
 			Date avgDate = new Date(avgLong);
 			String avgDateStr = sf.format(avgDate);
 			avgDate = sf.parse(avgDateStr);
-			List<TimeAndFlowData> avgAllFlowList = getZoneHourData(pointList,avgDate,basDataMapper);
-			treatmentEffectVO.setAllFlowRList(avgAllFlowList);
+			avgAllFlowList = getZoneHourData(pointList,avgDate,basDataMapper);
 			//工单结束日的供水量
 			Date endFDate = list.get(0).getUpdateTime();
 			String endFDateStr = sf.format(endFDate);
 			endFDate = sf.parse(endFDateStr);
-			List<TimeAndFlowData> endAllFlowList = getZoneHourData(pointList,endFDate,basDataMapper);
-			treatmentEffectVO.setAllFlowAList(endAllFlowList);
-			List<TimeAndFlowData> nowAllFlowList = getZoneHourData(pointList,nowDate,basDataMapper);
-			treatmentEffectVO.setAllFlowNList(nowAllFlowList);
+			endAllFlowList = getZoneHourData(pointList,endFDate,basDataMapper);
+			nowAllFlowList = getZoneHourData(pointList,nowDate,basDataMapper);
 		}
+		treatmentEffectVO.setAllFlowBList(beforAllFlowList);
+		treatmentEffectVO.setAllFlowRList(avgAllFlowList);
+		treatmentEffectVO.setAllFlowAList(endAllFlowList);
+		treatmentEffectVO.setAllFlowNList(nowAllFlowList);
 		
 		return treatmentEffectVO;
 	}

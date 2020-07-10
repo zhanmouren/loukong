@@ -12,9 +12,20 @@ public class WarningTask {
 	
 	private Date time;
 	
+	private Integer zoneTime;
+	
 	private Date createTime;
 	
 	private Date updateTime;
+	
+
+	public Integer getZoneTime() {
+		return zoneTime;
+	}
+
+	public void setZoneTime(Integer zoneTime) {
+		this.zoneTime = zoneTime;
+	}
 
 	public Integer getId() {
 		return id;

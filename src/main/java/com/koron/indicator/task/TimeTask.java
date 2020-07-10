@@ -15,11 +15,15 @@ import com.koron.indicator.bean.CalZoneInfos;
 import com.koron.indicator.service.ZoneLossIndicatorService;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
+import com.koron.inwlms.bean.DTO.leakageControl.ZoneDayData;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
+import com.koron.inwlms.mapper.common.CommonMapper;
+import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.service.common.impl.PointHistoryDataServiceImpl;
+import com.koron.inwlms.service.common.impl.ZoneHistoryDataServiceImpl;
 import com.koron.inwlms.service.leakageControl.AlarmMessageServiceImpl;
 import com.koron.inwlms.service.leakageControl.WarningMessageProduceService;
 import com.koron.inwlms.service.leakageControl.WarningMessageProduceServiceImpl;
@@ -222,40 +226,88 @@ public class TimeTask {
 			warningTask.setState(1);
 			warningTask.setType(type);
 			warningTask.setTime(nowDate);
-			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,minMonitorPointList);
+			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,warningTask);
 		}else {
 			WarningTask warningTask = new WarningTask();
 			warningTask.setState(0);
 			warningTask.setType(type);
 			warningTask.setTime(nowDate);
-			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,minMonitorPointList);
+			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,warningTask);
 		}
 	}
 	
 	//@Scheduled(cron = "0 30 0  * * ?")// 整点5分执行
 	public void calZoneAlarmTask() {
-		
 		AlarmMessageServiceImpl ams = new AlarmMessageServiceImpl();
+		ZoneHistoryDataServiceImpl zhds = new ZoneHistoryDataServiceImpl();
+		WarningMessageProduceService wmps = new WarningMessageProduceServiceImpl();
+		
+		String en = "4a1e7e2df9134cd297d03bbbc26df7f4_default";
 		Integer type = 1;
 		List<WarningTask> warningTaskList = ADOConnection.runTask(ams, "queryWarningTask", List.class,type);
 		if(warningTaskList != null && warningTaskList.size() != 0) {
-			//获取分区日数据
-			
-			//报警
+			for(WarningTask WarningTask : warningTaskList) {
+				List<String> codes = new ArrayList<>();
+				//一级分区日总流量数据
+				codes.add("FLDFWSSITDF");
+				//DMA/PMA分区日总流量数据
+				codes.add("DMDFWSSITDF");
+				//一级分区最小夜间流量数据
+				codes.add("FLDMNF");
+				//二级分区最小夜间流量数据
+				codes.add("SLDMNF");
+				IndicatorDTO indicatorDTO = new IndicatorDTO();
+				indicatorDTO.setCodes(codes);
+				indicatorDTO.setTimeType(2);
+				indicatorDTO.setStartTime(WarningTask.getZoneTime());
+				indicatorDTO.setEndTime(WarningTask.getZoneTime());
+				List<ZoneDayData> zoneDayDataList = ADOConnection.runTask(zhds, "queryZoneTaskData", List.class,indicatorDTO);
+				if(zoneDayDataList != null && zoneDayDataList.size() != 0) {
+					for(ZoneDayData zoneDayData : zoneDayDataList) {
+						ADOConnection.runTask(en,wmps, "startZoneWarning", Void.class,zoneDayData); 
+					}
+				}
+				
+			}
 		}
+		Date nowDate = new Date();
+		Date sDate = TimeUtil.addDay(nowDate, -1);
+		int nYear = TimeUtil.getYears(sDate);
+		int nMonth = TimeUtil.getMonth(sDate);
+		int nDay = TimeUtil.getDays(sDate);
+		int time = nYear*10000 + nMonth*100 + nDay;
+		
 		List<String> codes = new ArrayList<>();
 		//一级分区日总流量数据
-		codes.add("");
-		//二级分区日总流量数据
+		codes.add("FLDFWSSITDF");
+		//DMA/PMA分区日总流量数据
+		codes.add("DMDFWSSITDF");
 		//一级分区最小夜间流量数据
+		codes.add("FLDMNF");
 		//二级分区最小夜间流量数据
+		codes.add("SLDMNF");
 		IndicatorDTO indicatorDTO = new IndicatorDTO();
 		indicatorDTO.setCodes(codes);
 		indicatorDTO.setTimeType(2);
-//		indicatorDTO.setStartTime(sInt);
-//		indicatorDTO.setEndTime(eInt);
-//		List<IndicatorVO> dataList = indicMapper.queryWBBaseIndicData(indicatorDTO);
-		//获取分区日最小夜间流量数据
+		indicatorDTO.setStartTime(time);
+		indicatorDTO.setEndTime(time);
+		List<ZoneDayData> zoneDayDataList = ADOConnection.runTask(zhds, "queryZoneTaskData", List.class,indicatorDTO);
+		if(zoneDayDataList != null && zoneDayDataList.size() != 0) {
+			for(ZoneDayData zoneDayData : zoneDayDataList) {
+				ADOConnection.runTask(en,wmps, "startZoneWarning", Void.class,zoneDayData); 
+			}
+			WarningTask warningTask = new WarningTask();
+			warningTask.setState(1);
+			warningTask.setType(type);
+			warningTask.setZoneTime(time);
+			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,warningTask);
+		}else {
+			WarningTask warningTask = new WarningTask();
+			warningTask.setState(0);
+			warningTask.setType(type);
+			warningTask.setZoneTime(time);
+			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,warningTask);
+		}
 		
 		
 	}
