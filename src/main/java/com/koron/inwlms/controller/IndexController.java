@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.swan.bean.MessageBean;
 
 import com.koron.common.StaffAttribute;
+import com.koron.common.permission.SPIAccountAnno;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.aspect.OperateAspect;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
@@ -33,6 +34,7 @@ import com.koron.inwlms.bean.VO.indexData.MultParamterIndicatorVO;
 import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.indexData.IndexService;
+import com.koron.permission.authority.OPSPIMethod;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -61,16 +63,36 @@ public class IndexController {
 	@RequestMapping(value = "/queryCompreInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "显示分区或全网综合信息功能接口", notes = "显示分区或全网综合信息功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryCompreInfo(@RequestBody IndicatorNewDTO  indicatorDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+    @OPSPIMethod("home"+Constant.QUERY)
+	@OperateAspect(operateModule = "home")
+	public String queryCompreInfo(@RequestBody IndicatorNewDTO  indicatorDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(indicatorDTO.getStartTime()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间为空", Integer.class).toJson();
 		}
 		if(indicatorDTO.getEndTime()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间为空", Integer.class).toJson();
 		}
+		if(indicatorDTO.getStartTime()!=null && indicatorDTO.getEndTime() != null) {
+			if(indicatorDTO.getStartTime().toString() ==  indicatorDTO.getEndTime().toString() || indicatorDTO.getStartTime().toString().equals(indicatorDTO.getEndTime().toString())) {
+				String time = indicatorDTO.getStartTime().toString();
+				if(time.length() != 6) {
+					return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "时间的格式长度不正确，应为6位的数值（202006）", Integer.class).toJson();
+				}else {
+					Integer month = Integer.valueOf(time.substring(4, 6));
+					if(month < 1 || month > 12) {
+						return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "时间的月份格式不正确", Integer.class).toJson();
+					}
+				}
+			}else {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间必须与结束时间一致", Integer.class).toJson();
+			}
+		}
 		if(indicatorDTO.getAreaType() == null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
-		}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
+		}else if(!indicatorDTO.getAreaType().toString().equals("0") && !indicatorDTO.getAreaType().toString().equals("1") ) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型错误，只能为0或1", Integer.class).toJson(); 
+		}
+		if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
 		}
 		if(indicatorDTO.getAreaType() == 0){
@@ -204,7 +226,9 @@ public class IndexController {
 	@RequestMapping(value = "/queryComYearInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "时间段查询指标接口", notes = "时间段查询指标接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryComYearInfo(@RequestBody IndicatorNewDTO indicatorDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+    @OPSPIMethod("home"+Constant.QUERY)
+	@OperateAspect(operateModule = "home")
+	public String queryComYearInfo(@RequestBody IndicatorNewDTO indicatorDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(indicatorDTO.getStartTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
 		 }
@@ -426,7 +450,9 @@ public class IndexController {
 	@RequestMapping(value = "/queryWarningInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询漏损任务相关信息接口", notes = "查询漏损任务相关信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryWarningInfo(@RequestBody WarningInfoDTO warningInfoDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+    @OPSPIMethod("home"+Constant.QUERY)
+	@OperateAspect(operateModule = "home")
+	public String queryWarningInfo(@RequestBody WarningInfoDTO warningInfoDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(warningInfoDTO.getTaskCreateTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "日期不能为空", Integer.class).toJson();   
 		 }
@@ -467,7 +493,9 @@ public class IndexController {
 	@RequestMapping(value = "/queryCheckWarningInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询检测点报警信息接口", notes = "查询检测点报警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryCheckWarningInfo(@RequestBody WarningInfoDTO warningInfoDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+    @OPSPIMethod("home"+Constant.QUERY)
+	@OperateAspect(operateModule = "home")
+	public String queryCheckWarningInfo(@RequestBody WarningInfoDTO warningInfoDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(warningInfoDTO.getTaskCreateTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "日期不能为空", Integer.class).toJson();   
 		 }
@@ -508,7 +536,9 @@ public class IndexController {
 	@RequestMapping(value = "/queryAreaRankInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区下各个分区排名接口", notes = "查询分区下各个分区排名接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryAreaRankInfo(@RequestBody IndicatorNewDTO indicatorDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+    @OPSPIMethod("home"+Constant.QUERY)
+	@OperateAspect(operateModule = "home")
+	public String queryAreaRankInfo(@RequestBody IndicatorNewDTO indicatorDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(indicatorDTO.getStartTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
 		 }
@@ -556,7 +586,9 @@ public class IndexController {
 	@RequestMapping(value = "/queryChildAreaRankInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区下各个子分区排名接口", notes = "查询分区下各个子分区排名接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryChildAreaRankInfo(@RequestBody IndicatorNewDTO indicatorDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+    @OPSPIMethod("home"+Constant.QUERY)
+	@OperateAspect(operateModule = "home")
+	public String queryChildAreaRankInfo(@RequestBody IndicatorNewDTO indicatorDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(indicatorDTO.getStartTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
 		 }

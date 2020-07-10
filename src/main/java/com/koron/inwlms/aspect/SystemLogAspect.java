@@ -88,12 +88,12 @@ public class SystemLogAspect {
 	public void delete() {
 	}
 	
-//	/**
-//	 * 对导出方法记录日志的切点
-//	 */
-//	@Pointcut("execution(* com.koron..*.*Controller.download*(..))")
-//	public void download() {
-//	}
+	/**
+	 * 对导出方法记录日志的切点
+	 */
+	@Pointcut("execution(* com.koron..*.*Controller.download*(..))")
+	public void download() {
+	}
 
 	// 请求method前打印内容
 	@Before(value = "operateAspect()")
@@ -296,4 +296,41 @@ public class SystemLogAspect {
 
 	}
 
+	@AfterReturning(value = "download()", returning = "rvt")
+	public void downloadLog(JoinPoint joinPoint,Object rvt) {
+		
+		OperateLogDTO operateLogDTO = new OperateLogDTO();
+		
+//		String className = joinPoint.getTarget().getClass().getName();
+//		String methodName = joinPoint.getSignature().getName();
+//		Object[] params = joinPoint.getArgs();
+//		String url = request.getRequestURL().toString();
+		UserVO user = new UserVO();
+		Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		if (attribute != null) {
+			user = (UserVO) attribute;
+		}
+		
+		MethodSignature sign = (MethodSignature) joinPoint.getSignature();
+		Method method = sign.getMethod();
+		OperateAspect annotation = method.getAnnotation(OperateAspect.class);
+		if(annotation == null) {
+			return ; 
+		}
+		String operateModule = annotation.operateModule();
+		
+		String resultStr = rvt.toString();
+		String[] split = resultStr.split(",");
+		String[] split1 = split[1].split(":");
+		String result = split1[1].replace("\"", "");
+		
+		operateLogDTO.setCreateBy(user.getLoginName());
+		operateLogDTO.setUpdateBy(user.getLoginName());
+		operateLogDTO.setOperateModuleNo(operateModule);
+		operateLogDTO.setOperateType("L102120006");
+		operateLogDTO.setOperateUserCode(user.getCode());
+		operateLogDTO.setResult(result);
+		ADOConnection.runTask(user.getEnv(),logService, "addOperateLog",Integer.class,operateLogDTO);
+
+	}
 }

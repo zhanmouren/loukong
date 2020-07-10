@@ -17,6 +17,7 @@ import org.swan.bean.MessageBean;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
+import com.koron.common.permission.SPIAccountAnno;
 import com.koron.inwlms.aspect.OperateAspect;
 import com.koron.inwlms.bean.DTO.sysManager.PositionDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryLabelDTO;
@@ -27,6 +28,7 @@ import com.koron.inwlms.bean.VO.sysManager.PositionVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.sysManager.PositionService;
 import com.koron.inwlms.util.ExportDataUtil;
+import com.koron.permission.authority.OPSPIMethod;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -49,7 +51,9 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/queryPosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "查询职位接口",notes = "查询职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "zwgl")
+	@OPSPIMethod("zwgl"+Constant.QUERY)
+	public String queryPosition(@RequestBody PositionDTO positionDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(positionDTO.getPage() == null || positionDTO.getPage() <0 || positionDTO.getPage() == 0) {
 			positionDTO.setPage(1);
 		}
@@ -80,7 +84,8 @@ public class SystemManagerPositionController {
 	@ApiOperation(value = "查询职位详情接口",notes = "查询职位详情接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
 	@OperateAspect(operateModule = "zwgl")
-	public String queryPositionDetail(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OPSPIMethod("zwgl"+Constant.QUERY)
+	public String queryPositionDetail(@RequestBody PositionDTO positionDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
 		}
@@ -107,7 +112,9 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/deletePosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "删除职位接口",notes = "删除职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String deletePosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OPSPIMethod("zwgl"+Constant.DELETE)
+	@OperateAspect(operateModule = "zwgl")
+	public String deletePosition(@RequestBody PositionDTO positionDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
 		}
@@ -136,7 +143,9 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/addPosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "添加职位接口",notes = "添加职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String addPosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OPSPIMethod("zwgl"+Constant.ADD)
+	@OperateAspect(operateModule = "zwgl")
+	public String addPosition(@RequestBody PositionDTO positionDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		positionDTO.setCreateBy(user.getLoginName());
 		positionDTO.setUpdateBy(user.getLoginName());
 		MessageBean<?>  insertRes = ADOConnection.runTask(user.getEnv(),positionService, "addPosition",MessageBean.class,positionDTO);
@@ -146,7 +155,9 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/updatePosition.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "修改职位接口",notes = "修改职位接口",httpMethod  = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String updatePosition(@RequestBody PositionDTO positionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OPSPIMethod("zwgl"+Constant.UPDATE)
+	@OperateAspect(operateModule = "zwgl")
+	public String updatePosition(@RequestBody PositionDTO positionDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(positionDTO.getCode() == null || positionDTO.getCode().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "参数错误!code不能为空", Integer.class).toJson();
 		}
@@ -159,7 +170,9 @@ public class SystemManagerPositionController {
 	@RequestMapping(value = "/downloadAllList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载职位列表数据", notes = "下载职位列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadAllList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zwgl")
+	@OPSPIMethod("zwgl"+Constant.QUERY)
+	public HttpEntity<?> downloadAllList(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果

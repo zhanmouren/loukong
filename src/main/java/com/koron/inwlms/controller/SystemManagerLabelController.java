@@ -4,6 +4,8 @@ package com.koron.inwlms.controller;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
+import com.koron.common.permission.SPIAccountAnno;
+import com.koron.inwlms.aspect.OperateAspect;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LabelExcelBean;
@@ -16,6 +18,7 @@ import com.koron.inwlms.service.sysManager.LabelService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.FileUtil;
 import com.koron.inwlms.util.ImportExcelUtil;
+import com.koron.permission.authority.OPSPIMethod;
 import com.koron.util.Constant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -56,7 +59,9 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "queryLabel.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询标签接口", notes = "查询标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryLabel(@RequestBody QueryLabelDTO queryLabelDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "bqwh")
+   	@OPSPIMethod("bqwh"+Constant.QUERY)
+    public String queryLabel(@RequestBody QueryLabelDTO queryLabelDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(queryLabelDTO.getPage() == null || queryLabelDTO.getPage() <0 || queryLabelDTO.getPage() == 0) {
 			queryLabelDTO.setPage(1);
 		}
@@ -122,7 +127,9 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/addLabel.htm",method = RequestMethod.POST,produces = {"application/json;charset=UTF-8"})
 	@ApiOperation(value = "添加标签接口",notes = "添加标签接口", httpMethod = "POST",response = MessageBean.class,consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String addLabel(@RequestBody LabelDTO labelDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "bqwh")
+   	@OPSPIMethod("bqwh"+Constant.ADD)
+	public String addLabel(@RequestBody LabelDTO labelDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
@@ -140,7 +147,9 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/deleteLabel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除标签接口", notes = "删除标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String  deleteLabel(@RequestBody LabelDTO labelDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "bqwh")
+   	@OPSPIMethod("bqwh"+Constant.DELETE)
+	public String  deleteLabel(@RequestBody LabelDTO labelDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(labelDTO.getCode() == null || StringUtils.isBlank(labelDTO.getCode())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签编码code不能为空", Integer.class).toJson();
 		}
@@ -175,7 +184,9 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/deleteBatchLabel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量删除标签接口", notes = "批量删除标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String  deleteBatchLabel(@RequestBody LabelDTO labelDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "bqwh")
+   	@OPSPIMethod("bqwh"+Constant.DELETE)
+	public String  deleteBatchLabel(@RequestBody LabelDTO labelDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(labelDTO.getLabelCodeList() == null ) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签列表参数不能为空", Integer.class).toJson();
 		}
@@ -214,7 +225,9 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/updateLabel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改标签接口", notes = "修改标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String updateLabel(@RequestBody LabelDTO labelDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "bqwh")
+   	@OPSPIMethod("bqwh"+Constant.UPDATE)
+	public String updateLabel(@RequestBody LabelDTO labelDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(labelDTO.getId() == null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "标签id不能为空", Integer.class).toJson();
 		}
@@ -232,6 +245,8 @@ public class SystemManagerLabelController {
      */  
 	@RequestMapping(value = "/downloadFileByFileId.htm", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
     @ResponseBody
+    @OperateAspect(operateModule = "bqwh")
+   	@OPSPIMethod("bqwh"+Constant.QUERY)
     public void downloadFileByFileId(Integer fileId, HttpServletResponse response, HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         UploadFileDTO data = ADOConnection.runTask(user.getEnv(),labelService, "getAttachmentInfoById", UploadFileDTO.class, fileId);
         //调用文件工具类下载文件
@@ -247,7 +262,9 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/downloadAllList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载标签列表数据", notes = "下载标签列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadAllList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "bqwh")
+   	@OPSPIMethod("bqwh"+Constant.QUERY)
+	public HttpEntity<?> downloadAllList(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -283,7 +300,9 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "/uploadBatchLabel.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "批量导入标签接口", notes = "批量导入标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String uploadBatchLabel(MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "bqwh")
+   	@OPSPIMethod("bqwh"+Constant.ADD)
+	public String uploadBatchLabel(MultipartFile file,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		//1.先判断导入的excel格式信息正不正确
         //2.如果正确则excelBeans中数据不为null，然后 执行批量新增操作
         //3.如果不正确则excelBeans中数据为null，返回错误
@@ -311,7 +330,9 @@ public class SystemManagerLabelController {
 	@RequestMapping(value = "queryLabelNameList.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询标签列表接口", notes = "查询标签接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryLabelNameList(HttpServletRequest request,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "bqwh")
+   	@OPSPIMethod("bqwh"+Constant.QUERY)
+    public String queryLabelNameList(HttpServletRequest request,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<LabelNameListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, LabelNameListVO.class);	       
 		//执行查询标签
 		 try {

@@ -21,6 +21,8 @@ import org.swan.bean.MessageBean;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
+import com.koron.common.permission.SPIAccountAnno;
+import com.koron.inwlms.aspect.OperateAspect;
 import com.koron.inwlms.bean.DTO.sysManager.LoginLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.QueryIntegrationLogDTO;
@@ -36,6 +38,7 @@ import com.koron.inwlms.bean.VO.sysManager.PageOperateLogListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.sysManager.LogService;
 import com.koron.inwlms.util.ExportDataUtil;
+import com.koron.permission.authority.OPSPIMethod;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -63,7 +66,9 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/querySysLoginLog.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询登录日志接口", notes = "查询登录日志接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryLoginLog(@RequestBody QueryLoginLogDTO queryLoginLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "dlrz")
+   	@OPSPIMethod("dlrz"+Constant.QUERY)
+    public String queryLoginLog(@RequestBody QueryLoginLogDTO queryLoginLogDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(queryLoginLogDTO.getPage() == null || queryLoginLogDTO.getPage() <0 || queryLoginLogDTO.getPage() == 0) {
 			queryLoginLogDTO.setPage(1);
 		}
@@ -158,7 +163,9 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/downloadLoginLogList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载登录日志列表数据", notes = "下载登录日志列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadLoginLogList(@RequestParam(value = "objValue") String objValue,@RequestParam(value = "titleInfos") String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "dlrz")
+   	@OPSPIMethod("dlrz"+Constant.QUERY)
+	public HttpEntity<?> downloadLoginLogList(@RequestParam(value = "objValue") String objValue,@RequestParam(value = "titleInfos") String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -220,7 +227,9 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/querySysOperateLog.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询操作日志接口", notes = "查询操作日志接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryOperateLog(@RequestBody QueryOperateLogDTO queryOperateLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "czrz")
+   	@OPSPIMethod("czrz"+Constant.QUERY)
+    public String queryOperateLog(@RequestBody QueryOperateLogDTO queryOperateLogDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if(queryOperateLogDTO.getPage() == null || queryOperateLogDTO.getPage() <0 || queryOperateLogDTO.getPage() == 0) {
 			queryOperateLogDTO.setPage(1);
 		}
@@ -328,7 +337,9 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/downloadOperateLogList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载操作日志列表数据", notes = "下载操作日志列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadOperateLogList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "czrz")
+   	@OPSPIMethod("czrz"+Constant.QUERY)
+	public HttpEntity<?> downloadOperateLogList(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -390,7 +401,9 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/querySysIntegrationLog.htm",method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询集成日志接口", notes = "查询集成日志接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryIntegrationLog(@RequestBody QueryIntegrationLogDTO queryIntegrationLogDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "jcrz")
+   	@OPSPIMethod("jcrz"+Constant.QUERY)
+    public String queryIntegrationLog(@RequestBody QueryIntegrationLogDTO queryIntegrationLogDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		
 		if(queryIntegrationLogDTO.getPage() == null || queryIntegrationLogDTO.getPage() <0 || queryIntegrationLogDTO.getPage() == 0) {
 			queryIntegrationLogDTO.setPage(1);
@@ -457,7 +470,9 @@ public class SystemManagerLogController {
 	@RequestMapping(value = "/downloadIntegrationLogList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载集成日志列表数据", notes = "下载集成日志列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadIntegrationLogList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "jcrz")
+   	@OPSPIMethod("jcrz"+Constant.QUERY)
+	public HttpEntity<?> downloadIntegrationLogList(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
