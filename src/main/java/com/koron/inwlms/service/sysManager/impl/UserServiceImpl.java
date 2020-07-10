@@ -901,6 +901,7 @@ public class UserServiceImpl implements UserService{
 					menuOPDTO.setFlag(1);
 					menuOPDTO.setStatus(0);
 					menuOPDTO.setWeight(1);
+					menuOPDTO.setName(menuTreeDTO.getModuleName());
 					addRes=userMapper.addOneMenuOP(menuOPDTO);
 					if(addRes==-1) {
 						addRes=-1;

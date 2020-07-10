@@ -1093,7 +1093,7 @@
           <!--添加菜单的操作节点-->
          <insert id="addOneMenuOP" parameterType="com.koron.inwlms.bean.DTO.sysManager.MenuOPDTO" >  
            insert into tbloperation (code,creator,create_time,modifier,modify_time,name,status,weight,flag)
-           values(#{code},#{createBy},#{createTime},#{updateBy},#{updateTime},#{name},#{status},#{weight},#{flag})
+           values(#{code},#{createBy},Now(),#{updateBy},Now(),#{name},#{status},#{weight},#{flag})
          </insert>
 	    
 </mapper>
