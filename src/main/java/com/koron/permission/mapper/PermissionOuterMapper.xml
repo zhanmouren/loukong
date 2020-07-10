@@ -40,8 +40,10 @@
        from tbloperation as op
        left join tblrole_op  as roleop on roleop.operation=op.code
        left join tblrole   as role  on role.code=roleop.role
+       <!--
        left join tblrole_range_value as rolerangevalue on rolerangevalue.role=role.code
-       left join tblrole_user as roleuser on roleuser.role=role.code     
+      -->
+       left join tblrole_user as roleuser on roleuser.role=role.code
        where op.code=#{opCode} and roleuser.user=#{userCode}
     </select>  
  </mapper>
