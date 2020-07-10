@@ -55,20 +55,20 @@
     </update>
 
     <update id="updateZoneCharger" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
-        delete from gis_zone_charge where "zoonNo"=#{zoneNo};
+        delete from gis_zone_charge where "zoneNo"=#{zoneNo};
         insert into gis_zone_charge(
-        "user","zoonNo"
+        "user","zoneNo"
         )values
-        <if test="owner != null and owner.size > 0">
-            <foreach collection="array" item="item"  index="" separator=",">
-                (#{item},#{zoonNo})
+        <if test="owner != null and owner.length > 0">
+            <foreach collection="owner" item="item"  index="" separator=",">
+                (#{item},#{zoneNo})
             </foreach>
         </if>
     </update>
 
     <insert id="addChargeZones" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
         insert into gis_zone_charge(
-        "user","zoonNo"
+        "user","zoneNo"
         )values
         <if test="zoons != null and zoons.size > 0">
             <foreach collection="array" item="item"  index="" separator=",">

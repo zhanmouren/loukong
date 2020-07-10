@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
+import com.koron.common.permission.SPIAccountAnno;
 import com.koron.inwlms.bean.DTO.baseInf.*;
 import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.VO.baseInf.*;
@@ -16,6 +17,10 @@ import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.FileUtil;
 import com.koron.inwlms.util.ImportExcelUtil;
 import com.koron.inwlms.util.InterfaceUtil;
+import com.koron.permission.authority.DataInject;
+import com.koron.permission.authority.DataRangeMethod;
+import com.koron.permission.authority.OPSPIMethod;
+import com.koron.permission.bean.VO.TblRoleRangeValueListVO;
 import com.koron.util.Constant;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -523,12 +528,13 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqzs"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping(value = "/queryZoneList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区列表接口", notes = "查询分区列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZoneList(@RequestBody ZoneDTO zoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryZoneList(@RequestBody ZoneDTO zoneDTO, @DataInject TblRoleRangeValueListVO rangeList, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
-
         MessageBean msg = new MessageBean();
         //TODO:校验参数有效性
         if(zoneDTO.getBegD()!=null && !"".equals(zoneDTO.getBegD()) && !_checkFormat("YYYY-MM-DD",zoneDTO.getBegD())){
@@ -545,10 +551,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqzs"+Constant.UPDATE)
+    @DataRangeMethod
     @RequestMapping(value = "/updateZones.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "更新分区属性接口", notes = "更新分区属性接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateZones(@RequestBody ZoneDTO zoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String updateZones(@RequestBody ZoneDTO zoneDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
@@ -565,16 +573,18 @@ public class BaseDataController {
                 msg.setCode(0);
                 msg.setDescription("操作成功");
             }else{
-                msg.setCode(0);
+                msg.setCode(Constant.MESSAGE_INT_ERROR);
                 msg.setDescription("操作失败");
             }
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqzs"+Constant.UPDATE)
+    @DataRangeMethod
     @RequestMapping(value = "/updateZoneCharger.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "更新分区负责人接口", notes = "更新分区负责人接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateZoneCharger(@RequestBody ZoneDTO zoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String updateZoneCharger(@RequestBody ZoneDTO zoneDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
@@ -591,7 +601,7 @@ public class BaseDataController {
             msg.setCode(0);
             msg.setDescription("操作成功");
         } else{
-            msg.setCode(0);
+            msg.setCode(-1);
             msg.setDescription("操作失败");
         }
         return msg.toJson();
@@ -678,11 +688,13 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyjcd"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping(value = "/downloadZonePointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "导出分区与监测点接口", notes = "导出分区与监测点接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     //public HttpEntity<?> downloadZonePointList(@RequestBody ZonePointDTO zonePointDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-    public HttpEntity<?> downloadZonePointList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public HttpEntity<?> downloadZonePointList(@RequestParam String objValue,@RequestParam String titleInfos,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         //TODO:权限校验是否有查询权限
 
@@ -700,10 +712,12 @@ public class BaseDataController {
         return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
     }
 
+    @OPSPIMethod("fqyjcd"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping(value = "/queryZonePointList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与监测点列表接口", notes = "查询分区与监测点列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZonePointList(@RequestBody ZonePointDTO zonePointDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryZonePointList(@RequestBody ZonePointDTO zonePointDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
@@ -716,10 +730,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyjcd"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping(value = "/queryZonePointHistory.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与监测点数据导入历史接口", notes = "查询分区与监测点数据导入历史接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZonePointHistory(@RequestBody ZonePointDTO zonePointDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryZonePointHistory(@RequestBody ZonePointDTO zonePointDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:校验参数有效性
 
@@ -732,10 +748,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyjcd"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping(value = "/queryZonePointDet/{refID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区监测点详情接口", notes = "查询分区监测点详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZonePointDet(@PathVariable("refID") Integer refID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryZonePointDet(@PathVariable("refID") Integer refID,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
 
@@ -754,11 +772,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
-
+    @OPSPIMethod("fqyjcd"+Constant.UPDATE)
+    @DataRangeMethod
     @RequestMapping(value = "/updateZonePointDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改分区监测点详情接口", notes = "修改分区监测点详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateZonePointDet(@RequestBody ZonePointDTO zonePointDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String updateZonePointDet(@RequestBody ZonePointDTO zonePointDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
 
@@ -783,10 +802,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyjcd"+Constant.DELETE)
+    @DataRangeMethod
     @RequestMapping("/deleteZonePointByBatch/{BatchNo}")
     @ApiOperation(value = "删除某一批次分区与监测点数据", notes = "删除某一批次分区与监测点数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteZonePointByBatch(@PathVariable("BatchNo") String BatchNo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String deleteZonePointByBatch(@PathVariable("BatchNo") String BatchNo,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:校验是否有删除权限
 
@@ -804,6 +825,7 @@ public class BaseDataController {
         return msg.toString();
     }
 
+    @OPSPIMethod("fqyjcd"+Constant.ADD)
     @RequestMapping("/downloadZonePointTemplate.htm")
     @ApiOperation(value = "导出分区与监测点Excel模板", notes = "导出分区与监测点Excel模板", httpMethod = "GET", response = MessageBean.class)
     @ResponseBody
@@ -818,10 +840,12 @@ public class BaseDataController {
 
     }
 
+    @OPSPIMethod("fqyjcd"+Constant.ADD)
+    @DataRangeMethod
     @RequestMapping("/importZonePoint.htm")
     @ApiOperation(value = "导入分区与监测点数据接口", notes = "导入分区与监测点数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importZonePoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String importZonePoint(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
 
         //TODO:校验是否有数据添加权限
@@ -894,11 +918,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
-
+    @OPSPIMethod("fqyhb"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping(value = "/queryZoneMeterHistory.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与户表数据导入历史接口", notes = "查询分区与户表数据导入历史接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZoneMeterHistory(@RequestBody ZoneMeterDTO zoneMeterDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryZoneMeterHistory(@RequestBody ZoneMeterDTO zoneMeterDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:校验参数有效性
 
@@ -911,10 +936,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyhb"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping(value = "/downloadZoneMeterList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "导出分区与户表接口", notes = "导出分区与户表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadZoneMeterList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public HttpEntity<?> downloadZoneMeterList(@RequestParam String objValue,@RequestParam String titleInfos,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //public HttpEntity<?> downloadZoneMeterList(@RequestBody ZoneMeterDTO zoneMeterDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
@@ -932,10 +959,12 @@ public class BaseDataController {
         return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
     }
 
+    @OPSPIMethod("fqyhb"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping(value = "/queryZoneMeterList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与户表列表接口", notes = "查询分区与户表列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZoneMeterList(@RequestBody ZoneMeterDTO zoneMeterDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryZoneMeterList(@RequestBody ZoneMeterDTO zoneMeterDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:权限校验是否有查询权限
 
@@ -949,10 +978,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyhb"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping(value = "/queryZoneMeterDet/{refID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区与户表详情接口", notes = "查询分区与户表详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZoneMeterDet(@PathVariable("refID") Integer refID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryZoneMeterDet(@PathVariable("refID") Integer refID,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
         //TODO:r_code校验
@@ -968,10 +999,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyhb"+Constant.UPDATE)
+    @DataRangeMethod
     @RequestMapping(value = "/updateZoneMeterDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改分区户表详情接口", notes = "修改分区户表详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateZoneMeterDet(@RequestBody ZoneMeterDTO zoneMeterDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String updateZoneMeterDet(@RequestBody ZoneMeterDTO zoneMeterDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
 
@@ -996,10 +1029,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyjcd"+Constant.DELETE)
+    @DataRangeMethod
     @RequestMapping("/deleteZonePointByRef/{refID}")
     @ApiOperation(value = "删除分区与监测点数据", notes = "删除分区与监测点数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteZonePointByRef(@PathVariable("refID") Integer refID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String deleteZonePointByRef(@PathVariable("refID") Integer refID,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:校验是否有删除权限
 
@@ -1016,10 +1051,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyhb"+Constant.DELETE)
+    @DataRangeMethod
     @RequestMapping("/deleteZoneMeterRel/{refID}")
     @ApiOperation(value = "删除分区与户表数据", notes = "删除分区与户表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteZoneMeterRel(@PathVariable("refID") String refID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String deleteZoneMeterRel(@PathVariable("refID") String refID,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:校验是否有删除权限
 
@@ -1036,10 +1073,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyhb"+Constant.DELETE)
+    @DataRangeMethod
     @RequestMapping("/deleteZoneMeterByBatchNo/{BatchNo}")
     @ApiOperation(value = "删除某一批次分区与户表数据", notes = "删除某一批次分区与户表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteZoneMeterByBatchNo(@PathVariable("BatchNo") String BatchNo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String deleteZoneMeterByBatchNo(@PathVariable("BatchNo") String BatchNo,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:校验是否有删除权限
 
@@ -1061,6 +1100,8 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("fqyhb"+Constant.QUERY)
+    @DataRangeMethod
     @RequestMapping("/downloadZoneMeterTemplate.htm")
     @ApiOperation(value = "导出分区与户表Excel模板", notes = "导出分区与户表Excel模板", httpMethod = "GET", response = MessageBean.class)
     @ResponseBody
@@ -1078,10 +1119,12 @@ public class BaseDataController {
 //        }
     }
 
+    @OPSPIMethod("fqyhb"+Constant.ADD)
+    @DataRangeMethod
     @RequestMapping("/importZoneMeter.htm")
     @ApiOperation(value = "导入分区与户表数据接口", notes = "导入分区与户表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importZoneMeter(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String importZoneMeter(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
 
         //TODO:校验是否有数据添加权限
@@ -1148,11 +1191,12 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("jcsj"+Constant.QUERY)
     @RequestMapping(value = "/downloadMonitorDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "导出监测数据接口", notes = "导出监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     //public HttpEntity<?> downloadMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-    public HttpEntity<?> downloadMonitorDataList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public HttpEntity<?> downloadMonitorDataList(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
@@ -1177,10 +1221,11 @@ public class BaseDataController {
         return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
     }
 
+    @OPSPIMethod("jcsj"+Constant.QUERY)
     @RequestMapping(value = "/queryMonitorDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询监测数据列表接口", notes = "查询监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:权限校验是否有查询权限
 
@@ -1201,10 +1246,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("jcsj"+Constant.DELETE)
     @RequestMapping(value = "/deleteMonitorDataByBatchNo/{BatchNo}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "按批次删除监测数据接口", notes = "按批次删除监测数据接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteMonitorDataByBatchNo(@PathVariable("BatchNo")String BatchNo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String deleteMonitorDataByBatchNo(@PathVariable("BatchNo")String BatchNo,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:权限校验是否有查询权限
 
@@ -1218,10 +1264,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("jcsj"+Constant.QUERY)
     @RequestMapping(value = "/queryLastMonitorDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询最新监测数据接口", notes = "查询最新监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryLastMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user){
+    public String queryLastMonitorDataList(@RequestBody MonitorDataDTO monitorDataDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user){
         MessageBean msg = new MessageBean();
         List<MonitorDataVO> ret= ADOConnection.runTask(user.getEnv(),ms, "queryLastMonitorDataList", List.class, monitorDataDTO);
         msg.setCode(0);
@@ -1249,10 +1296,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("jcsj"+Constant.QUERY)
     @RequestMapping(value = "/queryPressureFlowDet/{id}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询压力/流量详情接口", notes = "查询压力/流量详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryPressureFlowDet(@PathVariable("id") Integer id,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryPressureFlowDet(@PathVariable("id") Integer id,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
         //TODO:r_code校验
@@ -1268,10 +1316,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("jcsj"+Constant.QUERY)
     @RequestMapping(value = "/queryNoiseDet/{id}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询噪声详情接口", notes = "查询噪声详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryNoiseDet(@PathVariable("id") Integer id,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryNoiseDet(@PathVariable("id") Integer id,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
 
@@ -1286,10 +1335,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("jcsj"+Constant.QUERY)
     @RequestMapping(value = "/queryMonitorDataHistoryList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询监测导入历史数据列表", notes = "查询监测导入历史数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMonitorDataHistoryList(@RequestBody MonitorDataDTO monitorDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryMonitorDataHistoryList(@RequestBody MonitorDataDTO monitorDataDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:权限校验是否有查询权限
 
@@ -1311,10 +1361,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("jcsj"+Constant.UPDATE)
     @RequestMapping(value = "/updateMonitorDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改监测详情接口", notes = "修改监测详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateMonitorDet(@RequestBody MonitorDataDTO monitorDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String updateMonitorDet(@RequestBody MonitorDataDTO monitorDataDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
 
@@ -1330,10 +1381,11 @@ public class BaseDataController {
         return msg.toString();
     }
 
+    @OPSPIMethod("jcsj"+Constant.ADD)
     @RequestMapping("/downloadMonitorDataTemplate.htm")
     @ApiOperation(value = "导出监测数据Excel模板", notes = "导出监测数据Excel模板", httpMethod = "POST", response = MessageBean.class)
     @ResponseBody
-    public void downloadMonitorDataTemplate(HttpServletResponse response, HttpServletRequest request) {
+    public void downloadMonitorDataTemplate(HttpServletResponse response, HttpServletRequest request,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
 
@@ -1348,10 +1400,11 @@ public class BaseDataController {
 //        }
     }
 
+    @OPSPIMethod("jcsj"+Constant.ADD)
     @RequestMapping("/importMonitorData.htm")
     @ApiOperation(value = "导入监测数据接口", notes = "导入监测数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importMonitorData(@RequestParam("BatchNo") String BatchNo,@RequestParam("type") String type,@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String importMonitorData(@RequestParam("BatchNo") String BatchNo,@RequestParam("type") String type,@RequestParam("file") MultipartFile file,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean<?> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 
         //TODO:校验是否有数据添加权限
@@ -1391,10 +1444,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("tm"+Constant.QUERY)
     @RequestMapping(value = "/downloadReadMeterDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "导出抄表接口", notes = "导出抄表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadReadMeterDataList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public HttpEntity<?> downloadReadMeterDataList(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
@@ -1410,10 +1464,11 @@ public class BaseDataController {
         return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
     }
 
+    @OPSPIMethod("tm"+Constant.QUERY)
     @RequestMapping(value = "/queryReadMeterDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询抄表列表接口", notes = "查询抄表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryReadMeterDataList(@RequestBody MeterDataDTO meterDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryReadMeterDataList(@RequestBody MeterDataDTO meterDataDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:权限校验是否有查询权限
 
@@ -1425,10 +1480,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("tm"+Constant.QUERY)
     @RequestMapping(value = "/queryReadMeterDataByBatchNo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据批次查询抄表数据列表接口", notes = "根据批次查询抄表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryReadMeterDataByBatchNo(@RequestBody MeterDataDTO meterDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryReadMeterDataByBatchNo(@RequestBody MeterDataDTO meterDataDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:权限校验是否有查询权限
 
@@ -1445,10 +1501,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("tm"+Constant.QUERY)
     @RequestMapping(value = "/queryReadMeterDataHistoryList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询抄表导入历史数据列表", notes = "查询抄表导入历史数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryReadMeterDataHistoryList(@RequestBody MeterDataDTO meterDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryReadMeterDataHistoryList(@RequestBody MeterDataDTO meterDataDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:权限校验是否有查询权限
 
@@ -1460,10 +1517,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("tm"+Constant.QUERY)
     @RequestMapping(value = "/queryReadMeterDataDet/{refID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询抄表详情接口", notes = "查询抄表详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryReadMeterDataDet(@PathVariable("refID") Integer refID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryReadMeterDataDet(@PathVariable("refID") Integer refID,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
         //TODO:校验是否有修改权限
@@ -1477,10 +1535,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("tm"+Constant.UPDATE)
     @RequestMapping(value = "/updateReadMeterDataDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改抄表详情接口", notes = "修改抄表详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String updateReadMeterDataDet(@RequestBody MeterDataDTO meterDataDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String updateReadMeterDataDet(@RequestBody MeterDataDTO meterDataDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
         //TODO:校验是否有修改权限
@@ -1494,10 +1553,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("tm"+Constant.ADD)
     @RequestMapping("/downloadMeterDataTemplate.htm")
     @ApiOperation(value = "导出抄表数据Excel模板", notes = "导出抄表数据Excel模板", httpMethod = "POST", response = MessageBean.class)
     @ResponseBody
-    public void downloadMeterDataTemplate(HttpServletResponse response, HttpServletRequest request) {
+    public void downloadMeterDataTemplate(HttpServletResponse response, HttpServletRequest request,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         //TODO:权限校验-校验是否有添加权限（有添加权限即有导入权限）
 
@@ -1511,10 +1571,11 @@ public class BaseDataController {
 //        }
     }
 
+    @OPSPIMethod("tm"+Constant.ADD)
     @RequestMapping("/importMeterData.htm")
     @ApiOperation(value = "导入抄表数据接口", notes = "导入抄表数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String importMeterData(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String importMeterData(@RequestParam("BatchNo") String BatchNo,@RequestParam("file") MultipartFile file,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean<?> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
 
         //TODO:校验是否有数据添加权限
@@ -1542,10 +1603,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("tm"+Constant.DELETE)
     @RequestMapping("/deleteMeterData/{refID}")
     @ApiOperation(value = "删除抄表数据", notes = "删除抄表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteMeterDataByBatch(@PathVariable("refID") Integer refID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String deleteMeterDataByBatch(@PathVariable("refID") Integer refID,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:校验是否有删除权限
 
@@ -1563,10 +1625,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("tm"+Constant.DELETE)
     @RequestMapping("/deleteMeterDataByBatch/{BatchNo}")
     @ApiOperation(value = "删除某一批次抄表数据", notes = "删除某一批次抄表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteMeterDataByBatch(@PathVariable("BatchNo") String BatchNo,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String deleteMeterDataByBatch(@PathVariable("BatchNo") String BatchNo,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:校验是否有删除权限
 
@@ -1584,10 +1647,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("sjyb"+Constant.QUERY)
     @RequestMapping(value = "/queryMonRep.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询数据月报数据", notes = "查询数据月报数据接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMonRep(@RequestBody DataQualityDTO dqd,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryMonRep(@RequestBody DataQualityDTO dqd,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
         if(dqd.getMon() == null){
@@ -1601,10 +1665,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("sjyxfx"+Constant.QUERY)
     @RequestMapping(value = "/queryDataImpact.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询数据影响分析数据", notes = "查询数据分析接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryDataImpact(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryDataImpact(@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
         List<DataImpactVO> dis = ADOConnection.runTask(user.getEnv(),dqs, "queryDataImpact", List.class);
@@ -1613,10 +1678,11 @@ public class BaseDataController {
         return msg.toJson();
     }
 
+    @OPSPIMethod("jcsljd"+Constant.QUERY)
     @RequestMapping(value = "/queryMonitoringQuantity.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询监测水量校对数据", notes = "查询监测水量校对数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryMonitoringQuantity(@RequestBody DataQualityDTO dqd,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryMonitoringQuantity(@RequestBody DataQualityDTO dqd,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
         Gson gson = new Gson();
