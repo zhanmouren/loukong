@@ -68,6 +68,33 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
     }
 
     /**
+     * 修改分区负责人
+     */
+    @TaskAnnotation("updateZoneCharger")
+    @Override
+    public Integer updateZoneCharger(SessionFactory factory,ZoneDTO zoneDTO){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer ret = mapper.updateZoneCharger(zoneDTO);
+        return ret;
+    }
+
+
+    /**
+     * 更新分区详情数据
+     *
+     * @param factory
+     * @param zoneDTO
+     * @return
+     */
+    @TaskAnnotation("updateZones")
+    @Override
+    public Integer updateZones(SessionFactory factory, ZoneDTO zoneDTO) {
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer result = mapper.updateZones(zoneDTO);
+        return result;
+    }
+
+    /**
      * 添加负责分区数据
      */
     @TaskAnnotation("addChargeZones")
@@ -95,11 +122,9 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
      * @param zoneDTO
      * @return
      */
-    @TaskAnnotation("queryChargeZones")
-    @Override
-    public PageListVO<List<ZoneUserVO>> queryChargeZones(SessionFactory factory, ZoneDTO zoneDTO){
+    public PageListVO<List<ZoneUserVO>> queryZoneOwners(SessionFactory factory, ZoneDTO zoneDTO){
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
-        List<ZoneUserVO> result = mapper.queryChargeZones(zoneDTO);
+        List<ZoneUserVO> result = mapper.queryZoneOwners(zoneDTO);
         PageListVO<List<ZoneUserVO>> plv = new PageListVO<>();
         ZoneUserVO r = result.get(result.size()-1);
         result.remove(result.size()-1);
@@ -111,7 +136,6 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
         plv.setPage(pageVO.getPage());
         return plv;
     }
-
 
     /**
      * 导入分区监测点数据

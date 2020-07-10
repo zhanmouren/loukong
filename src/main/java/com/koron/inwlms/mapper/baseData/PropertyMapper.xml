@@ -3,7 +3,6 @@
 <mapper namespace="com.koron.inwlms.mapper.baseData.PropertyMapper">
 
     <select id="queryLastMonitorDataList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
-
  select m.*,(case when n.status is null then 0 else 1 end)status from(
                 select
                 "pointID",
@@ -36,13 +35,44 @@
         select type,"pointNo" from gis_zone_point where type is not null group by type ,"pointNo" order by type
     </select>
 
+    <update id="updateZones" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
+        update gis_exist_zone
+        <set>
+            <if test="pressureDeviation != null">
+                pressure_deviation = #{pressureDeviation},
+            </if>
+            <if test="timeFactor != null">
+                time_factor = #{timeFactor},
+            </if>
+            <if test="waterPressure != null">
+                water_pressure = #{waterPressure},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where p_code = #{zoneNo}
+    </update>
+
+    <update id="updateZoneCharger" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
+        delete from gis_zone_charge where "zoonNo"=#{zoneNo};
+        insert into gis_zone_charge(
+        "user","zoonNo"
+        )values
+        <if test="owner != null and owner.size > 0">
+            <foreach collection="array" item="item"  index="" separator=",">
+                (#{item},#{zoonNo})
+            </foreach>
+        </if>
+    </update>
+
     <insert id="addChargeZones" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO">
         insert into gis_zone_charge(
         "user","zoonNo"
         )values
         <if test="zoons != null and zoons.size > 0">
             <foreach collection="array" item="item"  index="" separator=",">
-                (#{user},#{zoons})
+                (#{user},#{item})
             </foreach>
         </if>
     </insert>
@@ -83,8 +113,8 @@
         </if>
     </insert>
 
-    <select id="queryChargeZones" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneUserVO">
-            select id ,zoonNo,user from gis_zone_charge where user = #{user}
+    <select id="queryZoneOwners" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneUserVO">
+            select id ,"zoonNo",user from gis_zone_charge where "zoonNo" = #{zoonNo}
     </select>
 
     <select id="queryPipes" parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.PipeLineVO">
@@ -101,7 +131,7 @@
 
     <select id="queryZoneList"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneVO">
        select * from(
-        select 0 as rows, gis_exist_zone.p_code as "zoneNo",gis_exist_zone.name as "zoneName",rank,'' as position,'' as status,t.p_code as parentCode,t.name as parentName,"queryFirstZoon"(tbltree.seq) as firstZoon, 0 as "pressureDeviation", 0 as "timeFactor",0 as "waterPressure" from gis_exist_zone
+        select 0 as rows, gis_exist_zone.p_code as "zoneNo",gis_exist_zone.name as "zoneName",rank,'' as position,t.p_code as parentCode,t.name as parentName,"queryFirstZoon"(tbltree.seq) as firstZoon, pressure_deviation as "pressureDeviation", time_factor as "timeFactor",water_pressure as "waterPressure","queryZoneOwner"(gis_exist_zone.p_code) as owner,gis_exist_zone.status from gis_exist_zone
         left join tbltree on gis_exist_zone.p_code = tbltree.foreignkey
         left join LATERAL(select * from "queryParentZoon"(gis_exist_zone.p_code,tbltree.seq))t on t.code = gis_exist_zone.p_code
         <!--left join ana_zone_day on gis_exist_zone.p_code = ana_zone_day.zoneNo and ana_zone_day."analysisDate"=to_char(now() - interval '1 day','YYYY-MM-DD') and ana_zone_day.code = ''
@@ -127,7 +157,7 @@
         </if>
         )t
         union all
-        select count(*) as rows, '' as  zoneNo,'' as name,'' as rank,'' as position,'' as status,'','','',0,0,0 from gis_exist_zone
+        select count(*) as rows, '' as  zoneNo,'' as name,'' as rank,'' as position,'','','',0,0,0,'',0 from gis_exist_zone
         where 1=1
         <choose>
             <when test="zoneNo != null and zoneNo != ''">
@@ -147,22 +177,22 @@
 
     <select id="queryZonePointList"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZonePointDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZonePointVO">
         select * from(
-            select 0 as rows, gis_zone_point.id as "refID","zoneNo",gis_exist_zone.name as "zoneName","pointNo",gis_scada_station.name as "pointName",gis_zone_point.type,"BatchNo","createBy",to_char( "createTime",'YYYY-MM-dd HH:MM:SS') as "createTime"
+            select 0 as rows, gis_zone_point.id as "refID",gis_zone_point."zoneNo",gis_exist_zone.name as "zoneName","pointNo",gis_scada_station.name as "pointName",gis_zone_point.type,"BatchNo","createBy",to_char( "createTime",'YYYY-MM-dd HH:MM:SS') as "createTime"
             from gis_zone_point
             left join gis_exist_zone on gis_zone_point."zoneNo" = gis_exist_zone.p_code
             left join gis_scada_station on gis_zone_point."pointNo" = gis_scada_station.p_code
             where 1=1
             <if test="zoneNo != null and zoneNo != ''">
-                and "zoneNo" like '%'||#{zoneNo}||'%'
+                and gis_zone_point."zoneNo" like '%'||#{zoneNo}||'%'
             </if>
             <if test="pointNo != null and pointNo != ''">
-                and "pointNo" like '%'||#{pointNo}||'%'
+                and gis_zone_point."pointNo" like '%'||#{pointNo}||'%'
             </if>
             <if test="type != null and type != ''">
-                and type=#{type}
+                and gis_zone_point.type=#{type}
             </if>
             <if test="batchNo != null and batchNo != ''">
-                and "BatchNo"=#{batchNo}
+                and gis_zone_point."BatchNo"=#{batchNo}
             </if>
             <if test="pageCount !=null and page !=null">
                 limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
@@ -172,16 +202,16 @@
         select count(*) as rows, 0 as "refID", '' as zoneNo ,'' as zoneName, '' as pointNo,'' as pointName,'' as type, '' as BatchNo,'' as createBy,'' as createTime from gis_zone_point
         where 1=1
         <if test="zoneNo != null and zoneNo != ''">
-            and "zoneNo"=#{zoneNo}
+            and gis_zone_point."zoneNo" like '%'||#{zoneNo}||'%'
         </if>
         <if test="pointNo != null and pointNo != ''">
-            and "pointNo"=#{pointNo}
-        </if>
-        <if test="batchNo != null and batchNo != ''">
-            and "BatchNo"=#{batchNo}
+            and gis_zone_point."pointNo" like '%'||#{pointNo}||'%'
         </if>
         <if test="type != null and type != ''">
-            and type=#{type}
+            and gis_zone_point.type=#{type}
+        </if>
+        <if test="batchNo != null and batchNo != ''">
+            and gis_zone_point."BatchNo"=#{batchNo}
         </if>
     </select>
 

@@ -10,6 +10,16 @@ import java.util.List;
 public interface ZoneConfigService {
 
     /**
+     * 修改分区负责人
+     */
+    public Integer updateZoneCharger(SessionFactory factory,ZoneDTO zoneDTO);
+
+    /**
+     * 修改分区信息
+     */
+    public Integer updateZones(SessionFactory factory, ZoneDTO zoneDTO);
+
+    /**
      * 添加分区
      */
     public Integer addZone(SessionFactory factory, ZoneDTO zoneDTO);
@@ -29,13 +39,14 @@ public interface ZoneConfigService {
      */
     public Integer deleteChargeZones(SessionFactory factory, ZoneDTO zoneDTO);
 
+
     /**
      * 查询分区负责人列表
      * @param factory
      * @param zoneDTO
      * @return
      */
-    public PageListVO<List<ZoneUserVO>> queryChargeZones(SessionFactory factory, ZoneDTO zoneDTO);
+    public PageListVO<List<ZoneUserVO>> queryZoneOwners(SessionFactory factory, ZoneDTO zoneDTO);
 
     /**
      * 导入分区监测点数据
