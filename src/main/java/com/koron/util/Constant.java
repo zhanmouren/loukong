@@ -26,6 +26,11 @@ public class Constant {
 	public static final String QUERY = "004";
 
 	/**
+	 * 分区维度标识
+	 */
+	public static final String PARTITION_DATA_PERMISSION = "dim_partition";
+
+	/**
 	 * 登录用户在SESSION里的储存KEY
 	 */
 	public static final String USER = "_user";
