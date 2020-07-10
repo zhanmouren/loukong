@@ -148,7 +148,7 @@ public class SystemController {
 
 					msg.setData(userVO);
 					loginLogDTO.setResult("登录成功");
-					loginLogDTO.setErrorLog("————");
+					loginLogDTO.setErrorLog(null);
 					// 用户权限信息入缓存
 					SessionUtil.setAttribute(Constant.LOGIN_USER, userVO);
 					ADOConnection.runTask(env,logService, "addLoginLog", Integer.class, loginLogDTO);

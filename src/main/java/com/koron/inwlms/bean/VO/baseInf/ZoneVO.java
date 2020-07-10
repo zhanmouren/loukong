@@ -75,12 +75,25 @@ public class ZoneVO {
     /**
      * 当前状态
      */
-    private String status;
+    private Integer status;
 
     /**
      * 已废弃
      */
     private String discard;
+
+    /**
+     * 负责人
+     */
+    private String owner;
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 
     public void setRows(Integer rows) {
         this.rows = rows;
@@ -191,11 +204,11 @@ public class ZoneVO {
         this.waterPressure = waterPressure;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

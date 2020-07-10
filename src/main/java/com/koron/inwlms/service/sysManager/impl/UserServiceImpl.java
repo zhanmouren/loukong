@@ -42,6 +42,7 @@ import com.koron.inwlms.bean.DTO.sysManager.EnumMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.FieldMapperDTO;
 import com.koron.inwlms.bean.DTO.sysManager.IntegrationConfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuDTO;
+import com.koron.inwlms.bean.DTO.sysManager.MenuOPDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuSeqDTO;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
 import com.koron.inwlms.bean.DTO.sysManager.ModuleMenuDTO;
@@ -874,17 +875,33 @@ public class UserServiceImpl implements UserService{
 					UserMapper userMapper = factory.getMapper(UserMapper.class);
 					MenuDTO menuDTO=new MenuDTO();
 					menuDTO.setLinkAddress(menuTreeDTO.getLinkAddress());
-					RandomCodeUtil randomCodeUtil=new RandomCodeUtil();				
+				//	RandomCodeUtil randomCodeUtil=new RandomCodeUtil();				
 					//随机获取uuid,赋值给Code	
-					String menuCode=randomCodeUtil.getUUID32();
-					menuDTO.setMenuCode(menuCode);
+				//	String menuCode=randomCodeUtil.getUUID32();
+				//	menuDTO.setMenuCode(menuCode);
+					//前端给code 和moduleNo一样
+					menuDTO.setMenuCode(menuTreeDTO.getModuleCode());
 					menuDTO.setModuleName(menuTreeDTO.getModuleName());
 					menuDTO.setModuleNo(menuTreeDTO.getModuleNo());	
 					menuDTO.setSequence(menuTreeDTO.getSequence());
 					menuDTO.setCreateBy("admin");
 					menuDTO.setUpdateBy("admin");
-					//先生成菜单
+					//先生成菜单(菜单业务表中生成一条记录)
 					Integer addRes=userMapper.addMenu(menuDTO);
+					if(addRes==-1) {
+						addRes=-1;
+						return null;
+					}
+					//操作表中生成一条菜单节点记录
+					MenuOPDTO menuOPDTO=new MenuOPDTO();
+					menuOPDTO.setCode(menuTreeDTO.getModuleCode());
+					menuOPDTO.setCreateBy("admin");
+					menuOPDTO.setUpdateBy("admin");
+					//1 代表菜单
+					menuOPDTO.setFlag(1);
+					menuOPDTO.setStatus(0);
+					menuOPDTO.setWeight(1);
+					addRes=userMapper.addOneMenuOP(menuOPDTO);
 					if(addRes==-1) {
 						addRes=-1;
 						return null;
@@ -892,7 +909,7 @@ public class UserServiceImpl implements UserService{
 					//树状关系中插入一条记录
 					 //组装child,主要两个参数，一个type，一个是foreignkey
 					  LongTreeBean child=new LongTreeBean();
-					  child.setForeignkey(menuCode);
+					  child.setForeignkey(menuTreeDTO.getModuleCode());
 					  child.setType(1);
 					  int type=1;
 					  LongTreeBean parent= TreeService.getNode(factory, type, menuTreeDTO.getForeignKey());

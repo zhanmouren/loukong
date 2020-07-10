@@ -17,6 +17,7 @@ import com.koron.common.bean.StaffBean;
 import com.koron.common.permission.SPIAccountAnno;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
@@ -1355,6 +1356,40 @@ public class PermissionController {
 			     return msg.toJson();
 			}
 			
+			
+			 /*
+		     * date:2020-07-09
+		     * funtion:给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)分页
+		     * author:xiaozhan
+		     */
+			@RequestMapping(value = "/queryExceptRoleUserNew.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+		    @ApiOperation(value = "查询角色其他职员接口", notes = "查询角色其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+		    @ResponseBody
+			public String queryExceptRoleUserNew(@RequestBody RoleAndUserDTO roleUserDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+				if(roleUserDTO.getRoleCode()==null || "".equals(roleUserDTO.getRoleCode())) {
+					return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "角色编码不能为空", Integer.class).toJson();
+				}
+				 MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);	       
+				 //执行查询职员
+				 try {
+					 PageListVO userVO=ADOConnection.runTask(user.getEnv(),permissionService, "queryExceptRoleUserNew", PageListVO.class, roleUserDTO);
+					 if(userVO!=null && userVO.getRowNumber()>0) {
+						 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					     msg.setDescription("该角色查询到其他相关职员的信息"); 
+					     msg.setData(userVO);
+					 }else {
+					   //没查询到数据
+						 msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+					     msg.setDescription("该角色没有查询到相关职员的信息"); 
+					 }
+				 }catch(Exception e){
+			     	//查询失败
+			     	msg.setCode(Constant.MESSAGE_INT_ERROR);
+			        msg.setDescription("查询职员失败");
+			     }
+				 return msg.toJson();
+				 
+			}
 		   
 	   
 

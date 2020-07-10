@@ -16,6 +16,20 @@ public interface PropertyMapper {
     List<DataVO> queryALList();
 
     /**
+     * 更新分区数据
+     * @param zoneDTO
+     * @return
+     */
+    Integer updateZones(ZoneDTO zoneDTO);
+
+    /**
+     * 更新分区负责人
+     * @param zoneDTO
+     * @return
+     */
+    Integer updateZoneCharger(ZoneDTO zoneDTO);
+
+    /**
      * 添加分区
      * @param zoneDTO
      * @return
@@ -55,12 +69,13 @@ public interface PropertyMapper {
      */
     Integer deleteChargeZones(ZoneDTO zoneDTO);
 
+
     /**
-     * 查询负责分区列表
+     * 查询分区负责人列表
      * @param zoneDTO
      * @return
      */
-    List<ZoneUserVO> queryChargeZones(ZoneDTO zoneDTO);
+    List<ZoneUserVO> queryZoneOwners(ZoneDTO zoneDTO);
 
     /**
      * 批量添加分区监测点数据

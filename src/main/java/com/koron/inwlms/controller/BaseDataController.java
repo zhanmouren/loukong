@@ -6,10 +6,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.baseInf.*;
+import com.koron.inwlms.bean.DTO.sysManager.QueryUserDTO;
 import com.koron.inwlms.bean.VO.baseInf.*;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.baseData.*;
+import com.koron.inwlms.service.sysManager.UserService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.FileUtil;
 import com.koron.inwlms.util.ImportExcelUtil;
@@ -67,6 +69,9 @@ public class BaseDataController {
 
     @Autowired
     private MonitorService ms;
+
+    @Autowired
+    private UserService userService;
 
     @Value("${server.gis.address}")
     private String gis;
@@ -540,22 +545,99 @@ public class BaseDataController {
         return msg.toJson();
     }
 
-    @RequestMapping(value = "/queryChargeZones.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询管辖分区接口", notes = "查询管辖分区接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/updateZones.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "更新分区属性接口", notes = "更新分区属性接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryChargeZones(@RequestBody ZoneDTO zoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String updateZones(@RequestBody ZoneDTO zoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         //TODO:权限校验是否有查询权限
 
         MessageBean msg = new MessageBean();
         //TODO:校验参数有效性
-        if(zoneDTO.getUser()!=null && !"".equals(zoneDTO.getUser())){
+        if(zoneDTO.getZoneNo()==null || "".equals(zoneDTO.getZoneNo())){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toJson();
+        }
+
+        //*****插入符合条件数据
+        Integer r1 = ADOConnection.runTask(user.getEnv(),zcs, "updateZones", Integer.class,zoneDTO);
+        if(r1>=0) {
+                msg.setCode(0);
+                msg.setDescription("操作成功");
+            }else{
+                msg.setCode(0);
+                msg.setDescription("操作失败");
+            }
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/updateZoneCharger.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "更新分区负责人接口", notes = "更新分区负责人接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateZoneCharger(@RequestBody ZoneDTO zoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        //TODO:校验参数有效性
+        if(zoneDTO.getZoneNo()==null || "".equals(zoneDTO.getZoneNo())){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toJson();
+        }
+
+        //*****插入符合条件数据
+        Integer r1 = ADOConnection.runTask(user.getEnv(), zcs, "updateZoneCharger", Integer.class, zoneDTO);
+        if (r1 > 0) {
+            msg.setCode(0);
+            msg.setDescription("操作成功");
+        } else{
+            msg.setCode(0);
+            msg.setDescription("操作失败");
+        }
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryChargers.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询管辖人接口", notes = "查询管辖人接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryChargers(@RequestBody QueryUserDTO userDTO, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
+        //执行查询职员
+        try {
+            PageListVO result=ADOConnection.runTask(user.getEnv(),userService, "queryUser", PageListVO.class, userDTO);
+            if(result!=null  && result.getRowNumber()>0) {
+                msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+                msg.setDescription("查询到相关职员的信息");
+                msg.setData(result);
+            }else {
+                //没查询到数据
+                msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+                msg.setDescription("没有查询到相关职员的信息");
+            }
+        }catch(Exception e){
+            //查询失败
+            msg.setCode(Constant.MESSAGE_INT_ERROR);
+            msg.setDescription("查询职员失败");
+        }
+        return msg.toJson();
+    }
+
+    @RequestMapping(value = "/queryZoneOwners.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区管辖人接口", notes = "查询分区管辖人接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryZoneOwners(@RequestBody ZoneDTO zoneDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        //TODO:权限校验是否有查询权限
+
+        MessageBean msg = new MessageBean();
+        //TODO:校验参数有效性
+        if(zoneDTO.getZoneNo()==null || "".equals(zoneDTO.getZoneNo())){
             msg.setCode(Constant.MESSAGE_INT_NULL);
             msg.setDescription(Constant.MESSAGE_STRING_NULL);
             return msg.toJson();
         }
 
         //*****查询符合条件数据
-        PageListVO<List<ZoneUserVO>> zus = ADOConnection.runTask(user.getEnv(),zcs, "queryChargeZones", PageListVO.class,zoneDTO);
+        PageListVO<List<ZoneUserVO>> zus = ADOConnection.runTask(user.getEnv(),zcs, "queryZoneOwners", PageListVO.class,zoneDTO);
 
         msg.setCode(0);
         msg.setData(zus);
@@ -570,7 +652,7 @@ public class BaseDataController {
 
         MessageBean msg = new MessageBean();
         //TODO:校验参数有效性
-        if(zoneDTO.getUser()!=null && !"".equals(zoneDTO.getUser())){
+        if(zoneDTO.getUser()==null || "".equals(zoneDTO.getUser())){
             msg.setCode(Constant.MESSAGE_INT_NULL);
             msg.setDescription(Constant.MESSAGE_STRING_NULL);
             return msg.toJson();

@@ -61,7 +61,6 @@ public class IndexController {
 	@RequestMapping(value = "/queryCompreInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "显示分区或全网综合信息功能接口", notes = "显示分区或全网综合信息功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OperateAspect(operateModule = "home")
 	public String queryCompreInfo(@RequestBody IndicatorNewDTO  indicatorDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(indicatorDTO.getStartTime()==null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间为空", Integer.class).toJson();
@@ -205,7 +204,6 @@ public class IndexController {
 	@RequestMapping(value = "/queryComYearInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "时间段查询指标接口", notes = "时间段查询指标接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OperateAspect(operateModule = "home")
 	public String queryComYearInfo(@RequestBody IndicatorNewDTO indicatorDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(indicatorDTO.getStartTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
@@ -428,7 +426,6 @@ public class IndexController {
 	@RequestMapping(value = "/queryWarningInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询漏损任务相关信息接口", notes = "查询漏损任务相关信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OperateAspect(operateModule = "home")
 	public String queryWarningInfo(@RequestBody WarningInfoDTO warningInfoDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(warningInfoDTO.getTaskCreateTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "日期不能为空", Integer.class).toJson();   
@@ -470,7 +467,6 @@ public class IndexController {
 	@RequestMapping(value = "/queryCheckWarningInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询检测点报警信息接口", notes = "查询检测点报警信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OperateAspect(operateModule = "home")
 	public String queryCheckWarningInfo(@RequestBody WarningInfoDTO warningInfoDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(warningInfoDTO.getTaskCreateTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "日期不能为空", Integer.class).toJson();   
@@ -512,7 +508,6 @@ public class IndexController {
 	@RequestMapping(value = "/queryAreaRankInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区下各个分区排名接口", notes = "查询分区下各个分区排名接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OperateAspect(operateModule = "home")
 	public String queryAreaRankInfo(@RequestBody IndicatorNewDTO indicatorDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(indicatorDTO.getStartTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
@@ -561,7 +556,6 @@ public class IndexController {
 	@RequestMapping(value = "/queryChildAreaRankInfo.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询分区下各个子分区排名接口", notes = "查询分区下各个子分区排名接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OperateAspect(operateModule = "home")
 	public String queryChildAreaRankInfo(@RequestBody IndicatorNewDTO indicatorDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		 if(indicatorDTO.getStartTime()==null) {
 			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
@@ -610,7 +604,6 @@ public class IndexController {
 	@RequestMapping(value = "/queryTreeZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看分区树结构接口", notes = "查看分区树结构接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OperateAspect(operateModule = "home")
 	public String queryTreeZone(@RequestBody TreeDTO treeDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
 		if(treeDTO.getType()==null || "".equals(treeDTO.getType())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();

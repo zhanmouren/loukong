@@ -5,6 +5,7 @@ import java.util.List;
 import org.koron.ebs.mybatis.SessionFactory;
 
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.sysManager.RoleMenusVO;
@@ -132,5 +133,7 @@ public interface PermissionService {
     //批量生成操作子节点
     public Integer addAllOperate(SessionFactory factory);
     
+    //给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员)
+  	PageListVO<List<UserVO>> queryExceptRoleUserNew(SessionFactory factory, RoleAndUserDTO roleUserDTO);
     
 }

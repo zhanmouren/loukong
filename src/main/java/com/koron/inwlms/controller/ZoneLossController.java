@@ -1567,7 +1567,7 @@ public class ZoneLossController {
 			return msg.toJson();
 		}
 		try {
-			Map<String, Map<Object, Object>> data = ADOConnection.runTask(user.getEnv(), zlas, "queryZoneThematicValue",
+			Map<String, Map<String, Double>> data = ADOConnection.runTask(user.getEnv(), zlas, "queryZoneThematicValue",
 					Map.class, zoneThematicValueDTO);
 			msg.setData(data);
 		} catch (Exception e) {

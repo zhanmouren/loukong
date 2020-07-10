@@ -1439,12 +1439,12 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 
 	@TaskAnnotation("queryZoneThematicValue")
 	@Override
-	public Map<String, Map<Object, Object>> queryZoneThematicValue(SessionFactory factory,
+	public Map<String, Map<String, Double>> queryZoneThematicValue(SessionFactory factory,
 			ZoneThematicValueDTO zoneThematicValueDTO) {
 		IndicatorMapper mapper = factory.getMapper(IndicatorMapper.class);
 		List<String> codes = new ArrayList<>();
 		List<String> zoneNos = new ArrayList<>();
-		Map<String, Map<Object, Object>> maps = new HashMap<>();
+		Map<String, Map<String, Double>> maps = new HashMap<>();
 		DecimalFormat df = new DecimalFormat("#.0000");
 		//根据分区类型获取所有分区编号
 		GisZoneServiceImpl gisZoneServiceImpl = new GisZoneServiceImpl();
@@ -1477,13 +1477,13 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						timeNum++;
 					}
 				}
-				Map<Object,Object> map = new HashMap<Object, Object>();
+				Map<String,Double> map = new HashMap<String, Double>();
 				if(itemCode.contains("MRR") || itemCode.contains("DCPL") || itemCode.contains("DCCA")) {
 					//管道更新率指标，DMA覆盖率（管长），DMA覆盖率（户数），计算平均值
 					if(timeNum == 0) {
 						map.put(itemCode, null);
 					} else{
-						map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
+						map.put(itemCode, values/timeNum<0.0001?0:Double.parseDouble(df.format(values/timeNum)));
 					}
 					
 				}else {
@@ -1508,8 +1508,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						values += indicatorVO1.getValue();
 					}
 				}
-				Map<Object,Object> map = new HashMap<Object, Object>();
-				map.put(itemCode, df.format(values/10000));
+				Map<String,Double> map = new HashMap<String, Double>();
+				map.put(itemCode, values/10000<0.0001?0:Double.parseDouble(df.format(values/10000)));
 				maps.put(zoneNo, map);
 			}
 		}else if(Constant.ZONE_LOSS_INDIC.contains(itemCode)) {
@@ -1527,15 +1527,14 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						timeNum++;
 					}
 				}
-				Map<Object,Object> map = new HashMap<Object, Object>();
+				Map<String,Double> map = new HashMap<String, Double>();
 				if(timeNum == 0) {
 					map.put(itemCode, null);
 				} else{
-					map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
 					if(itemCode.contains("WL")) {
-						map.put(itemCode, df.format(values/timeNum/10000));
+						map.put(itemCode, values/timeNum/10000<0.0001?0:Double.parseDouble(df.format(values/timeNum/10000)));
 					}else{
-						map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
+						map.put(itemCode, values/timeNum<0.0001?0:Double.parseDouble(df.format(values/timeNum)));
 					}
 				}
 				maps.put(zoneNo, map);
@@ -1557,13 +1556,13 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 						timeNum++;
 					}
 				}
-				Map<Object,Object> map = new HashMap<Object, Object>();
+				Map<String,Double> map = new HashMap<String, Double>();
 				if(itemCode.contains("MRR") || itemCode.contains("DCPL") || itemCode.contains("DCCA")) {
 					//管道更新率指标，DMA覆盖率（管长），DMA覆盖率（户数），计算平均值
 					if(timeNum == 0) {
 						map.put(itemCode, null);
 					} else{
-						map.put(itemCode, Double.parseDouble(df.format(values/timeNum)));
+						map.put(itemCode, values/timeNum<0.0001?0:Double.parseDouble(df.format(values/timeNum)));
 					}
 				}else {
 					map.put(itemCode, values);

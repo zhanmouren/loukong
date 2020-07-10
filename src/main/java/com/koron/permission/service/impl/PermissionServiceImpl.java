@@ -20,6 +20,7 @@ import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
 import com.koron.common.web.service.TreeService;
 import com.koron.inwlms.bean.DTO.sysManager.MenuTreeDTO;
+import com.koron.inwlms.bean.DTO.sysManager.RoleAndUserDTO;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
@@ -790,6 +791,7 @@ public class PermissionServiceImpl implements PermissionService{
 						 tblOperationq.setForeignkey(tblOperateVOList.get(i).getOpCode());
 						 tblOperationq.setOpName("L102180004");
 						 tblOperationq.setCreator("admin");
+						 tblOperationq.setCrduFlag(4);
 						 
 						 tblOperationList.add(tblOperationq);
 						 if(treeList!=null && treeList.size()>1) {
@@ -803,6 +805,7 @@ public class PermissionServiceImpl implements PermissionService{
 							 tblOperationa.setForeignkey(tblOperateVOList.get(i).getOpCode());
 							 tblOperationa.setOpName("L102180001");
 							 tblOperationa.setCreator("admin");
+							 tblOperationa.setCrduFlag(1);
 							 
 							 TblOperationDTO tblOperatione=new TblOperationDTO();
 							 tblOperatione.setOpFlag(2);
@@ -810,13 +813,15 @@ public class PermissionServiceImpl implements PermissionService{
 							 tblOperatione.setForeignkey(tblOperateVOList.get(i).getOpCode());
 							 tblOperatione.setOpName("L102180002");
 							 tblOperatione.setCreator("admin"); 
+							 tblOperatione.setCrduFlag(2);
 							 
 							 TblOperationDTO tblOperationd=new TblOperationDTO();
 							 tblOperationd.setOpFlag(2);
 							 tblOperationd.setOpStatus(0);
 							 tblOperationd.setForeignkey(tblOperateVOList.get(i).getOpCode());
 							 tblOperationd.setOpName("L102180003");
-							 tblOperatione.setCreator("admin");
+							 tblOperationd.setCreator("admin");
+							 tblOperationd.setCrduFlag(3);
 							 
 							 tblOperationList.add(tblOperationa);
 							 tblOperationList.add(tblOperatione);
@@ -834,8 +839,19 @@ public class PermissionServiceImpl implements PermissionService{
 		public static Integer addOperateNew(SessionFactory factory, TblOperationDTO tblOperationDTO) {
 			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);		 
 			//生成code
-			String opCode=RandomCodeUtil.getUUID32();
-			tblOperationDTO.setOpCode(opCode);
+			//String opCode=RandomCodeUtil.getUUID32();
+			//tblOperationDTO.setOpCode(opCode);
+			String opCode=tblOperationDTO.getForeignkey()+"004";
+			if(tblOperationDTO.getCrduFlag()==4) {
+				 opCode=tblOperationDTO.getForeignkey()+"004";
+			}else if(tblOperationDTO.getCrduFlag()==1) {
+				 opCode=tblOperationDTO.getForeignkey()+"001";
+			}else if(tblOperationDTO.getCrduFlag()==2) {
+				 opCode=tblOperationDTO.getForeignkey()+"002";
+			}else{
+				 opCode=tblOperationDTO.getForeignkey()+"003";
+			}
+			tblOperationDTO.setOpCode(opCode);			
 		    //先生成操作节点
 			Integer addRes=mapper.addOperate(tblOperationDTO);
 			if(addRes==-1) {
@@ -863,6 +879,28 @@ public class PermissionServiceImpl implements PermissionService{
 			      }
 			  }
 			  return addRes;
+		}
+		
+		//给角色挑选职员的时候弹出框，要排除该角色已经存在的职员信息，只能选其他的职员(角色弹窗选择职员) 2020/03/24  分页
+		@TaskAnnotation("queryExceptRoleUserNew")
+		@Override
+		public PageListVO<List<UserVO>> queryExceptRoleUserNew(SessionFactory factory, RoleAndUserDTO roleUserDTO) {		
+			PermissionMapper mapper=factory.getMapper(PermissionMapper.class);	
+			roleUserDTO.setWhetUse(0);
+			List<UserVO> userList=mapper.queryExceptRoleUserNew(roleUserDTO);
+			//查询总条数
+			int rowNumber = mapper.getExceptRoleUserCountNew(roleUserDTO);
+			// 返回数据结果
+			PageListVO<List<UserVO>> result = new PageListVO<>();
+			result.setDataList(userList);
+			// 插入分页信息
+			PageVO pageVO = PageUtil.getPageBean(roleUserDTO.getPage(), roleUserDTO.getPageCount(), rowNumber);
+			result.setTotalPage(pageVO.getTotalPage());
+			result.setRowNumber(pageVO.getRowNumber());
+			result.setPageCount(pageVO.getPageCount());
+			result.setPage(pageVO.getPage());
+			return result;		
+			
 		}
 		
 

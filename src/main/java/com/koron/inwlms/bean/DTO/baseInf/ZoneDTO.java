@@ -51,6 +51,11 @@ public class ZoneDTO extends BaseDTO {
     private String user;
 
     /**
+     * 多用户
+     */
+    private String[] owner;
+
+    /**
      * 分区编号集
      * @return
      */
@@ -83,7 +88,69 @@ public class ZoneDTO extends BaseDTO {
      */
     private Object geometry;
 
-	public String getName() {
+    /**
+     * 压力偏离量(m)
+     * @return
+     */
+    private Double pressureDeviation;
+
+    /**
+     * 时间因子 (hr/d)
+     */
+    private Double timeFactor;
+
+    /**
+     * 区域服务水压
+     */
+    private Double waterPressure;
+
+    /**
+     *  状态
+     * @return
+     */
+    private Integer status;
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String[] getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String[] owner) {
+        this.owner = owner;
+    }
+
+    public Double getPressureDeviation() {
+        return pressureDeviation;
+    }
+
+    public void setPressureDeviation(Double pressureDeviation) {
+        this.pressureDeviation = pressureDeviation;
+    }
+
+    public Double getTimeFactor() {
+        return timeFactor;
+    }
+
+    public void setTimeFactor(Double timeFactor) {
+        this.timeFactor = timeFactor;
+    }
+
+    public Double getWaterPressure() {
+        return waterPressure;
+    }
+
+    public void setWaterPressure(Double waterPressure) {
+        this.waterPressure = waterPressure;
+    }
+
+    public String getName() {
         return name;
     }
 
