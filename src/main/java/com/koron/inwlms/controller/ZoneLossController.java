@@ -21,6 +21,8 @@ import com.github.pagehelper.util.StringUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
+import com.koron.common.permission.SPIAccountAnno;
+import com.koron.inwlms.aspect.OperateAspect;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddVCZoneDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.AddWNWBReportDTO;
@@ -72,6 +74,7 @@ import com.koron.inwlms.service.zoneLoss.WaterBalanceAnaService;
 import com.koron.inwlms.service.zoneLoss.ZoneLossAnaService;
 import com.koron.inwlms.util.ExportDataUtil;
 import com.koron.inwlms.util.TimeUtil;
+import com.koron.permission.authority.OPSPIMethod;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -105,7 +108,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询分区水平衡漏损数据", notes = "查询分区水平衡漏损数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryZoneWBLossData(@RequestBody QueryZoneWBLossDTO queryZoneWBLossDTO,
+	@OperateAspect(operateModule = "fla")
+	@OPSPIMethod("fla"+Constant.QUERY)
+	public String queryZoneWBLossData(@RequestBody QueryZoneWBLossDTO queryZoneWBLossDTO,@SPIAccountAnno 
 			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ZoneWBLossVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, ZoneWBLossVO.class);
 		if (queryZoneWBLossDTO.getTimeType() == null) {
@@ -157,8 +162,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询全网水平衡报表列表", notes = "查询全网水平衡报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.QUERY)
 	public String queryWNWBReportList(@RequestBody QueryWNWBReportListDTO queryWNWBReportListDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		// 参数校验
 		msg = checkWNWBReportListParam(queryWNWBReportListDTO, msg);
@@ -215,7 +222,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "下载全网水平衡报表信息", notes = "下载全网水平衡报表信息", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public HttpEntity<?> downloadWNWBReport(Integer id, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.QUERY)
+	public HttpEntity<?> downloadWNWBReport(Integer id, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		if (id == null)
 			return null;
 		HttpEntity<?> entity = null;
@@ -262,7 +271,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "删除全网水平衡报表", notes = "删除全网水平衡报表", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String deleteWNWBReport(Integer id, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.DELETE)
+	public String deleteWNWBReport(Integer id, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				Void.class);
 		try {
@@ -291,8 +302,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "下载全网水平衡报表列表", notes = "下载全网水平衡报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.QUERY)
 	public HttpEntity<?> downloadWNWBReportList(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -328,8 +341,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "添加全网水平衡报表", notes = "添加全网水平衡报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.ADD)
 	public String addWNWBReport(@RequestBody AddWNWBReportDTO addWNWBReportDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AddWNWBReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS,
 				Constant.MESSAGE_STRING_SUCCESS, AddWNWBReportDTO.class);
 		if (addWNWBReportDTO.getReportName() == null) {
@@ -367,8 +382,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "编辑全网水平衡报表", notes = "编辑全网水平衡报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.UPDATE)
 	public String updateWNWBReport(@RequestBody AddWNWBReportDTO editWNWBReportDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AddWNWBReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS,
 				Constant.MESSAGE_STRING_SUCCESS, AddWNWBReportDTO.class);
 		if (editWNWBReportDTO.getId() == null) {
@@ -410,7 +427,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询全网水平衡报表详情", notes = "查询全网水平衡报表详情", httpMethod = "GET", consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryWNWBReportDetail(Integer id, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.QUERY)
+	public String queryWNWBReportDetail(Integer id,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<WNWBReportDetailVO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS,
 				Constant.MESSAGE_STRING_SUCCESS, WNWBReportDetailVO.class);
 		try {
@@ -433,8 +452,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询全网水平衡报表附件列表", notes = "查查询全网水平衡报表附件列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.QUERY)
 	public String queryWNWBReporFileList(@RequestBody WNWBReportFileDTO wNWBReportFileDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				List.class);
 		try {
@@ -453,7 +474,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "删除全网水平衡报表附件", notes = "删除全网水平衡报表附件", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String deleteWNWBReporFile(Integer fileId, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.DELETE)
+	public String deleteWNWBReporFile(Integer fileId, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				Void.class);
 		try {
@@ -474,8 +497,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询全网水平衡报表指标值", notes = "查询全网水平衡报表指标值", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.QUERY)
 	public String queryWNWBIndicatorData(@RequestBody IndicatorDTO indicatorDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				List.class);
 		try {
@@ -494,8 +519,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询全网水平衡模板报表列表", notes = "查询全网水平衡模板报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.QUERY)
 	public String queryWNWBTReportList(@RequestBody QueryWNWBTReportListDTO queryWNWBTReportListDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkWNWBTReportListParam(queryWNWBTReportListDTO, msg);
 		if (msg.getCode() != 0)
@@ -542,8 +569,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "下载全网水平衡模板报表列表", notes = "下载全网水平衡模板报表列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.QUERY)
 	public HttpEntity<?> downloadWNWBReporTemplate(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -578,7 +607,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "删除全网水平衡模板报表", notes = "删除全网水平衡模板报表", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String deleteWNWBReporTemplate(Integer tId, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.DELETE)
+	public String deleteWNWBReporTemplate(Integer tId, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				Void.class);
 		try {
@@ -599,8 +630,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "添加全网水平衡模板报表", notes = "添加全网水平衡模板报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.ADD)
 	public String addWNWBReporTemplate(@RequestBody AddWNWBTReportDTO addWNWBTReportDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AddWNWBTReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS,
 				Constant.MESSAGE_STRING_SUCCESS, AddWNWBTReportDTO.class);
 		if (addWNWBTReportDTO.getReportName() == null) {
@@ -626,8 +659,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "编辑全网水平衡模板报表", notes = "编辑全网水平衡模板报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.UPDATE)
 	public String updateWNWBReporTemplate(@RequestBody AddWNWBTReportDTO editWNWBTReportDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AddWNWBTReportDTO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS,
 				Constant.MESSAGE_STRING_SUCCESS, AddWNWBTReportDTO.class);
 		if (editWNWBTReportDTO.getId() == null) {
@@ -657,7 +692,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询全网水平衡模板报表详情", notes = "查询全网水平衡报表详情", httpMethod = "GET", consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryWNWBTReportDetail(Integer id, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "qwsph")
+	@OPSPIMethod("qwsph"+Constant.QUERY)
+	public String queryWNWBTReportDetail(Integer id, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<WNWBTReportDetailVO> data = MessageBean.create(Constant.MESSAGE_INT_SUCCESS,
 				Constant.MESSAGE_STRING_SUCCESS, WNWBTReportDetailVO.class);
 		try {
@@ -680,8 +717,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询一级分区漏损分析列表", notes = "查询一级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "fqyj")
+	@OPSPIMethod("fqyj"+Constant.QUERY)
 	public String queryFZoneLossList(@RequestBody QueryFZoneLossListDTO queryFZoneLossListDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkFZoneLossListParam(queryFZoneLossListDTO, msg);
 		if (msg.getCode() != 0)
@@ -768,8 +807,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "下载一级分区漏损分析列表", notes = "下载一级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "fqyj")
+	@OPSPIMethod("fqyj"+Constant.QUERY)
 	public HttpEntity<?> downloadFZoneLossList(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -804,8 +845,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询二级分区漏损分析列表", notes = "查询二级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "fqej")
+	@OPSPIMethod("fqej"+Constant.QUERY)
 	public String querySZoneLossList(@RequestBody QuerySZoneLossListDTO querySZoneLossListDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkSZoneLossListParam(querySZoneLossListDTO, msg);
 		if (msg.getCode() != 0)
@@ -892,8 +935,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "下载二级分区漏损分析列表", notes = "下载二级分区漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "fqej")
+	@OPSPIMethod("fqej"+Constant.QUERY)
 	public HttpEntity<?> downloadSZoneLossList(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -928,8 +973,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询DMA漏损分析列表", notes = "查询DMA漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "dp")
+	@OPSPIMethod("dp"+Constant.QUERY)
 	public String queryDmaZoneLossList(@RequestBody QueryDmaZoneLossListDTO QueryDmaZoneLossListDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkDmaZoneLossListParam(QueryDmaZoneLossListDTO, msg);
 		if (msg.getCode() != 0)
@@ -1016,8 +1063,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "下载DMA漏损分析列表", notes = "下载DMA漏损分析列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "dp")
+	@OPSPIMethod("dp"+Constant.QUERY)
 	public HttpEntity<?> downloadDmaZoneLossList(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -1048,10 +1097,69 @@ public class ZoneLossController {
 		return null;
 	}
 
+	/**
+	 * 查询一级分区地图定位信息
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryFZonelocation.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询一级分区地图定位信息", notes = "查询一级分区地图定位信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "fqyj")
+	@OPSPIMethod("fqyj"+Constant.QUERY)
+	public String queryFZonelocation(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneInfoDTO.setZoneType(1);
+		String result = queryZonelocation(queryZoneInfoDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询二级分区地图定位信息
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/querySZonelocation.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询二级分区地图定位信息", notes = "查询二级分区地图定位信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "fqej")
+	@OPSPIMethod("fqej"+Constant.QUERY)
+	public String querySFZonelocation(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneInfoDTO.setZoneType(2);
+		String result = queryZonelocation(queryZoneInfoDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询DMA分区地图定位信息
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryDmaZonelocation.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询DMA分区地图定位信息", notes = "查询DMA分区地图定位信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "dp")
+	@OPSPIMethod("dp"+Constant.QUERY)
+	public String queryDmaZonelocation(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneInfoDTO.setZoneType(3);
+		String result = queryZonelocation(queryZoneInfoDTO,user);
+		return result;
+	}
+	
 	@RequestMapping(value = "/queryZonelocation.htm", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询分区地图定位信息", notes = "查询分区地图定位信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+//	@OperateAspect(operateModule = "fqlsfx")
+//	@OPSPIMethod("fqlsfx"+Constant.QUERY)
 	public String queryZonelocation(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,
 			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PositionInfoVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PositionInfoVO.class);
@@ -1083,10 +1191,88 @@ public class ZoneLossController {
 		return msg.toJson();
 	}
 
+	/**
+	 * 查询一级分区详情
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryFZonedetail.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询一级分区详情", notes = "查询一级分区详情", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "fqyj")
+	@OPSPIMethod("fqyj"+Constant.QUERY)
+	public String queryFZonedetail(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneInfoDTO.setZoneType(1);
+		String result = queryZonedetail(queryZoneInfoDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询二级分区详情
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/querySZonedetail.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询二级分区详情", notes = "查询二级分区详情", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "fqej")
+	@OPSPIMethod("fqej"+Constant.QUERY)
+	public String querySZonedetail(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneInfoDTO.setZoneType(2);
+		String result = queryZonedetail(queryZoneInfoDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询DMA分区详情
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryDmaZonedetail.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询DMA分区详情", notes = "查询DMA分区详情", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "dp")
+	@OPSPIMethod("dp"+Constant.QUERY)
+	public String queryDmaZonedetail(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneInfoDTO.setZoneType(3);
+		String result = queryZonedetail(queryZoneInfoDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询虚拟分区详情
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryVZonedetail.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询虚拟分区详情", notes = "查询虚拟分区详情", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "xnfq")
+	@OPSPIMethod("xnfq"+Constant.QUERY)
+	public String queryVZonedetail(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneInfoDTO.setZoneType(4);
+		String result = queryZonedetail(queryZoneInfoDTO,user);
+		return result;
+	}
+	
 	@RequestMapping(value = "/queryZonedetail.htm", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询分区详情", notes = "查询分区详情", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+//	@OperateAspect(operateModule = "fqlsfx")
+//	@OPSPIMethod("fqlsfx"+Constant.QUERY)
 	public String queryZonedetail(@RequestBody QueryZoneInfoDTO queryZoneInfoDTO,
 			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ZoneDetailInfoVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS,
@@ -1119,12 +1305,90 @@ public class ZoneLossController {
 		return msg.toJson();
 	}
 
+	/**
+	 * 查询一级分区历史数据
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryFZoneHstData.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询一级分区历史数据", notes = "查询一级分区历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "fqyj")
+	@OPSPIMethod("fqyj"+Constant.QUERY)
+	public String queryFZoneHstData(@RequestBody QueryZoneHstDataDTO queryZoneHstDataDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneHstDataDTO.setZoneType(1);
+		String result = queryZoneHstData(queryZoneHstDataDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询二级分区历史数据
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/querySZoneHstData.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询二级分区历史数据", notes = "查询二级分区历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "fqej")
+	@OPSPIMethod("fqej"+Constant.QUERY)
+	public String querySZoneHstData(@RequestBody QueryZoneHstDataDTO queryZoneHstDataDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneHstDataDTO.setZoneType(2);
+		String result = queryZoneHstData(queryZoneHstDataDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询DMA分区历史数据
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryDmaZoneHstData.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询DMA分区历史数据", notes = "查询DMA分区历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "dp")
+	@OPSPIMethod("dp"+Constant.QUERY)
+	public String queryDmaZoneHstData(@RequestBody QueryZoneHstDataDTO queryZoneHstDataDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneHstDataDTO.setZoneType(3);
+		String result = queryZoneHstData(queryZoneHstDataDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询虚拟分区历史数据
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryVZoneHstData.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询虚拟分区历史数据", notes = "查询虚拟分区历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "xnfq")
+	@OPSPIMethod("xnfq"+Constant.QUERY)
+	public String queryVZoneHstData(@RequestBody QueryZoneHstDataDTO queryZoneHstDataDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneHstDataDTO.setZoneType(4);
+		String result = queryZoneHstData(queryZoneHstDataDTO,user);
+		return result;
+	}
+	
 	@RequestMapping(value = "/queryZoneHstData.htm", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询分区漏损历史数据", notes = "查询分区漏损历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+//	@OperateAspect(operateModule = "fqlsfx")
+//	@OPSPIMethod("fqlsfx"+Constant.QUERY)
 	public String queryZoneHstData(@RequestBody QueryZoneHstDataDTO queryZoneHstDataDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		 @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ZoneHstDataVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, ZoneHstDataVO.class);
 		if (queryZoneHstDataDTO.getTimeType() == null) {
 			// 参数不正确
@@ -1162,6 +1426,17 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
 			msg.setDescription("开始时间大于结束时间");
 			return msg.toJson();
+		} else if (queryZoneHstDataDTO.getZoneType() == null) {
+			// 参数不正确
+			msg.setCode(Constant.MESSAGE_INT_NULL);
+			msg.setDescription("分区类型为空");
+			return msg.toJson();
+		} else if (queryZoneHstDataDTO.getZoneType() != null
+				&& (queryZoneHstDataDTO.getZoneType() < 1 || queryZoneHstDataDTO.getZoneType() > 4)) {
+			// 参数不正确
+			msg.setCode(Constant.MESSAGE_INT_PARAMS);
+			msg.setDescription("分区类型数值错误");
+			return msg.toJson();
 		}
 		try {
 			ZoneHstDataVO data = ADOConnection.runTask(user.getEnv(), zlas, "queryZoneHstData", ZoneHstDataVO.class,
@@ -1178,8 +1453,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询虚拟分区（相减）列表", notes = "查询虚拟分区（相减）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "xnfqxj")
+	@OPSPIMethod("xnfqxj"+Constant.QUERY)
 	public String queryVSZoneList(@RequestBody QueryVSZoneListDTO queryVSZoneListDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkVSZoneListParam(queryVSZoneListDTO, msg);
 		if (msg.getCode() != 0)
@@ -1264,8 +1541,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "下载虚拟分区（相减）列表", notes = "下载虚拟分区（相减）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "xnfqxj")
+	@OPSPIMethod("xnfqxj"+Constant.QUERY)
 	public HttpEntity<?> downloadVSZoneHstList(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -1300,8 +1579,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询拟分区（合并）列表", notes = "查询拟分区（合并）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "xnfqhb")
+	@OPSPIMethod("xnfqhb"+Constant.QUERY)
 	public String queryVCZoneList(@RequestBody QueryVCZoneListDTO queryVCZoneListDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkVCZoneListParam(queryVCZoneListDTO, msg);
 		if (msg.getCode() != 0)
@@ -1386,8 +1667,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "下载拟分区（合并）列表", notes = "下载拟分区（合并）列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "xnfqhb")
+	@OPSPIMethod("xnfqhb"+Constant.QUERY)
 	public HttpEntity<?> downloadVCZoneList(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -1422,7 +1705,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "添加虚拟分区（合并）", notes = "添加虚拟分区（合并）", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String addVCZone(@RequestBody AddVCZoneDTO addVCZoneDTO, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "xnfqhb")
+	@OPSPIMethod("xnfqhb"+Constant.ADD)
+	public String addVCZone(@RequestBody AddVCZoneDTO addVCZoneDTO, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				Void.class);
 		if (StringUtil.isEmpty(addVCZoneDTO.getsZoneNos())) {
@@ -1445,7 +1730,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "删除虚拟分区（合并）", notes = "删除虚拟分区（合并）", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String deleteVCZone(String vZoneNo, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "xnfqhb")
+	@OPSPIMethod("xnfqhb"+Constant.DELETE)
+	public String deleteVCZone(String vZoneNo,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Void> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				Void.class);
 		if (StringUtil.isEmpty(vZoneNo)) {
@@ -1495,6 +1782,7 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询分区指标数据字典", notes = "查询分区指标数据字典", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "lsztt")
 	public String queryZoneIndicatorDic(Integer zoneType, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				List.class);
@@ -1521,12 +1809,71 @@ public class ZoneLossController {
 
 	}
 
+	/**
+	 * 查询一级分区专题图指标数据
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryFZoneThematicValue.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询一级分区专题图指标数据", notes = "查询一级分区专题图指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "yjfq1")
+	@OPSPIMethod("yjfq1"+Constant.QUERY)
+	public String queryFZoneThematicValue(@RequestBody ZoneThematicValueDTO zoneThematicValueDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		zoneThematicValueDTO.setZoneType(1);
+		String result = queryZoneThematicValue(zoneThematicValueDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询二级分区专题图指标数据
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/querySZoneThematicValue.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询二级分区专题图指标数据", notes = "查询二级分区专题图指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "ejfq1")
+	@OPSPIMethod("ejfq1"+Constant.QUERY)
+	public String querySZoneThematicValue(@RequestBody ZoneThematicValueDTO zoneThematicValueDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		zoneThematicValueDTO.setZoneType(2);
+		String result = queryZoneThematicValue(zoneThematicValueDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询DMA分区专题图指标数据
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryDmaZoneThematicValue.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询DMA分区专题图指标数据", notes = "查询DMA分区专题图指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "dp1")
+	@OPSPIMethod("dp1"+Constant.QUERY)
+	public String queryDmaZoneThematicValue(@RequestBody ZoneThematicValueDTO zoneThematicValueDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		zoneThematicValueDTO.setZoneType(3);
+		String result = queryZoneThematicValue(zoneThematicValueDTO,user);
+		return result;
+	}
+	
 	@RequestMapping(value = "/queryZoneThematicValue.htm", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询分区专题图指标数据", notes = "查询分区专题图指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+//	@OperateAspect(operateModule = "lsztt")
+//	@OPSPIMethod("lsztt"+Constant.QUERY)
 	public String queryZoneThematicValue(@RequestBody ZoneThematicValueDTO zoneThematicValueDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		 @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<Map> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, Map.class);
 		if (zoneThematicValueDTO.getItemCode() == null) {
 			// 参数不正确
@@ -1578,12 +1925,71 @@ public class ZoneLossController {
 		return msg.toJson();
 	}
 
+	/**
+	 * 查询一级分区指标数据列表
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryFZoneIndicatorList.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询一级分区指标数据列表", notes = "查询一级分区指标数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "yjfq1")
+	@OPSPIMethod("yjfq1"+Constant.QUERY)
+	public String queryFZoneIndicatorList(@RequestBody QueryZoneIndicatorListDTO queryZoneIndicatorListDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneIndicatorListDTO.setZoneType(1);
+		String result = queryZoneIndicatorList(queryZoneIndicatorListDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询二级分区指标数据列表
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/querySZoneIndicatorList.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询二级分区指标数据列表", notes = "查询二级分区指标数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "ejfq1")
+	@OPSPIMethod("ejfq1"+Constant.QUERY)
+	public String querySZoneIndicatorList(@RequestBody QueryZoneIndicatorListDTO queryZoneIndicatorListDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneIndicatorListDTO.setZoneType(2);
+		String result = queryZoneIndicatorList(queryZoneIndicatorListDTO,user);
+		return result;
+	}
+	
+	/**
+	 * 查询DMA分区指标数据列表
+	 * @param queryZoneInfoDTO
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = "/queryDmaZoneIndicatorList.htm", method = RequestMethod.POST, produces = {
+			"application/json;charset=UTF-8" })
+	@ApiOperation(value = "查询DMA分区指标数据列表", notes = "查询DMA分区指标数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ResponseBody
+	@OperateAspect(operateModule = "dp1")
+	@OPSPIMethod("dp1"+Constant.QUERY)
+	public String queryDmaZoneIndicatorList(@RequestBody QueryZoneIndicatorListDTO queryZoneIndicatorListDTO,
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		queryZoneIndicatorListDTO.setZoneType(3);
+		String result = queryZoneIndicatorList(queryZoneIndicatorListDTO,user);
+		return result;
+	}
+	
 	@RequestMapping(value = "/queryZoneIndicatorList.htm", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询分区指标数据", notes = "查询分区指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+//	@OperateAspect(operateModule = "lsztt")
+//	@OPSPIMethod("lsztt"+Constant.QUERY)
 	public String queryZoneIndicatorList(@RequestBody QueryZoneIndicatorListDTO queryZoneIndicatorListDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		 @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkZoneIndicatorListParam(queryZoneIndicatorListDTO, msg);
 		if (msg.getCode() != 0)
@@ -1654,8 +2060,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "下载分区指标数据", notes = "下载分区指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "lsztt")
+	@OPSPIMethod("lsztt"+Constant.QUERY)
 	public HttpEntity<?> downloadZoneIndicatorList(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -1690,8 +2098,10 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询水平衡指标数据", notes = "查询水平衡指标数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
+	@OperateAspect(operateModule = "lsztt")
+	@OPSPIMethod("lsztt"+Constant.QUERY)
 	public String queryWBIndicatorData(@RequestBody IndicatorDTO indicatorDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		if (indicatorDTO.getTimeType() == null) {
 			// 参数不正确
@@ -1735,7 +2145,9 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryLeakageExponent.htm", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
-	public String queryLeakageExponent() {
+	@OperateAspect(operateModule = "tdps")
+	@OPSPIMethod("tdps"+Constant.QUERY)
+	public String queryLeakageExponent(@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				String.class);
 		try {
@@ -1752,7 +2164,9 @@ public class ZoneLossController {
 	@RequestMapping(value = "/updateLeakageExponent.htm", method = RequestMethod.GET, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
-	public String updateLeakageExponent(String value, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "tdps")
+	@OPSPIMethod("tdps"+Constant.QUERY)
+	public String updateLeakageExponent(String value, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				String.class);
 		if (StringUtil.isEmpty(value)) {
@@ -1780,8 +2194,10 @@ public class ZoneLossController {
 	@RequestMapping(value = "/queryLegitimateNightUseList.htm", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
+	@OperateAspect(operateModule = "tdps")
+	@OPSPIMethod("tdps"+Constant.QUERY)
 	public String queryLegitimateNightUseList(@RequestBody LegitimateNightUseDTO lnuDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkLegitimateNightUseListParam(lnuDTO, msg);
 		if (msg.getCode() != 0)
@@ -1824,8 +2240,10 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadLegitimateNightUseList.htm", method = RequestMethod.POST, produces = {
 			"text/html;charset=UTF-8" })
 	@ResponseBody
+	@OperateAspect(operateModule = "tdps")
+	@OPSPIMethod("tdps"+Constant.QUERY)
 	public HttpEntity<?> downloadLegitimateNightUseList(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -1867,8 +2285,10 @@ public class ZoneLossController {
 	@RequestMapping(value = "/updateLegitimateNightUse.htm", method = RequestMethod.POST, produces = {
 			"application/json;charset=UTF-8" })
 	@ResponseBody
+	@OperateAspect(operateModule = "tdps")
+	@OPSPIMethod("tdps"+Constant.UPDATE)
 	public String updateLegitimateNightUse(@RequestBody LegitimateNightUseEditDTO legitimateNightUseEditDTO,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean msg = MessageBean.create(0, Constant.MESSAGE_STRING_SUCCESS, Void.class);
 		if (legitimateNightUseEditDTO.getId() == null) {
 			// 参数不正确
@@ -1900,7 +2320,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "分区历史指标数据字典", notes = "分区历史指标数据字典", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryZoneHstIndicatorDic(Integer zoneType, @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "fqlsfx")
+	@OPSPIMethod("fqlsfx"+Constant.QUERY)
+	public String queryZoneHstIndicatorDic(Integer zoneType, @SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				List.class);
 		if (zoneType == null) {
@@ -1930,7 +2352,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询分区所有漏点信息", notes = "查询分区所有漏点信息", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryBurstLeakAnalysis(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "qwls1")
+	@OPSPIMethod("qwls1"+Constant.QUERY)
+	public String queryBurstLeakAnalysis(@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				List.class);
 		try {
@@ -1948,7 +2372,9 @@ public class ZoneLossController {
 			"application/json;charset=UTF-8" })
 	@ApiOperation(value = "根据id查询漏点详细信息", notes = "根据id查询漏点详细信息", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryBurstLeakById(String id,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "qwls1")
+	@OPSPIMethod("qwls1"+Constant.QUERY)
+	public String queryBurstLeakById(String id,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<LeakDetailsVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 				LeakDetailsVO.class);
 		if(StringUtil.isEmpty(id)) {
@@ -1971,7 +2397,9 @@ public class ZoneLossController {
 	"application/json;charset=UTF-8" })
 	@ApiOperation(value = "查询漏点信息列表", notes = "查询漏点信息列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String queryBurstLeakList(@RequestBody QueryLeakListDTO queryLeakListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+	@OperateAspect(operateModule = "qwls1")
+	@OPSPIMethod("qwls1"+Constant.QUERY)
+	public String queryBurstLeakList(@RequestBody QueryLeakListDTO queryLeakListDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 	MessageBean<PageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,
 			PageListVO.class);
 	try {
@@ -1986,7 +2414,7 @@ public class ZoneLossController {
 	}
 
 	/**
-	 * 导出合理夜晚使用量信息
+	 * 导出漏点信息列表
 	 *
 	 * @return
 	 */
@@ -1994,8 +2422,10 @@ public class ZoneLossController {
 	@RequestMapping(value = "/downloadBurstLeakList.htm", method = RequestMethod.POST, produces = {
 			"text/html;charset=UTF-8" })
 	@ResponseBody
+	@OperateAspect(operateModule = "qwls1")
+	@OPSPIMethod("qwls1"+Constant.QUERY)
 	public HttpEntity<?> downloadBurstLeakList(@RequestParam String objValue, @RequestParam String titleInfos,
-			@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+			@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果

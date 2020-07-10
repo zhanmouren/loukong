@@ -24,6 +24,8 @@ import com.github.pagehelper.util.StringUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.koron.common.StaffAttribute;
+import com.koron.common.permission.SPIAccountAnno;
+import com.koron.inwlms.aspect.OperateAspect;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.DTO.zoneLoss.QueryWNWBReportListDTO;
@@ -51,6 +53,7 @@ import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.util.ExportDataUtil;
+import com.koron.permission.authority.OPSPIMethod;
 import com.koron.util.Constant;
 
 import io.swagger.annotations.Api;
@@ -77,7 +80,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryALOverviewData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询表观漏损数据总览接口", notes = "查询表观漏损数据总览接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryALOverviewData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zbfx")
+	@OPSPIMethod("zbfx"+Constant.QUERY)
+	public String queryALOverviewData(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ALOverviewDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, ALOverviewDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -124,7 +129,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryALList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询表观漏损数据列表", notes = "查询表观漏损数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryALList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zbfx")
+	@OPSPIMethod("zbfx"+Constant.QUERY)
+	public String queryALList(@RequestBody QueryALListDTO queryALListDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		if(queryALListDTO.getTimeType() == null) {
 			//参数不正确
@@ -180,7 +187,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryALMapData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询表观漏损图表数据", notes = "查询表观漏损图表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryALMapData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zbfx")
+	@OPSPIMethod("zbfx"+Constant.QUERY)
+	public String queryALMapData(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<ALMapDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, ALMapDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -226,7 +235,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadALList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载表观漏损列表数据", notes = "下载表观漏损列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadALList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zbfx")
+	@OPSPIMethod("zbfx"+Constant.QUERY)
+	public HttpEntity<?> downloadALList(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -254,7 +265,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryMeterRunAnalysisTotalData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询水表运行分析总数据", notes = "查询水表运行分析总数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryMeterRunAnalysisTotalData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
+    @OperateAspect(operateModule = "sbyxfx")
+	@OPSPIMethod("sbyxfx"+Constant.QUERY)
+	public String queryMeterRunAnalysisTotalData(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
 		MessageBean<MeterRunAnalysisTotalDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, MeterRunAnalysisTotalDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -346,7 +359,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadMeterRunAnalysisList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载水表运行分析列表数据", notes = "下载水表运行分析列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public HttpEntity<?> downloadMeterRunAnalysisList(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "sbyxfx")
+	@OPSPIMethod("sbyxfx"+Constant.QUERY)
+    public HttpEntity<?> downloadMeterRunAnalysisList(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -373,7 +388,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrTotalData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告总数据", notes = "查询诊断报告总数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrTotalData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrTotalData(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
 		MessageBean<DrTotalVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrTotalVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -419,7 +436,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrTotalAnalysisData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告总体分析数据", notes = "查询诊断报告总体分析数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrTotalAnalysisData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrTotalAnalysisData(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrTotalAnalysisDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrTotalAnalysisDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -465,7 +484,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrCurrentMeterData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告现状水表数据", notes = "查询诊断报告现状水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrCurrentMeterData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrCurrentMeterData(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrCurrentMeterDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrCurrentMeterDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -511,7 +532,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrMeterManageData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告表计管理数据", notes = "查询诊断报告表计管理数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrMeterManageData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrMeterManageData(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrMeterManageVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrMeterManageVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -557,7 +580,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrMeterRunAnalysisData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告水表运行分析数据", notes = "查询诊断报告水表运行分析数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrMeterRunAnalysisData(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrMeterRunAnalysisData(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrMeterAnaDataVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrMeterAnaDataVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -603,7 +628,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrDealAdvise.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告处理建议数据", notes = "查询诊断报告处理建议数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrDealAdvise(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrDealAdvise(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrDealAdviseVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrDealAdviseVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -649,7 +676,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrQuestionList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询诊断报告问题清单数据", notes = "查询诊断报告问题清单数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrQuestionList(@RequestBody QueryALDTO queryALDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrQuestionList(@RequestBody QueryALDTO queryALDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<DrqlVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, DrqlVO.class);
 		if(queryALDTO.getTimeType() == null) {
 			//参数不正确
@@ -695,7 +724,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadDrQuestionList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载诊断报告问题清单列表", notes = "下载诊断报告问题清单列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDrQuestionList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public HttpEntity<?> downloadDrQuestionList(@RequestParam String objValue,@SPIAccountAnno @RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			if(StringUtil.isEmpty(labelId)) return null;
 			Gson jsonValue = new Gson();
@@ -734,7 +765,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrqlBDnZeroFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询大口径零流量水表数据", notes = "查询大口径零流量水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrqlBDnZeroFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrqlBDnZeroFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkDrQuestionListParam(queryALListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
@@ -751,7 +784,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadDrqlBDnZeroFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载大口径零流量水表数据列表", notes = "下载大口径零流量水表数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDrqlBDnZeroFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public HttpEntity<?> downloadDrqlBDnZeroFlowDataList(@RequestParam String objValue,@SPIAccountAnno @RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -780,7 +815,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrqlBDnLHFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询大口径低流量过载水表数据", notes = "查询大口径低流量过载水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrqlBDnLHFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrqlBDnLHFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkDrQuestionListParam(queryALListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
@@ -797,7 +834,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadDrqlBDnLHFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载大口径低流量过载水表数据列表", notes = "下载大口径低流量过载水表数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDrqlBDnLHFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public HttpEntity<?> downloadDrqlBDnLHFlowDataList(@RequestParam String objValue,@SPIAccountAnno @RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -826,7 +865,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrqlBDnErrFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询大口径用水异常数据", notes = "查询大口径用水异常数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrqlBDnErrFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrqlBDnErrFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkDrQuestionListParam(queryALListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
@@ -843,7 +884,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadDrqlBDnErrFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载大口径用水异常数据列表", notes = "下载大口径用水异常数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDrqlBDnErrFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public HttpEntity<?> downloadDrqlBDnErrFlowDataList(@RequestParam String objValue,@SPIAccountAnno @RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -872,7 +915,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrqlSusUseDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询用水性质可疑数据", notes = "查询用水性质可疑数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrqlSusUseDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrqlSusUseDataList(@RequestBody QueryALListDTO queryALListDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkDrQuestionListParam(queryALListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
@@ -889,7 +934,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadDrqlSusUseDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载用水性质可疑数据列表", notes = "下载用水性质可疑数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDrqlSusUseDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public HttpEntity<?> downloadDrqlSusUseDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -918,7 +965,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrqlSDnZeroFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询小口径零流量水表数据", notes = "查询小口径零流量水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrqlSDnZeroFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrqlSDnZeroFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkDrQuestionListParam(queryALListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
@@ -935,7 +984,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadDrqlSDnZeroFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载小口径零流量水表数据列表", notes = "下载小口径零流量水表数据列表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDrqlSDnZeroFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public HttpEntity<?> downloadDrqlSDnZeroFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
@@ -964,7 +1015,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/queryDrqlSDnLHFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询小口径低流量过载水表数据", notes = "查询小口径低流量过载水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public String queryDrqlSDnLHFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public String queryDrqlSDnLHFlowDataList(@RequestBody QueryALListDTO queryALListDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<PageListVO> msg = MessageBean.create(0,Constant.MESSAGE_STRING_SUCCESS, PageListVO.class);
 		msg = checkDrQuestionListParam(queryALListDTO,msg);
 		if(msg.getCode() != 0) return msg.toJson();
@@ -981,7 +1034,9 @@ public class ApparentLossController {
 	@RequestMapping(value = "/downloadDrqlSDnLHFlowDataList.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "下载小口径低流量过载水表数据", notes = "下载小口径低流量过载水表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-	public HttpEntity<?> downloadDrqlSDnLHFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    @OperateAspect(operateModule = "zdbg")
+	@OPSPIMethod("zdbg"+Constant.QUERY)
+	public HttpEntity<?> downloadDrqlSDnLHFlowDataList(@RequestParam String objValue,@RequestParam String titleInfos,@RequestParam String labelId,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
