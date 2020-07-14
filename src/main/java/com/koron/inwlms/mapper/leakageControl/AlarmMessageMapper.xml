@@ -54,7 +54,7 @@
   <trim prefix="where" prefixOverrides="and|or">
    <if test="objectType != null and objectType != '' ">and b."objectType" = #{objectType}</if> 
    <if test="objectCode != null and objectCode != '' ">and a.objectCode = #{objectCode}</if>
-   <if test="code != null and code != '' ">and code like '%'||#{code}||'%'</if>
+   <if test="code != null and code != '' ">and a.code like '%'||#{code}||'%'</if>
   </trim> 
   </select>
   
