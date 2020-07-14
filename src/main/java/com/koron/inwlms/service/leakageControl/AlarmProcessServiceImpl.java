@@ -29,6 +29,7 @@ import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.EnvelopeDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisZonePointVO;
 import com.koron.inwlms.bean.VO.leakageControl.PointHourData;
@@ -670,7 +671,6 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		String code = "";
 		for(int j = 0;j < 15;j++) { 
 			nowDate = TimeUtil.addMonth(nowDate, -j);
-			
 			Date endDate = TimeUtil.addMonth(nowDate, 1);
 			int nYear = TimeUtil.getYears(nowDate);
 			int nMonth = TimeUtil.getMonth(nowDate);
@@ -763,9 +763,12 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		return null;
 	}
 	
-	public String queryObjectName(SessionFactory factory,AlarmProcessVO alarmProcessVO) {
+	@TaskAnnotation("queryObjectName")
+	@Override
+	public List<GisExistZoneVO> queryObjectName(SessionFactory factory,AlarmProcessVO alarmProcessVO) {
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		ObjectData objectData = new ObjectData();
+		List<GisExistZoneVO> zoneList = new ArrayList<GisExistZoneVO>();
 		if(alarmProcessVO.getType() == 0) {
 			if(alarmProcessVO.getObjectType().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
 				objectData.setType(Constant.DMAZONELEVEL_ONE);
@@ -779,13 +782,19 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 				objectData.setObjectName(alarmProcessVO.getObjectName());
 			}
 			
-			List<GisExistZoneVO> zoneList = mapper.queryZoneData(objectData);
+			zoneList = mapper.queryZoneData(objectData);
 			
 		}else {
 			
 			
 			
 		}
+		
+		return zoneList;
+	}
+	
+	public String addEnvelopeData(EnvelopeDataVO envelopeDataVO) {
+		
 		
 		return null;
 	}

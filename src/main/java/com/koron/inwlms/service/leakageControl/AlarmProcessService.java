@@ -15,6 +15,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisDataParam;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
@@ -43,6 +44,8 @@ public interface AlarmProcessService {
 
 	List<WarningSchemeHisData> getEnvelopeData(SessionFactory factory,
 			WarningSchemeHisDataParam warningSchemeHisDataParam);
+
+	List<GisExistZoneVO> queryObjectName(SessionFactory factory, AlarmProcessVO alarmProcessVO);
 
 
 }

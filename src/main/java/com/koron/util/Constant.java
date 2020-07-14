@@ -507,15 +507,15 @@ public class Constant {
 	/**
 	 * DMA/PMA分区 数据字典编码
 	 */
-	public final static String DATADICTIONARY_DPZONE = "L101940003"; 
+	public final static String DATADICTIONARY_DPZONE = "L101940005"; 
 	/**
 	 * 一级分区 数据字典编码
 	 */
-	public final static String DATADICTIONARY_FIRSTZONE = "L101940004";
+	public final static String DATADICTIONARY_FIRSTZONE = "L101940003";
 	/**
 	 * 二级分区 数据字典编码
 	 */
-	public final static String DATADICTIONARY_SECZONE = "L101940005";
+	public final static String DATADICTIONARY_SECZONE = "L101940004";
 	/**
 	 * 正向瞬时流速-数据字典
 	 */

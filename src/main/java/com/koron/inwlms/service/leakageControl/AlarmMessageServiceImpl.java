@@ -72,11 +72,14 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 		
 		List<AlarmMessageVO> list = mapper.queryWarningCodeList(warningInfDTO);
 		if(list != null && list.size() != 0) {
-			for(AlarmMessageVO AlarmMessageVO :list) {
+			for(AlarmMessageVO alarmMessageVO :list) {
 				ObjectData objectData = new ObjectData();
-				objectData.setObjectCode(AlarmMessageVO.getObjectCode());
-				List<GisExistZoneVO> zoneList = apmapper.queryZoneData(objectData);
-				AlarmMessageVO.setObjectName(zoneList.get(0).getName());
+				objectData.setObjectCode(alarmMessageVO.getObjectCode());
+				if(alarmMessageVO.getObjectType().equals(Constant.DATADICTIONARY_DPZONE) || alarmMessageVO.getObjectType().equals(Constant.DATADICTIONARY_FIRSTZONE) || alarmMessageVO.getObjectType().equals(Constant.DATADICTIONARY_SECZONE)) {
+					List<GisExistZoneVO> zoneList = apmapper.queryZoneData(objectData);
+					alarmMessageVO.setObjectName(zoneList.get(0).getName());
+				}
+				
 			}
 		}
 		

@@ -78,6 +78,7 @@ import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventSubtypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventWarnRelation;
+import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
 import com.koron.inwlms.bean.VO.leakageControl.Policy;
 import com.koron.inwlms.bean.VO.leakageControl.PolicySchemeVO;
@@ -2320,6 +2321,24 @@ public class LeakageControlController {
 		
 		try {
 			List<WarningSchemeHisData> list = ADOConnection.runTask(user.getEnv(),aps, "getEnvelopeData", List.class, warningSchemeHisDataParam);
+			msg.setData(list);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/queryObjectName.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询历史数据", notes = "查询历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryObjectName(@RequestBody AlarmProcessVO alarmProcessVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		try {
+			List<GisExistZoneVO> list = ADOConnection.runTask(user.getEnv(),aps, "queryObjectName", List.class, alarmProcessVO);
 			msg.setData(list);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 		}catch(Exception e) {
