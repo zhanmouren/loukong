@@ -127,5 +127,11 @@
   </trim>
  </select>
  
+ <insert id="addEnvelopeData" parameterType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisData">
+ insert into app_warningschemecurve(max, min, "oldMax", "oldMin", time, type) values
+ <foreach collection="list" item="invest"  index="index" separator=",">
+			(#{invest.max}, #{invest.min}, #{invest.oldMax}, #{invest.oldMin}, #{invest.time}, #{invest.type})
+	</foreach>
+ </insert>
 
 </mapper>

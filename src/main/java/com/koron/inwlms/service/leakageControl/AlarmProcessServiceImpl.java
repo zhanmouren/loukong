@@ -793,10 +793,23 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		return zoneList;
 	}
 	
-	public String addEnvelopeData(EnvelopeDataVO envelopeDataVO) {
+	@TaskAnnotation("addEnvelopeData")
+	@Override
+	public Integer addEnvelopeData(SessionFactory factory,EnvelopeDataVO envelopeDataVO) {
+		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		List<WarningSchemeHisData> list = new ArrayList<WarningSchemeHisData>();
+		for(WarningSchemeHisData warningSchemeHisData :envelopeDataVO.getOldList()) {
+			warningSchemeHisData.setType(envelopeDataVO.getType());
+			list.add(warningSchemeHisData);
+		}
+		for(WarningSchemeHisData warningSchemeHisData :envelopeDataVO.getNowList()) {
+			warningSchemeHisData.setType(envelopeDataVO.getType());
+			list.add(warningSchemeHisData);
+		}
 		
+		Integer num = mapper.addEnvelopeData(list);
 		
-		return null;
+		return num;
 	}
 	
 }

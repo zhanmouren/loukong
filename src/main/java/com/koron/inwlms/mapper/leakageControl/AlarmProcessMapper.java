@@ -10,8 +10,10 @@ import org.springframework.stereotype.Repository;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ObjectData;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisData;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.EnvelopeDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 
 /**
@@ -54,5 +56,7 @@ public interface AlarmProcessMapper {
 	String queryUserNameByCode(@Param("code") String code);
 	
 	List<GisExistZoneVO> queryZoneData(ObjectData objectData);
+	
+	Integer addEnvelopeData(List<WarningSchemeHisData> list);
 
 }

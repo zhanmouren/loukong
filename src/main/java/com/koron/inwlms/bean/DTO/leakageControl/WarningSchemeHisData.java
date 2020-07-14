@@ -11,6 +11,17 @@ public class WarningSchemeHisData {
 	private Double min;
 	
 	private Integer time;
+	
+	private Integer type;
+	
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
 
 	public Double getOldMax() {
 		return oldMax;

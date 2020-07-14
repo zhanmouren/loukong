@@ -73,6 +73,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
+import com.koron.inwlms.bean.VO.leakageControl.EnvelopeDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventFileVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfoListReturnVO;
@@ -2332,7 +2333,7 @@ public class LeakageControlController {
 	}
 	
 	@RequestMapping(value = "/queryObjectName.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询历史数据", notes = "查询历史数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "查询对象名称", notes = "查询对象名称", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryObjectName(@RequestBody AlarmProcessVO alarmProcessVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
@@ -2341,6 +2342,29 @@ public class LeakageControlController {
 			List<GisExistZoneVO> list = ADOConnection.runTask(user.getEnv(),aps, "queryObjectName", List.class, alarmProcessVO);
 			msg.setData(list);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
+	}
+	
+	@RequestMapping(value = "/addEnvelopeData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询对象名称", notes = "查询对象名称", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String addEnvelopeData(@RequestBody EnvelopeDataVO envelopeDataVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
+		
+		try {
+			Integer num = ADOConnection.runTask(user.getEnv(),aps, "addEnvelopeData", Integer.class, envelopeDataVO);
+			if(num > 0) {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			}else {
+				msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				msg.setDescription("无数据添加");
+			}
+			 
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询失败！");
