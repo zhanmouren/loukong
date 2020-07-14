@@ -8,6 +8,7 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.inwlms.bean.DTO.leakageControl.ObjectData;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.sysManager.DataDicDTO;
@@ -16,10 +17,12 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageByTypeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmMessageVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
 import com.koron.inwlms.bean.VO.leakageControl.ZoneAndPoint;
 import com.koron.inwlms.bean.VO.sysManager.DataDicVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
+import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.BasicDataMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.util.Constant;
@@ -65,7 +68,18 @@ public class AlarmMessageServiceImpl implements AlarmMessageService {
 	@Override
 	public List<AlarmMessageVO> queryWarningCodeList(SessionFactory factory, WarningInfDTO warningInfDTO) {
 		AlarmMessageMapper mapper = factory.getMapper(AlarmMessageMapper.class);
+		AlarmProcessMapper apmapper = factory.getMapper(AlarmProcessMapper.class);
+		
 		List<AlarmMessageVO> list = mapper.queryWarningCodeList(warningInfDTO);
+		if(list != null && list.size() != 0) {
+			for(AlarmMessageVO AlarmMessageVO :list) {
+				ObjectData objectData = new ObjectData();
+				objectData.setObjectCode(AlarmMessageVO.getObjectCode());
+				List<GisExistZoneVO> zoneList = apmapper.queryZoneData(objectData);
+				AlarmMessageVO.setObjectName(zoneList.get(0).getName());
+			}
+		}
+		
 		return list;
 	}
 

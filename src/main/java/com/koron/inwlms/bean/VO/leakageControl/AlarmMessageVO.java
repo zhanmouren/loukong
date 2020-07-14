@@ -70,7 +70,17 @@ public class AlarmMessageVO {
 	
 	private String executorCode;
 	
+	private String objectName;
 	
+	
+
+	public String getObjectName() {
+		return objectName;
+	}
+
+	public void setObjectName(String objectName) {
+		this.objectName = objectName;
+	}
 
 	public String getExecutorCode() {
 		return executorCode;

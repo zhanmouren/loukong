@@ -16,6 +16,7 @@ import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.UploadFileDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmProcessDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.BasicDataParam;
+import com.koron.inwlms.bean.DTO.leakageControl.ObjectData;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.QueryTreeDTO;
@@ -658,16 +659,17 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	@Override
 	public List<WarningSchemeHisData> getEnvelopeData(SessionFactory factory,WarningSchemeHisDataParam warningSchemeHisDataParam) {
 		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
-		List<WarningSchemeHisData> dataList = new ArrayList<>();
+		List<WarningSchemeHisData> oldList = new ArrayList<>();
+		List<WarningSchemeHisData> nowList = new ArrayList<>();
 		List<String> zoneCodes = new ArrayList<>();
 		zoneCodes.add(warningSchemeHisDataParam.getZoneCode());
 		//获取去年同月时间
 		Date nowDate = new Date();
-		
+		nowDate = TimeUtil.addMonth(nowDate, 3);
 		//查询指标编码
 		String code = "";
-		for(int j = 0;j < 3;j++) { 
-			nowDate = TimeUtil.addMonth(nowDate, j);
+		for(int j = 0;j < 15;j++) { 
+			nowDate = TimeUtil.addMonth(nowDate, -j);
 			
 			Date endDate = TimeUtil.addMonth(nowDate, 1);
 			int nYear = TimeUtil.getYears(nowDate);
@@ -745,8 +747,11 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 				warningSchemeHisData.setMin(oldMin/warningSchemeHisDataParam.getMinIndex());
 			}
 			warningSchemeHisData.setTime((nYear*100+nMonth));
-			
-			dataList.add(warningSchemeHisData);
+			if(j >= 12) {
+				nowList.add(warningSchemeHisData);
+			}else {
+				oldList.add(warningSchemeHisData);
+			}
 		}
 		
 		
@@ -755,8 +760,34 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		//查询去年同月数据
 		
 		
-		return dataList;
+		return null;
 	}
 	
+	public String queryObjectName(SessionFactory factory,AlarmProcessVO alarmProcessVO) {
+		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
+		ObjectData objectData = new ObjectData();
+		if(alarmProcessVO.getType() == 0) {
+			if(alarmProcessVO.getObjectType().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+				objectData.setType(Constant.DMAZONELEVEL_ONE);
+			}else if(alarmProcessVO.getObjectType().equals(Constant.DATADICTIONARY_SECZONE)) {
+				objectData.setType(Constant.DMAZONELEVEL_TWO);
+			}else if(alarmProcessVO.getObjectType().equals(Constant.DATADICTIONARY_DPZONE)) {
+				objectData.setType(Constant.DMAZONELEVEL_THREE);
+			}
+			
+			if(alarmProcessVO.getObjectName() != null && !alarmProcessVO.getObjectName().equals("")) {
+				objectData.setObjectName(alarmProcessVO.getObjectName());
+			}
+			
+			List<GisExistZoneVO> zoneList = mapper.queryZoneData(objectData);
+			
+		}else {
+			
+			
+			
+		}
+		
+		return null;
+	}
 	
 }

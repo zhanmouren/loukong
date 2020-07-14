@@ -117,11 +117,21 @@ public class AlarmProcessVO {
 	 */
 	private String remarks;
 	
+	private String objectName;
 	
 	
 	
 	
 	
+	
+
+	public String getObjectName() {
+		return objectName;
+	}
+
+	public void setObjectName(String objectName) {
+		this.objectName = objectName;
+	}
 
 	public String getRemarks() {
 		return remarks;

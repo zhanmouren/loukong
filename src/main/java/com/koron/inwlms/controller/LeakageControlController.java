@@ -344,7 +344,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryAlarmProcessJC.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询预警信息处理任务接口", notes = "查询预警信息处理任务接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OPSPIMethod("jcyjcl"+Constant.QUERY)
+    @OPSPIMethod("jcbjcl"+Constant.QUERY)
     @OperateAspect(operateModule = "jcyjcl")
     public String queryAlarmProcessJC(@RequestBody AlarmProcessDTO alarmProcessDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<AlarmProcessReturnVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AlarmProcessReturnVO.class);
@@ -425,7 +425,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/downAlarmProcessJC.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     @ApiOperation(value = "下载监测预警信息处理任务列表数据", notes = "下载预警信息处理任务列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OPSPIMethod("jcyjcl"+Constant.QUERY)
+    @OPSPIMethod("jcbjcl"+Constant.QUERY)
     @OperateAspect(operateModule = "jcyjcl")
     public HttpEntity<?> downAlarmProcessJC(@RequestParam String objValue,@RequestParam String titleInfos,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
@@ -522,7 +522,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/updateAlarmProcessJC.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改预警信息处理任务接口", notes = "修改预警信息处理任务接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OPSPIMethod("jcyjcl"+Constant.UPDATE)
+    @OPSPIMethod("jcbjcl"+Constant.UPDATE)
     @OperateAspect(operateModule = "jcyjcl")
     public String updateAlarmProcessJC(@RequestBody AlarmProcessVO alarmProcessVO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
@@ -618,7 +618,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/addAlarmProcessJC.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加预警信息处理任务接口", notes = "添加预警信息处理任务接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OPSPIMethod("jcyjcl"+Constant.ADD)
+    @OPSPIMethod("jcbjcl"+Constant.ADD)
     @OperateAspect(operateModule = "jcyjcl")
     public String addAlarmProcessJC(@RequestBody AlarmProcessVO alarmProcessVO ,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
@@ -791,7 +791,7 @@ public class LeakageControlController {
 	@RequestMapping(value = "/deleteAlarmProcessJC.htm", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除预警信息处理任务接口", notes = "删除预警信息处理任务接口", httpMethod = "GET", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    @OPSPIMethod("jcyjcl"+Constant.DELETE)
+    @OPSPIMethod("jcbjcl"+Constant.DELETE)
     @OperateAspect(operateModule = "jcyjcl")
     public String deleteAlarmProcessJC(String taskCode,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
