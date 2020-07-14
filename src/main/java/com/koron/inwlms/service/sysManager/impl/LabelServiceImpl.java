@@ -142,14 +142,17 @@ public class LabelServiceImpl implements LabelService{
         MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);
         LabelMapper mapper = factory.getMapper(LabelMapper.class);
         boolean flag = true;
+        Gson jsonValue = new Gson();
+		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
         for (LabelExcelBean labelExcelBean : labelExcelBeanList) {
+//        	if(labelExcelBean.getCode() == null || labelExcelBean.getCode().equals("")) {
+//        		break;
+//        	}
             int i = mapper.countLabelByCode(labelExcelBean.getCode());
             if (i >= 1) {
                 flag = false;
                 break;
             }
-          Gson jsonValue = new Gson();
-		  UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
           labelExcelBean.setCreateBy(userListVO.getLoginName());
           labelExcelBean.setUpdateBy(userListVO.getLoginName());
         }

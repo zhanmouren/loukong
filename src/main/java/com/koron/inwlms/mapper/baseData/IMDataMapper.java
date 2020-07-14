@@ -54,6 +54,14 @@ public interface IMDataMapper {
      */
     List<MonitorDataVO> queryPressureFlowList(MonitorDataDTO monitorDataDTO);
 
+    
+    /**
+     * 查询监测压力/流量数据行数
+     * @param monitorDataDTO
+     * @return
+     */
+    int getPressureFlowListCount(MonitorDataDTO monitorDataDTO);
+    
     /**
      * 查询监测压力/流量数据详情数据
      * @param id

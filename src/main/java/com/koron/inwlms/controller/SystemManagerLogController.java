@@ -371,8 +371,8 @@ public class SystemManagerLogController {
 			if(queryOperateLogDTO.getOperateType()==null || StringUtils.isBlank(queryOperateLogDTO.getOperateType()) || queryOperateLogDTO.getOperateType().equals("L102100001")) {
 				queryOperateLogDTO.setOperateType(null);
 			}else if(!queryOperateLogDTO.getOperateType().equals("L102120002") && !queryOperateLogDTO.getOperateType().equals("L102120003") && 
-					!queryOperateLogDTO.getOperateType().equals("L102120004")) {
-				return new HttpEntity<String>("参数错误!操作类型必须是“全部、增加、删除或修改”");
+					!queryOperateLogDTO.getOperateType().equals("L102120004") && !queryOperateLogDTO.getOperateType().equals("L102120005")) {
+				return new HttpEntity<String>("参数错误!操作类型必须是“全部、增加、删除、修改或查询”");
 			} 
 			// 调用系统设置方法，获取导出数据条数上限，设置到分页参数中，//暂时默认
 			queryOperateLogDTO.setPage(1);

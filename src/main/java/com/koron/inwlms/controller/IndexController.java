@@ -229,22 +229,37 @@ public class IndexController {
     @OPSPIMethod("home"+Constant.QUERY)
 	@OperateAspect(operateModule = "home")
 	public String queryComYearInfo(@RequestBody IndicatorNewDTO indicatorDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
-		 if(indicatorDTO.getStartTime()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
-		 }
-		 if(indicatorDTO.getEndTime()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
-		 }
-		 if(indicatorDTO.getType()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
-		 }
-		 if(indicatorDTO.getAreaType() == null) {
+		if(indicatorDTO.getStartTime()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间为空", Integer.class).toJson();
+		}
+		if(indicatorDTO.getEndTime()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间为空", Integer.class).toJson();
+		}
+		if(indicatorDTO.getStartTime()!=null && indicatorDTO.getEndTime() != null) {
+			if(indicatorDTO.getStartTime().toString() ==  indicatorDTO.getEndTime().toString() || indicatorDTO.getStartTime().toString().equals(indicatorDTO.getEndTime().toString())) {
+				String time = indicatorDTO.getStartTime().toString();
+				if(time.length() != 6) {
+					return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "时间的格式长度不正确，应为6位的数值（202006）", Integer.class).toJson();
+				}else {
+					Integer month = Integer.valueOf(time.substring(4, 6));
+					if(month < 1 || month > 12) {
+						return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "时间的月份格式不正确", Integer.class).toJson();
+					}
+				}
+			}else {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间必须与结束时间一致", Integer.class).toJson();
+			}
+		}
+		if(indicatorDTO.getAreaType() == null) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
-		}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
+		}else if(!indicatorDTO.getAreaType().toString().equals("0") && !indicatorDTO.getAreaType().toString().equals("1") ) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型错误，只能为0或1", Integer.class).toJson(); 
+		}
+		if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
 		}
 		if(indicatorDTO.getAreaType() == 0){
-				indicatorDTO.setZoneCodes(null);
+			indicatorDTO.setZoneCodes(null);
 		}
 		 MessageBean<MultParamterIndicatorVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, MultParamterIndicatorVO.class);	       
 		  try{
@@ -539,22 +554,37 @@ public class IndexController {
     @OPSPIMethod("home"+Constant.QUERY)
 	@OperateAspect(operateModule = "home")
 	public String queryAreaRankInfo(@RequestBody IndicatorNewDTO indicatorDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
-		 if(indicatorDTO.getStartTime()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
-		 }
-		 if(indicatorDTO.getEndTime()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
-		 }
-		 if(indicatorDTO.getAreaType() == null) {
-				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
-			}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
-				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
+		if(indicatorDTO.getStartTime()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间为空", Integer.class).toJson();
+		}
+		if(indicatorDTO.getEndTime()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间为空", Integer.class).toJson();
+		}
+		if(indicatorDTO.getStartTime()!=null && indicatorDTO.getEndTime() != null) {
+			if(indicatorDTO.getStartTime().toString() ==  indicatorDTO.getEndTime().toString() || indicatorDTO.getStartTime().toString().equals(indicatorDTO.getEndTime().toString())) {
+				String time = indicatorDTO.getStartTime().toString();
+				if(time.length() != 6) {
+					return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "时间的格式长度不正确，应为6位的数值（202006）", Integer.class).toJson();
+				}else {
+					Integer month = Integer.valueOf(time.substring(4, 6));
+					if(month < 1 || month > 12) {
+						return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "时间的月份格式不正确", Integer.class).toJson();
+					}
+				}
+			}else {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间必须与结束时间一致", Integer.class).toJson();
 			}
-		 if(indicatorDTO.getType()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
-		 }
-		 if(indicatorDTO.getAreaType() == 0){
-				indicatorDTO.setZoneCodes(null);
+		}
+		if(indicatorDTO.getAreaType() == null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+		}else if(!indicatorDTO.getAreaType().toString().equals("0") && !indicatorDTO.getAreaType().toString().equals("1") ) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型错误，只能为0或1", Integer.class).toJson(); 
+		}
+		if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
+		}
+		if(indicatorDTO.getAreaType() == 0){
+			indicatorDTO.setZoneCodes(null);
 		}
 		 MessageBean<AreaInfoListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AreaInfoListVO.class);	       
 		  try{
@@ -589,22 +619,37 @@ public class IndexController {
     @OPSPIMethod("home"+Constant.QUERY)
 	@OperateAspect(operateModule = "home")
 	public String queryChildAreaRankInfo(@RequestBody IndicatorNewDTO indicatorDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
-		 if(indicatorDTO.getStartTime()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
-		 }
-		 if(indicatorDTO.getEndTime()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
-		 }
-		 if(indicatorDTO.getAreaType() == null) {
-				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
-			}else if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
-				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
+		if(indicatorDTO.getStartTime()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间为空", Integer.class).toJson();
+		}
+		if(indicatorDTO.getEndTime()==null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间为空", Integer.class).toJson();
+		}
+		if(indicatorDTO.getStartTime()!=null && indicatorDTO.getEndTime() != null) {
+			if(indicatorDTO.getStartTime().toString() ==  indicatorDTO.getEndTime().toString() || indicatorDTO.getStartTime().toString().equals(indicatorDTO.getEndTime().toString())) {
+				String time = indicatorDTO.getStartTime().toString();
+				if(time.length() != 6) {
+					return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "时间的格式长度不正确，应为6位的数值（202006）", Integer.class).toJson();
+				}else {
+					Integer month = Integer.valueOf(time.substring(4, 6));
+					if(month < 1 || month > 12) {
+						return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "时间的月份格式不正确", Integer.class).toJson();
+					}
+				}
+			}else {
+				return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间必须与结束时间一致", Integer.class).toJson();
 			}
-		 if(indicatorDTO.getType()==null) {
-			 return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "类型不能为空", Integer.class).toJson(); 
-		 }
-		 if(indicatorDTO.getAreaType() == 0){
-				indicatorDTO.setZoneCodes(null);
+		}
+		if(indicatorDTO.getAreaType() == null) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型为空", Integer.class).toJson();
+		}else if(!indicatorDTO.getAreaType().toString().equals("0") && !indicatorDTO.getAreaType().toString().equals("1") ) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区类型错误，只能为0或1", Integer.class).toJson(); 
+		}
+		if(indicatorDTO.getAreaType() != 0 && (indicatorDTO.getZoneCodes()==null || indicatorDTO.getZoneCodes().size()<1)) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson(); 
+		}
+		if(indicatorDTO.getAreaType() == 0){
+			indicatorDTO.setZoneCodes(null);
 		}
 		 MessageBean<AreaInfoListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, AreaInfoListVO.class);	       
 		  try{
