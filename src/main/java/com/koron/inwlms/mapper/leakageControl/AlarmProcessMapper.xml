@@ -119,7 +119,7 @@
  </insert>
  
  <select id="queryZoneData" parameterType="com.koron.inwlms.bean.DTO.leakageControl.ObjectData" resultType="com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO">
- select  * from gis_exist_zone
+ select  *  from gis_exist_zone
  <trim prefix="where" prefixOverrides="and|or">
    <if test="objectName != null and objectName != '' "> and name like '%'||#{objectName}||'%'</if>
    <if test="type != null and type != '' ">and rank = #{type}</if>
