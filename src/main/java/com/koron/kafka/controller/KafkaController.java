@@ -41,6 +41,6 @@ public class KafkaController {
 	 
 	 @RequestMapping("/readMsg")
 	 public void readMsg(@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		 kafkacus.consume(user);
+		 kafkacus.consume(user.getEnv());
 	  }
 }

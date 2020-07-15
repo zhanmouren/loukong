@@ -591,7 +591,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	 */
 	@TaskAnnotation("queryZoneTree")
 	@Override
-	public String queryZoneTree(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
+	public List<TreeVO> queryZoneTree(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
 		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
 		PointHistoryDataMapper phdMapper = factory.getMapper(PointHistoryDataMapper.class);
@@ -605,26 +605,35 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			List<TreeVO> zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
 			list.add(zoneList.get(0));
 			if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
-//				for(TreeVO treeZoneVO : zoneList) {
-//					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
-//						list.add(treeZoneVO);
-//					}
-//				}
+				for(TreeVO treeZoneVO : zoneList) {
+					if(treeZoneVO.getRank() != null) {
+						if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
+							list.add(treeZoneVO);
+						}
+					}
+					
+				}
 				
 			}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
 				for(TreeVO treeZoneVO : zoneList) {
 //					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
 //						list.add(treeZoneVO);
 //					}
-					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
-						list.add(treeZoneVO);
+					if(treeZoneVO.getRank() != null) {
+						if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
+							list.add(treeZoneVO);
+						}
 					}
+					
 				}
 			}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_DPZONE)) {
 				for(TreeVO treeZoneVO : zoneList) {
-					if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
-						list.add(treeZoneVO);
+					if(treeZoneVO.getRank() != null) {
+						if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_ONE) || treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
+							list.add(treeZoneVO);
+						}
 					}
+					
 				} 
 			}
 			//监测点
@@ -635,15 +644,18 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 				for(GisScadaStation gsPoint : pointList) {
 					List<TreeVO> newList = new ArrayList<>();
 					for(TreeVO treeVO : zoneList) {
-						if(treeVO.getCode().equals(gsPoint.getZoneNo())) {
-							newList.add(treeVO);
-							TreeVO treeVO1 = new TreeVO();
-							treeVO1.setCode(gsPoint.getPointNo());
-							treeVO1.setParentmask(treeVO.getParentmask() + 1);
-							newList.add(treeVO1);
-						}else {
-							newList.add(treeVO);
+						if(treeVO.getCode() != null) {
+							if(treeVO.getCode().equals(gsPoint.getZoneNo())) {
+								newList.add(treeVO);
+								TreeVO treeVO1 = new TreeVO();
+								treeVO1.setCode(gsPoint.getPointNo());
+								treeVO1.setParentmask(treeVO.getParentmask() + 1);
+								newList.add(treeVO1);
+							}else {
+								newList.add(treeVO);
+							}
 						}
+						
 					}
 					zoneList = newList;
 				}
@@ -653,114 +665,125 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		}
 		
 		
-		return null;
+		return list;
 	}
 	
 	@TaskAnnotation("getEnvelopeData")
 	@Override
-	public List<WarningSchemeHisData> getEnvelopeData(SessionFactory factory,WarningSchemeHisDataParam warningSchemeHisDataParam) {
+	public EnvelopeDataVO getEnvelopeData(SessionFactory factory,WarningSchemeHisDataParam warningSchemeHisDataParam) {
 		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
+		EnvelopeDataVO envelopeDataVO = new EnvelopeDataVO();
 		List<WarningSchemeHisData> oldList = new ArrayList<>();
 		List<WarningSchemeHisData> nowList = new ArrayList<>();
-		List<String> zoneCodes = new ArrayList<>();
-		zoneCodes.add(warningSchemeHisDataParam.getZoneCode());
+		List<String> objectCodes = new ArrayList<>();
+		
 		//获取去年同月时间
 		Date nowDate = new Date();
-		nowDate = TimeUtil.addMonth(nowDate, 3);
-		//查询指标编码
-		String code = "";
-		for(int j = 0;j < 15;j++) { 
-			nowDate = TimeUtil.addMonth(nowDate, -j);
-			Date endDate = TimeUtil.addMonth(nowDate, 1);
-			int nYear = TimeUtil.getYears(nowDate);
-			int nMonth = TimeUtil.getMonth(nowDate);
-			int endYear = TimeUtil.getYears(endDate);
-			int endMonth = TimeUtil.getMonth(endDate);
-			int old = (nYear - 1)*10000 + nMonth*100 + 1;
-			int end = (endYear - 1)*10000 + endMonth*100 + 1;
-			 
-			IndicatorDTO indicatorDTO = new IndicatorDTO();
-			indicatorDTO.setTimeType(2);
-			indicatorDTO.setStartTime(old);
-			indicatorDTO.setEndTime(end);
-			indicatorDTO.setZoneCodes(zoneCodes);
-			List<String> codes = new ArrayList<>();
-			List<IndicatorVO> indicatorVOList = new ArrayList<>();
-			if(warningSchemeHisDataParam.getIndexCode().equals(Constant.DATADICTIONARY_DAYFLOW)) {
-				//日流量
-				//判断分区分级
-				if(warningSchemeHisDataParam.getZoneGrade().equals("1")) {
-					code = "FLMFWSSITDF";
-				}else if(warningSchemeHisDataParam.getZoneGrade().equals("2")) {
-				}else {
-					code = "DMMFWSSITDF";
-				}
-				codes.add(code);
-				indicatorDTO.setCodes(codes);
-				indicatorVOList = indicMapper.queryWBBaseIndicData(indicatorDTO);
-			}else if(warningSchemeHisDataParam.getIndexCode().equals(Constant.DATADICTIONARY_MINNIGFLOW)) {
-				//最小夜间流量
-				if(warningSchemeHisDataParam.getZoneGrade().equals("1")) {
-					code = "FLMMNF";
-				}else if(warningSchemeHisDataParam.getZoneGrade().equals("2")) {
-					code = "SLMMNF";
-				}else {
-					code = "DMMMNF";
+		if(warningSchemeHisDataParam.getZoneCode() != null && !warningSchemeHisDataParam.getZoneCode().equals("")) {
+			objectCodes.add(warningSchemeHisDataParam.getZoneCode());
+			
+			nowDate = TimeUtil.addMonth(nowDate, 3);
+			//查询指标编码
+			String code = "";
+			for(int j = 0;j < 15;j++) { 
+				nowDate = TimeUtil.addMonth(nowDate, -j);
+				Date endDate = TimeUtil.addMonth(nowDate, 1);
+				int nYear = TimeUtil.getYears(nowDate);
+				int nMonth = TimeUtil.getMonth(nowDate);
+				int endYear = TimeUtil.getYears(endDate);
+				int endMonth = TimeUtil.getMonth(endDate);
+				int old = (nYear - 1)*10000 + nMonth*100 + 1;
+				int end = (endYear - 1)*10000 + endMonth*100 + 1;
+				 
+				IndicatorDTO indicatorDTO = new IndicatorDTO();
+				indicatorDTO.setTimeType(2);
+				indicatorDTO.setStartTime(old);
+				indicatorDTO.setEndTime(end);
+				indicatorDTO.setZoneCodes(objectCodes);
+				List<String> codes = new ArrayList<>();
+				List<IndicatorVO> indicatorVOList = new ArrayList<>();
+				if(warningSchemeHisDataParam.getIndexCode().equals(Constant.DATADICTIONARY_DAYFLOW)) {
+					//日流量
+					//判断分区分级
+					if(warningSchemeHisDataParam.getZoneGrade().equals("1")) {
+						code = "FLMFWSSITDF";
+					}else if(warningSchemeHisDataParam.getZoneGrade().equals("2")) {
+					}else {
+						code = "DMMFWSSITDF";
+					}
+					codes.add(code);
+					indicatorDTO.setCodes(codes);
+					indicatorVOList = indicMapper.queryWBBaseIndicData(indicatorDTO);
+				}else if(warningSchemeHisDataParam.getIndexCode().equals(Constant.DATADICTIONARY_MINNIGFLOW)) {
+					//最小夜间流量
+					if(warningSchemeHisDataParam.getZoneGrade().equals("1")) {
+						code = "FLMMNF";
+					}else if(warningSchemeHisDataParam.getZoneGrade().equals("2")) {
+						code = "SLMMNF";
+					}else {
+						code = "DMMMNF";
+					}
+					
+					codes.add(code);
+					indicatorDTO.setCodes(codes);
+					indicatorVOList = indicMapper.queryZoneLossIndicData(indicatorDTO);
 				}
 				
-				codes.add(code);
-				indicatorDTO.setCodes(codes);
-				indicatorVOList = indicMapper.queryZoneLossIndicData(indicatorDTO);
+				double sum = 0.0;
+				for(int i = 0;i < indicatorVOList.size();i++) {
+					sum +=  indicatorVOList.get(i).getValue();
+				}
+				double avg = sum/indicatorVOList.size();
+				
+				double total = 0;
+				for(int i = 0; i < indicatorVOList.size();i++) {
+					total += (indicatorVOList.get(i).getValue() - avg)*(indicatorVOList.get(i).getValue() - avg);
+				}
+				double standardDeviation = Math.sqrt(total/indicatorVOList.size());
+				double oldMax = avg + standardDeviation*3;
+				double oldMin = avg - standardDeviation*3;
+				WarningSchemeHisData warningSchemeHisData = new WarningSchemeHisData();
+				warningSchemeHisData.setOldMax(oldMax);
+				warningSchemeHisData.setOldMin(oldMin);
+				if(warningSchemeHisDataParam.getMaxFlag() == 0) {
+					warningSchemeHisData.setMax(oldMax + warningSchemeHisDataParam.getMaxIndex());
+				}else if(warningSchemeHisDataParam.getMaxFlag() == 1) {
+					warningSchemeHisData.setMax(oldMax - warningSchemeHisDataParam.getMaxIndex());
+				}else if(warningSchemeHisDataParam.getMaxFlag() == 2) {
+					warningSchemeHisData.setMax(oldMax*warningSchemeHisDataParam.getMaxIndex());
+				}else if(warningSchemeHisDataParam.getMaxFlag() == 3) {
+					warningSchemeHisData.setMax(oldMax/warningSchemeHisDataParam.getMaxIndex());
+				}else if(warningSchemeHisDataParam.getMinFlag() == 0) {
+					warningSchemeHisData.setMin(oldMin + warningSchemeHisDataParam.getMinIndex());
+				}else if(warningSchemeHisDataParam.getMinFlag() == 1) {
+					warningSchemeHisData.setMin(oldMin - warningSchemeHisDataParam.getMinIndex());
+				}else if(warningSchemeHisDataParam.getMinFlag() == 2) {
+					warningSchemeHisData.setMin(oldMin*warningSchemeHisDataParam.getMinIndex());
+				}else if(warningSchemeHisDataParam.getMinFlag() == 3) {
+					warningSchemeHisData.setMin(oldMin/warningSchemeHisDataParam.getMinIndex());
+				}
+				warningSchemeHisData.setTime((nYear*100+nMonth));
+				if(j >= 12) {
+					nowList.add(warningSchemeHisData);
+				}else {
+					oldList.add(warningSchemeHisData);
+				}
+			}
+		}else {
+			objectCodes.add(warningSchemeHisDataParam.getZoneCode());
+			if(warningSchemeHisDataParam.getIndexCode().equals(Constant.DATADICTIONARY_FORWARDSPEED)) {
+				
 			}
 			
-			double sum = 0.0;
-			for(int i = 0;i < indicatorVOList.size();i++) {
-				sum +=  indicatorVOList.get(i).getValue();
-			}
-			double avg = sum/indicatorVOList.size();
 			
-			double total = 0;
-			for(int i = 0; i < indicatorVOList.size();i++) {
-				total += (indicatorVOList.get(i).getValue() - avg)*(indicatorVOList.get(i).getValue() - avg);
-			}
-			double standardDeviation = Math.sqrt(total/indicatorVOList.size());
-			double oldMax = avg + standardDeviation*3;
-			double oldMin = avg - standardDeviation*3;
-			WarningSchemeHisData warningSchemeHisData = new WarningSchemeHisData();
-			warningSchemeHisData.setOldMax(oldMax);
-			warningSchemeHisData.setOldMin(oldMin);
-			if(warningSchemeHisDataParam.getMaxFlag() == 0) {
-				warningSchemeHisData.setMax(oldMax + warningSchemeHisDataParam.getMaxIndex());
-			}else if(warningSchemeHisDataParam.getMaxFlag() == 1) {
-				warningSchemeHisData.setMax(oldMax - warningSchemeHisDataParam.getMaxIndex());
-			}else if(warningSchemeHisDataParam.getMaxFlag() == 2) {
-				warningSchemeHisData.setMax(oldMax*warningSchemeHisDataParam.getMaxIndex());
-			}else if(warningSchemeHisDataParam.getMaxFlag() == 3) {
-				warningSchemeHisData.setMax(oldMax/warningSchemeHisDataParam.getMaxIndex());
-			}else if(warningSchemeHisDataParam.getMinFlag() == 0) {
-				warningSchemeHisData.setMin(oldMin + warningSchemeHisDataParam.getMinIndex());
-			}else if(warningSchemeHisDataParam.getMinFlag() == 1) {
-				warningSchemeHisData.setMin(oldMin - warningSchemeHisDataParam.getMinIndex());
-			}else if(warningSchemeHisDataParam.getMinFlag() == 2) {
-				warningSchemeHisData.setMin(oldMin*warningSchemeHisDataParam.getMinIndex());
-			}else if(warningSchemeHisDataParam.getMinFlag() == 3) {
-				warningSchemeHisData.setMin(oldMin/warningSchemeHisDataParam.getMinIndex());
-			}
-			warningSchemeHisData.setTime((nYear*100+nMonth));
-			if(j >= 12) {
-				nowList.add(warningSchemeHisData);
-			}else {
-				oldList.add(warningSchemeHisData);
-			}
 		}
 		
+
+		envelopeDataVO.setNowList(nowList);
+		envelopeDataVO.setOldList(oldList);
+		envelopeDataVO.setType(0);
 		
-		
-		
-		//查询去年同月数据
-		
-		
-		return null;
+		return envelopeDataVO;
 	}
 	
 	@TaskAnnotation("queryObjectName")

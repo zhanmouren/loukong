@@ -4,6 +4,8 @@ public class WarningSchemeHisDataParam {
 	
 	private String zoneCode;
 	
+	private String pointCode;
+	
 	private String indexCode;
 	
 	private String zoneGrade;
@@ -19,6 +21,15 @@ public class WarningSchemeHisDataParam {
 	 * 0(加法)，1(减法)，2(乘法)，3(除法)
 	 */
 	private Integer minFlag;
+	
+
+	public String getPointCode() {
+		return pointCode;
+	}
+
+	public void setPointCode(String pointCode) {
+		this.pointCode = pointCode;
+	}
 
 	public String getZoneCode() {
 		return zoneCode;

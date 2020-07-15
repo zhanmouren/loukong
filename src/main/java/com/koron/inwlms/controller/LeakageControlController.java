@@ -49,6 +49,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.PolicySchemeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PolicySettingDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.ProcessingStatisticsDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.QueryEventFileDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.QueryTreeDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.TreatmentEffectDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningInfDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
@@ -87,6 +88,7 @@ import com.koron.inwlms.bean.VO.leakageControl.PolicyTypeNum;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsAllDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.ProcessingStatisticsVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
+import com.koron.inwlms.bean.VO.leakageControl.TreeVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.ZoneAndPoint;
@@ -2180,9 +2182,19 @@ public class LeakageControlController {
 	@RequestMapping(value = "/queryZoneTree.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "获取预警方案分区树", notes = "获取预警方案分区树", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZoneTree() {
+    public String queryZoneTree(@RequestBody QueryTreeDTO queryTreeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
 		
-		return null;
+		try {
+			List<TreeVO> List = ADOConnection.runTask(user.getEnv(),aps, "queryZoneTree", List.class, queryTreeDTO);
+			msg.setData(List);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
 	}
 	
 	/**
@@ -2351,7 +2363,7 @@ public class LeakageControlController {
 	}
 	
 	@RequestMapping(value = "/addEnvelopeData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询对象名称", notes = "查询对象名称", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "保存动态阀值曲线", notes = "保存动态阀值曲线", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String addEnvelopeData(@RequestBody EnvelopeDataVO envelopeDataVO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, String.class);

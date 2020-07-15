@@ -18,6 +18,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
 import com.koron.inwlms.bean.VO.leakageControl.EnvelopeDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
+import com.koron.inwlms.bean.VO.leakageControl.TreeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 
 @Service
@@ -41,9 +42,9 @@ public interface AlarmProcessService {
 
 	List<AlarmProcessLog> queryAlarmProcessLog(SessionFactory factory, String taskCode);
 
-	String queryZoneTree(SessionFactory factory, QueryTreeDTO queryTreeDTO);
+	List<TreeVO> queryZoneTree(SessionFactory factory, QueryTreeDTO queryTreeDTO);
 
-	List<WarningSchemeHisData> getEnvelopeData(SessionFactory factory,
+	EnvelopeDataVO getEnvelopeData(SessionFactory factory,
 			WarningSchemeHisDataParam warningSchemeHisDataParam);
 
 	List<GisExistZoneVO> queryObjectName(SessionFactory factory, AlarmProcessVO alarmProcessVO);
