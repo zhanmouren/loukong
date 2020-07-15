@@ -971,7 +971,6 @@ public class BaseDataController {
         //TODO:校验参数
 
         //*****查询符合条件数据
-        //List<ZonePointVO> zps = ADOConnection.runTask(zcs, "queryZoneMeterList", List.class,zoneMeterDTO);
         PageListVO<List<ZoneMeterVO>> zps = ADOConnection.runTask(user.getEnv(),zcs, "queryZoneMeterList", PageListVO.class,zoneMeterDTO);
         msg.setCode(0);
         msg.setData(zps);
@@ -980,20 +979,20 @@ public class BaseDataController {
 
     @OPSPIMethod("fqyhb"+Constant.QUERY)
     @DataRangeMethod
-    @RequestMapping(value = "/queryZoneMeterDet/{refID}", method = RequestMethod.GET, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "查询分区与户表详情接口", notes = "查询分区与户表详情接口", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/queryZoneMeterDet.html", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询分区与户表详情接口", notes = "查询分区与户表详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryZoneMeterDet(@PathVariable("refID") Integer refID,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String queryZoneMeterDet(@RequestBody ZoneMeterDTO zoneMeterDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
-        //TODO:r_code校验
-        if(refID==null){
+        //入参校验
+        if(zoneMeterDTO.getVolumeNo()==null || zoneMeterDTO.getZoneNo()==null){
             msg.setCode(Constant.MESSAGE_INT_NULL);
             msg.setDescription(Constant.MESSAGE_STRING_NULL);
-            return msg.toString();
+            return msg.toJson();
         }
         //*****查询符合条件数据
-        ZoneMeterVO zp = ADOConnection.runTask(user.getEnv(),zcs, "queryZoneMeterDet", ZoneMeterVO.class,refID);
+        PageListVO<List<ZoneMeterVO>> zp = ADOConnection.runTask(user.getEnv(),zcs, "queryZoneMeterDet", PageListVO.class,zoneMeterDTO);
         //TODO:获取分区户表详情数据
         msg.setData(zp);
         return msg.toJson();
@@ -1007,13 +1006,6 @@ public class BaseDataController {
     public String updateZoneMeterDet(@RequestBody ZoneMeterDTO zoneMeterDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 
         MessageBean msg = new MessageBean();
-
-        //TODO:参数zoneMeterDTO校验
-        if(zoneMeterDTO.getRefID()==null ){
-            msg.setCode(Constant.BASE_PARAM_INT_NULL_ERROR);
-            msg.setDescription("关系编号不能为空");
-            return msg.toString();
-        }
 
         //TODO:获取分区监测点详情数据
         //*****查询符合条件数据
@@ -1056,13 +1048,38 @@ public class BaseDataController {
     @RequestMapping("/deleteZoneMeterRel/{refID}")
     @ApiOperation(value = "删除分区与户表数据", notes = "删除分区与户表数据", httpMethod = "GET", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String deleteZoneMeterRel(@PathVariable("refID") String refID,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+    public String deleteZoneMeterRel(@PathVariable("refID")Integer refID,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
         //TODO:校验是否有删除权限
 
 
         //TODO:返回数据
         Integer ret = ADOConnection.runTask(user.getEnv(),zcs, "deleteZoneMeterRel", Integer.class,refID);
+        if(ret>=0){
+            msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+            msg.setDescription("操作成功");
+        }else{
+            msg.setCode(Constant.MESSAGE_INT_ERROR);
+            msg.setDescription("操作失败");
+        }
+        return msg.toJson();
+    }
+
+    @OPSPIMethod("fqyhb"+Constant.DELETE)
+    @DataRangeMethod
+    @RequestMapping(value ="/deleteZoneMeters.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "删除分区某一册本号数据", notes = "删除分区某一册本号数据", httpMethod = "POST", response = MessageBean.class, consumes = "", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String deleteZoneMeters(@RequestBody ZoneMeterDTO zoneMeterDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+        MessageBean msg = new MessageBean();
+        if(zoneMeterDTO.getZoneNo() ==null || zoneMeterDTO.getVolumeNo()==null){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription(Constant.MESSAGE_STRING_NULL);
+            return msg.toJson();
+        }
+
+        //TODO:返回数据
+        Integer ret = ADOConnection.runTask(user.getEnv(),zcs, "deleteZoneMeters", Integer.class,zoneMeterDTO);
         if(ret>=0){
             msg.setCode(Constant.MESSAGE_INT_SUCCESS);
             msg.setDescription("操作成功");
@@ -1690,6 +1707,35 @@ public class BaseDataController {
         PageListVO<List<MonitorQuantityVO>> dis = ADOConnection.runTask(user.getEnv(),dqs, "queryMonitoringQuantity", PageListVO.class,dqd);
         msg.setCode(0);
         msg.setData(dis);
+        return msg.toJson();
+    }
+
+
+    @OPSPIMethod("jcsljd"+Constant.UPDATE)
+    @RequestMapping(value = "/updateMonitoringQuantity.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "修改监测水量校对数据", notes = "修改监测水量校对数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String updateMonitoringQuantity(@RequestBody DataQualityDTO dqd,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+
+        MessageBean msg = new MessageBean();
+        Gson gson = new Gson();
+        Map data = new HashMap();
+
+        //数据校验
+        if(dqd.getRefID() == null || dqd.getRefID().length <=0){
+            msg.setCode(Constant.MESSAGE_INT_NULL);
+            msg.setDescription("参数为空");
+            return msg.toJson();
+        }
+        dqd.setUpdateBy(user.getLoginName());
+        Integer ret = ADOConnection.runTask(user.getEnv(),dqs, "updateMonitoringQuantity", Integer.class,dqd);
+        if(ret>0){
+            msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+            msg.setDescription("操作成功");
+        }else{
+            msg.setCode(Constant.MESSAGE_INT_ERROR);
+            msg.setDescription("操作失败");
+        }
         return msg.toJson();
     }
 

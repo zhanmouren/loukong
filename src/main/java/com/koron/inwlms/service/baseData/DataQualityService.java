@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface DataQualityService {
 
+    public Integer updateMonitoringQuantity(SessionFactory factory, DataQualityDTO dqd);
+
     public PageListVO<List<MonRepVO>> queryMonRep(SessionFactory factory, DataQualityDTO dqd);
 
     public List<DataImpactVO> queryDataImpact(SessionFactory factory);

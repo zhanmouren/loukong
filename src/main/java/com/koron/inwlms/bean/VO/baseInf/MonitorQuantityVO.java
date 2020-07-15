@@ -19,6 +19,11 @@ public class MonitorQuantityVO {
     private Integer id;
 
     /**
+     * 测站名称
+     */
+    private String name;
+
+    /**
      * 测站编号
      */
     private String moniCode;
@@ -51,12 +56,17 @@ public class MonitorQuantityVO {
     /**
      * 前三月平均水量
      */
-    private Integer preAvg;
+    private Integer last3avg;
 
     /**
      * 本月调整后行码
      */
-    private Integer adjustValue;
+    private Integer verifyValue;
+
+    /**
+     * 本月调整后水量
+     */
+    private Integer verifyFlow;
 
     /**
      * 状态
@@ -67,6 +77,22 @@ public class MonitorQuantityVO {
      * 校对时间
      */
     private String verifyTime;
+
+    public Integer getVerifyFlow() {
+        return verifyFlow;
+    }
+
+    public void setVerifyFlow(Integer verifyFlow) {
+        this.verifyFlow = verifyFlow;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Integer getRows() {
         return rows;
@@ -132,20 +158,20 @@ public class MonitorQuantityVO {
         this.curValue = curValue;
     }
 
-    public Integer getPreAvg() {
-        return preAvg;
+    public Integer getLast3avg() {
+        return last3avg;
     }
 
-    public void setPreAvg(Integer preAvg) {
-        this.preAvg = preAvg;
+    public void setLast3avg(Integer last3avg) {
+        this.last3avg = last3avg;
     }
 
-    public Integer getAdjustValue() {
-        return adjustValue;
+    public Integer getVerifyValue() {
+        return verifyValue;
     }
 
-    public void setAdjustValue(Integer adjustValue) {
-        this.adjustValue = adjustValue;
+    public void setVerifyValue(Integer verifyValue) {
+        this.verifyValue = verifyValue;
     }
 
     public Integer getStatus() {

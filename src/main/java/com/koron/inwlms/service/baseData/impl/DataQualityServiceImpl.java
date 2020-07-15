@@ -24,6 +24,23 @@ import java.util.List;
 @Service
 public class DataQualityServiceImpl implements DataQualityService {
 
+
+    /**
+     *
+     */
+    @TaskAnnotation("updateMonitoringQuantity")
+    public Integer updateMonitoringQuantity(SessionFactory factory, DataQualityDTO dqd){
+        DataQualityMapper mapper = factory.getMapper(DataQualityMapper.class);
+        Integer ret = mapper.updateMonitoringQuantity(dqd);
+        return ret;
+    }
+
+    /**
+     * 数据月报查询
+     * @param factory
+     * @param dqd
+     * @return
+     */
     @TaskAnnotation("queryMonRep")
     public PageListVO<List<MonRepVO>> queryMonRep(SessionFactory factory, DataQualityDTO dqd){
         DataQualityMapper mapper = factory.getMapper(DataQualityMapper.class);
@@ -38,7 +55,6 @@ public class DataQualityServiceImpl implements DataQualityService {
         plv.setRowNumber(pageVO.getRowNumber());
         plv.setPageCount(pageVO.getPageCount());
         plv.setPage(pageVO.getPage());
-
 
         return plv;
     }

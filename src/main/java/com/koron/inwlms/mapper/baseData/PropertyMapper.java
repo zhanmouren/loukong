@@ -154,10 +154,10 @@ public interface PropertyMapper {
 
     /**
      * 查询分区与户表详情数据
-     * @param refID
+     * @param zoneMeterDTO
      * @return
      */
-    ZoneMeterVO queryZoneMeterDet(@Param("refID") Integer refID);
+    List<ZoneMeterVO> queryZoneMeterDet(ZoneMeterDTO zoneMeterDTO);
 
     /**
      * 更新分区与户表详情数据
@@ -178,7 +178,14 @@ public interface PropertyMapper {
      * @param refID
      * @return
      */
-    Integer deleteZoneMeterRel(@Param("refID") Integer refID);
+    Integer deleteZoneMeterRel(@Param("refID")Integer refID);
+
+    /**
+     * 删除分区某册本号数据
+     * @param zoneMeterDTO
+     * @return
+     */
+    Integer deleteZoneMeters(ZoneMeterDTO zoneMeterDTO);
 
     /**
      * 删除某一批次分区与户表数据

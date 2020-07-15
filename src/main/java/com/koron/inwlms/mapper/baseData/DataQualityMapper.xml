@@ -10,24 +10,53 @@
     <select id="queryMonitoringQuantity" parameterType="com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MonitorQuantityVO">
 
          select * from(
-            select 0 as rows,ana_monitorpoint_month.id,ana_monitorpoint_month."moniCode",code,lc_app_dim_month."yearMonth",value, t."lastValue",t."last3avg"
+            select 0 as rows,gis_scada_station.name,ana_monitorpoint_month.id,ana_monitorpoint_month."moniCode",code,lc_app_dim_month."yearMonth",value, t."lastValue",(value-t."lastValue") as "curValue",t."last3avg",ana_monitorpoint_month."verifyValue",(ana_monitorpoint_month."verifyValue"-t."lastValue") as "verifyFlow",ana_monitorpoint_month.status
             from ana_monitorpoint_month
             join lc_app_dim_month on ana_monitorpoint_month."yearMonth" = lc_app_dim_month.id
             left join LATERAL(select * from "queryLastMonthMoni"(ana_monitorpoint_month."moniCode",ana_monitorpoint_month."yearMonth",lc_app_dim_month."yearMonth"))t on ana_monitorpoint_month."yearMonth" = t."yearMonth" and ana_monitorpoint_month."moniCode"=t."moniCode"
-            where code ='MOMR' order by lc_app_dim_month."yearMonth" desc
+            left join gis_scada_station on ana_monitorpoint_month."moniCode" = gis_scada_station.p_code
+            where code ='MOMR'
+            <if test="status != null ">
+                and ana_monitorpoint_month.status = #{status}
+            </if>
+            <if test="pointName != null and pointName!=''">
+                and gis_scada_station.name like '%'||#{pointName}||'%'
+            </if>
+            <if test="mon != null and mon != ''">
+                and lc_app_dim_month."yearMonth"=cast(#{mon} as integer)
+            </if>
+            <if test="flag != null and flag=='on'">
+                and (value-t."lastValue") &lt; 0
+            </if>
+            order by lc_app_dim_month."yearMonth" desc
             <if test="pageCount != null and pageCount != null">
                 limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
             </if>
          )m
          union all
-        select count(*) as rows,0,'','',0,0, 0,0
+        select count(*) as rows,'',0,'','',0,0, 0,0,0,0,0,0
         from ana_monitorpoint_month
+        join lc_app_dim_month on ana_monitorpoint_month."yearMonth" = lc_app_dim_month.id
+        left join LATERAL(select * from "queryLastMonthMoni"(ana_monitorpoint_month."moniCode",ana_monitorpoint_month."yearMonth",lc_app_dim_month."yearMonth"))t on ana_monitorpoint_month."yearMonth" = t."yearMonth" and ana_monitorpoint_month."moniCode"=t."moniCode"
+        left join gis_scada_station on ana_monitorpoint_month."moniCode" = gis_scada_station.p_code
         where code ='MOMR'
+        <if test="status != null ">
+            and ana_monitorpoint_month.status = #{status}
+        </if>
+        <if test="pointName != null and pointName!=''">
+            and gis_scada_station.name like '%'||#{pointName}||'%'
+        </if>
+        <if test="mon != null and mon != ''">
+            and lc_app_dim_month."yearMonth"=cast(#{mon} as integer)
+        </if>
+        <if test="flag != null and flag=='on'">
+            and (value-t."lastValue") &lt; 0
+        </if>
     </select>
 
     <select id="queryMonRep" parameterType="com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MonRepVO">
         select * from(
-        select 0 as rows,reportdate,reporttime,type,row,integrity,accuracy,available,timely,consistence,rating from
+        select 0 as rows,id,reportdate,reporttime,type,row,integrity,accuracy,available,timely,consistence,rating from
         app_mon_report
         where 1=1
         <if test="mon != null and mon != ''">
@@ -38,7 +67,7 @@
         </if>
         )t
         union all
-         select count(*) as rows,'' ,'','',0,0,0,0,0,0,0 from app_mon_report
+         select count(*) as rows,0,'' ,'','',0,0,0,0,0,0,0 from app_mon_report
         where 1=1
         <if test="mon != null and mon != ''">
             and reportdate=#{mon}
@@ -63,5 +92,19 @@
             left join gis_zone_meter on  gis_exist_zone."p_code" = gis_zone_meter."zoneNo"
         )t
     </select>
+
+    <update id="updateMonitoringQuantity" parameterType="com.koron.inwlms.bean.DTO.baseInf.DataQualityDTO">
+            update ana_monitorpoint_month
+            <set>
+                <if test="verifyValue != null "> "verifyValue" = #{verifyValue}, </if>
+                <if test="status != null "> "status" = #{status},"updateBy"=#{updateBy},"updateTime"=now(), </if>
+            </set>
+            where 1=1 and  id in
+            <if test="refID != null and refID.length > 0">
+            <foreach item="item" collection="refID" separator="," open="(" close=")" index="">
+                     #{item}
+            </foreach>
+            </if>
+    </update>
 
 </mapper>

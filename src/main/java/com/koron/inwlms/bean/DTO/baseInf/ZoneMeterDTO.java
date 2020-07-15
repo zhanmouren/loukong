@@ -30,6 +30,16 @@ public class ZoneMeterDTO  extends BaseDTO {
     private String meterNo;
 
     /**
+     * 原册本号
+     */
+    private String originVolumnNo;
+
+    /**
+     * 册本号
+     */
+    private String volumeNo;
+
+    /**
      * 关系类型
      */
     private String type;
@@ -51,6 +61,22 @@ public class ZoneMeterDTO  extends BaseDTO {
      * @return
      */
     private String updateBy;
+
+    public String getOriginVolumnNo() {
+        return originVolumnNo;
+    }
+
+    public void setOriginVolumnNo(String originVolumnNo) {
+        this.originVolumnNo = originVolumnNo;
+    }
+
+    public String getVolumeNo() {
+        return volumeNo;
+    }
+
+    public void setVolumeNo(String volumeNo) {
+        this.volumeNo = volumeNo;
+    }
 
     public String getBatchNo() {
         return batchNo;

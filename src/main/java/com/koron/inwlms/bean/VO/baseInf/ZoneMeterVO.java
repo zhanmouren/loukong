@@ -28,6 +28,11 @@ public class ZoneMeterVO {
     private String zoneName;
 
     /**
+     * 册本号
+     */
+    private String volumeNo;
+
+    /**
      * 水表编号
      */
     private String meterNo;
@@ -46,6 +51,14 @@ public class ZoneMeterVO {
      * 批次
      */
     private String BatchNo;
+
+    public String getVolumeNo() {
+        return volumeNo;
+    }
+
+    public void setVolumeNo(String volumeNo) {
+        this.volumeNo = volumeNo;
+    }
 
     public Integer getRows() {
         return rows;

@@ -128,10 +128,10 @@ public interface ZoneConfigService {
     /**
      * 查询分区与户表详情数据
      * @param factory
-     * @param refID
+     * @param zoneMeterDTO
      * @return
      */
-    public ZoneMeterVO queryZoneMeterDet(SessionFactory factory, Integer refID);
+    public PageListVO<List<ZoneMeterVO>> queryZoneMeterDet(SessionFactory factory, ZoneMeterDTO zoneMeterDTO);
 
     /**
      * 更新分区户表数据
@@ -156,6 +156,14 @@ public interface ZoneConfigService {
      * @return
      */
     public Integer deleteZoneMeterRel(SessionFactory factory, Integer refID);
+
+    /**
+     * 删除分区某一册本号户表数据
+     * @param factory
+     * @param zoneMeterDTO
+     * @return
+     */
+    public Integer deleteZoneMeters(SessionFactory factory, ZoneMeterDTO zoneMeterDTO);
 
     /**
      * 删除某一批次分区户表数据

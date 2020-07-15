@@ -13,6 +13,11 @@ public class MonRepVO {
     private Integer rows;
 
     /**
+     * id
+     */
+    private Integer id;
+
+    /**
      * 月份
      */
    private String reportdate;
@@ -61,6 +66,14 @@ public class MonRepVO {
      * 总体评价
      */
     private Double rating;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getRows() {
         return rows;

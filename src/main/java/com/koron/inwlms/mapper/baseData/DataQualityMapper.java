@@ -11,6 +11,11 @@ import java.util.List;
 public interface DataQualityMapper {
 
     /**
+     * 更新监测水量数据
+     */
+    Integer updateMonitoringQuantity(DataQualityDTO dqd);
+
+    /**
      * 数据月报
      * @param dqd
      * @return

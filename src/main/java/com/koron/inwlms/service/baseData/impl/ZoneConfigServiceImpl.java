@@ -347,15 +347,24 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
      * 分区与户表详情数据
      *
      * @param factory
-     * @param refID
+     * @param zoneMeterDTO
      * @return
      */
     @TaskAnnotation("queryZoneMeterDet")
     @Override
-    public ZoneMeterVO queryZoneMeterDet(SessionFactory factory, Integer refID) {
+    public PageListVO<List<ZoneMeterVO>> queryZoneMeterDet(SessionFactory factory, ZoneMeterDTO zoneMeterDTO) {
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
-        ZoneMeterVO result = mapper.queryZoneMeterDet(refID);
-        return result;
+        List<ZoneMeterVO> result = mapper.queryZoneMeterDet(zoneMeterDTO);
+        PageListVO<List<ZoneMeterVO>> plv = new PageListVO<>();
+        ZoneMeterVO r = result.get(result.size()-1);
+        result.remove(result.size()-1);
+        plv.setDataList(result);
+        PageVO pageVO = PageUtil.getPageBean(zoneMeterDTO.getPage(), zoneMeterDTO.getPageCount(), r.getRows());
+        plv.setTotalPage(pageVO.getTotalPage());
+        plv.setRowNumber(pageVO.getRowNumber());
+        plv.setPageCount(pageVO.getPageCount());
+        plv.setPage(pageVO.getPage());
+        return plv;
     }
 
     /**
@@ -400,6 +409,20 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
     public Integer deleteZoneMeterRel(SessionFactory factory, Integer refID) {
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
         Integer result = mapper.deleteZoneMeterRel(refID);
+        return result;
+    }
+
+    /**
+     * 删除分区某一册本号户表数据
+     * @param factory
+     * @param zoneMeterDTO
+     * @return
+     */
+    @TaskAnnotation("deleteZoneMeters")
+    @Override
+    public Integer deleteZoneMeters(SessionFactory factory, ZoneMeterDTO zoneMeterDTO){
+        PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
+        Integer result = mapper.deleteZoneMeters(zoneMeterDTO);
         return result;
     }
 
