@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.DTO.intellectPartition.KafkaReturnData;
 import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.SchemeDetListVO;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDetReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeData;
@@ -22,7 +23,7 @@ public interface PartitionSchemeDetService {
 
 	Integer deleteSchemeDet(SessionFactory factory, List<String> codes);
 
-	List<SchemeDet> querySchemeDet(SessionFactory factory, TotalSchemeDetDTO totalSchemeDetDTO);
+	SchemeDetListVO querySchemeDet(SessionFactory factory, TotalSchemeDetDTO totalSchemeDetDTO);
 
 	Integer deleteTotalSchemeDet(SessionFactory factory, List<String> codes);
 

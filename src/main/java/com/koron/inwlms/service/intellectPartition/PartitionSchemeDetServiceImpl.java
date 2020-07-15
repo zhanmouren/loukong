@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.intellectPartition.*;
+import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.intellectPartition.*;
 import com.koron.inwlms.bean.VO.leakageControl.PartitionInvestVO;
@@ -54,10 +55,18 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	 */
 	@TaskAnnotation("querySchemeDet")
 	@Override
-	public List<SchemeDet> querySchemeDet(SessionFactory factory,TotalSchemeDetDTO totalSchemeDetDTO) {
+	public SchemeDetListVO querySchemeDet(SessionFactory factory,TotalSchemeDetDTO totalSchemeDetDTO) {
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
+		SchemeDetListVO schemeDetListVO = new SchemeDetListVO();
+		PageInfo query = new PageInfo();
+		query.setPage(totalSchemeDetDTO.getPage());
+		query.setSize(totalSchemeDetDTO.getPageCount());
+		Integer num = mapper.querySchemeDetNum(totalSchemeDetDTO);
+		query.setTotalNumber(num);
+		schemeDetListVO.setQuery(query);
 		List<SchemeDet> list = mapper.querySchemeDet(totalSchemeDetDTO);
-		return list;
+		schemeDetListVO.setSchemeList(list);
+		return schemeDetListVO;
 	}
 
 	/**
@@ -110,6 +119,12 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		String endTime = format.format(end);
 		totalSchemeDetDTO.setEndTime(endTime);
 		List<TotalSchemeDet> list = mapper.queryTotalSchemeDet(totalSchemeDetDTO);
+		Integer num = mapper.queryTotalSchemeDetNum(totalSchemeDetDTO);
+		PageInfo query = new PageInfo();
+		query.setPage(totalSchemeDetDTO.getPage());
+		query.setSize(totalSchemeDetDTO.getPageCount());
+		query.setTotalNumber(num);
+		totalSchemeDetReturn.setQuery(query);
 		if(list != null && list.size() != 0) {
 			for(TotalSchemeDet totalSchemeDet : list) {
 				TotalSchemeDetVO totalSchemeDetVO = new TotalSchemeDetVO();

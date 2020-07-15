@@ -9,6 +9,15 @@
  <if test="code != null and code != '' "> and code like '%'||#{code}||'%'</if>
  <if test="zoneCode != null and zoneCode != '' "> and "zoneCode" = #{zoneCode}</if>
  <if test="createBy != null and createBy != '' "> and "createBy" = #{createBy}</if>
+ limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+ </select>
+ 
+ <select id="queryTotalSchemeDetNum" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO" resultType="java.lang.Integer">
+ select count(*) from app_totalschemedet where "createTime" between '${startTime}' and '${endTime}'
+ <if test="code != null and code != '' "> and code like '%'||#{code}||'%'</if>
+ <if test="zoneCode != null and zoneCode != '' "> and "zoneCode" = #{zoneCode}</if>
+ <if test="createBy != null and createBy != '' "> and "createBy" = #{createBy}</if>
+ limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
  <select id="addTotalSchemeDet" parameterType="com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet" resultType="java.lang.String">
@@ -26,6 +35,13 @@
  <select id="querySchemeDet" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO" resultType="com.koron.inwlms.bean.VO.intellectPartition.SchemeDet">
  select * from app_schemedet where "totalSchemeCode" = #{code}
  <if test="subId != null"> and cast(id as varchar(10)) like '%'||#{subId}||'%'</if>
+ limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+ </select>
+ 
+ <select id="querySchemeDetNum" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO" resultType="java.lang.Integer">
+ select count(*) from app_schemedet where "totalSchemeCode" = #{code}
+ <if test="subId != null"> and cast(id as varchar(10)) like '%'||#{subId}||'%'</if>
+ limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
  <delete id="deleteSchemeDet" parameterType="java.lang.String">

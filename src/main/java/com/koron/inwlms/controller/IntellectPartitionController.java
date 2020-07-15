@@ -27,6 +27,7 @@ import com.koron.inwlms.bean.DTO.intellectPartition.TotalSchemeDetDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
 import com.koron.inwlms.bean.VO.intellectPartition.ModelReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.SchemeDet;
+import com.koron.inwlms.bean.VO.intellectPartition.SchemeDetListVO;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet;
 import com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDetReturn;
 import com.koron.inwlms.bean.VO.intellectPartition.ZonePipeDataReturn;
@@ -182,12 +183,12 @@ public class IntellectPartitionController {
 			totalSchemeDetDTO.setPage(1);
 			totalSchemeDetDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
 			// 查询到导出数据结果
-			List<TotalSchemeDet> list = ADOConnection.runTask(user.getEnv(),psds, "queryTotalSchemeDet", List.class,totalSchemeDetDTO);
+			TotalSchemeDetReturn list = ADOConnection.runTask(user.getEnv(),psds, "queryTotalSchemeDet", TotalSchemeDetReturn.class,totalSchemeDetDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
 			//导出list
-			return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+			return ExportDataUtil.getExcelDataFileInfoByList(list.getTotalSchemeDetList(), jsonArray);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -251,7 +252,7 @@ public class IntellectPartitionController {
     @ApiOperation(value = "查询分区方案数据", notes = "查询分区方案数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String querySchemeDet(@RequestBody TotalSchemeDetDTO totalSchemeDetDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<SchemeDetListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, SchemeDetListVO.class);
 		
 		if(totalSchemeDetDTO.getCode() == null || totalSchemeDetDTO.getCode().equals("")) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
@@ -260,7 +261,7 @@ public class IntellectPartitionController {
 		}
 		
 		try {
-			List<SchemeDet> list = ADOConnection.runTask(user.getEnv(),psds, "querySchemeDet", List.class,totalSchemeDetDTO);
+			SchemeDetListVO list = ADOConnection.runTask(user.getEnv(),psds, "querySchemeDet", SchemeDetListVO.class,totalSchemeDetDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			msg.setData(list);
 			
@@ -273,7 +274,7 @@ public class IntellectPartitionController {
 	}
 	
 	@RequestMapping(value = "/downSchemeDet.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-    @ApiOperation(value = "下载分区总方案列表数据", notes = "下载分区总方案列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ApiOperation(value = "下载分区子方案列表数据", notes = "下载分区子方案列表数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public HttpEntity<?> downSchemeDet(@RequestParam String objValue,@RequestParam String titleInfos,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		try{
@@ -287,12 +288,12 @@ public class IntellectPartitionController {
 			totalSchemeDetDTO.setPage(1);
 			totalSchemeDetDTO.setPageCount(Constant.DOWN_MAX_LIMIT); 
 			// 查询到导出数据结果
-			List<SchemeDet> list = ADOConnection.runTask(user.getEnv(),psds, "querySchemeDet", List.class,totalSchemeDetDTO.getCode());
+			SchemeDetListVO list = ADOConnection.runTask(user.getEnv(),psds, "querySchemeDet", SchemeDetListVO.class,totalSchemeDetDTO);
 			List<Map<String, String>> jsonArray = jsonValue.fromJson(titleInfos,new TypeToken<List<Map<String, String>>>() {
 					}.getType());
 			// 导出excel文件
 			//导出list
-			return ExportDataUtil.getExcelDataFileInfoByList(list, jsonArray);
+			return ExportDataUtil.getExcelDataFileInfoByList(list.getSchemeList(), jsonArray);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
