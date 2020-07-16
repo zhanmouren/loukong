@@ -9,7 +9,19 @@ public class ModelReturn {
 	private String msg;
 	
 	private String time;
+	/**
+	 * 子图数量
+	 */
+	private String subgraphNum;
 
+
+	public String getSubgraphNum() {
+		return subgraphNum;
+	}
+
+	public void setSubgraphNum(String subgraphNum) {
+		this.subgraphNum = subgraphNum;
+	}
 
 	public String getTime() {
 		return time;

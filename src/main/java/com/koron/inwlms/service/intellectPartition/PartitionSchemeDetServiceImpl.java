@@ -418,6 +418,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		}
 		ModelReturn modelreturn = new ModelReturn();
 		modelreturn.setTime(time);
+		modelreturn.setSubgraphNum(subgraphNum);
 		modelreturn.setTotal_plan_code(code);
 		modelreturn.setFlag(codejy);
 		return modelreturn;

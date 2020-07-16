@@ -366,7 +366,7 @@ public class TimeTask {
 		
 	}
 	
-	@PostConstruct
+	//@PostConstruct
 	public void kafka() {
 		List<String> tokenlist = new ArrayList<>();
 		String token1 = TenantUtil.getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4");
