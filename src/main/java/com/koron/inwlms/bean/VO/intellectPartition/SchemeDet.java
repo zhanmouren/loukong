@@ -35,6 +35,10 @@ public class SchemeDet {
 	 * 状态(0临时，1已保存)
 	 */
 	private Integer state;
+	/**
+	 * 0未进行；1正在进行；2已经完成；3处理失败
+	 */
+	private Integer isEnd;
 	
 	private String schemeType;
 	
@@ -46,6 +50,14 @@ public class SchemeDet {
 	
 	private Date updateTime;
 
+
+	public Integer getIsEnd() {
+		return isEnd;
+	}
+
+	public void setIsEnd(Integer isEnd) {
+		this.isEnd = isEnd;
+	}
 
 	public String getSchemeType() {
 		return schemeType;

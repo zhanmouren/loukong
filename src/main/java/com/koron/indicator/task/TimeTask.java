@@ -366,23 +366,22 @@ public class TimeTask {
 		
 	}
 	
-	//@PostConstruct
+	@PostConstruct
 	public void kafka() {
 		List<String> tokenlist = new ArrayList<>();
 		String token1 = TenantUtil.getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4");
 		tokenlist.add(token1);
 		String token2 = TenantUtil.getTenantToken(Constant.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85");
-		tokenlist.add(token2);
-		
+		tokenlist.add(token2);	
 		for(String token : tokenlist) {
 			String env = "";
 			String tenantID = "";
 			if(token.equals(token1)) {
 				tenantID = "mz";
-				env = "mz__default";
+				env = "mz_default";
 			}else {
 				tenantID = "cp";
-				env = "cp__default";
+				env = "cp_default";
 			}
 			DBInfoDTO dbd = TenantUtil.getDBInfo(token);
 			if (dbd != null) {
@@ -394,11 +393,10 @@ public class TimeTask {
 				prop.put("commandTimeout", 120);
 				new ADOSessionImpl().registeDBMap(env, prop);
 				//设置到envMap里面
-				envMap.put(tenantID, tenantID);
-				
-				kafkacus.consume(env);
+				envMap.put(tenantID, tenantID);	
 			}
 		}
+		//kafkacus.consume();
 	}
 	
 }

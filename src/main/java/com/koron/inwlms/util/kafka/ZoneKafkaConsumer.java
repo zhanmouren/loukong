@@ -27,7 +27,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 public class ZoneKafkaConsumer {
 	 private String topicUser="model_partition_zoning_result";
 	 
-	 public void consume(String env) {
+	 public void consume() {
 	        Properties props = new Properties();
 
 	        // 必须设置的属性
@@ -65,6 +65,12 @@ public class ZoneKafkaConsumer {
 	                String value = record.value();
 	                KafkaReturnData kafkaReturnData = jsonValue.fromJson(value, KafkaReturnData.class);
 	                if(kafkaReturnData.getIs_end() == 2 || kafkaReturnData.getIs_end() == 1) {
+	                	String env = "";
+	                	if(kafkaReturnData.getGroupFlag().equals("mz")) {
+	                		env = "mz_default";
+	                	}else if(kafkaReturnData.getGroupFlag().equals("cp")) {
+	                		env = "cp_default";
+	                	}
 	                	//数据入库
 		                ADOConnection.runTask(env,new PartitionSchemeDetServiceImpl(), "addKafkaData", Integer.class, kafkaReturnData);
 	                }

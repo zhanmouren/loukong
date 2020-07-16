@@ -13,6 +13,8 @@ public class KafkaReturnData {
 	 * 方案总表编码
 	 */
 	private String total_plan_code;
+	
+	private String groupFlag;
 	/**
 	 * 分区数量上限
 	 */
@@ -49,6 +51,16 @@ public class KafkaReturnData {
 	 * 边界管线编码
 	 */
 	private List<String> border;
+	
+	
+
+	public String getGroupFlag() {
+		return groupFlag;
+	}
+
+	public void setGroupFlag(String groupFlag) {
+		this.groupFlag = groupFlag;
+	}
 
 	public String getTotal_plan_code() {
 		return total_plan_code;

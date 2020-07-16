@@ -2330,11 +2330,11 @@ public class LeakageControlController {
     @OPSPIMethod("yjjbsz"+Constant.QUERY)
    	@OperateAspect(operateModule = "yjjbsz")
     public String queryEnvelopeData(@RequestBody WarningSchemeHisDataParam warningSchemeHisDataParam,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<EnvelopeDataVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, EnvelopeDataVO.class);
 		
 		try {
-			List<WarningSchemeHisData> list = ADOConnection.runTask(user.getEnv(),aps, "getEnvelopeData", List.class, warningSchemeHisDataParam);
-			msg.setData(list);
+			EnvelopeDataVO envelopeDataVO = ADOConnection.runTask(user.getEnv(),aps, "getEnvelopeData", EnvelopeDataVO.class, warningSchemeHisDataParam);
+			msg.setData(envelopeDataVO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);

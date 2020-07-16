@@ -8,7 +8,14 @@ public class TotalSchemeDetReturn {
 	
 	private List<TotalSchemeDetVO> totalSchemeDetList;
 	
-	private PageInfo query;
+    private Integer page;
+	
+	private Integer pageCount;
+	
+	private Integer rowNumber;
+	
+	private Integer totalPage;
+	
 
 	public List<TotalSchemeDetVO> getTotalSchemeDetList() {
 		return totalSchemeDetList;
@@ -18,13 +25,39 @@ public class TotalSchemeDetReturn {
 		this.totalSchemeDetList = totalSchemeDetList;
 	}
 
-	public PageInfo getQuery() {
-		return query;
+	public Integer getPage() {
+		return page;
 	}
 
-	public void setQuery(PageInfo query) {
-		this.query = query;
+	public void setPage(Integer page) {
+		this.page = page;
 	}
+
+	public Integer getPageCount() {
+		return pageCount;
+	}
+
+	public void setPageCount(Integer pageCount) {
+		this.pageCount = pageCount;
+	}
+
+	public Integer getRowNumber() {
+		return rowNumber;
+	}
+
+	public void setRowNumber(Integer rowNumber) {
+		this.rowNumber = rowNumber;
+	}
+
+	public Integer getTotalPage() {
+		return totalPage;
+	}
+
+	public void setTotalPage(Integer totalPage) {
+		this.totalPage = totalPage;
+	}
+
+
 	 
 
 }

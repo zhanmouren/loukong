@@ -150,6 +150,7 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 			}
 			if(warningSchemeDTO.getNoticeList() != null && warningSchemeDTO.getNoticeList().size() != 0) {
 				for(AlertNoticeScheme alertNoticeScheme : warningSchemeDTO.getNoticeList()) {
+					alertNoticeScheme.setSchemeCode(num);
 					mapper.addNoticeScheme(alertNoticeScheme);
 				}
 			}

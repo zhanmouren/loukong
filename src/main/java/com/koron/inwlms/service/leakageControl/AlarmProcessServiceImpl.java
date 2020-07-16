@@ -685,15 +685,16 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			nowDate = TimeUtil.addMonth(nowDate, 3);
 			//查询指标编码
 			String code = "";
-			for(int j = 0;j < 15;j++) { 
-				nowDate = TimeUtil.addMonth(nowDate, -j);
-				Date endDate = TimeUtil.addMonth(nowDate, 1);
-				int nYear = TimeUtil.getYears(nowDate);
-				int nMonth = TimeUtil.getMonth(nowDate);
-				int endYear = TimeUtil.getYears(endDate);
-				int endMonth = TimeUtil.getMonth(endDate);
-				int old = (nYear - 1)*10000 + nMonth*100 + 1;
-				int end = (endYear - 1)*10000 + endMonth*100 + 1;
+			for(int j = 0;j < 15;j++) {
+				
+				Date nowDate1 = TimeUtil.addMonth(nowDate, -j);
+				Date endDate = TimeUtil.addMonth(nowDate1, 1);
+				int nYear = TimeUtil.getYears(nowDate1);
+				int nMonth = TimeUtil.getMonth(nowDate1);
+				int endYear = TimeUtil.getYears(nowDate1);
+				int endMonth = TimeUtil.getMonth(nowDate1);
+				int old = nYear*10000 + nMonth*100 + 1;
+				int end = endYear*10000 + endMonth*100 + 1;
 				 
 				IndicatorDTO indicatorDTO = new IndicatorDTO();
 				indicatorDTO.setTimeType(2);
@@ -706,10 +707,10 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 					//日流量
 					//判断分区分级
 					if(warningSchemeHisDataParam.getZoneGrade().equals("1")) {
-						code = "FLMFWSSITDF";
+						code = "FLDFWSSITDF";
 					}else if(warningSchemeHisDataParam.getZoneGrade().equals("2")) {
 					}else {
-						code = "DMMFWSSITDF";
+						code = "DMDFWSSITDF";
 					}
 					codes.add(code);
 					indicatorDTO.setCodes(codes);
@@ -717,11 +718,11 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 				}else if(warningSchemeHisDataParam.getIndexCode().equals(Constant.DATADICTIONARY_MINNIGFLOW)) {
 					//最小夜间流量
 					if(warningSchemeHisDataParam.getZoneGrade().equals("1")) {
-						code = "FLMMNF";
+						code = "FLDMNF";
 					}else if(warningSchemeHisDataParam.getZoneGrade().equals("2")) {
-						code = "SLMMNF";
+						code = "SLDMNF";
 					}else {
-						code = "DMMMNF";
+						code = "DMDMNF";
 					}
 					
 					codes.add(code);
@@ -729,50 +730,55 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 					indicatorVOList = indicMapper.queryZoneLossIndicData(indicatorDTO);
 				}
 				
-				double sum = 0.0;
-				for(int i = 0;i < indicatorVOList.size();i++) {
-					sum +=  indicatorVOList.get(i).getValue();
+				if(indicatorVOList != null && indicatorVOList.size() != 0) {
+					double sum = 0.0;
+					for(int i = 0;i < indicatorVOList.size();i++) {
+						sum +=  indicatorVOList.get(i).getValue();
+					}
+					double avg = sum/indicatorVOList.size();
+					
+					double total = 0;
+					for(int i = 0; i < indicatorVOList.size();i++) {
+						total += (indicatorVOList.get(i).getValue() - avg)*(indicatorVOList.get(i).getValue() - avg);
+					}
+					double standardDeviation = Math.sqrt(total/indicatorVOList.size());
+					double oldMax = avg + standardDeviation*3;
+					double oldMin = avg - standardDeviation*3;
+					WarningSchemeHisData warningSchemeHisData = new WarningSchemeHisData();
+					warningSchemeHisData.setOldMax(oldMax);
+					warningSchemeHisData.setOldMin(oldMin);
+					if(warningSchemeHisDataParam.getMaxFlag() == 0) {
+						warningSchemeHisData.setMax(oldMax + warningSchemeHisDataParam.getMaxIndex());
+					}else if(warningSchemeHisDataParam.getMaxFlag() == 1) {
+						warningSchemeHisData.setMax(oldMax - warningSchemeHisDataParam.getMaxIndex());
+					}else if(warningSchemeHisDataParam.getMaxFlag() == 2) {
+						warningSchemeHisData.setMax(oldMax*warningSchemeHisDataParam.getMaxIndex());
+					}else if(warningSchemeHisDataParam.getMaxFlag() == 3) {
+						warningSchemeHisData.setMax(oldMax/warningSchemeHisDataParam.getMaxIndex());
+					}else if(warningSchemeHisDataParam.getMinFlag() == 0) {
+						warningSchemeHisData.setMin(oldMin + warningSchemeHisDataParam.getMinIndex());
+					}else if(warningSchemeHisDataParam.getMinFlag() == 1) {
+						warningSchemeHisData.setMin(oldMin - warningSchemeHisDataParam.getMinIndex());
+					}else if(warningSchemeHisDataParam.getMinFlag() == 2) {
+						warningSchemeHisData.setMin(oldMin*warningSchemeHisDataParam.getMinIndex());
+					}else if(warningSchemeHisDataParam.getMinFlag() == 3) {
+						warningSchemeHisData.setMin(oldMin/warningSchemeHisDataParam.getMinIndex());
+					}
+					warningSchemeHisData.setTime((nYear*100+nMonth));
+					if(j >= 12) {
+						nowList.add(warningSchemeHisData);
+					}else {
+						oldList.add(warningSchemeHisData);
+					}
 				}
-				double avg = sum/indicatorVOList.size();
 				
-				double total = 0;
-				for(int i = 0; i < indicatorVOList.size();i++) {
-					total += (indicatorVOList.get(i).getValue() - avg)*(indicatorVOList.get(i).getValue() - avg);
-				}
-				double standardDeviation = Math.sqrt(total/indicatorVOList.size());
-				double oldMax = avg + standardDeviation*3;
-				double oldMin = avg - standardDeviation*3;
-				WarningSchemeHisData warningSchemeHisData = new WarningSchemeHisData();
-				warningSchemeHisData.setOldMax(oldMax);
-				warningSchemeHisData.setOldMin(oldMin);
-				if(warningSchemeHisDataParam.getMaxFlag() == 0) {
-					warningSchemeHisData.setMax(oldMax + warningSchemeHisDataParam.getMaxIndex());
-				}else if(warningSchemeHisDataParam.getMaxFlag() == 1) {
-					warningSchemeHisData.setMax(oldMax - warningSchemeHisDataParam.getMaxIndex());
-				}else if(warningSchemeHisDataParam.getMaxFlag() == 2) {
-					warningSchemeHisData.setMax(oldMax*warningSchemeHisDataParam.getMaxIndex());
-				}else if(warningSchemeHisDataParam.getMaxFlag() == 3) {
-					warningSchemeHisData.setMax(oldMax/warningSchemeHisDataParam.getMaxIndex());
-				}else if(warningSchemeHisDataParam.getMinFlag() == 0) {
-					warningSchemeHisData.setMin(oldMin + warningSchemeHisDataParam.getMinIndex());
-				}else if(warningSchemeHisDataParam.getMinFlag() == 1) {
-					warningSchemeHisData.setMin(oldMin - warningSchemeHisDataParam.getMinIndex());
-				}else if(warningSchemeHisDataParam.getMinFlag() == 2) {
-					warningSchemeHisData.setMin(oldMin*warningSchemeHisDataParam.getMinIndex());
-				}else if(warningSchemeHisDataParam.getMinFlag() == 3) {
-					warningSchemeHisData.setMin(oldMin/warningSchemeHisDataParam.getMinIndex());
-				}
-				warningSchemeHisData.setTime((nYear*100+nMonth));
-				if(j >= 12) {
-					nowList.add(warningSchemeHisData);
-				}else {
-					oldList.add(warningSchemeHisData);
-				}
 			}
 		}else {
+			//分区
 			objectCodes.add(warningSchemeHisDataParam.getZoneCode());
+			String code = "";
 			if(warningSchemeHisDataParam.getIndexCode().equals(Constant.DATADICTIONARY_FORWARDSPEED)) {
-				
+				code = "";
 			}
 			
 			

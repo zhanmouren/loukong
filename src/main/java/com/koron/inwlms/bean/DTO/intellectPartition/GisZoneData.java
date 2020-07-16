@@ -29,13 +29,16 @@ public class GisZoneData {
 	
 	private Integer region_no;
 	
-	
+	private String groupFlag;
 
-	
 
-	
+	public String getGroupFlag() {
+		return groupFlag;
+	}
 
-	
+	public void setGroupFlag(String groupFlag) {
+		this.groupFlag = groupFlag;
+	}
 
 	public Integer getR_id() {
 		return r_id;

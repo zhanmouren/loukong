@@ -58,12 +58,11 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 	public SchemeDetListVO querySchemeDet(SessionFactory factory,TotalSchemeDetDTO totalSchemeDetDTO) {
 		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
 		SchemeDetListVO schemeDetListVO = new SchemeDetListVO();
-		PageInfo query = new PageInfo();
-		query.setPage(totalSchemeDetDTO.getPage());
-		query.setSize(totalSchemeDetDTO.getPageCount());
 		Integer num = mapper.querySchemeDetNum(totalSchemeDetDTO);
-		query.setTotalNumber(num);
-		schemeDetListVO.setQuery(query);
+		schemeDetListVO.setPage(totalSchemeDetDTO.getPage());
+		schemeDetListVO.setPageCount(totalSchemeDetDTO.getPageCount());
+		schemeDetListVO.setRowNumber(num);
+		schemeDetListVO.setTotalPage((int)Math.ceil(num/totalSchemeDetDTO.getPageCount()));
 		List<SchemeDet> list = mapper.querySchemeDet(totalSchemeDetDTO);
 		schemeDetListVO.setSchemeList(list);
 		return schemeDetListVO;
@@ -120,11 +119,10 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		totalSchemeDetDTO.setEndTime(endTime);
 		List<TotalSchemeDet> list = mapper.queryTotalSchemeDet(totalSchemeDetDTO);
 		Integer num = mapper.queryTotalSchemeDetNum(totalSchemeDetDTO);
-		PageInfo query = new PageInfo();
-		query.setPage(totalSchemeDetDTO.getPage());
-		query.setSize(totalSchemeDetDTO.getPageCount());
-		query.setTotalNumber(num);
-		totalSchemeDetReturn.setQuery(query);
+		totalSchemeDetReturn.setPage(totalSchemeDetDTO.getPage());
+		totalSchemeDetReturn.setPageCount(totalSchemeDetDTO.getPageCount());
+		totalSchemeDetReturn.setRowNumber(num);
+		totalSchemeDetReturn.setTotalPage((int) Math.ceil(num/totalSchemeDetDTO.getPageCount()));
 		if(list != null && list.size() != 0) {
 			for(TotalSchemeDet totalSchemeDet : list) {
 				TotalSchemeDetVO totalSchemeDetVO = new TotalSchemeDetVO();
@@ -554,6 +552,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
         SchemeDet.setEcomony(kafkaReturnData.getEconomy());
         SchemeDet.setRegionNum(kafkaReturnData.getPartition_no().intValue());
         SchemeDet.setState(0);
+        SchemeDet.setIsEnd(kafkaReturnData.getIs_end());
 		Integer schemeDetId = mapper.addSchemeDet(SchemeDet);
 		
 		for(ZoneSchemeData zoneSchemeData : kafkaReturnData.getPartition_detail()) {

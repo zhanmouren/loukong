@@ -67,8 +67,8 @@
  </update>
  
  <select id="addSchemeDet" parameterType="com.koron.inwlms.bean.VO.intellectPartition.SchemeDet" resultType="java.lang.Integer">
- insert into app_schemedet("totalSchemeCode", "regionNum", ecomony, tightness, "flowNum", state, "createBy", "createTime", "updateBy", "updateTime")
- values(#{totalSchemeCode}, #{regionNum}, #{ecomony}, #{tightness}, #{flowNum}, #{state}, #{createBy}, Now(), #{updateBy}, Now()) returning id
+ insert into app_schemedet("totalSchemeCode", "regionNum", ecomony, tightness, "flowNum", state, "createBy", "createTime", "updateBy", "updateTime", "isEnd")
+ values(#{totalSchemeCode}, #{regionNum}, #{ecomony}, #{tightness}, #{flowNum}, #{state}, #{createBy}, Now(), #{updateBy}, Now(), #{isEnd}) returning id
  </select>
  
  <insert id="addPreZone" parameterType="com.koron.inwlms.bean.DTO.intellectPartition.PreZoneRelationDTO">
