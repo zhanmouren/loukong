@@ -23,6 +23,11 @@ public class MeterDataVO {
     private String meterNo;
 
     /**
+     * 册本号
+     */
+    private String volumeNo;
+
+    /**
      * 水表口径
      */
     private String pipeD;
@@ -96,6 +101,14 @@ public class MeterDataVO {
      * 批次
      */
     private String BatchNo;
+
+    public String getVolumeNo() {
+        return volumeNo;
+    }
+
+    public void setVolumeNo(String volumeNo) {
+        this.volumeNo = volumeNo;
+    }
 
     public Integer getId() {
         return id;

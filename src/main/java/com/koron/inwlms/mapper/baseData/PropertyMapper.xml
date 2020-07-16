@@ -296,6 +296,12 @@
             <if test="zoneNo != null and zoneNo != ''">
                 and "zoneNo" like '%'||#{zoneNo}||'%'
             </if>
+            <if test="zoneName != null and zoneName != ''">
+                and gis_exist_zone.name like '%'||#{zoneName}||'%'
+            </if>
+            <if test="volumeNo != null and volumeNo != ''">
+                and gis_zone_meter."volumeNo" like '%'||#{volumeNo}||'%'
+            </if>
             <if test="meterNo != null and meterNo != ''">
                 and "meterNo" like '%'||#{meterNo}||'%'
             </if>
@@ -318,6 +324,12 @@
         where 1=1
              <if test="zoneNo != null and zoneNo != ''">
                 and "zoneNo" like '%'||#{zoneNo}||'%'
+            </if>
+            <if test="zoneName != null and zoneName != ''">
+                and gis_exist_zone.name like '%'||#{zoneName}||'%'
+            </if>
+            <if test="volumeNo != null and volumeNo != ''">
+                and gis_zone_meter."volumeNo" like '%'||#{volumeNo}||'%'
             </if>
             <if test="meterNo != null and meterNo != ''">
                 and "meterNo" like '%'||#{meterNo}||'%'
@@ -370,6 +382,12 @@
         <if test="volumeNo != null and volumeNo != ''">
             and "volumeNo" = #{volumeNo}
         </if>
+        <if test="meterNo != null and meterNo != ''">
+            and gis_zone_meter."meterNo" like '%'||#{meterNo}||'%'
+        </if>
+        <if test="type != null and type != ''">
+            and gis_zone_meter."type" like '%'||#{type}||'%'
+        </if>
         union all
         select count(*) as rows, 0 as "refID",'' as "zoneNo",'' as "zoneName",'' as"meterNo",'' as type from
         gis_zone_meter
@@ -379,6 +397,12 @@
         </if>
         <if test="volumeNo != null and volumeNo != ''">
             and "volumeNo" = #{volumeNo}
+        </if>
+        <if test="meterNo != null and meterNo != ''">
+            and gis_zone_meter."meterNo" like '%'||#{meterNo}||'%'
+        </if>
+        <if test="type != null and type != ''">
+            and gis_zone_meter."type" like '%'||#{type}||'%'
         </if>
     </select>
 

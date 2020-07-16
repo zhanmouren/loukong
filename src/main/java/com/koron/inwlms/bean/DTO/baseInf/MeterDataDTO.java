@@ -81,6 +81,76 @@ public class MeterDataDTO extends BaseDTO {
      */
     private String endD;
 
+    /**
+     * 册本号
+     * @return
+     */
+    private String volumeNo;
+
+    public String[] getDma() {
+        return dma;
+    }
+
+    public void setDma(String[] dma) {
+        this.dma = dma;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
+
+    public String getLastTime() {
+        return lastTime;
+    }
+
+    public void setLastTime(String lastTime) {
+        this.lastTime = lastTime;
+    }
+
+    public Double getLastReading() {
+        return lastReading;
+    }
+
+    public void setLastReading(Double lastReading) {
+        this.lastReading = lastReading;
+    }
+
+    public String getRecordTime() {
+        return recordTime;
+    }
+
+    public void setRecordTime(String recordTime) {
+        this.recordTime = recordTime;
+    }
+
+    public Double getMeterReading() {
+        return meterReading;
+    }
+
+    public void setMeterReading(Double meterReading) {
+        this.meterReading = meterReading;
+    }
+
+    public Double getMwo() {
+        return mwo;
+    }
+
+    public void setMwo(Double mwo) {
+        this.mwo = mwo;
+    }
+
+    public String getVolumeNo() {
+        return volumeNo;
+    }
+
+    public void setVolumeNo(String volumeNo) {
+        this.volumeNo = volumeNo;
+    }
+
     public String getBatchNo() {
         return BatchNo;
     }

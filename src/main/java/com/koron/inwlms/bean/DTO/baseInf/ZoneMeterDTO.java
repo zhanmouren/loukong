@@ -25,6 +25,11 @@ public class ZoneMeterDTO  extends BaseDTO {
     private String zoneNo;
 
     /**
+     * 分区名称
+     */
+    private String zoneName;
+
+    /**
      * 户表编号
      */
     private String meterNo;
@@ -61,6 +66,14 @@ public class ZoneMeterDTO  extends BaseDTO {
      * @return
      */
     private String updateBy;
+
+    public String getZoneName() {
+        return zoneName;
+    }
+
+    public void setZoneName(String zoneName) {
+        this.zoneName = zoneName;
+    }
 
     public String getOriginVolumnNo() {
         return originVolumnNo;
