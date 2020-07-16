@@ -49,6 +49,11 @@ public class MeterRunAnalysisVO {
 	 * 水表类型
 	 */
 	private String meterType;
+	
+	/**
+	 * 未抄表水表数量
+	 */
+	private int noReadNum = 0;
 
 	public String getMeterDn() {
 		return meterDn;
@@ -136,6 +141,14 @@ public class MeterRunAnalysisVO {
 
 	public void setFsHighFlowMeterNum(int fsHighFlowMeterNum) {
 		this.fsHighFlowMeterNum = fsHighFlowMeterNum;
+	}
+
+	public int getNoReadNum() {
+		return noReadNum;
+	}
+
+	public void setNoReadNum(int noReadNum) {
+		this.noReadNum = noReadNum;
 	}
 
 }

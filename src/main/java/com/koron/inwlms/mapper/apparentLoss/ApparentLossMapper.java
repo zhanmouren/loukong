@@ -305,4 +305,12 @@ public interface ApparentLossMapper {
 	 * @return
 	 */
 	String getDrReportResult(@Param("tenantid") String tenantid);
+	
+	/**
+	 * 查询未抄表的水表信息
+	 * @param queryALDTO
+	 * @return
+	 */
+	List<MeterInfo> queryNoReadMeterInfo(@Param("qaDTO") QueryALDTO queryALDTO);
+	
 }

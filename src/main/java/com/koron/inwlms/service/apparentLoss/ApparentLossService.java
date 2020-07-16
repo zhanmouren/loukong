@@ -26,6 +26,7 @@ import com.koron.inwlms.bean.VO.apparentLoss.DrqlSusUseDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterAnalysisMapVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterInfo;
+import com.koron.inwlms.bean.VO.apparentLoss.MeterQH;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisTotalDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.MeterRunAnalysisVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
@@ -69,7 +70,7 @@ public interface ApparentLossService {
 	 * @param queryALDTO
 	 * @return
 	 */
-	List<MeterRunAnalysisVO> queryMeterRunAnalysisList(SessionFactory factory,QueryALDTO queryALDTO,List<MeterInfo> lists);
+	List<MeterRunAnalysisVO> queryMeterRunAnalysisList(SessionFactory factory,QueryALDTO queryALDTO,List<MeterInfo> lists,List<MeterQH> queryMeterQH);
 
 	/**
 	 * 查询水表分析图表数据
