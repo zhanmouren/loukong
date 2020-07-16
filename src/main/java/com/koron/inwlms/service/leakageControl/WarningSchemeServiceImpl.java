@@ -165,8 +165,14 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 		int num = 0;
 		//先删除在添加
 		int deleteNum = mapper.deleteWarningScheme(warningSchemeDTO.getCode());
+		Integer deletenoticeNum = mapper.deleteNoticeScheme(warningSchemeDTO.getCode());
 		if(deleteNum > 0) {
 			num = mapper.addWarningScheme(warningSchemeDTO);
+			if(warningSchemeDTO.getNoticeList() != null && warningSchemeDTO.getNoticeList().size() != 0) {
+				for(AlertNoticeScheme alertNoticeScheme : warningSchemeDTO.getNoticeList()) {
+					alertNoticeScheme.setSchemeCode(warningSchemeDTO.getCode());
+				}
+			}
 		}
 		
 		return num;

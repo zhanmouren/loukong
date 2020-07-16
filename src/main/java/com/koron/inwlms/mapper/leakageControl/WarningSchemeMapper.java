@@ -36,6 +36,8 @@ public interface WarningSchemeMapper {
 	
 	Integer addNoticeScheme(AlertNoticeScheme alertNoticeScheme);
 	
+	Integer deleteNoticeScheme(String schemeCode);
+	
 	List<AlertNoticeSchemeVO> queryNoticeSchemeByWarningCode(String code);
 	
 	@Select("select * from app_warningscheme where \"state\" = #{state}")

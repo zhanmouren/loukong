@@ -161,6 +161,10 @@ where "schemeCode" = #{schemeCode}
  insert into app_alertnoticescheme("schemeCode", type, "roleCode", flag, "createBy", "createTime", "updateBy", "updateTime")
  values(#{schemeCode}, #{type}, #{roleCode}, #{flag}, #{createBy}, Now(), #{updateBy}, Now())
  </insert>
+ 
+ <delete id="deleteNoticeScheme" parameterType="java.lang.String">
+ delete from app_alertnoticescheme where "schemeCode" = #{schemeCode}
+ </delete>
 
  
  </mapper>

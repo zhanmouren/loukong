@@ -2,6 +2,8 @@ package com.koron.main;
 
 import com.koron.common.UserResolver;
 import com.koron.common.stub.ConfigCenter;
+import com.koron.indicator.task.TimeTask;
+
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootVersion;

@@ -14,13 +14,9 @@ import com.koron.util.Constant;
 
 public class TenantUtil {
 	
-	@Value("${cloud.management.platform.url}")
-	private static String cloudManagePlat;
 	
-	@Value("${cloud.management.platform.privateKey}")
-	private static String privateKey;
 	
-	public static String getTenantToken(String APPID,String tenantID){
+	public String getTenantToken(String APPID,String tenantID,String cloudManagePlat){
 		String path = cloudManagePlat+"/port/tenant/token.htm?appCode="+APPID+"&tenantCode="+tenantID+"&version="+Constant.APPVersion;
 		JsonObject ret =  InterfaceUtil.interfaceUtil(path);
 		Gson gson = new Gson();
@@ -36,7 +32,7 @@ public class TenantUtil {
 		}
 	}
 	
-	public static DBInfoDTO getDBInfo(String token){
+	public DBInfoDTO getDBInfo(String token,String cloudManagePlat,String privateKey){
 		String path = cloudManagePlat+"/port/tenant/dbinfo.htm?token="+token;
 		JsonObject ret =  InterfaceUtil.interfaceUtil(path);
 		Gson gson = new Gson();

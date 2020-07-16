@@ -59,12 +59,18 @@ import com.koron.util.Constant;
 public class TimeTask {
 	
 	@Value("${postgresql.driver.name}")
-	private String postgresqlDriver;
+	private static String postgresqlDriver;
+	
+	@Value("${cloud.management.platform.url}")
+	private String cloudManagePlat;
+	
+	@Value("${cloud.management.platform.privateKey}")
+	private String privateKey;
 	
 	@Autowired
     private ZoneKafkaConsumer kafkacus;
 	
-	private final Map<String,String> envMap=new HashMap<>();
+	private final static Map<String,String> envMap=new HashMap<>();
 
 	/**
 	 * 定时计算小时指标
@@ -220,9 +226,10 @@ public class TimeTask {
 		WarningMessageProduceService wmps = new WarningMessageProduceServiceImpl();
 		PointHistoryDataServiceImpl phds = new PointHistoryDataServiceImpl();
 		List<String> tokenlist = new ArrayList<>();
-		String token1 = TenantUtil.getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4");
+		TenantUtil tenantUtil = new TenantUtil();
+		String token1 = tenantUtil.getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4",this.cloudManagePlat);
 		tokenlist.add(token1);
-		String token2 = TenantUtil.getTenantToken(Constant.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85");
+		String token2 = tenantUtil.getTenantToken(Constant.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85",this.cloudManagePlat);
 		tokenlist.add(token2);
 		
 		//获取当前时间-整点数
@@ -246,7 +253,7 @@ public class TimeTask {
 				tenantID = "cp";
 				env = "cp__default";
 			}
-			DBInfoDTO dbd = TenantUtil.getDBInfo(token);
+			DBInfoDTO dbd = tenantUtil.getDBInfo(token,this.cloudManagePlat,this.privateKey);
 			if (dbd != null) {
 				Properties prop = new Properties();
 				prop.put(SessionFactory.PROPERTY_DRIVER, postgresqlDriver);
@@ -366,37 +373,5 @@ public class TimeTask {
 		
 	}
 	
-	//@PostConstruct
-	public void kafka() {
-		List<String> tokenlist = new ArrayList<>();
-		String token1 = TenantUtil.getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4");
-		tokenlist.add(token1);
-		String token2 = TenantUtil.getTenantToken(Constant.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85");
-		tokenlist.add(token2);	
-		for(String token : tokenlist) {
-			String env = "";
-			String tenantID = "";
-			if(token.equals(token1)) {
-				tenantID = "mz";
-				env = "mz_default";
-			}else {
-				tenantID = "cp";
-				env = "cp_default";
-			}
-			DBInfoDTO dbd = TenantUtil.getDBInfo(token);
-			if (dbd != null) {
-				Properties prop = new Properties();
-				prop.put(SessionFactory.PROPERTY_DRIVER, postgresqlDriver);
-				prop.put(SessionFactory.PROPERTY_URL, dbd.getUrl());
-				prop.put(SessionFactory.PROPERTY_USER, dbd.getUser());
-				prop.put(SessionFactory.PROPERTY_PASSWORD, dbd.getPassword());
-				prop.put("commandTimeout", 120);
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(tenantID, tenantID);	
-			}
-		}
-		//kafkacus.consume();
-	}
 	
 }
