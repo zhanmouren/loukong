@@ -392,15 +392,6 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 //		JsonObject mlResultData1 = InterfaceUtil.interfaceOfPostUtil(mlPath1, data101);
 
 
-		List<String> test = new ArrayList<>();
-		/******输出入参数据*******/
-		System.out.println(">>>>>>>>>>>>>>开始》>>>>>>>>>>>>>>>>");
-		for(GisZonePipeData gisZonePipeData : pipeinfo){
-			test.add(gisZonePipeData.getPip_obj_code());
-		}
-		System.out.println(gson.toJson(test));
-		System.out.println(">>>>>>>>>>>>>>结束》>>>>>>>>>>>>>>>>");
-
 		//TODO 调用模型算法接口推送数据，等待模型返回已接收信号时
 		GisZoneData gisZoneData = new GisZoneData();
 		gisZoneData.setPip_info(pipeinfo);
@@ -413,6 +404,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		//TODO 解析返回数据
 		String codejy = mlResultData.get("flag").getAsString();
 		String time = mlResultData.get("time").getAsString();
+		String subgraphNum = mlResultData.get("subgraph_num").getAsString();
 		if(codejy.equals("1")) {
 			String rpPath = "http://10.13.1.11:7500/partition/receivePartitionModel";
 			JsonObject rpResultData = InterfaceUtil.interfaceOfPostUtil(rpPath, gson.toJson(gisZoneData));
