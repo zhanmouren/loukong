@@ -239,7 +239,7 @@
             <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
             and gis_ssensor.stype = 'P1'
         </trim>
-        
+        limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         
         
         
