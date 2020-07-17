@@ -1,5 +1,6 @@
 package com.koron.inwlms.bean.VO.sysManager;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
@@ -9,7 +10,7 @@ import java.sql.Timestamp;
 * @Date 2020.03.17
 */
 
-public class UserVO {
+public class UserVO implements Serializable {
 	 //职员code
 	 private String code;
 	 //职员id

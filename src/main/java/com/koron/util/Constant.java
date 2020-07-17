@@ -1186,6 +1186,11 @@ public class Constant {
 	//************************end****************************//
 
 	/**
+	 * 过期时长
+	 */
+	public final static Long EXPIRE = 1800L;
+
+	/**
 	 * 应用标识
 	 */
 	public final static String APPID = "7c8222aa-9cc5-46b1-9bd7-743d24d01b0a";

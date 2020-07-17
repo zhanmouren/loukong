@@ -1,11 +1,11 @@
 package com.koron.util;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.ibatis.cache.CacheKey;
+import com.koron.inwlms.util.RedisUtil;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -15,6 +15,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  *
  */
 public class SessionUtil {
+
+	public static RedisUtil redisUtil;
+
 	public static HttpServletRequest getRequest(){
 		return ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 	}

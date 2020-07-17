@@ -1,20 +1,16 @@
 package com.koron.inwlms.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.sysManager.DBInfoDTO;
 import com.koron.inwlms.bean.DTO.sysManager.LoginLogDTO;
 import com.koron.inwlms.bean.DTO.sysManager.UserLoginDTO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.common.CommonLoginService;
 import com.koron.inwlms.service.sysManager.LogService;
-import com.koron.inwlms.util.InterfaceUtil;
-import com.koron.inwlms.util.RSAUtil;
-import com.koron.inwlms.util.ResponseUtil;
-import com.koron.inwlms.util.SysUtil;
-import com.koron.permission.bean.VO.UserListVO;
+import com.koron.inwlms.util.*;
 import com.koron.util.Constant;
 import com.koron.util.SessionUtil;
 import io.swagger.annotations.Api;
@@ -52,6 +48,9 @@ public class SystemController {
 	
 	@Autowired
 	private LogService logService;
+
+	@Autowired
+	private RedisUtil redisUtil;
 
 	@Value("${cloud.management.platform.url}")
 	private String cloudManagePlat;
@@ -151,6 +150,10 @@ public class SystemController {
 					loginLogDTO.setErrorLog(null);
 					// 用户权限信息入缓存
 					SessionUtil.setAttribute(Constant.LOGIN_USER, userVO);
+
+					//用户信息写入redis
+					boolean ret =  redisUtil.setHashValue(tenantID+"_"+SessionUtil.getSession().getId(),Constant.LOGIN_USER,userVO);
+					SessionUtil.redisUtil = redisUtil;
 					ADOConnection.runTask(env,logService, "addLoginLog", Integer.class, loginLogDTO);
 					msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 					msg.setDescription("登录成功");
@@ -186,24 +189,25 @@ public class SystemController {
 	@ApiOperation(value = "用户退出", notes = "用户退出", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	@RequestMapping(value = "/logout.htm", method = RequestMethod.POST, produces = { "application/json;charset=UTF-8" })
-	public String logout(HttpServletRequest request) {
+	public String logout(HttpServletRequest request,@PathVariable("tenantID") String tenantID,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
 		//清空用户缓存信息
 		MessageBean<String> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS,String.class);
 		try {
 			Gson jsonValue = new Gson();
 			// 查询条件字符串转对象，查询数据结果
-			UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
+			//UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
 			LoginLogDTO loginLogDTO = new LoginLogDTO();
 			String ip = SysUtil.getIpAddr(request);
 			loginLogDTO.setLoginIp(ip);
-			loginLogDTO.setLoginUserCode(userListVO.getCode());
-			loginLogDTO.setCreateBy(userListVO.getLoginName());
-			loginLogDTO.setUpdateBy(userListVO.getLoginName());
+			loginLogDTO.setLoginUserCode(user.getCode());
+			loginLogDTO.setCreateBy(user.getLoginName());
+			loginLogDTO.setUpdateBy(user.getLoginName());
 			loginLogDTO.setResult("登出成功");
 			loginLogDTO.setType("L102110003");
 			loginLogDTO.setErrorLog("————");
-			ADOConnection.runTask(logService, "addLoginLog", Integer.class, loginLogDTO);
+			ADOConnection.runTask(user.getEnv(),logService, "addLoginLog", Integer.class, loginLogDTO);
 			SessionUtil.removeAttribute(Constant.LOGIN_USER);
+			SessionUtil.redisUtil.delete(tenantID+"_"+SessionUtil.getSession().getId());
 		} catch (Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_NOLOGIN);
 			msg.setDescription("未登录");

@@ -2,6 +2,7 @@ package com.koron.common;
 
 import com.koron.common.stub.Port;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
+import com.koron.util.SessionUtil;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  * @description:
  */
 public class UserResolver implements HandlerMethodArgumentResolver {
+
     public UserResolver() {
     }
     public boolean supportsParameter(MethodParameter parameter) {
@@ -27,7 +29,14 @@ public class UserResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         StaffAttribute attr = (StaffAttribute)parameter.getParameterAnnotation(StaffAttribute.class);
         HttpServletRequest request = (HttpServletRequest)webRequest.getNativeRequest(HttpServletRequest.class);
-        Object o = request.getSession().getAttribute(attr.value());
+
+        //***获取租户id
+        String servletPath = request.getServletPath();
+        String tenantID = servletPath.split("/")[1];
+        //**获取用户信息
+        Object o = SessionUtil.redisUtil.getHashValue(tenantID+"_"+request.getSession().getId(),attr.value());
+
+        //Object o = request.getSession().getAttribute(attr.value());
         if (o != null) {
             return request.getSession().getAttribute(attr.value());
         } else {

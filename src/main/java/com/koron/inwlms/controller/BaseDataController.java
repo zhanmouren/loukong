@@ -54,12 +54,6 @@ public class BaseDataController {
     @Autowired
     private DataQualityService dqs;
 
-    //@Autowired
-    //private FacilityService fs;
-
-    //@Autowired
-    //private PipeNetworkService pns;
-
     @Autowired
     private PipeService pipesvr;
 
@@ -597,7 +591,7 @@ public class BaseDataController {
 
         //*****插入符合条件数据
         Integer r1 = ADOConnection.runTask(user.getEnv(), zcs, "updateZoneCharger", Integer.class, zoneDTO);
-        if (r1 > 0) {
+        if (r1 >= 0) {
             msg.setCode(0);
             msg.setDescription("操作成功");
         } else{

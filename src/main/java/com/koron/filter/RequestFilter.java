@@ -1,26 +1,19 @@
 package com.koron.filter;
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.koron.inwlms.bean.VO.sysManager.UserListVO;
+import com.koron.util.Constant;
+import com.koron.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.swan.bean.MessageBean;
 
-import com.google.gson.Gson;
-import com.koron.inwlms.bean.VO.sysManager.UserListVO;
-import com.koron.util.Constant;
-import com.koron.util.SessionUtil;
+import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 请求过滤器
@@ -69,7 +62,11 @@ public class RequestFilter implements Filter {
 		String tenantID = servletPath.split("/")[1];
 		
 		//获取用户的session缓存
-		Object attribute = hsRequest.getSession().getAttribute(Constant.LOGIN_USER);
+		//Object attribute = hsRequest.getSession().getAttribute(Constant.LOGIN_USER);
+		Object attribute = null;
+		if(SessionUtil.redisUtil !=null){
+			attribute = SessionUtil.redisUtil.getHashValue(tenantID+"_"+hsRequest.getSession().getId(),Constant.LOGIN_USER);
+		}
 		// 如果是生产环境
 		//TODO  prod需要更改
 		if (PROD.equals("prod")) {
@@ -82,6 +79,8 @@ public class RequestFilter implements Filter {
 			}
 			if (flag) {
 				if (attribute != null) {
+					//****延长会话有效时长
+					SessionUtil.redisUtil.setExpire(tenantID+"_"+hsRequest.getSession().getId(),Constant.EXPIRE);
 					chain.doFilter(request, response);
 				} else {
 					if (servletPath.endsWith(".html")) {
