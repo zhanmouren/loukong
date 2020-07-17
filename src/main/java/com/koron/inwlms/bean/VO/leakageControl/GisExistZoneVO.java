@@ -14,7 +14,7 @@ public class GisExistZoneVO {
 	
 	private String featid;
 	
-	private String p_code;
+	private String pcode;
 	
 	private String name;
 	
@@ -90,12 +90,13 @@ public class GisExistZoneVO {
 		this.featid = featid;
 	}
 
-	public String getP_code() {
-		return p_code;
+
+	public String getPcode() {
+		return pcode;
 	}
 
-	public void setP_code(String p_code) {
-		this.p_code = p_code;
+	public void setPcode(String pcode) {
+		this.pcode = pcode;
 	}
 
 	public String getName() {

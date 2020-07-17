@@ -394,6 +394,7 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 
 		//TODO 调用模型算法接口推送数据，等待模型返回已接收信号时
 		GisZoneData gisZoneData = new GisZoneData();
+		gisZoneData.setGroupFlag(tenantID);
 		gisZoneData.setPip_info(pipeinfo);
 		gisZoneData.setNum_up(automaticPartitionDTO.getMaxZone());
 		gisZoneData.setNum_down(automaticPartitionDTO.getMinZone());
