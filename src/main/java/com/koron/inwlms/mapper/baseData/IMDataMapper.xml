@@ -137,10 +137,12 @@
     </select>
 
 	<select id="getPressureFlowListCount" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO" resultType="java.lang.Integer">
-		select count(*)
+		select count(*)		
 		from nw_gdh_raw_rt
 		left join gis_scada_station on gis_scada_station.p_code = nw_gdh_raw_rt.station
 		left join gis_ssensor on nw_gdh_raw_rt.code = gis_ssensor.code
+		left join gis_exist_zone on gis_scada_station."zoneNo" =  gis_exist_zone.p_code
+		left join gis_zone_point on gis_zone_point."pointNo" = nw_gdh_raw_rt.station
 		left join (
   			select distinct app_warninginf."objectCode",app_warningprocessing."state" 
   			from  app_warninginf
@@ -154,11 +156,9 @@
   			left join gis_ssensor on nw_gdh_raw_rt.code = gis_ssensor.code
   			where gis_ssensor.stype ='Q4' and nw_gdh_raw_rt.value <![CDATA[!= ]]> '0'
 		)as b on b.station = nw_gdh_raw_rt.station
-		<trim prefix="where" prefixOverrides="and|or">
+		where  gis_ssensor.stype = 'P1' and gis_zone_point."channelType" = 'L103000001'
             <if test="begD != null and begD != '' "> and "lastTime" &gt;=#{begD} </if>
             <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
-            and gis_ssensor.stype = 'P1'
-        </trim>
 		
 		
 		
@@ -217,10 +217,12 @@
 	
     <select id="queryPressureFlowList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MonitorDataDTO"  resultType="com.koron.inwlms.bean.VO.baseInf.MonitorDataVO">
         select nw_gdh_raw_rt.value as "upstreamPressure",nw_gdh_raw_rt.station as "pointID",to_char(to_timestamp(nw_gdh_raw_rt.datatime), 'YYYY-MM-DD HH24:MI:SS') as lastTime,gis_scada_station.name as name,
-		a."state" as "status",b."value" as "flowRate"
+		gis_exist_zone."name" as "firstZoon",a."state" as "status",b."value" as "flowRate",gis_zone_point.type as "useType"
 		from nw_gdh_raw_rt
 		left join gis_scada_station on gis_scada_station.p_code = nw_gdh_raw_rt.station
 		left join gis_ssensor on nw_gdh_raw_rt.code = gis_ssensor.code
+		left join gis_exist_zone on gis_scada_station."zoneNo" =  gis_exist_zone.p_code
+		left join gis_zone_point on gis_zone_point."pointNo" = nw_gdh_raw_rt.station
 		left join (
   			select distinct app_warninginf."objectCode",app_warningprocessing."state" 
   			from  app_warninginf
@@ -234,11 +236,9 @@
   			left join gis_ssensor on nw_gdh_raw_rt.code = gis_ssensor.code
   			where gis_ssensor.stype ='Q4' and nw_gdh_raw_rt.value <![CDATA[!= ]]> '0'
 		)as b on b.station = nw_gdh_raw_rt.station
-		<trim prefix="where" prefixOverrides="and|or">
+		where  gis_ssensor.stype = 'P1' and gis_zone_point."channelType" = 'L103000001'
             <if test="begD != null and begD != '' "> and "lastTime" &gt;=#{begD} </if>
             <if test="endD != null and endD != '' "> and "lastTime" &lt;=#{endD} </if>
-            and gis_ssensor.stype = 'P1'
-        </trim>
         limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
         
         

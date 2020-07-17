@@ -1,6 +1,7 @@
 package com.koron.inwlms.service.sysManager.impl;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -144,10 +145,11 @@ public class LabelServiceImpl implements LabelService{
         boolean flag = true;
         Gson jsonValue = new Gson();
 		UserListVO userListVO = jsonValue.fromJson(JSON.toJSON(SessionUtil.getAttribute(Constant.LOGIN_USER)).toString(), UserListVO.class);
-        for (LabelExcelBean labelExcelBean : labelExcelBeanList) {
-//        	if(labelExcelBean.getCode() == null || labelExcelBean.getCode().equals("")) {
-//        		break;
-//        	}
+		List<LabelExcelBean> labelList = new ArrayList<>();
+		for (LabelExcelBean labelExcelBean : labelExcelBeanList) {
+        	if(labelExcelBean.getCode() == null || labelExcelBean.getCode().equals("")) {
+        		break;
+        	}
             int i = mapper.countLabelByCode(labelExcelBean.getCode());
             if (i >= 1) {
                 flag = false;
@@ -155,10 +157,11 @@ public class LabelServiceImpl implements LabelService{
             }
           labelExcelBean.setCreateBy(userListVO.getLoginName());
           labelExcelBean.setUpdateBy(userListVO.getLoginName());
+          labelList.add(labelExcelBean);
         }
         if (flag) {
             try {
-                mapper.uploadBatchLabel(labelExcelBeanList);
+                mapper.uploadBatchLabel(labelList);
 
             } catch (Exception e) {
                 msg.setCode(Constant.MESSAGE_INT_UPLOADERROR);
