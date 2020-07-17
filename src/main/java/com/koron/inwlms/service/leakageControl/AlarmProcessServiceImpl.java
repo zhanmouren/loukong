@@ -841,4 +841,44 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		return num;
 	}
 	
+	public String queryDetailedData(SessionFactory factory,String code,String objectType,QueryTreeDTO queryTreeDTO) {
+		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		
+		if(objectType.equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+			//查询自身信息
+		}else {
+			
+			//获取树的该节点信息
+			LongTreeBean node = mapper.getBeanByForeignIdType(queryTreeDTO.getType(),queryTreeDTO.getForeignKey());
+			List<TreeVO> list = new ArrayList<>();
+			if(node == null) {  
+				return null;
+			}else {
+				List<TreeVO> zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+				if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
+					for(TreeVO treeZoneVO : zoneList) {
+						if(treeZoneVO.getRank() != null) {
+							if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
+								list.add(treeZoneVO);
+							}
+						}
+						
+					}
+				}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_DPZONE)) {
+					for(TreeVO treeZoneVO : zoneList) {
+						if(treeZoneVO.getRank() != null) {
+							if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_THREE)) {
+								list.add(treeZoneVO);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
+		return null;
+	}
+	
 }
