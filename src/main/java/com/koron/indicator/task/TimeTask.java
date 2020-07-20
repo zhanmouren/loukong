@@ -1,52 +1,33 @@
 package com.koron.indicator.task;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.annotation.PostConstruct;
-
-import org.koron.ebs.mybatis.ADOConnection;
-import org.koron.ebs.mybatis.ADOSessionImpl;
-import org.koron.ebs.mybatis.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import org.swan.bean.MessageBean;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.koron.indicator.bean.CalZoneInfos;
 import com.koron.indicator.service.ZoneLossIndicatorService;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.common.MinMonitorPoint;
 import com.koron.inwlms.bean.DTO.leakageControl.ZoneDayData;
 import com.koron.inwlms.bean.DTO.sysManager.DBInfoDTO;
-import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
-import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningTask;
-import com.koron.inwlms.controller.SystemController;
-import com.koron.inwlms.mapper.common.CommonMapper;
-import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
 import com.koron.inwlms.service.common.impl.PointHistoryDataServiceImpl;
 import com.koron.inwlms.service.common.impl.ZoneHistoryDataServiceImpl;
 import com.koron.inwlms.service.leakageControl.AlarmMessageServiceImpl;
 import com.koron.inwlms.service.leakageControl.WarningMessageProduceService;
 import com.koron.inwlms.service.leakageControl.WarningMessageProduceServiceImpl;
-import com.koron.inwlms.util.InterfaceUtil;
 import com.koron.inwlms.util.TenantUtil;
 import com.koron.inwlms.util.TimeUtil;
 import com.koron.inwlms.util.kafka.ZoneKafkaConsumer;
-import com.koron.util.Constant;
+import org.koron.ebs.mybatis.ADOConnection;
+import org.koron.ebs.mybatis.ADOSessionImpl;
+import org.koron.ebs.mybatis.EnvSource;
+import org.koron.ebs.mybatis.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 定时任务，用于定时计算指标，包括：小时，日，月，年四种指标
@@ -66,11 +47,15 @@ public class TimeTask {
 	
 	@Value("${cloud.management.platform.privateKey}")
 	private String privateKey;
-	
+
+	@Value("${cloud.management.appid}")
+	private String APPID;
+
+	@Value("${cloud.management.appversion}")
+	private String APPVersion;
+
 	@Autowired
     private ZoneKafkaConsumer kafkacus;
-	
-	private final static Map<String,String> envMap=new HashMap<>();
 
 	/**
 	 * 定时计算小时指标
@@ -227,9 +212,9 @@ public class TimeTask {
 		PointHistoryDataServiceImpl phds = new PointHistoryDataServiceImpl();
 		List<String> tokenlist = new ArrayList<>();
 		TenantUtil tenantUtil = new TenantUtil();
-		String token1 = tenantUtil.getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4",this.cloudManagePlat);
+		String token1 = tenantUtil.getTenantToken(this.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4",this.cloudManagePlat,this.APPVersion);
 		tokenlist.add(token1);
-		String token2 = tenantUtil.getTenantToken(Constant.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85",this.cloudManagePlat);
+		String token2 = tenantUtil.getTenantToken(this.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85",this.cloudManagePlat,this.APPVersion);
 		tokenlist.add(token2);
 		
 		//获取当前时间-整点数
@@ -248,22 +233,25 @@ public class TimeTask {
 			String tenantID = "";
 			if(token.equals(token1)) {
 				tenantID = "mz";
-				env = "mz__default";
+				env = tenantID+ EnvSource.DEFAULT;
 			}else {
 				tenantID = "cp";
-				env = "cp__default";
+				env = tenantID+ EnvSource.DEFAULT;
 			}
-			DBInfoDTO dbd = tenantUtil.getDBInfo(token,this.cloudManagePlat,this.privateKey);
-			if (dbd != null) {
-				Properties prop = new Properties();
-				prop.put(SessionFactory.PROPERTY_DRIVER, postgresqlDriver);
-				prop.put(SessionFactory.PROPERTY_URL, dbd.getUrl());
-				prop.put(SessionFactory.PROPERTY_USER, dbd.getUser());
-				prop.put(SessionFactory.PROPERTY_PASSWORD, dbd.getPassword());
-				prop.put("commandTimeout", 120);
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(tenantID, tenantID);
+			if(TenantUtil.envMap.get(tenantID)==null || "".equals(TenantUtil.envMap.get(tenantID))) {
+				DBInfoDTO dbd = tenantUtil.getDBInfo(token, this.cloudManagePlat, this.privateKey);
+				if (dbd != null) {
+					Properties prop = new Properties();
+					prop.put(SessionFactory.PROPERTY_DRIVER, postgresqlDriver);
+					prop.put(SessionFactory.PROPERTY_URL, dbd.getUrl());
+					prop.put(SessionFactory.PROPERTY_USER, dbd.getUser());
+					prop.put(SessionFactory.PROPERTY_PASSWORD, dbd.getPassword());
+					prop.put("commandTimeout", 120);
+					new ADOSessionImpl().registeDBMap(env, prop);
+					//设置到envMap里面
+					TenantUtil.envMap.put(tenantID, tenantID);
+				}
+			}
 				
 				List<WarningTask> warningTaskList = ADOConnection.runTask(env,ams, "queryWarningTask", List.class,type);
 				if(warningTaskList != null && warningTaskList.size() != 0) {
@@ -292,7 +280,6 @@ public class TimeTask {
 					warningTask.setTime(nowDate);
 					ADOConnection.runTask(env,ams, "addWarningTask", Void.class,warningTask);
 				}
-			}
 		}
 		
 	}
@@ -304,32 +291,34 @@ public class TimeTask {
 		WarningMessageProduceService wmps = new WarningMessageProduceServiceImpl();
 		List<String> tokenlist = new ArrayList<>();
 		TenantUtil tenantUtil = new TenantUtil();
-		String token1 = tenantUtil.getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4",this.cloudManagePlat);
+		String token1 = tenantUtil.getTenantToken(this.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4",this.cloudManagePlat,this.APPVersion);
 		tokenlist.add(token1);
-		String token2 = tenantUtil.getTenantToken(Constant.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85",this.cloudManagePlat);
+		String token2 = tenantUtil.getTenantToken(this.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85",this.cloudManagePlat,this.APPVersion);
 		tokenlist.add(token2);
 		for(String token : tokenlist) {
 			String env = "";
 			String tenantID = "";
 			if(token.equals(token1)) {
 				tenantID = "mz";
-				env = "mz__default";
+				env = tenantID+ EnvSource.DEFAULT;
 			}else {
 				tenantID = "cp";
-				env = "cp__default";
+				env = tenantID+ EnvSource.DEFAULT;
 			}
-			DBInfoDTO dbd = tenantUtil.getDBInfo(token,this.cloudManagePlat,this.privateKey);
-			if (dbd != null) {
-				Properties prop = new Properties();
-				prop.put(SessionFactory.PROPERTY_DRIVER, postgresqlDriver);
-				prop.put(SessionFactory.PROPERTY_URL, dbd.getUrl());
-				prop.put(SessionFactory.PROPERTY_USER, dbd.getUser());
-				prop.put(SessionFactory.PROPERTY_PASSWORD, dbd.getPassword());
-				prop.put("commandTimeout", 120);
-				new ADOSessionImpl().registeDBMap(env, prop);
-				//设置到envMap里面
-				envMap.put(tenantID, tenantID);
-				
+			if(TenantUtil.envMap.get(tenantID)==null || "".equals(TenantUtil.envMap.get(tenantID))) {
+				DBInfoDTO dbd = tenantUtil.getDBInfo(token, this.cloudManagePlat, this.privateKey);
+				if (dbd != null) {
+					Properties prop = new Properties();
+					prop.put(SessionFactory.PROPERTY_DRIVER, postgresqlDriver);
+					prop.put(SessionFactory.PROPERTY_URL, dbd.getUrl());
+					prop.put(SessionFactory.PROPERTY_USER, dbd.getUser());
+					prop.put(SessionFactory.PROPERTY_PASSWORD, dbd.getPassword());
+					prop.put("commandTimeout", 120);
+					new ADOSessionImpl().registeDBMap(env, prop);
+					//设置到envMap里面
+					TenantUtil.envMap.put(tenantID, tenantID);
+				}
+			}
 				Integer type = 1;
 				List<WarningTask> warningTaskList = ADOConnection.runTask(env,ams, "queryWarningTask", List.class,type);
 				if(warningTaskList != null && warningTaskList.size() != 0) {
@@ -395,7 +384,7 @@ public class TimeTask {
 					warningTask.setZoneTime(time);
 					ADOConnection.runTask(env,ams, "addWarningTask", Void.class,warningTask);
 				}
-			}
+
 		}
 		
 		

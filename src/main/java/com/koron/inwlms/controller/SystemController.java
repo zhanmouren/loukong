@@ -61,7 +61,13 @@ public class SystemController {
 	@Value("${postgresql.driver.name}")
 	private String postgresqlDriver;
 
-	private final Map<String,String> envMap=new HashMap<>();
+	@Value("${cloud.management.appid}")
+	private String APPID;
+
+	@Value("${cloud.management.appversion}")
+	private String APPVersion;
+
+	//private final Map<String,String> envMap=new HashMap<>();
 
 	private final Map orgMap = new HashMap<>();
 	/**
@@ -87,13 +93,13 @@ public class SystemController {
 			//登录成功，数据源注册操作
 			String env = tenantID+ EnvSource.DEFAULT;
 
-			if(envMap.get(tenantID)==null || "".equals(envMap.get(tenantID))) {
+			if(TenantUtil.envMap.get(tenantID)==null || "".equals(TenantUtil.envMap.get(tenantID))) {
 				String token = "";
 				//调用云管平台接口获取租户数据
 				if("mz".equals(tenantID)){
-					token = getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4");
+					token = getTenantToken(this.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4");
 				}else if("cp".equals(tenantID)){
-					token = getTenantToken(Constant.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85");
+					token = getTenantToken(this.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85");
 				}
 
 				if (token != null) {
@@ -109,7 +115,7 @@ public class SystemController {
 						prop.put("commandTimeout", 120);
 						new ADOSessionImpl().registeDBMap(env, prop);
 						//设置到envMap里面
-						envMap.put(tenantID, tenantID);
+						TenantUtil.envMap.put(tenantID, tenantID);
 					} else {
 						msg.setCode(Constant.MESSAGE_INT_LOGINERROR);
 						msg.setDescription("数据源初始化失败");
@@ -216,7 +222,7 @@ public class SystemController {
 	}
 
 	private String getTenantToken(String APPID,String tenantID){
-		String path = this.cloudManagePlat+"/port/tenant/token.htm?appCode="+APPID+"&tenantCode="+tenantID+"&version="+Constant.APPVersion;
+		String path = this.cloudManagePlat+"/port/tenant/token.htm?appCode="+APPID+"&tenantCode="+tenantID+"&version="+this.APPVersion;
 		JsonObject ret =  InterfaceUtil.interfaceUtil(path);
 		Gson gson = new Gson();
 		MessageBean msg = gson.fromJson(ret, new TypeToken<MessageBean>(){}.getType());
