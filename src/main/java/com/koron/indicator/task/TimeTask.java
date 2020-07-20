@@ -302,12 +302,68 @@ public class TimeTask {
 		AlarmMessageServiceImpl ams = new AlarmMessageServiceImpl();
 		ZoneHistoryDataServiceImpl zhds = new ZoneHistoryDataServiceImpl();
 		WarningMessageProduceService wmps = new WarningMessageProduceServiceImpl();
-		
-		String en = "4a1e7e2df9134cd297d03bbbc26df7f4_default";
-		Integer type = 1;
-		List<WarningTask> warningTaskList = ADOConnection.runTask(ams, "queryWarningTask", List.class,type);
-		if(warningTaskList != null && warningTaskList.size() != 0) {
-			for(WarningTask WarningTask : warningTaskList) {
+		List<String> tokenlist = new ArrayList<>();
+		TenantUtil tenantUtil = new TenantUtil();
+		String token1 = tenantUtil.getTenantToken(Constant.APPID, "4a1e7e2df9134cd297d03bbbc26df7f4",this.cloudManagePlat);
+		tokenlist.add(token1);
+		String token2 = tenantUtil.getTenantToken(Constant.APPID, "565ee7bdd75a4c6e937ce9b406b3aa85",this.cloudManagePlat);
+		tokenlist.add(token2);
+		for(String token : tokenlist) {
+			String env = "";
+			String tenantID = "";
+			if(token.equals(token1)) {
+				tenantID = "mz";
+				env = "mz__default";
+			}else {
+				tenantID = "cp";
+				env = "cp__default";
+			}
+			DBInfoDTO dbd = tenantUtil.getDBInfo(token,this.cloudManagePlat,this.privateKey);
+			if (dbd != null) {
+				Properties prop = new Properties();
+				prop.put(SessionFactory.PROPERTY_DRIVER, postgresqlDriver);
+				prop.put(SessionFactory.PROPERTY_URL, dbd.getUrl());
+				prop.put(SessionFactory.PROPERTY_USER, dbd.getUser());
+				prop.put(SessionFactory.PROPERTY_PASSWORD, dbd.getPassword());
+				prop.put("commandTimeout", 120);
+				new ADOSessionImpl().registeDBMap(env, prop);
+				//设置到envMap里面
+				envMap.put(tenantID, tenantID);
+				
+				Integer type = 1;
+				List<WarningTask> warningTaskList = ADOConnection.runTask(env,ams, "queryWarningTask", List.class,type);
+				if(warningTaskList != null && warningTaskList.size() != 0) {
+					for(WarningTask WarningTask : warningTaskList) {
+						List<String> codes = new ArrayList<>();
+						//一级分区日总流量数据
+						codes.add("FLDFWSSITDF");
+						//DMA/PMA分区日总流量数据
+						codes.add("DMDFWSSITDF");
+						//一级分区最小夜间流量数据
+						codes.add("FLDMNF");
+						//二级分区最小夜间流量数据
+						codes.add("SLDMNF");
+						IndicatorDTO indicatorDTO = new IndicatorDTO();
+						indicatorDTO.setCodes(codes);
+						indicatorDTO.setTimeType(2);
+						indicatorDTO.setStartTime(WarningTask.getZoneTime());
+						indicatorDTO.setEndTime(WarningTask.getZoneTime());
+						List<ZoneDayData> zoneDayDataList = ADOConnection.runTask(env,zhds, "queryZoneTaskData", List.class,indicatorDTO);
+						if(zoneDayDataList != null && zoneDayDataList.size() != 0) {
+							for(ZoneDayData zoneDayData : zoneDayDataList) {
+								ADOConnection.runTask(env,wmps, "startZoneWarning", Void.class,zoneDayData); 
+							}
+						}
+						
+					}
+				}
+				Date nowDate = new Date();
+				Date sDate = TimeUtil.addDay(nowDate, -1);
+				int nYear = TimeUtil.getYears(sDate);
+				int nMonth = TimeUtil.getMonth(sDate);
+				int nDay = TimeUtil.getDays(sDate);
+				int time = nYear*10000 + nMonth*100 + nDay;
+				
 				List<String> codes = new ArrayList<>();
 				//一级分区日总流量数据
 				codes.add("FLDFWSSITDF");
@@ -320,55 +376,28 @@ public class TimeTask {
 				IndicatorDTO indicatorDTO = new IndicatorDTO();
 				indicatorDTO.setCodes(codes);
 				indicatorDTO.setTimeType(2);
-				indicatorDTO.setStartTime(WarningTask.getZoneTime());
-				indicatorDTO.setEndTime(WarningTask.getZoneTime());
-				List<ZoneDayData> zoneDayDataList = ADOConnection.runTask(zhds, "queryZoneTaskData", List.class,indicatorDTO);
+				indicatorDTO.setStartTime(time);
+				indicatorDTO.setEndTime(time);
+				List<ZoneDayData> zoneDayDataList = ADOConnection.runTask(env,zhds, "queryZoneTaskData", List.class,indicatorDTO);
 				if(zoneDayDataList != null && zoneDayDataList.size() != 0) {
 					for(ZoneDayData zoneDayData : zoneDayDataList) {
-						ADOConnection.runTask(en,wmps, "startZoneWarning", Void.class,zoneDayData); 
+						ADOConnection.runTask(env,wmps, "startZoneWarning", Void.class,zoneDayData); 
 					}
+					WarningTask warningTask = new WarningTask();
+					warningTask.setState(1);
+					warningTask.setType(type);
+					warningTask.setZoneTime(time);
+					ADOConnection.runTask(env,ams, "addWarningTask", Void.class,warningTask);
+				}else {
+					WarningTask warningTask = new WarningTask();
+					warningTask.setState(0);
+					warningTask.setType(type);
+					warningTask.setZoneTime(time);
+					ADOConnection.runTask(env,ams, "addWarningTask", Void.class,warningTask);
 				}
-				
 			}
 		}
-		Date nowDate = new Date();
-		Date sDate = TimeUtil.addDay(nowDate, -1);
-		int nYear = TimeUtil.getYears(sDate);
-		int nMonth = TimeUtil.getMonth(sDate);
-		int nDay = TimeUtil.getDays(sDate);
-		int time = nYear*10000 + nMonth*100 + nDay;
 		
-		List<String> codes = new ArrayList<>();
-		//一级分区日总流量数据
-		codes.add("FLDFWSSITDF");
-		//DMA/PMA分区日总流量数据
-		codes.add("DMDFWSSITDF");
-		//一级分区最小夜间流量数据
-		codes.add("FLDMNF");
-		//二级分区最小夜间流量数据
-		codes.add("SLDMNF");
-		IndicatorDTO indicatorDTO = new IndicatorDTO();
-		indicatorDTO.setCodes(codes);
-		indicatorDTO.setTimeType(2);
-		indicatorDTO.setStartTime(time);
-		indicatorDTO.setEndTime(time);
-		List<ZoneDayData> zoneDayDataList = ADOConnection.runTask(zhds, "queryZoneTaskData", List.class,indicatorDTO);
-		if(zoneDayDataList != null && zoneDayDataList.size() != 0) {
-			for(ZoneDayData zoneDayData : zoneDayDataList) {
-				ADOConnection.runTask(en,wmps, "startZoneWarning", Void.class,zoneDayData); 
-			}
-			WarningTask warningTask = new WarningTask();
-			warningTask.setState(1);
-			warningTask.setType(type);
-			warningTask.setZoneTime(time);
-			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,warningTask);
-		}else {
-			WarningTask warningTask = new WarningTask();
-			warningTask.setState(0);
-			warningTask.setType(type);
-			warningTask.setZoneTime(time);
-			ADOConnection.runTask(en,ams, "addWarningTask", Void.class,warningTask);
-		}
 		
 		
 	}

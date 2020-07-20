@@ -1,17 +1,29 @@
 package com.koron.inwlms.bean.DTO.leakageControl;
 
 public class WarningSchemeHisDataParam {
-	
+	/**
+	 * 分区编码
+	 */
 	private String zoneCode;
-	
+	/**
+	 * 检测点吗
+	 */
 	private String pointCode;
-	
+	/**
+	 * 指标编码
+	 */
 	private String indexCode;
-	
+	/**
+	 * 分区级别
+	 */
 	private String zoneGrade;
-	
+	/**
+	 * 上限运算标志
+	 */
 	private Double maxIndex;
-	
+	/**
+	 * 下限运算标志
+	 */
 	private Double minIndex;
 	/**
 	 * 0(加法)，1(减法)，2(乘法)，3(除法)

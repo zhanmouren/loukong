@@ -2385,6 +2385,24 @@ public class LeakageControlController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/queryDetailedData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查询树下详细数据", notes = "查询树下详细数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryDetailedData(@RequestBody QueryTreeDTO queryTreeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		
+		try {
+			List<TreeVO> list = ADOConnection.runTask(user.getEnv(),aps, "queryDetailedData", List.class, queryTreeDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(list);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询失败！");
+		}
+		
+		return msg.toJson();
+	}
+	
 	
 	
 }

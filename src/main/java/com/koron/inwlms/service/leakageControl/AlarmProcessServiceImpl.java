@@ -648,7 +648,7 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 							if(treeVO.getCode().equals(gsPoint.getZoneNo())) {
 								newList.add(treeVO);
 								TreeVO treeVO1 = new TreeVO();
-								treeVO1.setCode(gsPoint.getPointNo());
+								treeVO1.setCode(gsPoint.getpCode());
 								treeVO1.setParentmask(treeVO.getParentmask() + 1);
 								newList.add(treeVO1);
 							}else {
@@ -841,44 +841,68 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 		return num;
 	}
 	
-	public String queryDetailedData(SessionFactory factory,String code,String objectType,QueryTreeDTO queryTreeDTO) {
+	@TaskAnnotation("queryDetailedData")
+	@Override
+	public List<TreeVO> queryDetailedData(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
 		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
-		
-		if(objectType.equals(Constant.DATADICTIONARY_FIRSTZONE)) {
-			//查询自身信息
-		}else {
-			
-			//获取树的该节点信息
-			LongTreeBean node = mapper.getBeanByForeignIdType(queryTreeDTO.getType(),queryTreeDTO.getForeignKey());
-			List<TreeVO> list = new ArrayList<>();
-			if(node == null) {  
-				return null;
+		PointHistoryDataMapper phdMapper = factory.getMapper(PointHistoryDataMapper.class);
+		List<TreeVO> list = new ArrayList<>();
+		if(queryTreeDTO.getType() == 2) {
+			if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+				//查询自身信息
+				TreeVO treeVO = new TreeVO();
+				treeVO.setCode(queryTreeDTO.getForeignKey());
+				treeVO.setName(queryTreeDTO.getName());
+				list.add(treeVO);
 			}else {
-				List<TreeVO> zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
-				if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
-					for(TreeVO treeZoneVO : zoneList) {
-						if(treeZoneVO.getRank() != null) {
-							if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
-								list.add(treeZoneVO);
-							}
+				//获取树的该节点信息
+				LongTreeBean node = mapper.getBeanByForeignIdType(queryTreeDTO.getType(),queryTreeDTO.getForeignKey());
+				if(node == null) {  
+					return null;
+				}else {
+					List<TreeVO> zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+					if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_SECZONE)) {
+						for(TreeVO treeZoneVO : zoneList) {
+							if(treeZoneVO.getRank() != null) {
+								if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
+									list.add(treeZoneVO);
+								}
+							}	
 						}
-						
-					}
-				}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_DPZONE)) {
-					for(TreeVO treeZoneVO : zoneList) {
-						if(treeZoneVO.getRank() != null) {
-							if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_THREE)) {
-								list.add(treeZoneVO);
+					}else if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_DPZONE)) {
+						for(TreeVO treeZoneVO : zoneList) {
+							if(treeZoneVO.getRank() != null) {
+								if(treeZoneVO.getRank().equals(Constant.DMAZONELEVEL_THREE)) {
+									list.add(treeZoneVO);
+								}
 							}
 						}
 					}
 				}
 			}
+		}else {
+			if(queryTreeDTO.getPointType() == 3) {
+				//即本身
+				TreeVO treeVO = new TreeVO();
+				treeVO.setCode(queryTreeDTO.getForeignKey());
+				treeVO.setName(queryTreeDTO.getName());
+				list.add(treeVO);
+			}else {
+				//查询分区下的监测点
+				List<GisScadaStation> pointList = phdMapper.queryPointByZoneNo(queryTreeDTO.getForeignKey());
+				for(GisScadaStation gisScadaStation : pointList) {
+					TreeVO treeVO = new TreeVO();
+					treeVO.setCode(gisScadaStation.getpCode());
+					treeVO.setName(gisScadaStation.getName());
+					list.add(treeVO);
+				}
+				
+			}
+			
 		}
 		
-		
-		return null;
+		return list;
 	}
 	
 }

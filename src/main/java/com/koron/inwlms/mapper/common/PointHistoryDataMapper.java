@@ -33,8 +33,11 @@ public interface PointHistoryDataMapper {
 			" and a.\"stationCode\"  = #{stationCode}")
 	List<MinMonitorPoint> queryPointHourDataByDay(@Param("code") String code,@Param("start") Date start, @Param("end") Date end,@Param("stationCode") String stationCode);
 	
-	@Select("select * from gis_scada_station")
+	@Select("select id as id, name as name, p_code as pCode, \"zoneNo\" as \"zoneNo\" from gis_scada_station")
 	List<GisScadaStation> queryAllPointMessage();
+	
+	@Select("select id as id, name as name, p_code as pCode, \"zoneNo\" as \"zoneNo\" from gis_scada_station where \"zoneNo\" = #{zoneNo}")
+	List<GisScadaStation> queryPointByZoneNo(@Param("zoneNo") String zoneNo);
 	
 	List<GisScadaStation> queryPointMessageByName(PointParamDTO pointParamDTO);
 	

@@ -1,14 +1,42 @@
 package com.koron.inwlms.bean.DTO.leakageControl;
 
 public class QueryTreeDTO {
-	
+	/**
+	 * 2分区,3监测点
+	 */
 	private int type;
-	
+	/**
+	 * 编码
+	 */
 	private String foreignKey;
-	
+	/**
+	 * 对象类型
+	 */
 	private String zoneIndex;
+	/**
+	 * 监测点树所选择的类型
+	 */
+	private Integer pointType;
+	
+	private String name;
 	
 	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getPointType() {
+		return pointType;
+	}
+
+	public void setPointType(Integer pointType) {
+		this.pointType = pointType;
+	}
 
 	public String getZoneIndex() {
 		return zoneIndex;

@@ -6,9 +6,9 @@ public class GisScadaStation {
 	
 	private Integer id;
 	
-	private String zoneNo;
+	private String smid;
 	
-	private String pointNo;
+	private String featid;
 	
 	private String createBy;
 	
@@ -18,17 +18,19 @@ public class GisScadaStation {
 	
 	private Date updateTime;
 	
-	private Integer taskid;
+	private String asset_status;
 	
-	private Date integratedtime;
+	private String pCode;
 	
-	private String type;
+	private String name;
 	
-	private String BatchNo;
+	private String scadaid;
 	
-	private String channelType;
+	private String w_category;
 	
-	private Integer pointType;
+	private String model;
+	
+	private String zoneNo;
 
 	public Integer getId() {
 		return id;
@@ -38,20 +40,20 @@ public class GisScadaStation {
 		this.id = id;
 	}
 
-	public String getZoneNo() {
-		return zoneNo;
+	public String getSmid() {
+		return smid;
 	}
 
-	public void setZoneNo(String zoneNo) {
-		this.zoneNo = zoneNo;
+	public void setSmid(String smid) {
+		this.smid = smid;
 	}
 
-	public String getPointNo() {
-		return pointNo;
+	public String getFeatid() {
+		return featid;
 	}
 
-	public void setPointNo(String pointNo) {
-		this.pointNo = pointNo;
+	public void setFeatid(String featid) {
+		this.featid = featid;
 	}
 
 	public String getCreateBy() {
@@ -86,53 +88,67 @@ public class GisScadaStation {
 		this.updateTime = updateTime;
 	}
 
-	public Integer getTaskid() {
-		return taskid;
+	public String getAsset_status() {
+		return asset_status;
 	}
 
-	public void setTaskid(Integer taskid) {
-		this.taskid = taskid;
+	public void setAsset_status(String asset_status) {
+		this.asset_status = asset_status;
 	}
 
-	public Date getIntegratedtime() {
-		return integratedtime;
+	public String getpCode() {
+		return pCode;
 	}
 
-	public void setIntegratedtime(Date integratedtime) {
-		this.integratedtime = integratedtime;
+	public void setpCode(String pCode) {
+		this.pCode = pCode;
 	}
 
-	public String getType() {
-		return type;
+	public String getName() {
+		return name;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getBatchNo() {
-		return BatchNo;
+	public String getScadaid() {
+		return scadaid;
 	}
 
-	public void setBatchNo(String batchNo) {
-		BatchNo = batchNo;
+	public void setScadaid(String scadaid) {
+		this.scadaid = scadaid;
 	}
 
-	public String getChannelType() {
-		return channelType;
+	public String getW_category() {
+		return w_category;
 	}
 
-	public void setChannelType(String channelType) {
-		this.channelType = channelType;
+	public void setW_category(String w_category) {
+		this.w_category = w_category;
 	}
 
-	public Integer getPointType() {
-		return pointType;
+	public String getModel() {
+		return model;
 	}
 
-	public void setPointType(Integer pointType) {
-		this.pointType = pointType;
+	public void setModel(String model) {
+		this.model = model;
 	}
+
+	public String getZoneNo() {
+		return zoneNo;
+	}
+
+	public void setZoneNo(String zoneNo) {
+		this.zoneNo = zoneNo;
+	}
+	
+	
+
+	
+
+	
 	
 	
 

@@ -51,5 +51,7 @@ public interface AlarmProcessService {
 
 	Integer addEnvelopeData(SessionFactory factory, EnvelopeDataVO envelopeDataVO);
 
+	List<TreeVO> queryDetailedData(SessionFactory factory, QueryTreeDTO queryTreeDTO);
+
 
 }
