@@ -14,6 +14,16 @@ public class WarningSchemeHisData {
 	
 	private Integer type;
 	
+	private String schemeCode;
+	
+
+	public String getSchemeCode() {
+		return schemeCode;
+	}
+
+	public void setSchemeCode(String schemeCode) {
+		this.schemeCode = schemeCode;
+	}
 
 	public Integer getType() {
 		return type;

@@ -1,6 +1,8 @@
 package com.koron.inwlms.bean.DTO.leakageControl;
 
-public class QueryTreeDTO {
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
+public class QueryTreeDTO extends BaseDTO {
 	/**
 	 * 2分区,3监测点
 	 */

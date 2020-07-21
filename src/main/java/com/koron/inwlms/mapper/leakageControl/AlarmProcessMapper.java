@@ -58,5 +58,7 @@ public interface AlarmProcessMapper {
 	List<GisExistZoneVO> queryZoneData(ObjectData objectData);
 	
 	Integer addEnvelopeData(List<WarningSchemeHisData> list);
+	
+	List<WarningSchemeHisData> queryEnvelopeData(String schemeCode);
 
 }

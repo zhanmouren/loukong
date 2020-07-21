@@ -133,5 +133,9 @@
 			(#{invest.max}, #{invest.min}, #{invest.oldMax}, #{invest.oldMin}, #{invest.time}, #{invest.type})
 	</foreach>
  </insert>
+ 
+ <select id="queryEnvelopeData" parameterType="java.lang.String" resultType="com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisData">
+ select * from app_warningschemecurve where "schemeCode" = #{schemeCode}
+ </select>
 
 </mapper>

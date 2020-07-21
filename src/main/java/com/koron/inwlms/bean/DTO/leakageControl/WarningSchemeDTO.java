@@ -6,6 +6,7 @@ import java.util.List;
 import com.koron.inwlms.bean.DTO.common.BaseDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
+import com.koron.inwlms.bean.VO.leakageControl.EnvelopeDataVO;
 
 /**
  * 
@@ -57,6 +58,14 @@ public class WarningSchemeDTO extends BaseDTO{
 	 * 通知信息列表
 	 */
 	private List<AlertNoticeScheme> noticeList;
+	/**
+	 * 历史曲线数据
+	 */
+	private EnvelopeDataVO envelopeDataVO;
+	
+	/**
+	 * 适用范围
+	 */
 	
 	private String createBy;
 	
@@ -78,6 +87,14 @@ public class WarningSchemeDTO extends BaseDTO{
 	
 
 	
+
+	public EnvelopeDataVO getEnvelopeDataVO() {
+		return envelopeDataVO;
+	}
+
+	public void setEnvelopeDataVO(EnvelopeDataVO envelopeDataVO) {
+		this.envelopeDataVO = envelopeDataVO;
+	}
 
 	public List<AlertNoticeScheme> getNoticeList() {
 		return noticeList;

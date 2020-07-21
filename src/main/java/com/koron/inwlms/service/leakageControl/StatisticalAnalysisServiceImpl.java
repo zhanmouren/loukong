@@ -197,7 +197,7 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 			  calendar.set(Calendar.DAY_OF_MONTH,1);
 			  calendar.add(Calendar.MONTH, i);
 			  String startTime = format.format(calendar.getTime());
-			  calendar.add(Calendar.MONTH, i+1);
+			  calendar.add(Calendar.MONTH, 1);
 			  String endTime = format.format(calendar.getTime());
 			  
 			  AlarmProcessDTO alarmProcessDTO = new AlarmProcessDTO();
@@ -216,7 +216,7 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 					  //查询预警信息
 					  if(alarmProcessVO.getWarningCode() != null && !alarmProcessVO.getWarningCode().equals("")) {
 						  AlarmMessageVO alarmMessageVO = messageMapper.queryAlarmMessageByCode(alarmProcessVO.getWarningCode());
-						  if(areaCodeList != null || areaCodeList.size() != 0) {
+						  if(areaCodeList != null && areaCodeList.size() != 0) {
 							  for(TreeVO treeVO : areaCodeList) {
 								  if(alarmMessageVO.getAreaCode() != null && !alarmMessageVO.getAreaCode().equals("")) {
 									  if(alarmMessageVO.getAreaCode().equals(treeVO.getCode())) {
@@ -238,10 +238,10 @@ public class StatisticalAnalysisServiceImpl implements StatisticalAnalysisServic
 								  ptn = getStrategyStatistics(alarmProcessVO.getRecommendStrategy(),ptn);
 							  }  
 						  }else {
-							  if(state.equals("0")) {
+							  if(state.equals(Constant.DATADICTIONARY_TASKSTATUSON)) {
 								  //处理中
 								  loadNum = loadNum + 1;
-							  }else if(state.equals("1")) {
+							  }else if(state.equals(Constant.DATADICTIONARY_TASKSTATUSOVER)) {
 								  //已处理
 								  finishNum = finishNum + 1;
 								  //TODO  统计使用的控制策略次数

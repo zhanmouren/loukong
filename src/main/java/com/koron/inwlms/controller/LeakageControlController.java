@@ -74,6 +74,7 @@ import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
 import com.koron.inwlms.bean.VO.leakageControl.DataDicRelationVO;
+import com.koron.inwlms.bean.VO.leakageControl.DetaileDataReturn;
 import com.koron.inwlms.bean.VO.leakageControl.EnvelopeDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventFileVO;
 import com.koron.inwlms.bean.VO.leakageControl.EventInfo;
@@ -1173,108 +1174,7 @@ public class LeakageControlController {
 		}
 		
 		try {
-			//测试数据（待数据连通后删除）
-//			ProcessingStatisticsAllDataVO psadv = new ProcessingStatisticsAllDataVO();
-//			psadv.setMnfBefor(100.01);
-//			psadv.setMnfAfther(81.2);
-//			psadv.setLossFlowBefor(111.3);
-//			psadv.setLossFlowAfther(80.4);
-//			ProcessingStatisticsVO processingStatisticsVO = new ProcessingStatisticsVO();
-//			processingStatisticsVO.setLoadingNum(10.0);
-//			processingStatisticsVO.setFinishNum(5.0);
-//			processingStatisticsVO.setUntreatedNum(8.0);
-//			List<ProcessingStatisticsVO> processingStatisticsVOList = new ArrayList<>();
-//			ProcessingStatisticsVO processingStatisticsVO1 = new ProcessingStatisticsVO();
-//			processingStatisticsVO1.setLoadingNum(10.0);
-//			processingStatisticsVO1.setFinishNum(5.0);
-//			processingStatisticsVO1.setUntreatedNum(8.0);
-//			processingStatisticsVO1.setLossFlowNum(340.2);
-//			processingStatisticsVO1.setAllFlowNum(700.4);
-//			processingStatisticsVO1.setMonth(1);
-//			processingStatisticsVOList.add(processingStatisticsVO1);
-//			ProcessingStatisticsVO processingStatisticsVO2 = new ProcessingStatisticsVO();
-//			processingStatisticsVO2.setLoadingNum(11.0);
-//			processingStatisticsVO2.setFinishNum(6.0);
-//			processingStatisticsVO2.setUntreatedNum(7.0);
-//			processingStatisticsVO2.setAllFlowNum(800.6);
-//			processingStatisticsVO2.setLossFlowNum(300.4);
-//			processingStatisticsVO2.setMonth(2);
-//			processingStatisticsVOList.add(processingStatisticsVO2);
-//			ProcessingStatisticsVO processingStatisticsVO3 = new ProcessingStatisticsVO();
-//			processingStatisticsVO3.setLoadingNum(11.0);
-//			processingStatisticsVO3.setFinishNum(8.0);
-//			processingStatisticsVO3.setUntreatedNum(4.0);
-//			processingStatisticsVO3.setAllFlowNum(780.6);
-//			processingStatisticsVO3.setLossFlowNum(300.1);
-//			processingStatisticsVO3.setMonth(3);
-//			processingStatisticsVOList.add(processingStatisticsVO3);
-//			ProcessingStatisticsVO processingStatisticsVO4 = new ProcessingStatisticsVO();
-//			processingStatisticsVO4.setLoadingNum(11.0);
-//			processingStatisticsVO4.setFinishNum(8.0);
-//			processingStatisticsVO4.setUntreatedNum(4.0);
-//			processingStatisticsVO4.setAllFlowNum(600.5);
-//			processingStatisticsVO4.setLossFlowNum(500.1);
-//			processingStatisticsVO4.setMonth(4);
-//			processingStatisticsVOList.add(processingStatisticsVO4);
-//			processingStatisticsVO.setProStatList(processingStatisticsVOList);
-//			psadv.setPsv(processingStatisticsVO);
-//			List<ZoneSaveWaterData> zswd = new ArrayList<>();
-//			ZoneSaveWaterData zoneSaveWaterData = new ZoneSaveWaterData();
-//			zoneSaveWaterData.setName("分区1");
-//			zoneSaveWaterData.setProportion(50.0);
-//			zoneSaveWaterData.setSaveWater(1800.0);
-//			zswd.add(zoneSaveWaterData);
-//			ZoneSaveWaterData zoneSaveWaterData1 = new ZoneSaveWaterData();
-//			zoneSaveWaterData1.setName("分区2");
-//			zoneSaveWaterData1.setProportion(20.0);
-//			zoneSaveWaterData1.setSaveWater(800.0);
-//			zswd.add(zoneSaveWaterData1);
-//			ZoneSaveWaterData zoneSaveWaterData2 = new ZoneSaveWaterData();
-//			zoneSaveWaterData2.setName("分区3");
-//			zoneSaveWaterData2.setProportion(20.0);
-//			zoneSaveWaterData2.setSaveWater(800.0);
-//			zswd.add(zoneSaveWaterData2);
-//			ZoneSaveWaterData zoneSaveWaterData3 = new ZoneSaveWaterData();
-//			zoneSaveWaterData3.setName("分区4");
-//			zoneSaveWaterData3.setProportion(10.0);
-//			zoneSaveWaterData3.setSaveWater(400.0);
-//			zswd.add(zoneSaveWaterData3);
-//			psadv.setSaveWaterList(zswd);
-//			List<ZoneSaveWaterData> zscd = new ArrayList<>();
-//			ZoneSaveWaterData zoneSaveWaterData4 = new ZoneSaveWaterData();
-//			zoneSaveWaterData4.setName("分区1");
-//			zoneSaveWaterData4.setSaveCost(10.0);
-//			zscd.add(zoneSaveWaterData4);
-//			ZoneSaveWaterData zoneSaveWaterData5 = new ZoneSaveWaterData();
-//			zoneSaveWaterData5.setName("分区2");
-//			zoneSaveWaterData5.setSaveCost(12.3);
-//			zscd.add(zoneSaveWaterData5);
-//			ZoneSaveWaterData zoneSaveWaterData6 = new ZoneSaveWaterData();
-//			zoneSaveWaterData6.setName("分区3");
-//			zoneSaveWaterData6.setSaveCost(14.7);
-//			zscd.add(zoneSaveWaterData6);
-//			ZoneSaveWaterData zoneSaveWaterData7 = new ZoneSaveWaterData();
-//			zoneSaveWaterData7.setName("分区4");
-//			zoneSaveWaterData7.setSaveCost(20.6);
-//			zscd.add(zoneSaveWaterData7);
-//			psadv.setSaveCostList(zscd);
-//			PolicyTypeNum policyTypeNum = new PolicyTypeNum();
-//			policyTypeNum.setP1(2);
-//			policyTypeNum.setP2(5);
-//			policyTypeNum.setP3(4);
-//			policyTypeNum.setP4(7);
-//			policyTypeNum.setP5(1);
-//			policyTypeNum.setP6(0);
-//			policyTypeNum.setP7(2);
-//			policyTypeNum.setP8(10);
-//			policyTypeNum.setP9(0);
-//			policyTypeNum.setP10(5);
-//			policyTypeNum.setP11(3);
-//			policyTypeNum.setP12(2);
-//			psadv.setPtn(policyTypeNum);
-			
-			
-			
+
 			//TODO 数据统计
 			ProcessingStatisticsAllDataVO psadv = ADOConnection.runTask(user.getEnv(),sas, "queryProcessingStatistics",ProcessingStatisticsAllDataVO.class,processingStatisticsDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
@@ -2389,12 +2289,12 @@ public class LeakageControlController {
     @ApiOperation(value = "查询树下详细数据", notes = "查询树下详细数据", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryDetailedData(@RequestBody QueryTreeDTO queryTreeDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
-		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		MessageBean<DetaileDataReturn> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, DetaileDataReturn.class);
 		
 		try {
-			List<TreeVO> list = ADOConnection.runTask(user.getEnv(),aps, "queryDetailedData", List.class, queryTreeDTO);
+			DetaileDataReturn data = ADOConnection.runTask(user.getEnv(),aps, "queryDetailedData", DetaileDataReturn.class, queryTreeDTO);
 			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-			msg.setData(list);
+			msg.setData(data);
 		}catch(Exception e) {
 			msg.setCode(Constant.MESSAGE_INT_ERROR);
 	        msg.setDescription("查询失败！");

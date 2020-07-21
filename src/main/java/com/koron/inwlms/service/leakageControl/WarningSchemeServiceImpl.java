@@ -1,6 +1,7 @@
 package com.koron.inwlms.service.leakageControl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.koron.ebs.mybatis.ADOConnection;
@@ -11,18 +12,22 @@ import org.springframework.stereotype.Service;
 import com.koron.inwlms.bean.DTO.leakageControl.AlarmRuleDTO;
 import com.koron.inwlms.bean.DTO.leakageControl.PageInfo;
 import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeDTO;
+import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisData;
 import com.koron.inwlms.bean.DTO.sysManager.RoleDTO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeMessage;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeScheme;
 import com.koron.inwlms.bean.VO.leakageControl.AlertNoticeSchemeVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlertSchemeListVO;
+import com.koron.inwlms.bean.VO.leakageControl.EnvelopeDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeDateVO;
 import com.koron.inwlms.bean.VO.leakageControl.WarningSchemeVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.mapper.leakageControl.AlarmMessageMapper;
+import com.koron.inwlms.mapper.leakageControl.AlarmProcessMapper;
 import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
+import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
 
 @Service
@@ -49,6 +54,32 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 			List<AlertNoticeScheme> noticelist = mapper.queryAlertNoticeSchemeByWarningId(warningSchemeDTO.getCode());
 			warningSchemeDateVO.setNoticeList(noticelist);
 		}
+		
+		//查询历史曲线
+		AlarmProcessMapper amapper = factory.getMapper(AlarmProcessMapper.class);
+		List<WarningSchemeHisData> dList = amapper.queryEnvelopeData(warningSchemeDTO.getCode());
+		if(dList != null && dList.size() != 0) {
+			Date nowDate = new Date();
+			int year = TimeUtil.getYears(nowDate);
+			int moth = TimeUtil.getMonth(nowDate);
+			int time = year*100 + moth;
+			EnvelopeDataVO envelopeDataVO = new EnvelopeDataVO();
+			List<WarningSchemeHisData> nowList = new ArrayList<>();
+			List<WarningSchemeHisData> oldList = new ArrayList<>();
+			for(WarningSchemeHisData warningSchemeHisData : dList) {
+				if(warningSchemeHisData.getTime() >= time) {
+					nowList.add(warningSchemeHisData);
+				}else {
+					oldList.add(warningSchemeHisData);
+				}
+			}
+			envelopeDataVO.setNowList(nowList);
+			envelopeDataVO.setOldList(oldList);
+			warningSchemeDateVO.setEnvelopeDataVO(envelopeDataVO);
+		}
+		
+		
+		
 		return warningSchemeDateVO;
 	}
 	
@@ -155,6 +186,23 @@ public class WarningSchemeServiceImpl implements WarningSchemeService {
 				}
 			}
 		}
+		
+		if(warningSchemeDTO.getEnvelopeDataVO() != null) {
+			AlarmProcessMapper amapper = factory.getMapper(AlarmProcessMapper.class);
+			List<WarningSchemeHisData> list = new ArrayList<WarningSchemeHisData>();
+			for(WarningSchemeHisData warningSchemeHisData :warningSchemeDTO.getEnvelopeDataVO().getOldList()) {
+				warningSchemeHisData.setType(warningSchemeDTO.getEnvelopeDataVO().getType());
+				warningSchemeHisData.setSchemeCode(num);
+				list.add(warningSchemeHisData);
+			}
+			for(WarningSchemeHisData warningSchemeHisData :warningSchemeDTO.getEnvelopeDataVO().getNowList()) {
+				warningSchemeHisData.setType(warningSchemeDTO.getEnvelopeDataVO().getType());
+				warningSchemeHisData.setSchemeCode(num);
+				list.add(warningSchemeHisData);
+			}
+			amapper.addEnvelopeData(list);
+		}
+		
 		return num;
 	}
 	

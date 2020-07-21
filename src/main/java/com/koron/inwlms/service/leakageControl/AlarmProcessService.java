@@ -15,6 +15,7 @@ import com.koron.inwlms.bean.DTO.leakageControl.WarningSchemeHisDataParam;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.DetaileDataReturn;
 import com.koron.inwlms.bean.VO.leakageControl.EnvelopeDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.TreatmentEffectVO;
@@ -51,7 +52,7 @@ public interface AlarmProcessService {
 
 	Integer addEnvelopeData(SessionFactory factory, EnvelopeDataVO envelopeDataVO);
 
-	List<TreeVO> queryDetailedData(SessionFactory factory, QueryTreeDTO queryTreeDTO);
+	DetaileDataReturn queryDetailedData(SessionFactory factory, QueryTreeDTO queryTreeDTO);
 
 
 }

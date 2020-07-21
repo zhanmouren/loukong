@@ -12,7 +12,16 @@ public class WarningSchemeDateVO {
 	
 	private List<AlertNoticeScheme> noticeList;
 	
+	private EnvelopeDataVO envelopeDataVO;
 	
+
+	public EnvelopeDataVO getEnvelopeDataVO() {
+		return envelopeDataVO;
+	}
+
+	public void setEnvelopeDataVO(EnvelopeDataVO envelopeDataVO) {
+		this.envelopeDataVO = envelopeDataVO;
+	}
 
 	public List<AlertNoticeScheme> getNoticeList() {
 		return noticeList;

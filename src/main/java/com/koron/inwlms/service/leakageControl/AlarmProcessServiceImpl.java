@@ -29,6 +29,7 @@ import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessLog;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessReturnVO;
 import com.koron.inwlms.bean.VO.leakageControl.AlarmProcessVO;
+import com.koron.inwlms.bean.VO.leakageControl.DetaileDataReturn;
 import com.koron.inwlms.bean.VO.leakageControl.EnvelopeDataVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisZonePointVO;
@@ -843,10 +844,11 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	
 	@TaskAnnotation("queryDetailedData")
 	@Override
-	public List<TreeVO> queryDetailedData(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
+	public DetaileDataReturn queryDetailedData(SessionFactory factory,QueryTreeDTO queryTreeDTO) {
 		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
 		TreeMapper mapper = factory.getMapper(TreeMapper.class);
 		PointHistoryDataMapper phdMapper = factory.getMapper(PointHistoryDataMapper.class);
+		DetaileDataReturn detaileDataReturn = new DetaileDataReturn();
 		List<TreeVO> list = new ArrayList<>();
 		if(queryTreeDTO.getType() == 2) {
 			if(queryTreeDTO.getZoneIndex().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
@@ -891,18 +893,44 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 			}else {
 				//查询分区下的监测点
 				List<GisScadaStation> pointList = phdMapper.queryPointByZoneNo(queryTreeDTO.getForeignKey());
-				for(GisScadaStation gisScadaStation : pointList) {
-					TreeVO treeVO = new TreeVO();
-					treeVO.setCode(gisScadaStation.getpCode());
-					treeVO.setName(gisScadaStation.getName());
-					list.add(treeVO);
+				if(pointList != null && pointList.size() != 0) {
+					for(GisScadaStation gisScadaStation : pointList) {
+						TreeVO treeVO = new TreeVO();
+						treeVO.setCode(gisScadaStation.getpCode());
+						treeVO.setName(gisScadaStation.getName());
+						list.add(treeVO);
+					}
 				}
+				
 				
 			}
 			
 		}
 		
-		return list;
+		//分页
+		List<TreeVO> rlist = new ArrayList<>();
+		int min = (queryTreeDTO.getPage() - 1)*queryTreeDTO.getPageCount();
+		int max = queryTreeDTO.getPage()*queryTreeDTO.getPageCount() - 1;
+		if(list.size() > min) {
+			if(list.size() <= max) {
+				for(int i = min; i < list.size();i++) {
+					rlist.add(list.get(i));
+				}
+			}else {
+				for(int i = min; i <= max;i++) {
+					rlist.add(list.get(i));
+				}
+			}
+		}else {
+			return null;
+		}
+		detaileDataReturn.setDataList(rlist);
+		detaileDataReturn.setPage(queryTreeDTO.getPage());
+		detaileDataReturn.setPageCount(queryTreeDTO.getPageCount());
+		detaileDataReturn.setRowNumber(list.size());
+		detaileDataReturn.setTotalPage((int)Math.ceil(list.size()/queryTreeDTO.getPageCount()));
+		
+		return detaileDataReturn;
 	}
 	
 }
