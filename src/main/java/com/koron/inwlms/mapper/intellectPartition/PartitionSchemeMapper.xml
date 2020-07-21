@@ -17,7 +17,6 @@
  <if test="code != null and code != '' "> and code like '%'||#{code}||'%'</if>
  <if test="zoneCode != null and zoneCode != '' "> and "zoneCode" = #{zoneCode}</if>
  <if test="createBy != null and createBy != '' "> and "createBy" = #{createBy}</if>
- limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
  <select id="addTotalSchemeDet" parameterType="com.koron.inwlms.bean.VO.intellectPartition.TotalSchemeDet" resultType="java.lang.String">

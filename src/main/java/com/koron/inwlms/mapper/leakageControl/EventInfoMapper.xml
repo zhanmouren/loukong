@@ -85,7 +85,7 @@
  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
- <select id="queryEventFileNum">
+ <select id="queryEventFileNum" resultType="java.lang.Integer">
  select count(*)
  from app_file a inner join app_filerelation b on b."fileId" = a.id where b.code = #{code}
  <if test="name != null and name != '' "> and a."fileName" like '%'||#{name}||'%'</if>
