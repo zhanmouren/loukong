@@ -21,8 +21,10 @@ import com.koron.inwlms.bean.VO.apparentLoss.ALData;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.BigMeterFlowTopTen;
 import com.koron.inwlms.bean.VO.apparentLoss.CurrentMeterData;
 import com.koron.inwlms.bean.VO.apparentLoss.DrBigDnDealData;
+import com.koron.inwlms.bean.VO.apparentLoss.DrBigDnFlowTopTen;
 import com.koron.inwlms.bean.VO.apparentLoss.DrMeterStatisData;
 import com.koron.inwlms.bean.VO.apparentLoss.DrSmallDnAnaData;
 import com.koron.inwlms.bean.VO.apparentLoss.DrSmallDnMeterData;
@@ -1516,6 +1518,22 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		dmsLists.add(bigDnData);
 		drDealAdviseVO.setDmsList(dmsLists);
 		
+		//大口径排名前十数据
+		DrBigDnFlowTopTen drBigDnFlowTopTen = new DrBigDnFlowTopTen();
+		List<String> accNos = new ArrayList<>();
+		List<Double> flows =new ArrayList<>();
+		List<Double> flowRates =new ArrayList<>();
+		List<BigMeterFlowTopTen> queryBigMeterFlowTopTen = mapper.queryBigMeterFlowTopTen(queryALDTO);
+		for (BigMeterFlowTopTen bigMeterFlowTopTen : queryBigMeterFlowTopTen) {
+			accNos.add(bigMeterFlowTopTen.getAccNo());
+			flows.add(bigMeterFlowTopTen.getFlow());
+			flowRates.add(bigMeterFlowTopTen.getFlow()/(bigDnMFlow == null? 0 : bigDnMFlow));
+		}
+		drBigDnFlowTopTen.setAccNos(accNos);
+		drBigDnFlowTopTen.setFlows(flows);
+		drBigDnFlowTopTen.setFlowRates(flowRates);
+		drDealAdviseVO.setBigDnFlowTopTen(drBigDnFlowTopTen);
+		
 		// 3、诊断报告过载大口径水表统计数据
 		// 4、诊断报告过载小口径水表统计数据
 		List<DrFlowMeterData> bdfmList = new ArrayList<>();
@@ -1525,6 +1543,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		try {
 		List<String> sAccNoList = new ArrayList<>();
 		List<String> bAccNoList = new ArrayList<>();
+		List<String> maxFlowCodeList = new ArrayList<>();
 		for (MeterQH meterQH : queryMeterQH) {
 			if(meterQH.getQh() == null || meterQH.getMeterDn() == null) continue;
 			double qh = Double.parseDouble(meterQH.getQh());
@@ -1535,9 +1554,9 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				//判断是否重复录入
 				if(sAccNoList.contains(meterQH.getAccNo()) || bAccNoList.contains(meterQH.getAccNo())) continue;
 				//计算最高月流量
-				List<String> maxFlowCodeList = new ArrayList<>();
 				maxFlowCodeList.add(meterQH.getAccNo());
 				List<Double> maxFList = mapper.queryMeterMMaxFlow(maxFlowCodeList, queryALDTO);
+				maxFlowCodeList.clear();
 				//判断是大口径，小口径
 				DrFlowMeterData drFlowMeterData = new DrFlowMeterData();
 				drFlowMeterData.setAddress(meterQH.getAddress());

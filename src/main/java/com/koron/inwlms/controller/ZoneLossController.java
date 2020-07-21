@@ -1885,7 +1885,7 @@ public class ZoneLossController {
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
 			return msg.toJson();
-		} else if (zoneThematicValueDTO.getTimeType() < Constant.TIME_TYPE_M
+		} else if (zoneThematicValueDTO.getTimeType() < Constant.TIME_TYPE_D
 				|| zoneThematicValueDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			// 传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);
@@ -2021,7 +2021,7 @@ public class ZoneLossController {
 			// 参数不正确
 			msg.setCode(Constant.MESSAGE_INT_NULL);
 			msg.setDescription("时间粒度为空");
-		} else if (queryZoneIndicatorListDTO.getTimeType() < Constant.TIME_TYPE_M
+		} else if (queryZoneIndicatorListDTO.getTimeType() < Constant.TIME_TYPE_D
 				|| queryZoneIndicatorListDTO.getTimeType() > Constant.TIME_TYPE_Y) {
 			// 传参数值不正确
 			msg.setCode(Constant.MESSAGE_INT_PARAMS);

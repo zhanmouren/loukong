@@ -15,6 +15,11 @@ public class DrDealAdviseVO {
 	private DrBigDnDealData bigDnDealData;
 	
 	/**
+	 * 大口径排名前十的水量数据
+	 */
+	private DrBigDnFlowTopTen bigDnFlowTopTen;
+	
+	/**
 	 * 大口径水表统计数据
 	 */
 	private List<DrMeterStatisData> dmsList;
@@ -140,6 +145,14 @@ public class DrDealAdviseVO {
 
 	public void setSdfmList(List<DrFlowMeterData> sdfmList) {
 		this.sdfmList = sdfmList;
+	}
+
+	public DrBigDnFlowTopTen getBigDnFlowTopTen() {
+		return bigDnFlowTopTen;
+	}
+
+	public void setBigDnFlowTopTen(DrBigDnFlowTopTen bigDnFlowTopTen) {
+		this.bigDnFlowTopTen = bigDnFlowTopTen;
 	}
 	
 }

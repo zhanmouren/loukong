@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALOverviewDataVO;
+import com.koron.inwlms.bean.VO.apparentLoss.BigMeterFlowTopTen;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnErrFlowDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnLHFlowDataListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.DrqlBDnZeroFlowDataListVO;
@@ -312,5 +313,12 @@ public interface ApparentLossMapper {
 	 * @return
 	 */
 	List<MeterInfo> queryNoReadMeterInfo(@Param("qaDTO") QueryALDTO queryALDTO);
+	
+	/**
+	 * 查询大口径用水量前十的排行榜
+	 * @param queryALDTO
+	 * @return
+	 */
+	List<BigMeterFlowTopTen> queryBigMeterFlowTopTen(@Param("qaDTO") QueryALDTO queryALDTO);
 	
 }

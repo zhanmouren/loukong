@@ -813,7 +813,7 @@
 	
 	<select id="queryMeterMMaxFlow" resultType="java.lang.Double">
 		select 
-		round( max("REAL_NUM")/100 :: NUMERIC, 2 ) as value
+		round( max("REAL_NUM") :: NUMERIC, 2 ) as value
 		from rw_fct_cb where
 		"MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
 		<if test="lists != null and lists.size > 0">
@@ -823,5 +823,12 @@
 			</foreach> 
 		</if>
 	    group by "CTM_NUM";
+	</select>
+	
+	<select id="queryBigMeterFlowTopTen" resultType="com.koron.inwlms.bean.VO.apparentLoss.BigMeterFlowTopTen">
+	select sum("REAL_NUM") as reaNum,"CTM_NUM" from rw_fct_cb 
+	where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
+	and "CTM_NUM" in (select "CTM_NUM" from rw_fct_ctm where "BORE_VALUE" >= '50') 
+	group by "CTM_NUM" order by reaNum desc limit 10
 	</select>
 </mapper> 

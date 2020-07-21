@@ -304,7 +304,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			inputSum++;
 			
 		}
-		
+		List<FZoneLossListVO> lists = new ArrayList<>();
 		//查询警报信息
 		ZoneLossAnaMapper zMapper = factory.getMapper(ZoneLossAnaMapper.class);
 		for (FZoneLossListVO data : dataList) {
@@ -312,10 +312,20 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			Integer warnCount = zMapper.queryZoneWarningInfo(data.getZoneNo());
 			if(warnCount != null && warnCount>0) {
 				data.setAlarmStatus(1);
+				if(queryFZoneLossListDTO.getAlarmStatus() != null && queryFZoneLossListDTO.getAlarmStatus() == 0) {
+					continue;
+				}
+			}else {
+				if(queryFZoneLossListDTO.getAlarmStatus() != null && queryFZoneLossListDTO.getAlarmStatus() == 1) {
+					continue;
+				}
 			}
+			lists.add(data);
 		}
+		
+		
 		PageListVO<List<FZoneLossListVO>> result = new PageListVO<>();
-		result.setDataList(dataList);
+		result.setDataList(lists);
 		// 插入分页信息
 		PageVO pageVO = PageUtil.getPageBean(queryFZoneLossListDTO.getPage(), queryFZoneLossListDTO.getPageCount(), zoneInfos.size());
 		result.setTotalPage(pageVO.getTotalPage());
