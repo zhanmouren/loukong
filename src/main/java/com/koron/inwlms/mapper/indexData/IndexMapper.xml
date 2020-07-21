@@ -452,7 +452,7 @@
      <!-- 查询检测点信息列表 -->
     <select id="queryCheckWarningMsg"  parameterType="com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO"  resultType="com.koron.inwlms.bean.VO.indexData.TaskMsgVO">
     	select "warninginf".content ,"warninginf"."alarmType","processing".state,"warninginf"."objectCode",
-    	case when "warninginf".code is null then  '否' else  '是'  end as initiate
+    	case when "processing".code is null then  '否' else  '是'  end as initiate
 		from app_warninginf as "warninginf"
 		left join app_warningprocessing as "processing" on "processing"."warningCode" = "warninginf".code
 		left join gis_exist_zone  as "zone" on "zone".p_code = "warninginf"."areaCode"

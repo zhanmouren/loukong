@@ -1640,7 +1640,7 @@ public class SystemManagerController {
     * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是主表信息) 分页
     * author:xiaozhan
     */
-	@OPSPIMethod("sjzd002")
+	@OPSPIMethod("sjzd004")
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/queryMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
    @ApiOperation(value = "查询数据字典接口(主表信息)", notes = "查询数据字典接口(主表信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
