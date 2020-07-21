@@ -192,5 +192,5 @@ public interface PropertyMapper {
      * @param BatchNo
      * @return
      */
-    boolean deleteZoneMeterByBatchNo(@Param("BatchNo") String BatchNo);
+    Integer deleteZoneMeterByBatchNo(@Param("BatchNo") String BatchNo);
 }

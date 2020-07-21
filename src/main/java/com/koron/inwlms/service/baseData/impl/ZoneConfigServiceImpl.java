@@ -435,9 +435,9 @@ public class ZoneConfigServiceImpl implements ZoneConfigService {
      */
     @TaskAnnotation("deleteZoneMeterByBatchNo")
     @Override
-    public boolean deleteZoneMeterByBatchNo(SessionFactory factory, String BatchNo) {
+    public Integer deleteZoneMeterByBatchNo(SessionFactory factory, String BatchNo) {
         PropertyMapper mapper = factory.getMapper(PropertyMapper.class);
-        boolean result = mapper.deleteZoneMeterByBatchNo(BatchNo);
+        Integer result = mapper.deleteZoneMeterByBatchNo(BatchNo);
         return result;
     }
 }

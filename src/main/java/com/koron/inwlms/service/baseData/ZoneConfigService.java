@@ -171,6 +171,6 @@ public interface ZoneConfigService {
      * @param BatchNo
      * @return
      */
-    public boolean deleteZoneMeterByBatchNo(SessionFactory factory, String BatchNo);
+    public Integer deleteZoneMeterByBatchNo(SessionFactory factory, String BatchNo);
 
 }
