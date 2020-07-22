@@ -55,7 +55,7 @@ public class SystemManagerController {
      * author:xiaozhan
      */
 
-    @OPSPIMethod("yhgl001")
+    @OPSPIMethod("yhgl"+Constant.ADD)
     @OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/addUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "管理员添加新职员接口", notes = "管理员添加新职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -107,7 +107,7 @@ public class SystemManagerController {
      * funtion:查询职员接口，通过此接口可以通过职员名或部门或者Id称查询职员的基本信息
      * author:xiaozhan
      */
-    @OPSPIMethod("yhgl004")
+    @OPSPIMethod("yhgl"+Constant.QUERY)
     @OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/queryUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询职员接口", notes = "查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -140,7 +140,7 @@ public class SystemManagerController {
      * funtion:查询职员详情信息接口
      * author:lzy
      */
-    @OPSPIMethod("yhgl004")
+    @OPSPIMethod("yhgl"+Constant.QUERY)
     @OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/queryUserDetail.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询职员详情接口", notes = "查询职员详情接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -176,7 +176,7 @@ public class SystemManagerController {
      * funtion:修改新职员接口
      * author:xiaozhan
      */  
-	@OPSPIMethod("yhgl002")
+	@OPSPIMethod("yhgl"+Constant.UPDATE)
 	@OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/updateUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改职员信息接口", notes = "修改职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -271,7 +271,7 @@ public class SystemManagerController {
      * funtion:删除新职员接口
      * author:xiaozhan
      */ 
-	@OPSPIMethod("yhgl003")
+	@OPSPIMethod("yhgl"+Constant.DELETE)
 	@OperateAspect(operateModule= "yhgl")
 	@RequestMapping(value = "/deleteUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除职员信息接口", notes = "删除职员信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -610,7 +610,7 @@ public class SystemManagerController {
      * funtion:给部门挑选职员的时候弹出框，要排除该部门已经存在的职员信息，只能选其他的职员(部门弹窗选择职员)
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl001")
+	@OPSPIMethod("zzgl"+Constant.QUERY)
 	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/queryExceptDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询部门其他职员接口", notes = "查询部门其他职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -646,7 +646,7 @@ public class SystemManagerController {
      * funtion:插入职员(批量)和部门的关系
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl001")
+	@OPSPIMethod("zzgl"+Constant.ADD)
 	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/addDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "插入职员(批量)和部门的关系", notes = "插入职员(批量)和部门的关系", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -697,7 +697,7 @@ public class SystemManagerController {
      * funtion:删除部门中职员(批量)接口
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl003")
+	@OPSPIMethod("zzgl"+Constant.DELETE)
 	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/deleteDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除部门中职员接口", notes = "删除部门中职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -743,7 +743,7 @@ public class SystemManagerController {
      * funtion:添加集成配置功能
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl001")
+	@OPSPIMethod("zzgl"+Constant.ADD)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/addIntegration.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "插入集成配置功能接口", notes = "插入集成配置功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -787,7 +787,7 @@ public class SystemManagerController {
      * funtion:添加表格映射
      * author:xiaozhan
      */ 
-	@OPSPIMethod("zzgl001")
+	@OPSPIMethod("zzgl"+Constant.ADD)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/addTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加表格映射功能接口", notes = "添加表格映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -833,7 +833,7 @@ public class SystemManagerController {
      * funtion:添加表格字段映射
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl001")
+	@OPSPIMethod("zzgl"+Constant.ADD)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/addFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加表格字段映射功能接口", notes = "添加表格字段映射功能接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -888,7 +888,7 @@ public class SystemManagerController {
      * funtion:添加枚举值映射明细
      * author:xiaozhan
      */ 
-	@OPSPIMethod("zzgl001")
+	@OPSPIMethod("zzgl"+Constant.ADD)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/addEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加枚举值映射明细接口", notes = "添加枚举值映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -931,7 +931,7 @@ public class SystemManagerController {
      * funtion:查询集成配置列表信息
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl004")
+	@OPSPIMethod("zzgl"+Constant.QUERY)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryIntegration.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询集成配置列表信息接口", notes = "查询集成配置列表信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -961,7 +961,7 @@ public class SystemManagerController {
      * funtion:根据code查询集成配置信息
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl004")
+	@OPSPIMethod("zzgl"+Constant.QUERY)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryIntegrationByCode.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据code查询集成配置信息接口", notes = "根据code查询集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -994,7 +994,7 @@ public class SystemManagerController {
      * funtion:根据配置主表Code查询表格映射明细列表
      * author:xiaozhan
      */  
-	@OPSPIMethod("zzgl004")
+	@OPSPIMethod("zzgl"+Constant.QUERY)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据配置主表Code查询表格映射明细列表接口", notes = "根据配置主表Code查询表格映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1027,7 +1027,7 @@ public class SystemManagerController {
      * funtion:根据配置主表Code查询枚举值映射明细列表
      * author:xiaozhan
      */ 
-	@OPSPIMethod("zzgl004")
+	@OPSPIMethod("zzgl"+ Constant.QUERY)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据配置主表Code查询枚举值映射明细列表接口", notes = "根据配置主表Code查询枚举值映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1060,7 +1060,7 @@ public class SystemManagerController {
      * funtion:根据表格Code查询表格字段映射明细列表
      * author:xiaozhan
      */ 
-	@OPSPIMethod("zzgl004")
+	@OPSPIMethod("zzgl"+Constant.QUERY)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/queryFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据表格Code查询表格字段映射明细列表接口", notes = "根据表格Code查询表格字段映射明细列表接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1093,7 +1093,7 @@ public class SystemManagerController {
      * funtion:根据code修改集成配置信息
      * author:xiaozhan
      */  
-	@OPSPIMethod("zzgl002")
+	@OPSPIMethod("zzgl"+Constant.UPDATE)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/updateConf.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据code修改集成配置信息接口", notes = "根据code修改集成配置信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1133,7 +1133,7 @@ public class SystemManagerController {
      * funtion:根据code修改表格映射明细信息
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl002")
+	@OPSPIMethod("zzgl"+Constant.UPDATE)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/updateTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据code修改表格映射明细信息接口", notes = "根据code修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1178,7 +1178,7 @@ public class SystemManagerController {
      * funtion:根据Id修改枚举明细映射接口
      * author:xiaozhan
      */ 
-	@OPSPIMethod("zzgl002")
+	@OPSPIMethod("zzgl"+Constant.UPDATE)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/updateEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据id修改表格映射明细信息接口", notes = "根据id修改表格映射明细信息接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1221,7 +1221,7 @@ public class SystemManagerController {
      * funtion:根据Code修改表格字段映射明细
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl002")
+	@OPSPIMethod("zzgl"+Constant.UPDATE)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/updateFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据Code修改表格字段映射明细接口", notes = "根据Code修改表格字段映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1276,7 +1276,7 @@ public class SystemManagerController {
      * funtion:根据Code删除表格映射
      * author:xiaozhan
      */ 
-	@OPSPIMethod("zzgl003")
+	@OPSPIMethod("zzgl"+Constant.DELETE)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/deleteTableMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据Code删除表格映射接口", notes = "根据Code删除表格映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1311,7 +1311,7 @@ public class SystemManagerController {
      * funtion:根据Code删除表格字段映射
      * author:xiaozhan
      */ 
-	@OPSPIMethod("zzgl003")
+	@OPSPIMethod("zzgl"+Constant.DELETE)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/deleteFieldMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据Code删除表格映字段射接口", notes = "根据Code删除表格字段映射接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1346,7 +1346,7 @@ public class SystemManagerController {
      * funtion:根据id删除枚举值映射明细
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl003")
+	@OPSPIMethod("zzgl"+Constant.DELETE)
 	@OperateAspect(operateModule= "jcpz")
 	@RequestMapping(value = "/deleteEnumMapper.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据id删除枚举值映射明细接口", notes = "根据id删除枚举值映射明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1381,7 +1381,7 @@ public class SystemManagerController {
      * funtion:新建数据字典(主明细信息同时插入)
      * author:xiaozhan
      */  
-	@OPSPIMethod("sjzd001")
+	@OPSPIMethod("sjzd"+Constant.ADD)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/addDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典接口", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1454,7 +1454,7 @@ public class SystemManagerController {
      * funtion:新建数据字典(主表)(type 0代表系统的数据字典，1代表是用户自建的数据字典)
      * author:xiaozhan
      */  
-	@OPSPIMethod("sjzd001")
+	@OPSPIMethod("sjzd"+Constant.ADD)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/addMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典接口(主表)", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1507,7 +1507,7 @@ public class SystemManagerController {
      * funtion:生成数据字典Key
      * author:xiaozhan
      */
-	@OPSPIMethod("sjzd001")
+	@OPSPIMethod("sjzd"+Constant.ADD)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/createDataKey.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典接口(主表)", notes = "新建数据字典接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1544,7 +1544,7 @@ public class SystemManagerController {
      * funtion:新建数据字典(明细信息)
      * author:xiaozhan
      */  
-	@OPSPIMethod("sjzd001")
+	@OPSPIMethod("sjzd"+ Constant.ADD)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/addDetDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建数据字典明细接口", notes = "新建数据字典明细接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1600,7 +1600,7 @@ public class SystemManagerController {
      * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是明细信息)
      * author:xiaozhan
      */
-	@OPSPIMethod("sjzd004")
+	@OPSPIMethod("sjzd"+Constant.QUERY)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/queryDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询数据字典接口(明细信息)", notes = "查询数据字典接口(明细信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1640,7 +1640,7 @@ public class SystemManagerController {
     * funtion:查询数据字典接口说明(通过名称标识等等,这个查询的是主表信息) 分页
     * author:xiaozhan
     */
-	@OPSPIMethod("sjzd004")
+	@OPSPIMethod("sjzd"+Constant.QUERY)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/queryMainDataDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
    @ApiOperation(value = "查询数据字典接口(主表信息)", notes = "查询数据字典接口(主表信息)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1673,7 +1673,7 @@ public class SystemManagerController {
      * funtion:通过字典主表parent修改数据字典接口(主表信息))说明
      * author:xiaozhan
      */
-	@OPSPIMethod("sjzd002")
+	@OPSPIMethod("sjzd"+Constant.UPDATE)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/updateDic.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "通过字典主表parent修改数据字典接口(主表信息))接口", notes = "通过字典主表parent修改数据字典接口(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1722,7 +1722,7 @@ public class SystemManagerController {
      * funtion:通过字典主表Parent删除数据字典接口(主表信息)(批量)说明
      * author:xiaozhan
      */
-	@OPSPIMethod("sjzd003")
+	@OPSPIMethod("sjzd"+Constant.DELETE)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/deleteDicByParent.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "主表parent删除数据字典详情(主表信息)接口", notes = "主表parent删除数据字典详情(主表信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1763,7 +1763,7 @@ public class SystemManagerController {
      * funtion:通过字典主表id修改数据字典明细接口(明细信息))说明
      * author:xiaozhan
      */
-	@OPSPIMethod("sjzd003")
+	@OPSPIMethod("sjzd"+Constant.UPDATE)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/updateDicDetById.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "通过字典主表id修改数据字典接口(明细信息))接口", notes = "通过字典主表id修改数据字典接口(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1815,7 +1815,7 @@ public class SystemManagerController {
      * funtion:通过字典主表key删除数据字典接口(明细信息)(批量)说明(通过Key等等)
      * author:xiaozhan
      */
-	@OPSPIMethod("sjzd004")
+	@OPSPIMethod("sjzd"+Constant.DELETE)
 	@OperateAspect(operateModule= "sjzd")
 	@RequestMapping(value = "/deleteDetDicByKey.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "主表key删除数据字典详情(明细信息)接口", notes = "主表key删除数据字典详情(明细信息))接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1855,7 +1855,7 @@ public class SystemManagerController {
      * funtion:新建特征日接口功能描述
      * author:xiaozhan
      */
-	@OPSPIMethod("dzrpz001")
+	@OPSPIMethod("dzrpz"+Constant.ADD)
 	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/addSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "新建特征日接口", notes = "新建特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1911,7 +1911,7 @@ public class SystemManagerController {
      * funtion:查询某年某月特征日接口功能描述
      * author:xiaozhan
      */
-	@OPSPIMethod("dzrpz004")
+	@OPSPIMethod("dzrpz"+Constant.QUERY)
 	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/querySpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查询某年某月特征日接口", notes = "查询某年某月特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1952,7 +1952,7 @@ public class SystemManagerController {
      * funtion:根据日期查询特征日接口
      * author:xiaozhan
      */
-	@OPSPIMethod("dzrpz004")
+	@OPSPIMethod("dzrpz"+Constant.QUERY)
 	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/querySpecialDateByDay.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据日期查询特征日接口", notes = "根据日期查询特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -1989,7 +1989,7 @@ public class SystemManagerController {
      * funtion:删除特征日接口功能描述
      * author:xiaozhan
      */
-	@OPSPIMethod("dzrpz003")
+	@OPSPIMethod("dzrpz"+Constant.DELETE)
 	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/deleteSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除特征日接口", notes = "删除特征日接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -2032,7 +2032,7 @@ public class SystemManagerController {
      * funtion:修改特征日接口功能描述
      * author:xiaozhan
      */
-	@OPSPIMethod("dzrpz002")
+	@OPSPIMethod("dzrpz"+Constant.UPDATE)
 	@OperateAspect(operateModule= "dzrpz")
 	@RequestMapping(value = "/updateSpecialDate.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改特征日接口", notes = "修改特征日接口接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -2120,7 +2120,7 @@ public class SystemManagerController {
      * funtion:组织下添加部门,部门下添加部门
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl001")
+	@OPSPIMethod("zzgl"+Constant.ADD)
 	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/addTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "添加部门接口", notes = "添加部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -2181,7 +2181,7 @@ public class SystemManagerController {
      * funtion:删除树结构的部门
      * author:xiaozhan
      */	
-	@OPSPIMethod("zzgl003")
+	@OPSPIMethod("zzgl"+Constant.DELETE)
 	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/deleteTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "删除树结构的部门接口", notes = "删除树结构的部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -2232,7 +2232,7 @@ public class SystemManagerController {
      * funtion:修改树结构的部门
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl002")
+	@OPSPIMethod("zzgl"+Constant.UPDATE)
 	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/updateTreeDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "修改树结构的部门接口", notes = "修改树结构的部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -2273,7 +2273,7 @@ public class SystemManagerController {
      * funtion:查看组织树结构(展开所有)
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl004")
+	@OPSPIMethod("zzgl"+Constant.QUERY)
 	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/queryTreeOrg.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "查看组织树接口", notes = "查看组织树接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -2311,7 +2311,7 @@ public class SystemManagerController {
      * funtion:根据部门Code查询部门职员 分页
      * author:xiaozhan
      */
-	@OPSPIMethod("zzgl004")
+	@OPSPIMethod("zzgl"+Constant.QUERY)
 	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/queryDeptUser.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "根据部门Code查询职员接口", notes = "根据部门Code查询职员接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
@@ -2593,7 +2593,7 @@ public class SystemManagerController {
      * funtion:模糊查询部门接口
      * author:xiaozhan
      */	
-	@OPSPIMethod("zzgl004")
+	@OPSPIMethod("zzgl"+Constant.QUERY)
 	@OperateAspect(operateModule= "zzgl")
 	@RequestMapping(value = "/queryDept.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "模糊查询部门接口", notes = "模糊查询部门接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")

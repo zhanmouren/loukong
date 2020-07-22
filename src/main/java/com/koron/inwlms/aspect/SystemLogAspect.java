@@ -1,33 +1,22 @@
 package com.koron.inwlms.aspect;
 
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
-import org.aspectj.lang.reflect.MethodSignature;
-import org.koron.ebs.mybatis.ADOConnection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import com.google.gson.Gson;
 import com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.sysManager.LogService;
+import com.koron.util.Constant;
+import com.koron.util.SessionUtil;
+import org.apache.log4j.Logger;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.koron.ebs.mybatis.ADOConnection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * 切面日志管理
@@ -157,7 +146,13 @@ public class SystemLogAspect {
 //		Object[] params = joinPoint.getArgs();
 //		String url = request.getRequestURL().toString();
 		UserVO user = new UserVO();
-		Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		//Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		String servletPath = request.getServletPath();
+		String tenantID = servletPath.split("/")[1];
+		Object attribute = null;
+		if(SessionUtil.redisUtil !=null){
+			attribute = SessionUtil.redisUtil.getHashValue(tenantID+"_"+request.getSession().getId(), Constant.LOGIN_USER);
+		}
 		if (attribute != null) {
 			user = (UserVO) attribute;
 		}
@@ -195,7 +190,13 @@ public class SystemLogAspect {
 //		Object[] params = joinPoint.getArgs();
 //		String url = request.getRequestURL().toString();
 		UserVO user = new UserVO();
-		Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		//Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		String servletPath = request.getServletPath();
+		String tenantID = servletPath.split("/")[1];
+		Object attribute = null;
+		if(SessionUtil.redisUtil !=null){
+			attribute = SessionUtil.redisUtil.getHashValue(tenantID+"_"+request.getSession().getId(), Constant.LOGIN_USER);
+		}
 		if (attribute != null) {
 			user = (UserVO) attribute;
 		}
@@ -232,7 +233,12 @@ public class SystemLogAspect {
 //		Object[] params = joinPoint.getArgs();
 //		String url = request.getRequestURL().toString();
 		UserVO user = new UserVO();
-		Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		String servletPath = request.getServletPath();
+		String tenantID = servletPath.split("/")[1];
+		Object attribute = null;
+		if(SessionUtil.redisUtil !=null){
+			attribute = SessionUtil.redisUtil.getHashValue(tenantID+"_"+request.getSession().getId(), Constant.LOGIN_USER);
+		}
 		if (attribute != null) {
 			user = (UserVO) attribute;
 		}
@@ -268,7 +274,13 @@ public class SystemLogAspect {
 //		Object[] params = joinPoint.getArgs();
 //		String url = request.getRequestURL().toString();
 		UserVO user = new UserVO();
-		Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		//Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		String servletPath = request.getServletPath();
+		String tenantID = servletPath.split("/")[1];
+		Object attribute = null;
+		if(SessionUtil.redisUtil !=null){
+			attribute = SessionUtil.redisUtil.getHashValue(tenantID+"_"+request.getSession().getId(), Constant.LOGIN_USER);
+		}
 		if (attribute != null) {
 			user = (UserVO) attribute;
 		}
@@ -306,7 +318,13 @@ public class SystemLogAspect {
 //		Object[] params = joinPoint.getArgs();
 //		String url = request.getRequestURL().toString();
 		UserVO user = new UserVO();
-		Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		//Object attribute = request.getSession().getAttribute(com.koron.util.Constant.LOGIN_USER);
+		String servletPath = request.getServletPath();
+		String tenantID = servletPath.split("/")[1];
+		Object attribute = null;
+		if(SessionUtil.redisUtil !=null){
+			attribute = SessionUtil.redisUtil.getHashValue(tenantID+"_"+request.getSession().getId(), Constant.LOGIN_USER);
+		}
 		if (attribute != null) {
 			user = (UserVO) attribute;
 		}
