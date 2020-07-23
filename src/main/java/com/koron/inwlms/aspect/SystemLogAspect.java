@@ -1,5 +1,6 @@
 package com.koron.inwlms.aspect;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.koron.inwlms.bean.DTO.sysManager.OperateLogDTO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -12,6 +13,8 @@ import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -332,15 +335,25 @@ public class SystemLogAspect {
 		MethodSignature sign = (MethodSignature) joinPoint.getSignature();
 		Method method = sign.getMethod();
 		OperateAspect annotation = method.getAnnotation(OperateAspect.class);
+		String result = "";
 		if(annotation == null) {
 			return ; 
 		}
 		String operateModule = annotation.operateModule();
+		if(rvt != null) {
+			ResponseEntity responseEntity = (ResponseEntity) rvt;
+			HttpStatus statusCode = responseEntity.getStatusCode();
+			if(statusCode.value() == 200) {
+				result = "下载成功";
+			}else {
+				result = "下载失败";
+			}
+		}
 		
-		String resultStr = rvt.toString();
-		String[] split = resultStr.split(",");
-		String[] split1 = split[1].split(":");
-		String result = split1[1].replace("\"", "");
+//		String resultStr = rvt.toString();
+//		String[] split = resultStr.split(",");
+//		String[] split1 = split[1].split(":");
+//		String result = split1[1].replace("\"", "");
 		
 		operateLogDTO.setCreateBy(user.getLoginName());
 		operateLogDTO.setUpdateBy(user.getLoginName());
