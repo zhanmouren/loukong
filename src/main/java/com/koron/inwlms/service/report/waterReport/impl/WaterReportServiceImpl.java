@@ -12,9 +12,12 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.report.waterBalanceReport.WB1BalanceDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB1BalanceVO;
 import com.koron.inwlms.mapper.report.waterReport.WaterReportMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
@@ -497,6 +500,24 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	        }
 	        return result;
 	    }
+
+	 /**
+	   * 查询一级分区
+	  */
+    @TaskAnnotation("queryTreeOneZone")
+	@Override
+	public List<TreeZoneVO> queryTreeOneZone(SessionFactory factory, int type, String foreignKey) {
+    	WaterReportMapper waterReportMapper = factory.getMapper(WaterReportMapper.class);    	
+    	TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
+		if(node == null) {
+			return null;
+		}
+		else{
+			List<TreeZoneVO> zoneList=waterReportMapper.queryTreeOneZone(node);
+			return zoneList;
+		}
+	}
 
 	
 	

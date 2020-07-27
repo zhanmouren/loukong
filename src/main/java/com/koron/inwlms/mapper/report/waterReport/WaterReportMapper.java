@@ -2,11 +2,15 @@ package com.koron.inwlms.mapper.report.waterReport;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.report.waterBalanceReport.WB1BalanceDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB1BalanceVO;
 
 @Repository
@@ -70,4 +74,16 @@ public interface WaterReportMapper {
 		 * @return
 		 */
 		List<IndicatorVO> queryCompanyIndicData(IndicatorNewDTO indicatorDTO);
+		
+		/**
+		 * 查询一级分区
+		 */
+		 /**
+		  * 获取节点之下所有节点和节点名称(树形目录)
+		  *
+		  * @param bean 节点
+		  * @return 节点集合
+		  */
+		 @Select("select tbltree.*,gis_exist_zone.p_code as code,gis_exist_zone.name,gis_exist_zone.rank,gis_exist_zone.smid from tbltree left join gis_exist_zone on  gis_exist_zone.p_code=tbltree.foreignkey where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
+		 public List<TreeZoneVO> queryTreeOneZone(LongTreeBean bean);
 }

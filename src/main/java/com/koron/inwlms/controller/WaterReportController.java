@@ -16,7 +16,9 @@ import com.koron.common.StaffAttribute;
 import com.koron.common.permission.SPIAccountAnno;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.report.waterBalanceReport.WB1BalanceDTO;
+import com.koron.inwlms.bean.DTO.sysManager.TreeDTO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB1BalanceVO;
+import com.koron.inwlms.bean.VO.sysManager.TreeDeptVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.service.report.waterReport.WaterReportService;
 import com.koron.util.Constant;
@@ -72,6 +74,42 @@ public class WaterReportController {
 				  }
 			  
 	        }catch(Exception e){
+	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+	            msg.setDescription("查询失败");
+	        }
+		
+	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-07-27
+     * funtion:查看分区树结构下级(一级分区)
+     * author:xiaozhan
+     */
+	@RequestMapping(value = "/queryTreeOneZone.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "查看分区树结构下级(一级分区)", notes = "查看分区树结构下级(一级分区)", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryTreeOneZone(@RequestBody TreeDTO treeDTO,@StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+		if(treeDTO.getType()==null || "".equals(treeDTO.getType())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点类型不能为空", Integer.class).toJson();
+		}	
+		if(treeDTO.getForeignKey()==null || "".equals(treeDTO.getForeignKey())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
+		}
+		
+		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
+		  try{				
+			  List<TreeDeptVO> zoneBeanList=ADOConnection.runTask(user.getEnv(),waterReportService, "queryTreeOneZone", List.class,treeDTO.getType(),treeDTO.getForeignKey());	
+			  if(zoneBeanList == null || zoneBeanList.size()<1) {		
+				  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			      msg.setDescription("没有查询到相关分区树结构"); 
+			  }else {
+				  msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
+				  msg.setDescription("查询分区树结构成功"); 
+				  msg.setData(zoneBeanList);
+			  }		  
+	        }catch(Exception e){
+	        	//查询失败
 	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
 	            msg.setDescription("查询失败");
 	        }
