@@ -1087,7 +1087,58 @@ public class Constant {
 	 */
 	public final static String ZONE_LOSS_INDIC_DMMLPL="DMMLPL";
 	
-		
+	/*
+	  *   全网月免费计量用水量
+	 */
+	public final static String BALANCE_INDIC_WNMUMC="WNMUMC";
+	/*
+	  *   一级分区月免费计量用水量
+	 */
+	public final static String BALANCE_INDIC_FLMUMC="FLMUMC";
+	/*
+	  *   二级分区月免费计量用水量
+	 */
+	public final static String BALANCE_INDIC_SLMUMC="SLMUMC";
+	/*
+	 *DMA/PMA分区月免费计量用水量
+	 */
+	public final static String BALANCE_INDIC_DMMUMC="DMMUMC";
+	
+	/*
+	   *全网月未计量食水用水量
+	 */
+	public final static String BALANCE_INDIC_WNMUFWC="WNMUFWC";
+	/*
+	   *一级分区月未计量食水用水量
+	 */
+	public final static String BALANCE_INDIC_FLMUFWC="FLMUFWC";
+	/*
+	   *二级分区月未计量食水用水量
+	 */
+	public final static String BALANCE_INDIC_SLMUFWC="SLMUFWC";
+	/*
+	 *DMA/PMA分区月未计量食水用水量
+	 */
+	public final static String BALANCE_INDIC_DMMUFWC="DMMUFWC";	
+	
+	/*
+	  *全网月未计量用水量占比
+	 */
+	public final static String ZONE_LOSS_INDIC_WNMUCRFW="WNMUCRFW";	
+	/*
+	  *一级分区月未计量用水量占比
+	 */
+	public final static String ZONE_LOSS_INDIC_FLMUCRFW="FLMUCRFW";	
+	/*
+	  *二级分区月未计量用水量占比
+	 */
+	public final static String ZONE_LOSS_INDIC_SLMUCRFW="SLMUCRFW";	
+	/*
+	  *DMA/PMA级分区月未计量用水量占比
+	 */
+	public final static String ZONE_LOSS_INDIC_DMMUCRFW="DMMUCRFW";	
+	
+		 
 	//**********************基础模块**************************//
 
 	/**
