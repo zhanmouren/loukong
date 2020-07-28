@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.koron.inwlms.mapper.report.AnalysisReportMapper">
+
+<select id="queryZoneData" parameterType="com.koron.inwlms.bean.DTO.report.ZoneMnfDTO" resultType="com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO">
+ select name as name, rank as rank, p_code as pcode  from gis_exist_zone
+ <trim prefix="where" prefixOverrides="and|or">
+   <if test="zoneGrade != null and zoneGrade != '' ">and rank = #{zoneGrade}</if>
+   <if test="zoneCode != null and zoneCode != '' "> and p_code = #{zoneCode}</if>
+  </trim>
+  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+ </select>
+ 
+ <select id="queryZoneDataNum" parameterType="com.koron.inwlms.bean.DTO.report.ZoneMnfDTO" resultType="java.lang.Integer">
+  select count(*)  from gis_exist_zone
+ <trim prefix="where" prefixOverrides="and|or">
+   <if test="zoneGrade != null and zoneGrade != '' ">and rank = #{zoneGrade}</if>
+   <if test="zoneCode != null and zoneCode != '' "> and p_code = #{zoneCode}</if>
+  </trim>
+  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
+ </select>
+
+	
+</mapper> 

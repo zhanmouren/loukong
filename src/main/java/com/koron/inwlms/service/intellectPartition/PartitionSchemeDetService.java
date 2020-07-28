@@ -45,6 +45,9 @@ public interface PartitionSchemeDetService {
 	ZoneRange getZoneNum(SessionFactory factory, AutomaticPartitionDTO automaticPartitionDTO);
 
 	List<ZonePipeDataReturn> getSchemePipeData(SessionFactory factory, Integer schemeId);
+
+	ModelReturn getModelSubnetData(SessionFactory factory, AutomaticPartitionDTO automaticPartitionDTO,
+			TotalSchemeDet totalSchemeDet, String tenantID);
 	
 	
 

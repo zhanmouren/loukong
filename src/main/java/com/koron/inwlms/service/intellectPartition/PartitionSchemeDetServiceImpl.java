@@ -405,7 +405,6 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		//TODO 解析返回数据
 		String codejy = mlResultData.get("flag").getAsString();
 		String time = mlResultData.get("time").getAsString();
-		String subgraphNum = mlResultData.get("subgraph_num").getAsString();
 		if(codejy.equals("1")) {
 			String rpPath = "http://10.13.1.11:7500/partition/receivePartitionModel";
 			JsonObject rpResultData = InterfaceUtil.interfaceOfPostUtil(rpPath, gson.toJson(gisZoneData));
@@ -419,10 +418,225 @@ public class PartitionSchemeDetServiceImpl implements PartitionSchemeDetService{
 		}
 		ModelReturn modelreturn = new ModelReturn();
 		modelreturn.setTime(time);
-		modelreturn.setSubgraphNum(subgraphNum);
 		modelreturn.setTotal_plan_code(code);
 		modelreturn.setFlag(codejy);
 		return modelreturn;
+	}
+	
+	/**
+	 * 获取分区子网信息
+	 */
+	@TaskAnnotation("getModelSubnetData")
+	@Override
+	public ModelReturn getModelSubnetData(SessionFactory factory,AutomaticPartitionDTO automaticPartitionDTO,TotalSchemeDet totalSchemeDet,String tenantID) {
+		PartitionSchemeMapper mapper = factory.getMapper(PartitionSchemeMapper.class);
+		Gson gson = new Gson();
+		List<String> railwayList = new ArrayList<>();
+		List<String> riverList = new ArrayList<>();
+		List<String> xzqList = new ArrayList<>(); 
+		List<String> scadaList = new ArrayList<>(); 
+		//List<LayerData> ambientLayerList = automaticPartitionDTO.getAmbientLayerList();
+		List<LayerData> ambientLayerList = new ArrayList<>();
+		//List<LayerData> flowLayerList = automaticPartitionDTO.getFlowLayerList();
+		List<LayerData> flowLayerList = new ArrayList<>();
+		//调用gis接口，获取所选分区管线数据(不包括图层信息)
+		String gisPath = "http://10.13.1.11:8888/"+tenantID+"/getDmaIsolatedPipe.htm";
+		GisAllPipeDTO gisAllPipeDTO = new GisAllPipeDTO();
+		List<String> cutRegion = new ArrayList<>();
+		gisAllPipeDTO.setBaseRegion(automaticPartitionDTO.getZoneCode());
+		//查看是否是虚拟分区
+		if(automaticPartitionDTO.getCutRegion() != null && automaticPartitionDTO.getCutRegion().size() != 0) {
+			cutRegion = automaticPartitionDTO.getCutRegion();
+		}
+		gisAllPipeDTO.setCutRegion(cutRegion);
+		String gisJsonData = gson.toJson(gisAllPipeDTO);
+		JsonObject gisResultData = InterfaceUtil.interfaceOfPostUtil(gisPath, gisJsonData);
+		String code1 = gisResultData.get("code").getAsString();
+		if(!code1.equals("0")) {
+			return null;
+		}
+		JsonObject gisdata = gisResultData.getAsJsonObject("data");
+		GisDmaIsolatedPipeVO  gisDmaIsolatedPipeVO = gson.fromJson(gisdata, new TypeToken<GisDmaIsolatedPipeVO>(){}.getType());
+		List<GisZonePipeDateVO> gisZonePipeDateVO = gisDmaIsolatedPipeVO.getNormalList();
+
+		if(ambientLayerList != null && ambientLayerList.size() != 0) {
+			for(LayerData layerData : ambientLayerList) {
+				if(layerData.getCode().equals("BASE_RAILWAY")) {
+					//调用gis接口，查询铁路图层信息
+					String gisPath1 = "http://10.13.1.11:8888/"+tenantID+"/railwayIntersect.htm";
+					JsonObject gisResultData1 = InterfaceUtil.interfaceOfPostUtil(gisPath1, gisJsonData);
+					String code2 = gisResultData1.get("code").getAsString();
+					if(!code2.equals("0")) {
+						return null;
+					}
+					JsonArray gisdata1 = (JsonArray) gisResultData.getAsJsonObject().get("data");
+					railwayList = gson.fromJson(gisdata1, new TypeToken<List<String>>(){}.getType());
+				}else if(layerData.getCode().equals("BASE_RIVER")) {
+					//调用gis接口，查询河流图层信息
+					String gisPath2 = "http://10.13.1.11:8888/"+tenantID+"/riverIntersect.htm";
+					JsonObject gisResultData2 = InterfaceUtil.interfaceOfPostUtil(gisPath2, gisJsonData);
+					String code3 = gisResultData2.get("code").getAsString();
+					if(!code3.equals("0")) {
+						return null;
+					}
+					JsonArray gisdata2 = gisResultData.getAsJsonArray("data");
+					riverList = gson.fromJson(gisdata2, new TypeToken<List<String>>(){}.getType());
+				}else if(layerData.getCode().equals("BASE_XZQ")) {
+					//查询gis接口，查询行政区域图层信息
+					String gisPath3 = "http://10.13.1.11:8888/"+tenantID+"/xzqIntersect.htm";
+					JsonObject gisResultData3 = InterfaceUtil.interfaceOfPostUtil(gisPath3, gisJsonData);
+					String code4 = gisResultData3.get("code").getAsString();
+					if(!code4.equals("0")) {
+						return null;
+					}
+					JsonArray gisdata3 = gisResultData.getAsJsonArray("data");
+					xzqList = gson.fromJson(gisdata3, new TypeToken<List<String>>(){}.getType());
+				}
+			}
+		}
+		
+		if(flowLayerList != null && flowLayerList.size() != 0) {
+			//查询gis接口，查询计量点相交管线
+			String gisPath4 = "http://10.13.1.11:8888/"+tenantID+"/scadaIntersect.htm";
+			JsonObject gisResultData4 = InterfaceUtil.interfaceOfPostUtil(gisPath4, gisJsonData);
+			String code5 = gisResultData4.get("code").getAsString();
+			if(!code5.equals("0")) {
+				return null;
+			}
+			JsonArray gisdata4 = gisResultData4.getAsJsonArray("data");
+			scadaList = gson.fromJson(gisdata4, new TypeToken<List<String>>(){}.getType());
+		}
+		
+		List<GisZonePipeData> pipeinfo = new ArrayList<>();
+		
+		for(GisZonePipeDateVO gisZonePipeDataVO : gisZonePipeDateVO) {
+			//获取数据
+			GisZonePipeData gisZonePipeData = new GisZonePipeData();
+			if(gisZonePipeDataVO.getPip_p() == null || gisZonePipeDataVO.getPip_p_pre() == null || gisZonePipeDataVO.getPip_obj_code() == null || gisZonePipeDataVO.getPip_len() == null) {
+				System.out.print(1);
+			}else if(gisZonePipeDataVO.getPoint_a() == null || gisZonePipeDataVO.getPoint_b() == null || gisZonePipeDataVO.getPip_d() == null || gisZonePipeDataVO.getPip_value() == null) {
+				System.out.print(1);
+			}
+			if(gisZonePipeDataVO.getPip_p().equals("") || gisZonePipeDataVO.getPip_p_pre().equals("") || gisZonePipeDataVO.getPip_obj_code().equals("")) {
+				System.out.print(1);
+			}
+			gisZonePipeData.setPip_p(gisZonePipeDataVO.getPip_p());
+			gisZonePipeData.setPip_p_pre(gisZonePipeDataVO.getPip_p_pre());
+			gisZonePipeData.setPip_obj_code(gisZonePipeDataVO.getPip_obj_code());
+			gisZonePipeData.setPip_len(gisZonePipeDataVO.getPip_len());
+			gisZonePipeData.setPoint_a(gisZonePipeDataVO.getPoint_a());
+			gisZonePipeData.setPoint_b(gisZonePipeDataVO.getPoint_b());
+			gisZonePipeData.setPip_d(gisZonePipeDataVO.getPip_d());
+			gisZonePipeData.setPoint_c(gisZonePipeDataVO.getPoint_c());
+			gisZonePipeData.setPoint_z(gisZonePipeDataVO.getPoint_z());
+			gisZonePipeData.setAdministration(0);
+			gisZonePipeData.setRailway(0);
+			gisZonePipeData.setPip_river(0);
+			gisZonePipeData.setPip_gauge(0);
+			gisZonePipeData.setLayerOne(0);
+			gisZonePipeData.setLayerTwo(0);
+			gisZonePipeData.setLayerThree(0);
+			gisZonePipeData.setLayerFour(0);
+			
+			//测试数据
+			/*
+			gisZonePipeData.setPoint_c(0.0);
+			gisZonePipeData.setPoint_z(0.0);
+			*/
+			gisZonePipeData.setPoint_c(1.0);
+			gisZonePipeData.setPoint_z(1.0);
+
+			if(gisZonePipeDataVO.getPip_value().equals("W101510001")) {
+				gisZonePipeData.setPip_value(1); 
+			}else {
+				gisZonePipeData.setPip_value(0);
+			}
+			
+			//铁路
+			if(railwayList != null && railwayList.size() != 0) {
+				for(String code : railwayList) {
+					if(gisZonePipeDataVO.getPip_obj_code().equals(code)) {
+						gisZonePipeData.setRailway(1);
+					}
+				}
+			}
+			
+			//河流
+			if(riverList != null && riverList.size() != 0) {
+				for(String code : riverList) {
+					if(gisZonePipeData.getPip_obj_code().equals(code)) {
+						gisZonePipeData.setPip_river(1);
+					}
+				}
+			}
+			
+			//行政
+			if(xzqList != null && xzqList.size() != 0) {
+				for(String code : xzqList) {
+					if(gisZonePipeData.getPip_obj_code().equals(code)) {
+						gisZonePipeData.setAdministration(1);
+					}
+				}
+			}
+			
+			
+			//流量计
+			if(scadaList != null && scadaList.size() != 0) {
+				for(String code : scadaList) {
+					if(gisZonePipeData.getPip_obj_code().equals(code)) {
+						gisZonePipeData.setPip_gauge(1);
+					}
+				}
+			}
+			
+			pipeinfo.add(gisZonePipeData);
+		}
+		
+		String code = mapper.addTotalSchemeDet(totalSchemeDet);
+		//查询管径数据
+		 //TODO 判断分区类型（PMA或者DMA）
+		String type = "dma";
+		EconomicIndicatorMapper emapper = factory.getMapper(EconomicIndicatorMapper.class);
+		List<PartitionInvestVO> partInvestList = emapper.queryPartitionInvestCaliber(type);
+		if(partInvestList != null && partInvestList.size() != 0) {
+			for(GisZonePipeData gisZonePipeData : pipeinfo) {
+				String caliber = gisZonePipeData.getPip_d() +"";
+				for(PartitionInvestVO partitionInvestVO : partInvestList) {
+					if(partitionInvestVO.getCaliber().equals(caliber)) {
+						gisZonePipeData.setPip_price(partitionInvestVO.getMoney());
+					}
+				}
+				//测试
+				gisZonePipeData.setPip_price(100.1);
+			}
+		}else {
+			//测试
+			for(GisZonePipeData gisZonePipeData : pipeinfo) {
+				//测试
+				gisZonePipeData.setPip_price(100.1);
+			}
+		}
+
+		//TODO 调用模型算法接口推送数据，等待模型返回已接收信号时
+		GisZoneData gisZoneData = new GisZoneData();
+		gisZoneData.setGroupFlag(tenantID);
+		gisZoneData.setPip_info(pipeinfo);
+		gisZoneData.setTotal_plan_code(code);
+		String data101 = gson.toJson(gisZoneData);
+		System.out.print(data101);
+		String mlPath = "http://10.13.1.11:7500/partition/partitionIdentify";
+		JsonObject mlResultData = InterfaceUtil.interfaceOfPostUtil(mlPath, data101);
+		//TODO 解析返回数据
+		String codejy = mlResultData.get("flag").getAsString();
+		String subgraphNum = mlResultData.get("subgraph_num").getAsString();
+		String msg = mlResultData.get("msg").getAsString();
+		ModelReturn modelreturn = new ModelReturn();
+		modelreturn.setSubgraphNum(subgraphNum);
+		modelreturn.setTotal_plan_code(code);
+		modelreturn.setMsg(msg);
+		modelreturn.setFlag(codejy);
+		return modelreturn;
+		
 	}
 	
 	@TaskAnnotation("getZoneNum")

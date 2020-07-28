@@ -112,6 +112,54 @@ public class IntellectPartitionController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/getModelSubnetData.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "智能分区子网接口", notes = "智能分区子网接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String getModelSubnetData(@RequestBody AutomaticPartitionDTO automaticPartitionDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user,@PathVariable("tenantID") String tenantID) {
+		MessageBean<ModelReturn> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, ModelReturn.class);
+		
+		if(automaticPartitionDTO.getMaxZone() == null && automaticPartitionDTO.getMinZone() == null) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区范围为空");
+			return msg.toJson();
+		}
+		
+		if(automaticPartitionDTO.getZoneType() == null && automaticPartitionDTO.getZoneType().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区类型为空");
+			return msg.toJson();
+		}
+		
+		if(automaticPartitionDTO.getZoneCode() == null && automaticPartitionDTO.getZoneCode().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("分区 编码为空");
+			return msg.toJson();
+		}
+		
+		//接收到信号，开始存储方案总表信息
+		TotalSchemeDet totalSchemeDet = new TotalSchemeDet();	
+		totalSchemeDet.setMaxZone(automaticPartitionDTO.getMaxZone());
+		totalSchemeDet.setMinZone(automaticPartitionDTO.getMinZone());
+		totalSchemeDet.setZoneType(automaticPartitionDTO.getZoneType());
+		totalSchemeDet.setCreateBy(user.getCode());
+		if(automaticPartitionDTO.getZoneGrade() != null) {
+			totalSchemeDet.setZoneGrade(automaticPartitionDTO.getZoneGrade());
+		}
+		totalSchemeDet.setZoneCode(automaticPartitionDTO.getZoneCode());
+		totalSchemeDet.setState(0);
+		try {
+			ModelReturn data = ADOConnection.runTask(user.getEnv(),psds, "getModelSubnetData", ModelReturn.class, automaticPartitionDTO, totalSchemeDet,tenantID);
+			msg.setData(data);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+			msg.setDescription("智能分区数据传输失败！");
+		}
+		
+		return msg.toJson();
+	}
+	
 	@RequestMapping(value = "/getZoneRange.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
     @ApiOperation(value = "获取自动分区范围接口", notes = "获取自动分区范围接口", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody

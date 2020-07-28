@@ -1,4 +1,4 @@
-package com.koron.inwlms.bean.VO.statisticalReport;
+package com.koron.inwlms.bean.VO.report.statisticalReport;
 
 public class ZoneMnf {
 	/**

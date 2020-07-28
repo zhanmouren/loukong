@@ -72,7 +72,7 @@ public class DataSourceInitialization {
 				TenantUtil.envMap.put(tenantID, tenantID);
 			}
 		}
-		//kafkacus.consume();
+		kafkacus.consume();
 	}
 
 }

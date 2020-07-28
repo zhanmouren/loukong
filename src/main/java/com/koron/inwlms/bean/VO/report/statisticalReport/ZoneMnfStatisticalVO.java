@@ -1,10 +1,10 @@
-package com.koron.inwlms.bean.VO.statisticalReport;
+package com.koron.inwlms.bean.VO.report.statisticalReport;
 
 import java.util.List;
 
-public class ZoneMnfVO {
-
-	private List<ZoneMnf> dataList;
+public class ZoneMnfStatisticalVO {
+	
+	private List<ZoneMnfStatistical> dataList;
 	
     private Integer page;
 	
@@ -14,11 +14,11 @@ public class ZoneMnfVO {
 	
 	private Integer totalPage;
 
-	public List<ZoneMnf> getDataList() {
+	public List<ZoneMnfStatistical> getDataList() {
 		return dataList;
 	}
 
-	public void setDataList(List<ZoneMnf> dataList) {
+	public void setDataList(List<ZoneMnfStatistical> dataList) {
 		this.dataList = dataList;
 	}
 
@@ -55,5 +55,5 @@ public class ZoneMnfVO {
 	}
 	
 	
-	
+
 }
