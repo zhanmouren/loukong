@@ -439,6 +439,14 @@ public class Constant {
 	 */
 	public final static Integer RANK_T = 3;
 	
+	public final static String YUANSHUI = "原水";
+	
+	public final static String FJUMYS = "非居民生活用水";
+	
+	public final static String TEZHONYS = "特种用水";
+	
+	public final static String JUMYS = "居民生活用水";
+	
 	/**
 	 * 报警指标-渗漏状态持续时间
 	 */

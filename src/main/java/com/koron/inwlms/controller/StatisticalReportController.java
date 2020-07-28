@@ -90,7 +90,7 @@ public class StatisticalReportController {
 	}
 	
 	@RequestMapping(value = "/queryFlowMeterAnalysis.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
-	@ApiOperation(value = "分区最小夜间流量统计报表", notes = "分区最小夜间流量统计报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+	@ApiOperation(value = "用户水表分析对比报表", notes = "用户水表分析对比报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String queryFlowMeterAnalysis() {
 		
