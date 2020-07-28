@@ -2,5 +2,150 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.koron.inwlms.mapper.report.OpReportMapper">
 
+	<select id = "queryPFLoggerListReport" parameterType="com.koron.inwlms.bean.DTO.report.PFLoggerListReportDTO"
+		resultType="com.koron.inwlms.bean.VO.report.PFLoggerListReportVO">
+		select 
+		p_code as loggerId, 
+		(case when fac_type is null then '-' else fac_type end) as facType,
+		(case when fac_id is null then '-' else fac_id end) as facId,
+		'-' as manufacturer,
+		'-' as readInterva,
+		(case when x is null then 0 else x end) as coordinateX,
+		(case when y is null then 0 else y end) as coordinateY,
+		(case when (select rank from gis_exist_zone where p_code = "zoneNo") = 'W101640001' then "zoneNo" 
+		when (select b.rank from (select parent_code from gis_exist_zone where p_code = "zoneNo") a left join gis_exist_zone b on a.parent_code = b.p_code) = 'W101640001' then (select parent_code from gis_exist_zone where p_code = "zoneNo")
+		end) as firstZone,
+		(case when (select rank from gis_exist_zone where p_code = "zoneNo") = 'W101640002' then "zoneNo" end) as secondZone,
+		(case when (select rank from gis_exist_zone where p_code = "zoneNo") = 'W101640003' then "zoneNo" end) as dmaNos
+		from gis_scada_station
+		where 1 = 1
+		<if test = "zoneNo != null and zoneNo != ''">
+			and "zoneNo" = #{zoneNo}
+		</if>
+		limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+	</select>
+	
+	<select id = "countPFLoggerListReport" parameterType="com.koron.inwlms.bean.DTO.report.PFLoggerListReportDTO"
+		resultType="java.lang.Integer">
+		select 
+		count(*)
+		from gis_scada_station
+		where 1 = 1
+		<if test = "zoneNo != null and zoneNo != ''">
+			and "zoneNo" = #{zoneNo}
+		</if>
+	</select>
+	
+	<select id = "queryNoiseLoggerListReport" parameterType="com.koron.inwlms.bean.DTO.report.PFLoggerListReportDTO"
+		resultType="com.koron.inwlms.bean.VO.report.NoiseLoggerListReportVO">
+	
+	</select>
+	
+	<select id = "queryDmaOperabilityReport" parameterType="com.koron.inwlms.bean.DTO.report.DmaOperabilityReportDTO"
+		resultType="com.koron.inwlms.bean.VO.report.DmaOperabilityReportVO">
+	
+	</select>
+	
+	<select id = "queryPFLoggerOperabilityReport" parameterType="com.koron.inwlms.bean.DTO.report.PFLoggerOperabilityReportDTO"
+		resultType="com.koron.inwlms.bean.VO.report.PFLoggerOperabilityReportVO">
+		select 
+		p_code as loggerNo, 
+		"zoneNo",
+		(case when fac_id is null then '-' else fac_id end) as deviceName,
+		(case when (select rank from gis_exist_zone where p_code = "zoneNo") = 'W101640003' then "zoneNo" end) as dmaNo
+		from gis_scada_station
+		where work_stats = 'W101710001'
+		<if test = "zoneNo != null and zoneNo != ''">
+			and "zoneNo" = #{zoneNo}
+		</if>
+		limit #{pageCount} OFFSET #{pageCount}*(#{page}-1)
+	</select>
+	
+	<select id = "countPFLoggerOperabilityReport" parameterType="com.koron.inwlms.bean.DTO.report.PFLoggerOperabilityReportDTO"
+		resultType="java.lang.Integer">
+		select 
+		count(*)
+		from gis_scada_station
+		where work_stats = 'W101710001'
+		<if test = "zoneNo != null and zoneNo != ''">
+			and "zoneNo" = #{zoneNo}
+		</if>
+	</select>
+	
+	<select id = "queryPFLoggerData" parameterType="com.koron.inwlms.bean.DTO.report.PFLoggerOperabilityReportDTO"
+		resultType="com.koron.inwlms.bean.VO.report.PFLoggerDataInfo">
+		select distinct station as loggerNo,to_char(TO_TIMESTAMP(time),'yyyy-mm-dd') as date
+        from ods_scada_gdh_hour_hi
+        where TO_TIMESTAMP(time) &gt;= to_date(#{startTime},'yyyy-mm-dd') 
+        and TO_TIMESTAMP(time) &lt;= to_date(#{endTime},'yyyy-mm-dd')
+	</select>
+	
+	<select id = "queryPFLoggerLastRecordTime" 
+		resultType="com.koron.inwlms.bean.VO.report.PFLoggerDataInfo">
+		select DISTINCT station as loggerNo, to_char(max(TO_TIMESTAMP(time)), 'yyyy-mm-dd') as date
+        from ods_scada_gdh_hour_hi 
+        group by station
+	</select>
+	
+	<select id = "queryLoggerFlowQuestionReport" 
+		resultType="com.koron.inwlms.bean.VO.report.LoggerFlowQuestionReportVO">
+		select * from (
+		   select a."zoneNo",a.address,
+		   a."moniCode" as loggerNo,
+		   a.missDataNum as missingData, 
+		   (case when b.exceDataNum is null then 0 else b.exceDataNum end) as flow,
+		   (case when c.majorAbnoraml is null then 0 else c.majorAbnoraml end) as major,
+		   (case when d.minorAbnoraml is null then 0 else d.minorAbnoraml end) as abnoraml 
+		   from (select #{days}-count(DISTINCT e."analysisDate") as missDataNum,
+		   e."moniCode",
+		   f."zoneNo",
+		   f.address 
+		   from ana_monitorpoint_day e 
+		   left join gis_scada_station f 
+		   on e."moniCode" = f.p_code 
+		   where code = 'MODDF' and "analysisDate" &gt;= to_date(#{lfqrDTO.startTime}, 'YYYY-MM-DD HH24:MI:SS')
+		   and "analysisDate" &lt;= to_date(#{lfqrDTO.endTime}, 'YYYY-MM-DD HH24:MI:SS') 
+		   group by e."moniCode",f."zoneNo",f.address ) a
+		   left join (select count(DISTINCT "analysisDate") as exceDataNum, "moniCode" 
+		   from ana_monitorpoint_day 
+		   where code = 'MODDF' and "analysisDate" &gt;= to_date(#{lfqrDTO.startTime}, 'YYYY-MM-DD HH24:MI:SS')
+		   and "analysisDate" &lt;= to_date(#{lfqrDTO.endTime}, 'YYYY-MM-DD HH24:MI:SS') 
+		   and value &lt; 0 group by "moniCode") b on a."moniCode" = b."moniCode"
+		   left join (select count(*) as majorAbnoraml,c."moniCode" 
+		   from (select 
+		   case when "sevenValue" != 0 then (
+		   case when abs((value-"sevenValue")/"sevenValue") &gt;= 1.5 then 1 end) 
+		   else 0 end as majorAbnoraml,"moniCode" from ana_monitorpoint_day 
+		   where code = 'MODDF' and "analysisDate" &gt;= to_date(#{lfqrDTO.startTime}, 'YYYY-MM-DD HH24:MI:SS')
+		   and "analysisDate" &lt;= to_date(#{lfqrDTO.endTime}, 'YYYY-MM-DD HH24:MI:SS') ) c 
+		   where c.majorAbnoraml = 1 group by c."moniCode") c 
+		   on a."moniCode" = c."moniCode" 
+		   left join (select count(*) as minorAbnoraml,
+		   c."moniCode" from (select 
+		   case when "sevenValue" != 0 then (
+		   case when abs((value-"sevenValue")/"sevenValue") &gt;= 0.5 
+		   and abs((value-"sevenValue")/"sevenValue") &lt; 1.5 then 2 end) else 0 end as minorAbnoraml,
+		   "moniCode" from ana_monitorpoint_day where code = 'MODDF'
+		   and "analysisDate" &gt;= to_date(#{lfqrDTO.startTime}, 'YYYY-MM-DD HH24:MI:SS')
+		   and "analysisDate" &lt;= to_date(#{lfqrDTO.endTime}, 'YYYY-MM-DD HH24:MI:SS') ) c 
+		   where c.minorAbnoraml = 2 group by c."moniCode") d on a."moniCode" = d."moniCode") e 
+		   where 1 = 1
+		<if test = "lfqrDTO.zoneNo != null and lfqrDTO.zoneNo != ''">
+		and e.zoneNo = #{lfqrDTO.zoneNo}
+		</if> 
+		limit #{lfqrDTO.pageCount} OFFSET #{lfqrDTO.pageCount}*(#{lfqrDTO.page}-1)
+	</select>
+	
+	<select id = "countLoggerFlowQuestionReport" 
+		resultType="java.lang.Integer">
+		select count(DISTINCT a."moniCode")
+		from ana_monitorpoint_day a left join gis_scada_station b 
+		on a."moniCode" = b.p_code where a.code = 'MODDF' 
+		and a."analysisDate" &gt;= to_date(#{lfqrDTO.startTime}, 'YYYY-MM-DD HH24:MI:SS') 
+		and a."analysisDate" &lt;= to_date(#{lfqrDTO.endTime}, 'YYYY-MM-DD HH24:MI:SS')
+		<if test = "lfqrDTO.zoneNo != null and lfqrDTO.zoneNo != ''">
+		and b.zoneNo = #{lfqrDTO.zoneNo}
+		</if> 
+	</select>
 	
 </mapper> 

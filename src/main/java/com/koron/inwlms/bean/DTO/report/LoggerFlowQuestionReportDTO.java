@@ -1,11 +1,13 @@
 package com.koron.inwlms.bean.DTO.report;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * 查询监测水量存疑报表DTO
  * @author csh
  *
  */
-public class LoggerFlowQuestionReportDTO {
+public class LoggerFlowQuestionReportDTO extends BaseDTO{
 
 	private String zoneNo;
 	

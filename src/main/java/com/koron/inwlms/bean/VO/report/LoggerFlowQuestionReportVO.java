@@ -7,7 +7,7 @@ package com.koron.inwlms.bean.VO.report;
  */
 public class LoggerFlowQuestionReportVO {
 
-	 private String firstZone;
+	 private String zoneNo;
 
 	 private String loggerNo;
 
@@ -25,16 +25,17 @@ public class LoggerFlowQuestionReportVO {
 
 	 private Integer doubts;
 
-	 private String rate;
+	 private Double rate;
 
 	 private Integer days;
 
-	public String getFirstZone() {
-		return firstZone;
+
+	public String getZoneNo() {
+		return zoneNo;
 	}
 
-	public void setFirstZone(String firstZone) {
-		this.firstZone = firstZone;
+	public void setZoneNo(String zoneNo) {
+		this.zoneNo = zoneNo;
 	}
 
 	public String getLoggerNo() {
@@ -101,11 +102,11 @@ public class LoggerFlowQuestionReportVO {
 		this.doubts = doubts;
 	}
 
-	public String getRate() {
+	public Double getRate() {
 		return rate;
 	}
 
-	public void setRate(String rate) {
+	public void setRate(Double rate) {
 		this.rate = rate;
 	}
 

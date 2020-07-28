@@ -627,4 +627,76 @@ public class TimeUtil {
     	 return cal.getActualMaximum(Calendar.DAY_OF_YEAR);
     } 
      
+     /**
+      * 获得两个时间之间的日期
+      *
+      * @param starttime
+      * @param endtime
+      * @return
+      */
+     public static List<String> getBetweenTime(String starttime, String endtime) {
+         List<String> betweenTime = new ArrayList<>();
+         try {
+             Date sdate = new SimpleDateFormat("yyyy-MM-dd").parse(starttime);
+             Date edate = new SimpleDateFormat("yyyy-MM-dd").parse(endtime);
+
+             SimpleDateFormat outformat = new SimpleDateFormat("yyyy-MM-dd");
+
+             Calendar sCalendar = Calendar.getInstance();
+             sCalendar.setTime(sdate);
+             int year = sCalendar.get(Calendar.YEAR);
+             int month = sCalendar.get(Calendar.MONTH);
+             int day = sCalendar.get(Calendar.DATE);
+             sCalendar.set(year, month, day, 0, 0, 0);
+
+             Calendar eCalendar = Calendar.getInstance();
+             eCalendar.setTime(edate);
+             year = eCalendar.get(Calendar.YEAR);
+             month = eCalendar.get(Calendar.MONTH);
+             day = eCalendar.get(Calendar.DATE);
+             eCalendar.set(year, month, day, 0, 0, 0);
+
+             while (sCalendar.before(eCalendar)) {
+                 betweenTime.add(outformat.format(sCalendar.getTime()));
+                 sCalendar.add(Calendar.DAY_OF_YEAR, 1);
+             }
+             betweenTime.add(outformat.format(eCalendar.getTime()));
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+         return betweenTime;
+     }
+
+     /**
+      * 获取两个月份之间的月份
+      *
+      * @param minDate
+      * @param maxDate
+      * @return
+      */
+     public static List<String> getMonthBetween(String minDate, String maxDate) {
+         ArrayList<String> result = new ArrayList<>();
+         try {
+             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
+
+             Calendar min = Calendar.getInstance();
+             Calendar max = Calendar.getInstance();
+
+             min.setTime(sdf.parse(minDate));
+             min.set(min.get(Calendar.YEAR), min.get(Calendar.MONTH), 1);
+
+             max.setTime(sdf.parse(maxDate));
+             max.set(max.get(Calendar.YEAR), max.get(Calendar.MONTH), 2);
+
+             while (min.before(max)) {
+                 result.add(sdf.format(min.getTime()));
+                 min.add(Calendar.MONTH, 1);
+             }
+
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+         return result;
+     }
+     
 }

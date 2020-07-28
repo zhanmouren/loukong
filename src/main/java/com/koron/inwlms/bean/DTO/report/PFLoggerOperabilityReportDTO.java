@@ -1,11 +1,13 @@
 package com.koron.inwlms.bean.DTO.report;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * 压力流量监测设备可操作性报表DTO
  * @author csh
  *
  */
-public class PFLoggerOperabilityReportDTO {
+public class PFLoggerOperabilityReportDTO extends BaseDTO{
 
 	/**
 	 * 分区编号
@@ -20,12 +22,12 @@ public class PFLoggerOperabilityReportDTO {
 	/**
 	 * 开始时间
 	 */
-	private Integer startTime;
+	private String startTime;
 	
 	/**
 	 * 结束时间
 	 */
-	private Integer endTime;
+	private String endTime;
 
 	public String getZoneNo() {
 		return zoneNo;
@@ -43,21 +45,23 @@ public class PFLoggerOperabilityReportDTO {
 		this.zoneRank = zoneRank;
 	}
 
-	public Integer getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Integer startTime) {
+	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
 
-	public Integer getEndTime() {
+	public String getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(Integer endTime) {
+	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
+
+	
 	
 	
 }
