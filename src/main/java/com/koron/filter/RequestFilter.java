@@ -1,7 +1,6 @@
 package com.koron.filter;
 
 import com.google.gson.Gson;
-import com.koron.inwlms.bean.VO.sysManager.UserListVO;
 import com.koron.util.Constant;
 import com.koron.util.SessionUtil;
 import org.slf4j.Logger;
@@ -43,7 +42,7 @@ public class RequestFilter implements Filter {
 	/**
 	 * 不需要过滤的url
 	 */
-	private static final String[] urls = {"login",".json",".js",".css",".ico",".jpg",".png",".woff",".ttf",".gif"};
+	private static final String[] urls = {"api-docs","swagger-resources","swagger-ui.html","login",".json",".js",".css",".ico",".jpg",".png",".woff",".ttf",".gif"};
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -85,7 +84,6 @@ public class RequestFilter implements Filter {
 				} else {
 					if (servletPath.endsWith(".html")) {
 						// 如果是页面,则重定向到登录界面
-						System.out.println(hsRequest.getContextPath());
 						hsResponse.sendRedirect(hsRequest.getContextPath() + "/"+tenantID+"/dist/views/login.html");
 						
 					} else {
@@ -103,11 +101,7 @@ public class RequestFilter implements Filter {
 			}
 		} else {
 			if (attribute== null) {
-				UserListVO userListVO = new UserListVO();
-				userListVO.setLoginName("admin");
-				userListVO.setName("管理员账号");
-				userListVO.setCode("92070DF42CFF279FE05305010D0A1637");
-				SessionUtil.setAttribute(Constant.LOGIN_USER, userListVO);
+
 			}
 			chain.doFilter(request, response);
 		}
