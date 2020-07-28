@@ -11,6 +11,7 @@ import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.report.waterBalanceReport.WB1BalanceDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
+import com.koron.inwlms.bean.VO.report.waterBalanceReport.TreefirstVO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB1BalanceVO;
 
 @Repository
@@ -86,4 +87,10 @@ public interface WaterReportMapper {
 		  */
 		 @Select("select tbltree.*,gis_exist_zone.p_code as code,gis_exist_zone.name,gis_exist_zone.rank,gis_exist_zone.smid from tbltree left join gis_exist_zone on  gis_exist_zone.p_code=tbltree.foreignkey where (seq & ~((1::int8 << (62 - #{parentMask}-#{mask}))-1)) = #{seq} and (seq & ((1::int8 << (62 - #{parentMask}-#{mask} - #{childMask}))-1)) = 0 and type = #{type}")
 		 public List<TreeZoneVO> queryTreeOneZone(LongTreeBean bean);
+		 
+		 /*
+		  * 查询parentMask是0的，并且type为2的树
+		  */
+		 @Select("select foreignkey,type from tbltree where type=#{treeType} and parentmask=#{parentmask}")
+		 public List<TreefirstVO> getFirstTree(@Param("treeType") Integer treeType ,@Param("parentmask") Integer parentmask);
 }

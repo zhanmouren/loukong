@@ -18,7 +18,9 @@ import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.report.waterBalanceReport.WB1BalanceDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
+import com.koron.inwlms.bean.VO.report.waterBalanceReport.TreefirstVO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB1BalanceVO;
+import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB2OneZoneVO;
 import com.koron.inwlms.mapper.report.waterReport.WaterReportMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.report.waterReport.WaterReportService;
@@ -27,8 +29,12 @@ import com.koron.util.Constant;
 
 @Service
 public  class WaterReportServiceImpl implements WaterReportService{
-	
+	//时间类型（年，月，日）
 	public final Integer timeType=1;
+	//树的类型
+	public final Integer treeType=2;
+	
+	public final Integer parentmask=0;
 
 	//(WB_01)水司及一级分区产销差率同比报表      以月为时间间隔,汇总分析所选运作区或全网在指定时间范围内用水量、产销差和未计量食水用水量。
 	@TaskAnnotation("queryPartitionData")
@@ -517,6 +523,105 @@ public  class WaterReportServiceImpl implements WaterReportService{
 			List<TreeZoneVO> zoneList=waterReportMapper.queryTreeOneZone(node);
 			return zoneList;
 		}
+	}
+
+    //一级分区产销差率比较报表
+    @TaskAnnotation("queryOneZoneCXC")
+	@Override
+	public List<WB2OneZoneVO> queryOneZoneCXC(SessionFactory factory, IndicatorNewDTO indicatorNewDTO) {
+    	/**
+		  * BALANCE_INDIC  水平衡基础数据--- 抄表量  WNMBMC
+		         供水（总）量 1     WNMFWSSITDF 
+		  * 							
+		  * ZONE_LOSS_INDIC 分区漏损数据   ---  产销差率1 WNMNRR
+		  * 
+		  */
+    	WaterReportMapper waterReportMapper = factory.getMapper(WaterReportMapper.class);
+    	TreeMapper mapper = factory.getMapper(TreeMapper.class);	
+    	List<String>  monthList=new ArrayList<>();
+		try {
+			//获取中间月份
+		   monthList=getMonthBetween(indicatorNewDTO.getStartTime().toString(),indicatorNewDTO.getEndTime().toString());
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}
+		//返回的数据
+		List<WB2OneZoneVO> wB2OneZoneList=new ArrayList<>();
+		//查询parentMask为0 的并且type为1 的foreignkey
+		List<TreefirstVO> firstTreeVO=waterReportMapper.getFirstTree(treeType,parentmask);
+		LongTreeBean node=null;
+		List<TreeZoneVO> zoneList=new ArrayList<>();
+		List<String> finalZoneList=new ArrayList<>();
+		if(firstTreeVO!=null  && firstTreeVO.size()>0) {
+		 //查询一级分区
+		 node=mapper.getBeanByForeignIdType(treeType,firstTreeVO.get(0).getForeignkey());
+		}else {
+			return null;
+		}
+		if(node == null) {
+			return null;
+		}
+		else{
+			zoneList=waterReportMapper.queryTreeOneZone(node);		
+			if(zoneList!=null && zoneList.size()>0) {
+				for(int i=0;i<zoneList.size();i++) {
+					if(zoneList.get(i).getName()!=null && !"".equals(zoneList.get(i).getName())) {
+					 finalZoneList.add(zoneList.get(i).getCode());
+					}
+		    	}
+			}
+		}
+		
+		//一级分区
+	    for(int i=0;i<monthList.size();i++) {	
+	    	WB2OneZoneVO wB2OneZoneVO=new WB2OneZoneVO();
+	    	wB2OneZoneVO.setMonthId(monthList.get(i));
+	    	//查询水平衡数据 抄表量  
+	    	IndicatorNewDTO indicatorcb=new IndicatorNewDTO();
+	    	List<String> balanceCBCodes=new ArrayList<>();
+	    	balanceCBCodes.add(Constant.BALANCE_INDIC_FLMBMC);
+	    	indicatorcb.setCodes(balanceCBCodes);
+	    	indicatorcb.setStartTime(Integer.valueOf(monthList.get(i)));
+	    	indicatorcb.setEndTime(Integer.valueOf(monthList.get(i)));
+	    	indicatorcb.setTimeType(timeType);
+	    	//添加一级分区
+	    	indicatorcb.setZoneCodes(finalZoneList);
+	    	
+	   	    List<IndicatorVO> balanceCBList=waterReportMapper.queryWBBaseIndicData(indicatorcb);
+	   	    wB2OneZoneVO.setCxcList(balanceCBList);
+	   	    
+	       //查询水平衡数据 供水量  
+	    	IndicatorNewDTO indicatorgs=new IndicatorNewDTO();
+	    	List<String> balanceGSCodes=new ArrayList<>();	    
+	    	balanceGSCodes.add(Constant.BALANCE_INDIC_FLMFWSSITDF);
+	    	indicatorgs.setCodes(balanceGSCodes);
+	    	indicatorgs.setStartTime(Integer.valueOf(monthList.get(i)));
+	    	indicatorgs.setEndTime(Integer.valueOf(monthList.get(i)));
+	    	indicatorgs.setTimeType(timeType);
+	    	
+	    	indicatorgs.setZoneCodes(finalZoneList);
+	    	
+	   	    List<IndicatorVO> balanceGSList=waterReportMapper.queryWBBaseIndicData(indicatorgs);
+	   	    wB2OneZoneVO.setGslList(balanceGSList);
+	   	    
+	   	    //查询产销差率
+	   	    IndicatorNewDTO indicatorCXC=new IndicatorNewDTO();
+	    	List<String> zoneCXCCodes=new ArrayList<>();
+	    	zoneCXCCodes.add(Constant.ZONE_LOSS_INDIC_FLMNRR);
+	    	indicatorCXC.setCodes(zoneCXCCodes);
+	    	indicatorCXC.setStartTime(Integer.valueOf(monthList.get(i)));
+	    	indicatorCXC.setEndTime(Integer.valueOf(monthList.get(i)));
+	    	indicatorCXC.setTimeType(timeType);
+	    	
+	    	indicatorCXC.setZoneCodes(finalZoneList);
+	    	
+	    	List<IndicatorVO> zoneLossCXCList=waterReportMapper.queryZoneLossIndicData(indicatorCXC);
+	    	wB2OneZoneVO.setCxcList(zoneLossCXCList);
+	    	
+	    	wB2OneZoneList.add(wB2OneZoneVO);	           	    
+	    }
+    	
+		return wB2OneZoneList;
 	}
 
 	
