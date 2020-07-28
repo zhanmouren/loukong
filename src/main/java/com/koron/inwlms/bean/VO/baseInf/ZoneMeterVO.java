@@ -30,7 +30,7 @@ public class ZoneMeterVO {
     /**
      * 册本号
      */
-    private String volumeNo;
+    private String bookNo;
 
     /**
      * 水表编号
@@ -52,12 +52,12 @@ public class ZoneMeterVO {
      */
     private String BatchNo;
 
-    public String getVolumeNo() {
-        return volumeNo;
+    public String getBookNo() {
+        return bookNo;
     }
 
-    public void setVolumeNo(String volumeNo) {
-        this.volumeNo = volumeNo;
+    public void setBookNo(String bookNo) {
+        this.bookNo = bookNo;
     }
 
     public Integer getRows() {

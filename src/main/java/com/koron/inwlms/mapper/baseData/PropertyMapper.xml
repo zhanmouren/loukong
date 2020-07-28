@@ -274,8 +274,8 @@
            <if test="zoneNo != null and zoneNo != ''">
                  and "zoneNo" = #{zoneNo}
             </if>
-            <if test="volumeNo != null and volumeNo != ''">
-                and "volumeNo" = #{volumeNo}
+            <if test="bookNo != null and bookNo != ''">
+                and "bookNo" = #{bookNo}
             </if>
      </delete>
 
@@ -290,7 +290,7 @@
 
     <select id="queryZoneMeterList"  parameterType="com.koron.inwlms.bean.DTO.baseInf.ZoneMeterDTO" resultType="com.koron.inwlms.bean.VO.baseInf.ZoneMeterVO">
         select * from(
-        select distinct 0 as rows,"zoneNo",gis_exist_zone.name as "zoneName",gis_zone_meter."volumeNo" as "volumeNo",type,"BatchNo" from gis_zone_meter
+        select distinct 0 as rows,"zoneNo",gis_exist_zone.name as "zoneName",gis_zone_meter."bookNo" as "bookNo",type,"BatchNo" from gis_zone_meter
         left join gis_exist_zone on gis_exist_zone.p_code = gis_zone_meter."zoneNo"
         where 1=1
             <if test="zoneNo != null and zoneNo != ''">
@@ -299,8 +299,8 @@
             <if test="zoneName != null and zoneName != ''">
                 and gis_exist_zone.name like '%'||#{zoneName}||'%'
             </if>
-            <if test="volumeNo != null and volumeNo != ''">
-                and gis_zone_meter."volumeNo" like '%'||#{volumeNo}||'%'
+            <if test="bookNo != null and bookNo != ''">
+                and gis_zone_meter."bookNo" like '%'||#{bookNo}||'%'
             </if>
             <if test="meterNo != null and meterNo != ''">
                 and "meterNo" like '%'||#{meterNo}||'%'
@@ -318,8 +318,8 @@
         union all
         select count(*), '' as zoneNo,'' as zoneName,'', '' as type,'' as BatchNo from
         (
-        select distinct 0 as rows,"zoneNo",gis_exist_zone.name as "zoneName",gis_zone_meter."volumeNo" as
-        "volumeNo",type,"BatchNo" from gis_zone_meter
+        select distinct 0 as rows,"zoneNo",gis_exist_zone.name as "zoneName",gis_zone_meter."bookNo" as
+        "bookNo",type,"BatchNo" from gis_zone_meter
         left join gis_exist_zone on gis_exist_zone.p_code = gis_zone_meter."zoneNo"
         where 1=1
              <if test="zoneNo != null and zoneNo != ''">
@@ -328,8 +328,8 @@
             <if test="zoneName != null and zoneName != ''">
                 and gis_exist_zone.name like '%'||#{zoneName}||'%'
             </if>
-            <if test="volumeNo != null and volumeNo != ''">
-                and gis_zone_meter."volumeNo" like '%'||#{volumeNo}||'%'
+            <if test="bookNo != null and bookNo != ''">
+                and gis_zone_meter."bookNo" like '%'||#{bookNo}||'%'
             </if>
             <if test="meterNo != null and meterNo != ''">
                 and "meterNo" like '%'||#{meterNo}||'%'
@@ -379,8 +379,8 @@
         <if test="zoneNo != null and zoneNo != ''">
             and "zoneNo" = #{zoneNo}
         </if>
-        <if test="volumeNo != null and volumeNo != ''">
-            and "volumeNo" = #{volumeNo}
+        <if test="bookNo != null and bookNo != ''">
+            and "bookNo" = #{bookNo}
         </if>
         <if test="meterNo != null and meterNo != ''">
             and gis_zone_meter."meterNo" like '%'||#{meterNo}||'%'
@@ -395,8 +395,8 @@
         <if test="zoneNo != null and zoneNo != ''">
             and "zoneNo" = #{zoneNo}
         </if>
-        <if test="volumeNo != null and volumeNo != ''">
-            and "volumeNo" = #{volumeNo}
+        <if test="bookNo != null and bookNo != ''">
+            and "bookNo" = #{bookNo}
         </if>
         <if test="meterNo != null and meterNo != ''">
             and gis_zone_meter."meterNo" like '%'||#{meterNo}||'%'
@@ -415,8 +415,8 @@
             <if test="meterNo != null and meterNo!=''">
                 "meterNo" = #{meterNo},
             </if>
-             <if test="volumeNo != null and volumeNo !=''">
-                "volumeNo" = #{volumeNo},
+             <if test="bookNo != null and bookNo !=''">
+                "bookNo" = #{bookNo},
             </if>
             <if test="type != null and type !=''">
                 type = #{type},
@@ -434,7 +434,7 @@
              and "zoneNo" = #{zoneNo}
          </if>
           <if test="originVolumnNo != null and originVolumnNo !=''">
-             and "volumeNo" = #{originVolumnNo}
+             and "bookNo" = #{originVolumnNo}
           </if>
     </update>
 

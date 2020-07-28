@@ -42,7 +42,7 @@ public class ZoneMeterDTO  extends BaseDTO {
     /**
      * 册本号
      */
-    private String volumeNo;
+    private String bookNo;
 
     /**
      * 关系类型
@@ -83,12 +83,12 @@ public class ZoneMeterDTO  extends BaseDTO {
         this.originVolumnNo = originVolumnNo;
     }
 
-    public String getVolumeNo() {
-        return volumeNo;
+    public String getBookNo() {
+        return bookNo;
     }
 
-    public void setVolumeNo(String volumeNo) {
-        this.volumeNo = volumeNo;
+    public void setBookNo(String bookNo) {
+        this.bookNo = bookNo;
     }
 
     public String getBatchNo() {

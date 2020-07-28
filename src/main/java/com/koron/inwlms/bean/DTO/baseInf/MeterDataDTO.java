@@ -85,7 +85,7 @@ public class MeterDataDTO extends BaseDTO {
      * 册本号
      * @return
      */
-    private String volumeNo;
+    private String bookNo;
 
     public String[] getDma() {
         return dma;
@@ -143,12 +143,12 @@ public class MeterDataDTO extends BaseDTO {
         this.mwo = mwo;
     }
 
-    public String getVolumeNo() {
-        return volumeNo;
+    public String getBookNo() {
+        return bookNo;
     }
 
-    public void setVolumeNo(String volumeNo) {
-        this.volumeNo = volumeNo;
+    public void setBookNo(String bookNo) {
+        this.bookNo = bookNo;
     }
 
     public String getBatchNo() {

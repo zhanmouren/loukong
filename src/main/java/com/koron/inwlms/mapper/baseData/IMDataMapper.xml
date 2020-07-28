@@ -426,15 +426,15 @@
 
     <select id="queryReadMeterDataList" parameterType="com.koron.inwlms.bean.DTO.baseInf.MeterDataDTO" resultType="com.koron.inwlms.bean.VO.baseInf.MeterDataVO">
        select * from(
-        select 0 as rows,mi_readwaterinfo.id,user_no as "userNo",user_name as "userName",user_type as "userType",prior_period_num as "priorPeriodNum",prior_period_date as "priorPeriodDate",meter_reading_date as "meterReadingDate",currend_period_num as "currendPeriodNum",reality_water as "realityWater",meter_reading_way "meterReadingWay",mi_readwaterinfo."createBy",to_char(mi_readwaterinfo."createTime",'YYYY-MM-DD') as "createTime",mi_readwaterinfo."updateBy",to_char(mi_readwaterinfo."updateTime",'YYYY-MM-DD') as "updateTime",mi_readwaterinfo."BatchNo",gis_meter.p_code as "meterNo",gis_meter.pipe_d as "pipeD",gis_zone_meter."volumeNo"
+        select 0 as rows,mi_readwaterinfo.id,user_no as "userNo",user_name as "userName",user_type as "userType",prior_period_num as "priorPeriodNum",prior_period_date as "priorPeriodDate",meter_reading_date as "meterReadingDate",currend_period_num as "currendPeriodNum",reality_water as "realityWater",meter_reading_way "meterReadingWay",mi_readwaterinfo."createBy",to_char(mi_readwaterinfo."createTime",'YYYY-MM-DD') as "createTime",mi_readwaterinfo."updateBy",to_char(mi_readwaterinfo."updateTime",'YYYY-MM-DD') as "updateTime",mi_readwaterinfo."BatchNo",gis_meter.p_code as "meterNo",gis_meter.pipe_d as "pipeD",gis_zone_meter."bookNo"
         from mi_readwaterinfo
         left join gis_meter on mi_readwaterinfo.user_no=gis_meter.accountid
-        left join gis_zone_meter on gis_meter."p_code" = gis_zone_meter."meterNo"
+        left join gis_zone_meter on gis_meter."accountid" = gis_zone_meter."userNo"
         <trim prefix="where" prefixOverrides="and|or">
             <if test="readType != null  and readType !=''"> and meter_reading_way= #{readType}</if>
             <if test="usrType != null  and usrType !=''"> and user_type= #{usrType}</if>
             <if test="userNo != null  and userNo !=''"> and user_no like '%'||#{userNo}||'%'</if>
-            <if test="volumeNo != null  and volumeNo !=''"> and gis_zone_meter."volumeNo" like '%'||#{volumeNo}||'%'</if>
+            <if test="bookNo != null  and bookNo !=''"> and gis_zone_meter."bookNo" like '%'||#{bookNo}||'%'</if>
             <if test="begD != null  and begD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &gt;= #{begD}</if>
             <if test="endD != null  and endD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &lt;= #{endD}</if>
         </trim>
@@ -451,7 +451,7 @@
             <if test="readType != null  and readType !=''"> and meter_reading_way= #{readType}</if>
             <if test="usrType != null  and usrType !=''"> and user_type= #{usrType}</if>
             <if test="userNo != null  and userNo !=''"> and user_no like '%'||#{userNo}||'%'</if>
-            <if test="volumeNo != null  and volumeNo !=''"> and gis_zone_meter."volumeNo" like '%'||#{volumeNo}||'%'</if>
+            <if test="bookNo != null  and bookNo !=''"> and gis_zone_meter."bookNo" like '%'||#{bookNo}||'%'</if>
             <if test="begD != null  and begD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &gt;= #{begD}</if>
             <if test="endD != null  and endD !=''"> and to_char("meter_reading_date",'YYYY-MM-DD') &lt;= #{endD}</if>
         </trim>

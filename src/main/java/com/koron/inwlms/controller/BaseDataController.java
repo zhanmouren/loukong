@@ -980,7 +980,7 @@ public class BaseDataController {
 
         MessageBean msg = new MessageBean();
         //入参校验
-        if(zoneMeterDTO.getVolumeNo()==null || zoneMeterDTO.getZoneNo()==null){
+        if(zoneMeterDTO.getBookNo()==null || zoneMeterDTO.getZoneNo()==null){
             msg.setCode(Constant.MESSAGE_INT_NULL);
             msg.setDescription(Constant.MESSAGE_STRING_NULL);
             return msg.toJson();
@@ -1066,7 +1066,7 @@ public class BaseDataController {
     @ResponseBody
     public String deleteZoneMeters(@RequestBody ZoneMeterDTO zoneMeterDTO,@DataInject TblRoleRangeValueListVO rangeList,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER) UserVO user) {
         MessageBean msg = new MessageBean();
-        if(zoneMeterDTO.getZoneNo() ==null || zoneMeterDTO.getVolumeNo()==null){
+        if(zoneMeterDTO.getZoneNo() ==null || zoneMeterDTO.getBookNo()==null){
             msg.setCode(Constant.MESSAGE_INT_NULL);
             msg.setDescription(Constant.MESSAGE_STRING_NULL);
             return msg.toJson();
