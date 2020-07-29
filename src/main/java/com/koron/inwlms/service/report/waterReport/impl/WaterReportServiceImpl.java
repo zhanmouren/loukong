@@ -44,7 +44,7 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	//(WB_01)水司及一级分区产销差率同比报表      以月为时间间隔,汇总分析所选运作区或全网在指定时间范围内用水量、产销差和未计量食水用水量。
 	@TaskAnnotation("queryPartitionData")
 	@Override
-	public List<WB1BalanceVO> queryPartitionData(SessionFactory factory, IndicatorNewDTO indicatorNewDTO) {
+	public Map<String,Object> queryPartitionData(SessionFactory factory, IndicatorNewDTO indicatorNewDTO) {
 		WaterReportMapper waterReportMapper = factory.getMapper(WaterReportMapper.class);
 		/**
 		  * BALANCE_INDIC  水平衡基础数据---  计费计量用水量1    免费计量用水量    供水（总）量 1      
@@ -361,7 +361,7 @@ public  class WaterReportServiceImpl implements WaterReportService{
 		  finalMap.put("pageCount", indicatorNewDTO.getPageCount());
 		  finalMap.put("page", indicatorNewDTO.getPage());
 		  finalMap.put("totalPage", pageVO.getRowNumber());
-		  finalMap.put("dataList",copyList);
+		  
 	    //end
 	    
 	    //计算total 那行	
@@ -417,42 +417,42 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	     double cxctbCount=0.0;
 	     
 	     
-	     for(int p=0;p<finalWB1BalanceList.size();p++) {
-	    	 if(finalWB1BalanceList.get(p).getSystemInput()!=0.0) {
+	     for(int p=0;p<copyList.size();p++) {
+	    	 if(copyList.get(p).getSystemInput()!=0.0) {
 	    		 gslNum++;
-	    		 gslCount+=finalWB1BalanceList.get(p).getSystemInput();
+	    		 gslCount+=copyList.get(p).getSystemInput();
 	    	 }
-	    	 if(finalWB1BalanceList.get(p).getBilledMeteredConsumption()!=0.0) {
+	    	 if(copyList.get(p).getBilledMeteredConsumption()!=0.0) {
 	    		 jfjlNum++;
-	    		 jfjlCount+=finalWB1BalanceList.get(p).getBilledMeteredConsumption();
+	    		 jfjlCount+=copyList.get(p).getBilledMeteredConsumption();
 	    	 }
-	    	 if(finalWB1BalanceList.get(p).getUnbilledMeteredConsumption()!=0.0) {
+	    	 if(copyList.get(p).getUnbilledMeteredConsumption()!=0.0) {
 	    		 mfjlNum++;
-	    		 mfjlCount+=finalWB1BalanceList.get(p).getUnbilledMeteredConsumption();
+	    		 mfjlCount+=copyList.get(p).getUnbilledMeteredConsumption();
 	    	 }
-	    	 if(finalWB1BalanceList.get(p).getTotal()!=0.0) {
+	    	 if(copyList.get(p).getTotal()!=0.0) {
 	    		 totalNum++;
-	    		 totalCount+=finalWB1BalanceList.get(p).getTotal();
+	    		 totalCount+=copyList.get(p).getTotal();
 	    	 }
-	    	 if(finalWB1BalanceList.get(p).getCurrentW()!=0.0) {
+	    	 if(copyList.get(p).getCurrentW()!=0.0) {
 	    		 wjlzbNNum++;
-	    		 wjlzbNCount+=finalWB1BalanceList.get(p).getCurrentW();
+	    		 wjlzbNCount+=copyList.get(p).getCurrentW();
 	    	 }
-	    	 if(finalWB1BalanceList.get(p).getLastW()!=0.0) {
+	    	 if(copyList.get(p).getLastW()!=0.0) {
 	    		 wjlzbCNum++;
-	    		 wjlzbCCount+=finalWB1BalanceList.get(p).getLastW(); 
+	    		 wjlzbCCount+=copyList.get(p).getLastW(); 
 	    	 }
-	    	 if(finalWB1BalanceList.get(p).getYearAgoW()!=0.0) {
+	    	 if(copyList.get(p).getYearAgoW()!=0.0) {
 	    		 wtbNum++;
-	    		 wtbCount+=finalWB1BalanceList.get(p).getYearAgoW();
+	    		 wtbCount+=copyList.get(p).getYearAgoW();
 	    	 }
-	    	 if(finalWB1BalanceList.get(p).getCurrentC()!=0.0) {
+	    	 if(copyList.get(p).getCurrentC()!=0.0) {
 	    		 cxcNum++;
-	    		 cxcCount+=finalWB1BalanceList.get(p).getCurrentC();
+	    		 cxcCount+=copyList.get(p).getCurrentC();
 	    	 }
-	    	 if(finalWB1BalanceList.get(p).getYearAgoC()!=0.0) {
+	    	 if(copyList.get(p).getYearAgoC()!=0.0) {
 	    		 cxctbNum++;
-	    		 cxctbCount+=finalWB1BalanceList.get(p).getYearAgoC();
+	    		 cxctbCount+=copyList.get(p).getYearAgoC();
 	    	 }
 	    	 	    	 
 	     }
@@ -507,8 +507,11 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	    	 totalVO.setYearAgoC(0.0); 
 	     }
 	     
-	     finalWB1BalanceList.add(totalVO);
-		 return finalWB1BalanceList;
+	     copyList.add(totalVO);
+	     finalMap.put("dataList",copyList);
+		// return copyList;
+	     
+	     return finalMap;
 	
 	}
 	

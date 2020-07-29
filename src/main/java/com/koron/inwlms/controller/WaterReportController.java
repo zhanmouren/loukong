@@ -64,25 +64,35 @@ public class WaterReportController {
 		if(indicatorNewDTO.getZoneCodes().size()<1) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson();
 		}
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       		
+		Gson gson=new Gson();
+		Map<String,Object>    resultMap=new HashMap<>();	
+		// MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       		
 		  try{
-			  List<WB1BalanceVO> WB1BalanceVOList=ADOConnection.runTask(user.getEnv(),waterReportService, "queryPartitionData", List.class, indicatorNewDTO);		 
-				  if(WB1BalanceVOList!=null && WB1BalanceVOList.size()>0) {			
-				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				    msg.setDescription("查询水司及一级分区产销差率同比信息成功");
-				    msg.setData(WB1BalanceVOList);
+			  Map<String,Object>  WB1BalanceVO=ADOConnection.runTask(user.getEnv(),waterReportService, "queryPartitionData", Map.class, indicatorNewDTO);		 
+				  if(WB1BalanceVO!=null ) {			
+//				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+//				    msg.setDescription("查询水司及一级分区产销差率同比信息成功");
+//				    msg.setData(WB1BalanceVOList);
+					resultMap.put("code", Constant.MESSAGE_INT_SUCCESS);
+					resultMap.put("description", "查询水司及一级分区产销差率同比信息成功");
+					resultMap.put("data", WB1BalanceVO);	
 				  }
 				  else {				   
-			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
-			        msg.setDescription("未查询到水司及一级分区产销差率同比信息");
+//			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
+//			        msg.setDescription("未查询到水司及一级分区产销差率同比信息");
+					resultMap.put("code", Constant.MESSAGE_INT_SUCCESS);
+					resultMap.put("description", "未查询到水司及一级分区产销差率同比信息");					
 				  }
 			  
 	        }catch(Exception e){
-	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("查询失败");
+//	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+//	            msg.setDescription("查询失败");
+	        	resultMap.put("code", Constant.MESSAGE_INT_ERROR);
+				resultMap.put("description", "查询失败");	
 	        }
 		
-	     return msg.toJson();
+//	     return msg.toJson();
+		  return gson.toJson(resultMap);
 	}
 	
 	/*
