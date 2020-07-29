@@ -20,6 +20,8 @@ import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysis;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysisVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterData;
 import com.koron.inwlms.bean.VO.report.statisticalReport.MeterAbnormalAnalysisVO;
+import com.koron.inwlms.bean.VO.report.statisticalReport.NetFault;
+import com.koron.inwlms.bean.VO.report.statisticalReport.NetFaultVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnf;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfStatistical;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfStatisticalVO;
@@ -390,6 +392,14 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_THREE);
 		}
 		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO);
+		if(zoneList == null || zoneList.size() == 0) {
+			flowMeterAnalysisVO.setDataList(dataList);
+			flowMeterAnalysisVO.setPage(zoneMnfDTO.getPage());
+			flowMeterAnalysisVO.setPageCount(zoneMnfDTO.getPageCount());
+			flowMeterAnalysisVO.setRowNumber(0);
+			flowMeterAnalysisVO.setTotalPage(0);
+			return flowMeterAnalysisVO;
+		}
 		//获取时间
 		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = new Date();
@@ -409,53 +419,79 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		flowMeterAnalysisVO.setRowNumber(num);
 		flowMeterAnalysisVO.setTotalPage((int) Math.ceil(num/zoneMnfDTO.getPageCount())+1);
 		
-		for(String name : typeNameList) {
-			int meter = 0;
-			Double flow = 0.0;
-			for(GisExistZoneVO zoneInf : zoneList) {
-				List<String> meterNoList = anaMapper.queryMeterNoByZoneCode(zoneInf.getPcode());
-				for(String meterNo : meterNoList) {
-					List<FlowMeterData> flowMeterDataList = anaMapper.queryCtmByBookNum(meterNo);
-					for(FlowMeterData flowMeterData : flowMeterDataList) {
-						Double value = anaMapper.queryMeterValueByMonth(flowMeterData.getCtmNum(), monthId);
-						if(flowMeterData.getYsName().equals(name)) {
-							meter = meter + 1;
-							flow = flow + value;
+		if(typeNameList != null && typeNameList.size() != 0) {
+			for(String name : typeNameList) {
+				FlowMeterAnalysis flowMeterAnalysis = new FlowMeterAnalysis();
+				int meter = 0;
+				Double flow = 0.0;
+				for(GisExistZoneVO zoneInf : zoneList) {
+					List<String> meterNoList = anaMapper.queryMeterNoByZoneCode(zoneInf.getPcode());
+					if(meterNoList != null && meterNoList.size() != 0) {
+						for(String meterNo : meterNoList) {
+							List<FlowMeterData> flowMeterDataList = anaMapper.queryCtmByBookNum(meterNo);
+							if(flowMeterDataList != null && flowMeterDataList.size() != 0) {
+								for(FlowMeterData flowMeterData : flowMeterDataList) {
+									List<Double> value = anaMapper.queryMeterValueByMonth(flowMeterData.getCtmNum(), monthId);
+									if(value != null && value.size() != 0) {
+										if(flowMeterData.getYsName() != null) {
+											if(flowMeterData.getYsName().equals(name)) {
+												meter = meter + 1;
+												flow = flow + value.get(0);
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}
+				allFlow = allFlow + flow;
+				
+				Integer monthTime = getTimeMonth(date,-1);
+				Double monthValue = getMeterFlow(anaMapper,monthTime,zoneList,name);
+				if(monthValue != null && monthValue != 0.0) {
+					Double monthContrast = (flow - monthValue)/monthValue;
+					flowMeterAnalysis.setMonthContrast(Math.ceil(monthContrast*10000)/100);
+				}
+				Integer yearTime = getTimeMonth(date,-12);
+				Double yearValue = getMeterFlow(anaMapper,yearTime,zoneList,name);
+				if(yearValue != null && yearValue != 0.0) {
+					Double yearContrast = (flow - yearValue)/yearValue;
+					flowMeterAnalysis.setYearContrast(Math.ceil(yearContrast*10000)/100);
+				}
+				flowMeterAnalysis.setType(name);
+				flowMeterAnalysis.setMeterNum(meter);
+				flowMeterAnalysis.setCustomerWater(Math.ceil(flow*100)/100);
+				if(meter != 0) {
+					Double unitFlow = flow/meter;
+					flowMeterAnalysis.setUnitHouseWater(Math.ceil(unitFlow*100)/100);
+				}
+				
+				dataList.add(flowMeterAnalysis);
 			}
-			allFlow = allFlow + flow;
-			
-			Integer monthTime = getTimeMonth(date,-1);
-			Double monthValue = getMeterFlow(anaMapper,monthTime,zoneList,name);
-			Double monthContrast = (flow - monthValue)/monthValue;
-			Integer yearTime = getTimeMonth(date,-12);
-			Double yearValue = getMeterFlow(anaMapper,yearTime,zoneList,name);
-			Double yearContrast = (flow - yearValue)/yearValue;
-			
-			FlowMeterAnalysis flowMeterAnalysis = new FlowMeterAnalysis();
-			flowMeterAnalysis.setType(name);
-			flowMeterAnalysis.setMeterNum(meter);
-			flowMeterAnalysis.setCustomerWater(Math.ceil(flow*100)/100);
-			Double unitFlow = flow/meter;
-			flowMeterAnalysis.setUnitHouseWater(Math.ceil(unitFlow*100)/100);
-			flowMeterAnalysis.setMonthContrast(Math.ceil(monthContrast*10000)/100);
-			flowMeterAnalysis.setYearContrast(Math.ceil(yearContrast*10000)/100);
-			dataList.add(flowMeterAnalysis);
 		}
-		
-		for(FlowMeterAnalysis flowMeterAnalysis : dataList) {
-			Double value = flowMeterAnalysis.getCustomerWater()/allFlow;
-			flowMeterAnalysis.setWaterProportion(Math.ceil(value*10000)/100);
+		if(dataList != null && dataList.size() != 0) {
+			for(FlowMeterAnalysis flowMeterAnalysis : dataList) {
+				Double value = flowMeterAnalysis.getCustomerWater()/allFlow;
+				flowMeterAnalysis.setWaterProportion(Math.ceil(value*10000)/100);
+			}
 		}
 		flowMeterAnalysisVO.setDataList(dataList);
 		
 		return flowMeterAnalysisVO;
 	}
 	
+	@TaskAnnotation("queryMeterAbnormalAnalysis")
+	@Override
 	public MeterAbnormalAnalysisVO queryMeterAbnormalAnalysis(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
 		AnalysisReportMapper anaMapper = factory.getMapper(AnalysisReportMapper.class);
+		
+		List<Map<String,Object>> dataList = new ArrayList<>();
+		Map<String,Object> tableData = new HashMap<String, Object>();
+		
+		MeterAbnormalAnalysisVO meterAbnormalAnalysisVO = new MeterAbnormalAnalysisVO();
+		meterAbnormalAnalysisVO.setPage(zoneMnfDTO.getPage());
+		meterAbnormalAnalysisVO.setPageCount(zoneMnfDTO.getPageCount());
 		
 		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
 			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_ONE);
@@ -466,7 +502,9 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		}
 		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO);
 		if(zoneList == null || zoneList.size() == 0) {
-			
+			meterAbnormalAnalysisVO.setRowNumber(0);
+			meterAbnormalAnalysisVO.setTotalPage(0);
+			meterAbnormalAnalysisVO.setDataList(dataList);
 			return null;
 		}
 		
@@ -484,23 +522,96 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		Integer startTime = getTimeMonth(startDate,0);
 		Integer endTime = getTimeMonth(endDate,0);
 		
-		List<String> typeNameList = anaMapper.queryMeterTypeName(zoneMnfDTO.getPageCount(),zoneMnfDTO.getPage());
-		for(String name : typeNameList) {
-			int i = 0;
-			while(startTime <= endTime) {
-				for(GisExistZoneVO zoneInf : zoneList) {
-					
+		
+		//计算分页展示得编码范围
+		int sNum = zoneMnfDTO.getPageCount()*(zoneMnfDTO.getPage() - 1);
+		int eNum = zoneMnfDTO.getPageCount()*(zoneMnfDTO.getPage() + 1) - 1;
+		
+		int k = 0;
+		for(GisExistZoneVO zoneInf : zoneList) {
+			List<String> meterNoList = anaMapper.queryMeterNoByZoneCode(zoneInf.getPcode());
+			if(meterNoList != null && meterNoList.size() != 0) {
+				for(String meterNo : meterNoList) {
+					List<FlowMeterData> flowMeterDataList = anaMapper.queryCtmByBookNum(meterNo);
+					if(flowMeterDataList != null && flowMeterDataList.size() != 0) {
+						for(FlowMeterData flowMeterData : flowMeterDataList) {
+							if(k >= sNum && k <= eNum) {
+								tableData.put("用户编号", flowMeterData.getCtmNum());
+								tableData.put("用水类型", flowMeterData.getYsName());
+								tableData.put("水表编号", flowMeterData.getTblNum());
+								tableData.put("直径", flowMeterData.getBoreValue());
+								int i = 0;
+								List<Double> flowList = new ArrayList<>();
+								Double avgFlow = 0.0;
+								while(startTime <= endTime) {					
+									List<Double> value = anaMapper.queryMeterValueByMonth(flowMeterData.getCtmNum(), startTime);
+									if(value != null && value.size() != 0) {
+										tableData.put(startTime.toString(), value.get(0));
+										avgFlow = avgFlow + value.get(0);
+										flowList.add(value.get(0));
+									}
+									
+									i = i + 1;
+									startTime = getTimeMonth(startDate,i);
+								}
+								if(flowList != null && flowList.size() != 0) {
+									avgFlow = avgFlow/flowList.size();
+									Double stand = Math.sqrt(getVariance(avgFlow,flowList));
+									int zeroNum = 0;
+									int standNum = 0;
+									for(Double flow : flowList) {
+										if(flow == 0.0) {
+											zeroNum = zeroNum + 1;
+										}
+										if(flow > stand*3) {
+											standNum = standNum + 1;
+										}
+									}
+									tableData.put("连续零用水量计数", zeroNum);
+									tableData.put("超三倍标准差计数", standNum);
+								}else {
+									tableData.put("连续零用水量计数", 0);
+									tableData.put("超三倍标准差计数", 0);
+								}
+								dataList.add(tableData);
+							}
+							k = k + 1;
+						}
+					}
 					
 				}
-				
-				
-				i = i + 1;
-				startTime = getTimeMonth(startDate,i);
-			}
-			
+			}	
+		}
+		meterAbnormalAnalysisVO.setRowNumber(k);
+		meterAbnormalAnalysisVO.setTotalPage((int)Math.ceil(k/zoneMnfDTO.getPageCount()));
+		meterAbnormalAnalysisVO.setDataList(dataList);
+		
+		return meterAbnormalAnalysisVO;
+	}
+	
+	public NetFaultVO queryNteFault(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
+		AnalysisReportMapper anaMapper = factory.getMapper(AnalysisReportMapper.class);
+		
+		NetFaultVO netFaultVO = new NetFaultVO();
+		List<NetFault> dataList = new ArrayList<>();
+		netFaultVO.setPage(zoneMnfDTO.getPage());
+		netFaultVO.setPageCount(zoneMnfDTO.getPageCount());
+		
+		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_ONE);
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_SECZONE)) {
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_TWO);
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_THREE);
+		}
+		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO);
+		if(zoneList == null || zoneList.size() == 0) {
+			netFaultVO.setRowNumber(0);
+			netFaultVO.setTotalPage(0);
+			netFaultVO.setDataList(dataList);
+			return netFaultVO;
 		}
 		
-		Map<String,Object> tableData = new HashMap<String, Object>();
 		
 		
 		return null;
@@ -510,12 +621,19 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		Double flow = 0.0;
 		for(GisExistZoneVO zoneInf : zoneList) {
 			List<String> meterNoList = anaMapper.queryMeterNoByZoneCode(zoneInf.getPcode());
-			for(String meterNo : meterNoList) {
-				List<FlowMeterData> flowMeterDataList = anaMapper.queryCtmByBookNum(meterNo);
-				for(FlowMeterData flowMeterData : flowMeterDataList) {
-					Double value = anaMapper.queryMeterValueByMonth(flowMeterData.getCtmNum(), time);
-					if(flowMeterData.getYsName().equals(name)) {
-						flow = flow + value;
+			if(meterNoList != null && meterNoList.size() != 0) {
+				for(String meterNo : meterNoList) {
+					List<FlowMeterData> flowMeterDataList = anaMapper.queryCtmByBookNum(meterNo);
+					if(flowMeterDataList != null && flowMeterDataList.size() != 0) {
+						for(FlowMeterData flowMeterData : flowMeterDataList) {
+							List<Double> value = anaMapper.queryMeterValueByMonth(flowMeterData.getCtmNum(), time);
+							if(value != null && value.size() != 0) {
+								if(flowMeterData.getYsName().equals(name)) {
+									flow = flow + value.get(0);
+								}
+							}
+							
+						}
 					}
 				}
 			}

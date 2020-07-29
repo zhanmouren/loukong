@@ -26,19 +26,19 @@ public interface AnalysisReportMapper {
 	@Select("select id from lc_app_dim_month where \"yearMonth\" = #{yearMonth} ")
 	Integer queryMonthId(@Param("yearMonth") Integer yearMonth);
 	
-	@Select("select \"meterNo\" from gis_zone_meter where \"zoneNo\" = #{zoneCode}")
+	@Select("select \"bookNo\" from gis_zone_meter where \"zoneNo\" = #{zoneCode}")
 	List<String> queryMeterNoByZoneCode(@Param("zoneCode") String zoneCode);
 	
-	@Select("select \"CTM_NUM\" as \"ctmNum\", \"YS_NAME\" as \"ysName\" from rw_fct_ctm where \"BOOK_NUM\" = #{bookNum}")
+	@Select("select \"CTM_NUM\" as \"ctmNum\", \"YS_NAME\" as \"ysName\", \"TBL_NUM\" as \"tblNum\", \"BORE_VALUE\" as \"boreValue\"  from rw_fct_ctm where \"BOOK_NUM\" = #{bookNum}")
 	List<FlowMeterData> queryCtmByBookNum(@Param("bookNum") String bookNum);
 	
 	@Select("select \"REAL_NUM\" from rw_fct_cb where \"CTM_NUM\" = #{ctmNum} and \"MONTH_ID\" = #{monthId}")
-	Double queryMeterValueByMonth(@Param("ctmNum") String ctmNum,@Param("monthId") Integer monthId);
+	List<Double> queryMeterValueByMonth(@Param("ctmNum") String ctmNum,@Param("monthId") Integer monthId);
 	
 	@Select("select distinct \"YS_NAME\" from rw_fct_ctm limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);")
 	List<String> queryMeterTypeName(@Param("pageCount") Integer pageCount,@Param("page") Integer page);
 	
-	@Select("select count(*) from (select distinct \"YS_NAME\" from rw_fct_ctm)")
+	@Select("select count(*) from (select distinct \"YS_NAME\" from rw_fct_ctm)a")
 	Integer queryMeterTypeNameNum();
 
 }
