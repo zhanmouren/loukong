@@ -244,9 +244,9 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			String peoCode = "";
 			
 			ZoneMnfStatistical zoneMnfStatistical = new ZoneMnfStatistical();
-			
+			zoneMnfStatistical.setZoneCode(zoneInf.getPcode());
 			zoneMnfStatistical.setZoneName(zoneInf.getName());
-			zoneMnfStatistical.setZoneGrade(zoneInf.getRank());
+			
 			String zoneCode = "";
 			//判断分区级别
 			if(zoneInf.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
@@ -267,7 +267,7 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 				peoCode = "DMMNOCM";
 				zoneCode = Constant.DATADICTIONARY_DPZONE;
 			}
-			zoneMnfStatistical.setZoneCode(zoneCode);
+			zoneMnfStatistical.setZoneGrade(zoneCode);
 			
 			Integer startTimeM = getTimeMonth(startDate,0);
 			Integer timeId = anaMapper.queryMonthId(startTimeM);
@@ -470,10 +470,36 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			return null;
 		}
 		
-		for(GisExistZoneVO zoneInf : zoneList) {
-			
+		//时间
+		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+		Date startDate = new Date();
+		Date endDate = new Date();
+		try {
+			startDate = form.parse(zoneMnfDTO.getStartTime());
+			endDate = form.parse(zoneMnfDTO.getEndTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Integer startTime = getTimeMonth(startDate,0);
+		Integer endTime = getTimeMonth(endDate,0);
+		
+		List<String> typeNameList = anaMapper.queryMeterTypeName(zoneMnfDTO.getPageCount(),zoneMnfDTO.getPage());
+		for(String name : typeNameList) {
+			int i = 0;
+			while(startTime <= endTime) {
+				for(GisExistZoneVO zoneInf : zoneList) {
+					
+					
+				}
+				
+				
+				i = i + 1;
+				startTime = getTimeMonth(startDate,i);
+			}
 			
 		}
+		
 		Map<String,Object> tableData = new HashMap<String, Object>();
 		
 		
