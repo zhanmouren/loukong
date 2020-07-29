@@ -17,7 +17,6 @@
    <if test="zoneGrade != null and zoneGrade != '' ">and rank = #{zoneGrade}</if>
    <if test="zoneCode != null and zoneCode != '' "> and p_code = #{zoneCode}</if>
   </trim>
-  limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);
  </select>
  
 

@@ -35,7 +35,10 @@ public interface AnalysisReportMapper {
 	@Select("select \"REAL_NUM\" from rw_fct_cb where \"CTM_NUM\" = #{ctmNum} and \"MONTH_ID\" = #{monthId}")
 	Double queryMeterValueByMonth(@Param("ctmNum") String ctmNum,@Param("monthId") Integer monthId);
 	
-	@Select("select distinct \"YS_NAME\" from rw_fct_ctm")
-	List<String> queryMeterTypeName();
+	@Select("select distinct \"YS_NAME\" from rw_fct_ctm limit #{pageCount} OFFSET #{pageCount}*(#{page}-1);")
+	List<String> queryMeterTypeName(@Param("pageCount") Integer pageCount,@Param("page") Integer page);
+	
+	@Select("select count(*) from (select distinct \"YS_NAME\" from rw_fct_ctm)")
+	Integer queryMeterTypeNameNum();
 
 }

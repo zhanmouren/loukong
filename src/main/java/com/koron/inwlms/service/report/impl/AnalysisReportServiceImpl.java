@@ -4,7 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
@@ -17,6 +19,7 @@ import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysis;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysisVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterData;
+import com.koron.inwlms.bean.VO.report.statisticalReport.MeterAbnormalAnalysisVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnf;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfStatistical;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfStatisticalVO;
@@ -47,14 +50,18 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		List<ZoneMnf> dataList = new ArrayList<ZoneMnf>();
 		
 		//查询分区信息
-		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
-			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_ONE);
-		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_SECZONE)) {
-			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_TWO);
-		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
-			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_THREE);
+		ZoneMnfDTO zoneMnfDTO1 = new ZoneMnfDTO();
+		if(zoneMnfDTO.getZoneCode() != null && !zoneMnfDTO.getZoneCode().equals("")) {
+			zoneMnfDTO1.setZoneCode(zoneMnfDTO.getZoneCode());
 		}
-		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO);
+		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_ONE);
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_SECZONE)) {
+			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_TWO);
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
+			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_THREE);
+		}
+		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO1);
 		Integer num = anaMapper.queryZoneDataNum(zoneMnfDTO);
 		zoneMnfVO.setPage(zoneMnfDTO.getPage());
 		zoneMnfVO.setPageCount(zoneMnfDTO.getPageCount());
@@ -193,14 +200,18 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		List<ZoneMnfStatistical> dataList = new ArrayList<>();
 		
 		//查询分区信息
-		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
-			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_ONE);
-		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_SECZONE)) {
-			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_TWO);
-		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
-			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_THREE);
+		ZoneMnfDTO zoneMnfDTO1 = new ZoneMnfDTO();
+		if(zoneMnfDTO.getZoneCode() != null && !zoneMnfDTO.getZoneCode().equals("")) {
+			zoneMnfDTO1.setZoneCode(zoneMnfDTO.getZoneCode());
 		}
-		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO);
+		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_ONE);
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_SECZONE)) {
+			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_TWO);
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
+			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_THREE);
+		}
+		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO1);
 		Integer num = anaMapper.queryZoneDataNum(zoneMnfDTO);
 		zoneMnfStatisticalVO.setPage(zoneMnfDTO.getPage());
 		zoneMnfStatisticalVO.setPageCount(zoneMnfDTO.getPageCount());
@@ -293,6 +304,7 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 				codes.add(allFlowCode);
 				indicatorDTO.setCodes(codes);
 				indicatorDTO.setZoneCodes(zoneCodes);
+				indicatorDTO.setTimeType(2);
 				indicatorDTO.setStartTime(startTime);
 				indicatorDTO.setEndTime(startTime);
 				//所选日期数据
@@ -324,22 +336,37 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 				startTime = getTimeDay(startDate,k);
 			}
 			
-			avgMnf = avgMnf/allMnfList.size();
-			double avgHouseMnf = avgMnf/peoList.get(0).getValue();
-			double avgLengthMnf = avgMnf/lenList.get(0).getValue();
+			if(allMnfList != null && allMnfList.size() != 0) {
+				avgMnf = avgMnf/allMnfList.size();
+			}
+			if(peoList != null && peoList.size() != 0) {
+				double avgHouseMnf = avgMnf/peoList.get(0).getValue();
+				zoneMnfStatistical.setAvgHouseMnf(Math.ceil(avgHouseMnf*100)/100);
+			}
+			if(lenList != null && lenList.size() != 0) {
+				double avgLengthMnf = avgMnf/lenList.get(0).getValue();
+				zoneMnfStatistical.setAvgLengthMnf(Math.ceil(avgLengthMnf*100)/100);
+			}
+			
 			if(j > 0) {
 				prop = avgMnf/j;
 			}
-			Double medMnf = allMnfList.get((int) Math.ceil(i/2));
-			Double standardMnf = Math.sqrt(getVariance(avgMnf,allMnfList));
+			if(allMnfList != null && allMnfList.size() != 0) {
+				Double medMnf = allMnfList.get((int) Math.ceil(i/2));
+				zoneMnfStatistical.setMedMnf(Math.ceil(medMnf*100)/100);
+				Double standardMnf = Math.sqrt(getVariance(avgMnf,allMnfList));
+				zoneMnfStatistical.setStandardMnf(Math.ceil(standardMnf*100)/100);
+			}
+			
+			
 			zoneMnfStatistical.setMinMnf(Math.ceil(minMnf*100)/100);
 			zoneMnfStatistical.setMaxMnf(Math.ceil(maxMnf*100)/100);
 			zoneMnfStatistical.setAvgMnf(Math.ceil(avgMnf*100)/100);
 			zoneMnfStatistical.setAvgProp(Math.ceil(prop*10000)/100);
-			zoneMnfStatistical.setMedMnf(Math.ceil(medMnf*100)/100);
-			zoneMnfStatistical.setStandardMnf(Math.ceil(standardMnf*100)/100);
-			zoneMnfStatistical.setAvgHouseMnf(Math.ceil(avgHouseMnf*100)/100);
-			zoneMnfStatistical.setAvgLengthMnf(Math.ceil(avgLengthMnf*100)/100);
+			
+			
+			
+			
 			
 			dataList.add(zoneMnfStatistical);
 		}
@@ -348,9 +375,10 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		return zoneMnfStatisticalVO;
 	}
 	
+	@TaskAnnotation("queryFlowMeterAnalysis")
+	@Override
 	public FlowMeterAnalysisVO queryFlowMeterAnalysis(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
 		AnalysisReportMapper anaMapper = factory.getMapper(AnalysisReportMapper.class);
-		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
 		
 		FlowMeterAnalysisVO flowMeterAnalysisVO = new FlowMeterAnalysisVO();
 		List<FlowMeterAnalysis> dataList = new ArrayList<>();
@@ -375,7 +403,13 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		Integer monthId = getTimeMonth(date,0);
 		
 		Double allFlow = 0.0;
-		List<String> typeNameList = anaMapper.queryMeterTypeName();
+		List<String> typeNameList = anaMapper.queryMeterTypeName(zoneMnfDTO.getPageCount(),zoneMnfDTO.getPage());
+		Integer num = anaMapper.queryMeterTypeNameNum();
+		flowMeterAnalysisVO.setPage(zoneMnfDTO.getPageCount());
+		flowMeterAnalysisVO.setPageCount(zoneMnfDTO.getPage());
+		flowMeterAnalysisVO.setRowNumber(num);
+		flowMeterAnalysisVO.setTotalPage((int) Math.ceil(num/zoneMnfDTO.getPageCount())+1);
+		
 		for(String name : typeNameList) {
 			int meter = 0;
 			Double flow = 0.0;
@@ -417,6 +451,32 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			flowMeterAnalysis.setWaterProportion(Math.ceil(value*10000)/100);
 		}
 		flowMeterAnalysisVO.setDataList(dataList);
+		
+		return flowMeterAnalysisVO;
+	}
+	
+	public MeterAbnormalAnalysisVO queryMeterAbnormalAnalysis(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
+		AnalysisReportMapper anaMapper = factory.getMapper(AnalysisReportMapper.class);
+		
+		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_ONE);
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_SECZONE)) {
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_TWO);
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_THREE);
+		}
+		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO);
+		if(zoneList == null || zoneList.size() == 0) {
+			
+			return null;
+		}
+		
+		for(GisExistZoneVO zoneInf : zoneList) {
+			
+			
+		}
+		Map<String,Object> tableData = new HashMap<String, Object>();
+		
 		
 		return null;
 	}

@@ -11,6 +11,7 @@ import org.swan.bean.MessageBean;
 
 import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.report.ZoneMnfDTO;
+import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysisVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfStatisticalVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
@@ -92,13 +93,32 @@ public class StatisticalReportController {
 	@RequestMapping(value = "/queryFlowMeterAnalysis.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
 	@ApiOperation(value = "用户水表分析对比报表", notes = "用户水表分析对比报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String queryFlowMeterAnalysis() {
+    public String queryFlowMeterAnalysis(@RequestBody ZoneMnfDTO zoneMnfDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<FlowMeterAnalysisVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, FlowMeterAnalysisVO.class);
 		
+		if(zoneMnfDTO.getStartTime() == null || zoneMnfDTO.getStartTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!开始时间为空");
+	        return msg.toJson();
+		}
+		if(zoneMnfDTO.getEndTime() == null || zoneMnfDTO.getEndTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!结束时间为空");
+	        return msg.toJson();
+		}
 		
+		try {
+			
+			FlowMeterAnalysisVO zoneMnfVO = ADOConnection.runTask(user.getEnv(),ars, "queryFlowMeterAnalysis", FlowMeterAnalysisVO.class, zoneMnfDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(zoneMnfVO);
+			
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询报表失败");
+		}
 		
-		
-		
-		return null;
+		return msg.toJson();
 	}
 
 }
