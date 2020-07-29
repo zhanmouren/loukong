@@ -135,13 +135,14 @@
 				and "yearMonth" &lt;= #{endTime}
 			) b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator c on a.code = c.code
+			where 1 = 1
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
 			from (select code,value,year,"zoneNo" from ana_zone_moni_year where year &gt;= #{startTime} 
 			and year &lt;= #{endTime} ) a left join lc_app_dim_indicator b on a.code = b.code
+			where 1 = 1
 		</if>
-		where 1 = 1
 		<if test="codes != null and codes.size > 0">
 			and a.code in 
 			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
@@ -174,13 +175,14 @@
 				and "yearMonth" &lt;= #{endTime}
 			) b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator c on a.code = c.code
+			where 1 = 1
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
 			from (select code,value,year,"zoneNo" from ana_leak_year where year &gt;= #{startTime} 
 			and year &lt;= #{endTime} ) a left join lc_app_dim_indicator b on a.code = b.code
+			where 1 = 1
 		</if>
-		where 1 = 1
 		<if test="codes != null and codes.size > 0">
 			and a.code in 
 			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
@@ -213,16 +215,50 @@
 				and "yearMonth" &lt;= #{endTime}
 			) b on a."yearMonth" = b.id 
 			left join lc_app_dim_indicator c on a.code = c.code
+			where 1 = 1
 		</if>
 		<if test="timeType != null and timeType == 4">
 			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId"
 			from (select code,value,year from ana_company_year where year &gt;= #{startTime} 
 			and year &lt;= #{endTime} ) a left join lc_app_dim_indicator b on a.code = b.code
+			where 1 = 1
+		</if>
+		<if test="codes != null and codes.size > 0">
+			and a.code in 
+			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+	</select>
+	
+	<select id="queryZoneApparentIndicData" parameterType="com.koron.inwlms.bean.DTO.common.IndicatorDTO" 
+	resultType="com.koron.inwlms.bean.VO.common.IndicatorVO">
+		select 
+		<if test="timeType != null and timeType == 3">
+			a.code,round( a.value/c.precision :: NUMERIC, 2 ) as value,
+			b."yearMonth" as "timeId",a."zoneNo"
+			from ana_apparent_month a inner join(
+				select id,"yearMonth" from lc_app_dim_month
+				where "yearMonth" &gt;= #{startTime} 
+				and "yearMonth" &lt;= #{endTime}
+			) b on a."yearMonth" = b.id 
+			left join lc_app_dim_indicator c on a.code = c.code
+		</if>
+		<if test="timeType != null and timeType == 4">
+			a.code,round( a.value/b.precision :: NUMERIC, 2 ) as value,a.year as "timeId",a."zoneNo"
+			from (select code,value,year,"zoneNo" from ana_apparent_year where year &gt;= #{startTime} 
+			and year &lt;= #{endTime} ) a  left join lc_app_dim_indicator b on a.code = b.code
 		</if>
 		where 1 = 1
 		<if test="codes != null and codes.size > 0">
 			and a.code in 
 			<foreach item="item" collection="codes" separator="," open="(" close=")" index="">    
+				#{item}    
+			</foreach> 
+		</if>
+		<if test="zoneCodes != null and zoneCodes.size > 0">
+			and a."zoneNo" in 
+			<foreach item="item" collection="zoneCodes" separator="," open="(" close=")" index="">    
 				#{item}    
 			</foreach> 
 		</if>

@@ -48,6 +48,13 @@ public interface IndicatorMapper {
 	List<IndicatorVO> queryLeakIndicData(IndicatorDTO indicatorDTO);
 	
 	/**
+	 * 查询分区表观漏损指标数据
+	 * @param indicatorDTO
+	 * @return
+	 */
+	List<IndicatorVO> queryZoneApparentIndicData(IndicatorDTO indicatorDTO);
+	
+	/**
 	 * 查询全网指标数据
 	 * @param indicatorDTO
 	 * @return
