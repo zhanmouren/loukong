@@ -12,10 +12,13 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.koron.common.web.mapper.LongTreeBean;
+import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.report.ZoneMnfDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
+import com.koron.inwlms.bean.VO.leakageControl.TreeVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysis;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysisVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterData;
@@ -27,6 +30,7 @@ import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfStatistical;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfStatisticalVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfVO;
 import com.koron.inwlms.mapper.common.IndicatorMapper;
+import com.koron.inwlms.mapper.leakageControl.WarningSchemeMapper;
 import com.koron.inwlms.mapper.report.AnalysisReportMapper;
 import com.koron.inwlms.service.report.AnalysisReportService;
 import com.koron.inwlms.util.TimeUtil;
@@ -587,8 +591,13 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		return meterAbnormalAnalysisVO;
 	}
 	
+	@TaskAnnotation("queryNteFault")
+	@Override
 	public NetFaultVO queryNteFault(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
 		AnalysisReportMapper anaMapper = factory.getMapper(AnalysisReportMapper.class);
+		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
 		
 		NetFaultVO netFaultVO = new NetFaultVO();
 		List<NetFault> dataList = new ArrayList<>();
@@ -602,31 +611,125 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
 			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_THREE);
 		}
-		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO);
-		if(zoneList == null || zoneList.size() == 0) {
+		List<TreeVO> zoneList = new ArrayList<>();
+		LongTreeBean node = mapper.getBeanByForeignIdType(2,zoneMnfDTO.getZoneCode());
+		if(node == null) {  
 			netFaultVO.setRowNumber(0);
 			netFaultVO.setTotalPage(0);
 			netFaultVO.setDataList(dataList);
 			return netFaultVO;
+		}else {
+			zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
 		}
 		
-		for(GisExistZoneVO zoninf : zoneList) {
+		//时间
+		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+		Date startDate = new Date();
+		Date endDate = new Date();
+		try {
+			startDate = form.parse(zoneMnfDTO.getStartTime());
+			endDate = form.parse(zoneMnfDTO.getEndTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int montTime = getTimeMonth(endDate,0);
+		int startTime = getTimeDay(startDate,0);
+		int endTime = getTimeDay(endDate,0);
+		
+		for(TreeVO zoninf : zoneList) {
+			ZoneMnfDTO zoneMnfDTO1 = new ZoneMnfDTO();
+			zoneMnfDTO1.setZoneCode(zoninf.getCode());
+			zoneMnfDTO1.setZoneGrade(zoninf.getRank());
+			List<GisExistZoneVO> zoneList1 = anaMapper.queryZoneData(zoneMnfDTO);
 			
-			if(zoninf.getRank().equals(Constant.APPARENT_INDIC_SLMWL)) {
-				
+			NetFault netFault = new NetFault();
+			netFault.setZoneCode(zoninf.getCode());
+			netFault.setZoneName(zoninf.getName());
+			String indexCode = "";
+			String lenCode = "";
+			String leakageCode = "";
+			String lossCode = ""; 
+			if(zoninf.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
+				indexCode = "FLDNBFW";
+				lenCode = "FLMFTPL";
+				leakageCode = "FLDBLFW";
+				lossCode = "FLDLRL";
+				netFault.setZoneGrade(Constant.DATADICTIONARY_FIRSTZONE);
+			}else if(zoninf.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
+				indexCode = "SLDNBFW";
+				lenCode = "SLMFTPL";
+				leakageCode = "SLDBLFW";
+				lossCode = "SLDLRL";
+				netFault.setZoneGrade(Constant.DATADICTIONARY_SECZONE);
+			}else if(zoninf.getRank().equals(Constant.DMAZONELEVEL_THREE)) {
+				indexCode = "DMDNBFW";
+				lenCode = "DMMFTPL";
+				leakageCode = "DMDBLFW";
+				lossCode = "DMDLRL";
+				netFault.setZoneGrade(Constant.DATADICTIONARY_DPZONE);
 			}
 			
 			IndicatorDTO indicatorDTO = new IndicatorDTO();
 			List<String> codes = new ArrayList<>();
 			List<String> zoneCodes = new ArrayList<>();
-//			codes.add(lenCode);
-//			zoneCodes.add(zoneInf.getPcode());
-//			indicatorDTO1.setCodes(codes1);
-//			indicatorDTO1.setZoneCodes(zoneCodes);
-//			indicatorDTO1.setTimeType(3);
-//			indicatorDTO1.setStartTime(timeId);
-//			indicatorDTO1.setEndTime(timeId);
-//			List<IndicatorVO> lenList = indicMapper.queryBaseIndicData(indicatorDTO1);
+			codes.add(lenCode);
+			zoneCodes.add(zoninf.getCode());
+			indicatorDTO.setCodes(codes);
+			indicatorDTO.setZoneCodes(zoneCodes);
+			indicatorDTO.setTimeType(3);
+			indicatorDTO.setStartTime(montTime);
+			indicatorDTO.setEndTime(montTime);
+			List<IndicatorVO> lenList = indicMapper.queryBaseIndicData(indicatorDTO);
+			
+			codes.add(leakageCode);
+			indicatorDTO.setCodes(zoneCodes);
+			indicatorDTO.setTimeType(2);
+			indicatorDTO.setStartTime(startTime);
+			indicatorDTO.setEndTime(endTime);
+			List<IndicatorVO> leakageList = indicMapper.queryLeakIndicData(indicatorDTO);
+			Double leakage = 0.0;
+			if(leakageList != null && leakageList.size() != 0) {
+				for(IndicatorVO indicatorVO : leakageList) {
+					leakage = leakage + indicatorVO.getValue();
+				}
+			}
+			netFault.setLeakageNum(leakage);
+			
+			List<String> codes1 = new ArrayList<>();
+			codes1.add(indexCode);
+			indicatorDTO.setCodes(codes1);
+			List<IndicatorVO> tubeBurstList = indicMapper.queryLeakIndicData(indicatorDTO);
+			Double tubeBurst = 0.0;
+			if(tubeBurstList != null && tubeBurstList.size() != 0) {
+				for(IndicatorVO indicatorVO : tubeBurstList) {
+					tubeBurst = tubeBurst + indicatorVO.getValue();
+				}
+			}
+			netFault.setTubeBurstNum(tubeBurst);
+			
+			List<String> codes2 = new ArrayList<>();
+			codes2.add(lossCode);
+			indicatorDTO.setCodes(codes2);
+			List<IndicatorVO> lossList = indicMapper.queryLeakIndicData(indicatorDTO);
+			Double loss = 0.0;
+			if(lossList != null && lossList.size() != 0) {
+				for(IndicatorVO indicatorVO : lossList) {
+					loss = loss + indicatorVO.getValue();
+				}
+				loss = loss/lossList.size();
+			}
+			netFault.setLoss(Math.ceil(loss*10000)/100);
+			
+			Double allFault = leakage + tubeBurst;
+			netFault.setAllFaultNum(allFault);
+			if(lenList != null && lenList.size() != 0) {
+				netFault.setAllLength(lenList.get(0).getValue());
+				if(allFault != 0) {
+					Double unit = allFault/lenList.get(0).getValue();
+					netFault.setUnitFaultNum(Math.ceil(unit*100)/100);
+				}
+			}
 			
 		}
 		
