@@ -365,10 +365,6 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			zoneMnfStatistical.setAvgMnf(Math.ceil(avgMnf*100)/100);
 			zoneMnfStatistical.setAvgProp(Math.ceil(prop*10000)/100);
 			
-			
-			
-			
-			
 			dataList.add(zoneMnfStatistical);
 		}
 		zoneMnfStatisticalVO.setDataList(dataList);
@@ -401,7 +397,7 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			return flowMeterAnalysisVO;
 		}
 		//获取时间
-		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM");
 		Date date = new Date();
 		try {
 			date = form.parse(zoneMnfDTO.getStartTime());
@@ -509,7 +505,7 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		}
 		
 		//时间
-		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM");
 		Date startDate = new Date();
 		Date endDate = new Date();
 		try {
@@ -612,6 +608,10 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			return netFaultVO;
 		}
 		
+		for(GisExistZoneVO zoninf : zoneList) {
+			
+			
+		}
 		
 		
 		return null;
