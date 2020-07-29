@@ -150,25 +150,27 @@ public class WaterReportController {
 		if(indicatorNewDTO.getEndTime()==null || "".equals(indicatorNewDTO.getEndTime())) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
 		}
-		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       		
+		  Gson gson=new Gson();
+		  Map<String,Object>    resultMap=new HashMap<>();	   		
 		  try{
-			  List<WB2OneZoneVO> WB2OneZoneVOList=ADOConnection.runTask(user.getEnv(),waterReportService, "queryOneZoneCXC", List.class, indicatorNewDTO);		 
-				  if(WB2OneZoneVOList!=null && WB2OneZoneVOList.size()>0) {			
-				    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
-				    msg.setDescription("查询一级分区产销差率比较报表成功");
-				    msg.setData(WB2OneZoneVOList);
+			  Map<String,Object>   WB2OneZoneVO=ADOConnection.runTask(user.getEnv(),waterReportService, "queryOneZoneCXC", Map.class, indicatorNewDTO);		 
+				  if(WB2OneZoneVO!=null) {							    
+				    resultMap.put("code", Constant.MESSAGE_INT_SUCCESS);
+					resultMap.put("description", "查询一级分区产销差率比较报表成功");
+					resultMap.put("data", WB2OneZoneVO);	
 				  }
-				  else {				   
-			        msg.setCode(Constant.MESSAGE_INT_ADDERROR);
-			        msg.setDescription("未查询到一级分区产销差率比较报表信息");
+				  else {				   			      
+			        resultMap.put("code", Constant.MESSAGE_INT_SUCCESS);
+					resultMap.put("description", "未查询到一级分区产销差率比较报表信息");
 				  }
 			  
-	        }catch(Exception e){
-	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
-	            msg.setDescription("查询失败");
+	        }catch(Exception e){        	
+	            resultMap.put("code", Constant.MESSAGE_INT_ERROR);
+				resultMap.put("description", "查询失败");
 	        }
 		
-	     return msg.toJson();
+	     //return msg.toJson();
+		  return gson.toJson(resultMap);
 	}
 	
 	/*

@@ -21,7 +21,8 @@ public interface WaterReportService {
 	 List<TreeZoneVO> queryTreeOneZone (SessionFactory factory,int type,String foreignKey,int allFlag);
 	 
 	 //一级分区产销差率比较报表
-	 List<WB2OneZoneVO> queryOneZoneCXC(SessionFactory factory, IndicatorNewDTO indicatorNewDTO);
+	 //List<WB2OneZoneVO> queryOneZoneCXC(SessionFactory factory, IndicatorNewDTO indicatorNewDTO);
+	 Map<String,Object> queryOneZoneCXC(SessionFactory factory, IndicatorNewDTO indicatorNewDTO);
 	 
 	 //WB_03)二级分区水平衡报表
 	 Map<String,Object> queryTwoZoneWater(SessionFactory factory,IndicatorNewDTO indicatorNewDTO);

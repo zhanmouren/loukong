@@ -580,7 +580,7 @@ public  class WaterReportServiceImpl implements WaterReportService{
     //一级分区产销差率比较报表
     @TaskAnnotation("queryOneZoneCXC")
 	@Override
-	public List<WB2OneZoneVO> queryOneZoneCXC(SessionFactory factory, IndicatorNewDTO indicatorNewDTO) {
+	public Map<String,Object> queryOneZoneCXC(SessionFactory factory, IndicatorNewDTO indicatorNewDTO) {
     	/**
 		  * BALANCE_INDIC  水平衡基础数据--- 抄表量  WNMBMC
 		         供水（总）量 1     WNMFWSSITDF 
@@ -688,8 +688,34 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	    	
 	    	wB2OneZoneList.add(wB2OneZoneVO);	           	    
 	    }
+	    
+	  //分页 action
+	      Map<String,Object> finalMap=new HashMap<>();
+	      
+	      finalMap.put("rowNumber", wB2OneZoneList.size());
+		 
+		  int startIndex=(indicatorNewDTO.getPage()-1)*indicatorNewDTO.getPageCount();
+		  int listsize=wB2OneZoneList.size();
+		  
+		  //新建一个空的List集合接收它  	
+		  List<WB2OneZoneVO> copyList=new ArrayList<>();
+		  if(Math.floor(listsize/indicatorNewDTO.getPageCount())>=indicatorNewDTO.getPage()) {
+			  listsize=startIndex+indicatorNewDTO.getPageCount();
+		  }
+		  for(int n=startIndex;n<listsize;n++) {
+			  copyList.add(wB2OneZoneList.get(n));
+		  }
+		 // 插入分页信息
+		  PageVO pageVO = PageUtil.getPageBean(indicatorNewDTO.getPage(), indicatorNewDTO.getPageCount(), listsize);
+		  finalMap.put("pageCount", indicatorNewDTO.getPageCount());
+		  finalMap.put("page", indicatorNewDTO.getPage());
+		  finalMap.put("totalPage", pageVO.getRowNumber());
+		  finalMap.put("dataList",copyList);
+		  
+	    //end
     	
-		return wB2OneZoneList;
+		//return wB2OneZoneList;
+		  return finalMap;
 	}
 
     //WB_03)二级分区水平衡报表
