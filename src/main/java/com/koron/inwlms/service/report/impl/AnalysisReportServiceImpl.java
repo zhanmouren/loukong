@@ -468,8 +468,10 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		}
 		if(dataList != null && dataList.size() != 0) {
 			for(FlowMeterAnalysis flowMeterAnalysis : dataList) {
-				Double value = flowMeterAnalysis.getCustomerWater()/allFlow;
-				flowMeterAnalysis.setWaterProportion(Math.ceil(value*10000)/100);
+				if(allFlow != 0.0) {
+					Double value = flowMeterAnalysis.getCustomerWater()/allFlow;
+					flowMeterAnalysis.setWaterProportion(Math.ceil(value*10000)/100);
+				}	
 			}
 		}
 		flowMeterAnalysisVO.setDataList(dataList);
@@ -610,6 +612,21 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		
 		for(GisExistZoneVO zoninf : zoneList) {
 			
+			if(zoninf.getRank().equals(Constant.APPARENT_INDIC_SLMWL)) {
+				
+			}
+			
+			IndicatorDTO indicatorDTO = new IndicatorDTO();
+			List<String> codes = new ArrayList<>();
+			List<String> zoneCodes = new ArrayList<>();
+//			codes.add(lenCode);
+//			zoneCodes.add(zoneInf.getPcode());
+//			indicatorDTO1.setCodes(codes1);
+//			indicatorDTO1.setZoneCodes(zoneCodes);
+//			indicatorDTO1.setTimeType(3);
+//			indicatorDTO1.setStartTime(timeId);
+//			indicatorDTO1.setEndTime(timeId);
+//			List<IndicatorVO> lenList = indicMapper.queryBaseIndicData(indicatorDTO1);
 			
 		}
 		
