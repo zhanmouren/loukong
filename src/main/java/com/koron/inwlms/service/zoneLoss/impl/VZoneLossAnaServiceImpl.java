@@ -287,9 +287,9 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 			DecimalFormat df = new DecimalFormat("#.0000");
 			vSZoneListVO.setMeterNum(meterNum/timeNum);
 			vSZoneListVO.setPipeLength(pipeLength/timeNum);
-			vSZoneListVO.setFlow(flow);
-			vSZoneListVO.setUseFlow(useFlow);
-			vSZoneListVO.setLossFlow(lossFlow);
+			vSZoneListVO.setFlow(Double.parseDouble(df.format(flow/10000/timeNum)));
+			vSZoneListVO.setUseFlow(Double.parseDouble(df.format(useFlow/10000/timeNum)));
+			vSZoneListVO.setLossFlow(Double.parseDouble(df.format(lossFlow/10000/timeNum)));
 			vSZoneListVO.setNrw(nrw);
 			vSZoneListVO.setPerUserLossFlow(Double.parseDouble(df.format(perUserLossFlow/timeNum)));
 			vSZoneListVO.setPerLengthLossFlow(Double.parseDouble(df.format(perLengthLossFlow/timeNum)));
@@ -558,9 +558,9 @@ public class VZoneLossAnaServiceImpl implements VZoneLossAnaService {
 			DecimalFormat df = new DecimalFormat("#.0000");
 			vCZoneListVO.setMeterNum(meterNum/timeNum);
 			vCZoneListVO.setPipeLength(pipeLength/timeNum);
-			vCZoneListVO.setFlow(flow);
-			vCZoneListVO.setUseFlow(useFlow);
-			vCZoneListVO.setLossFlow(lossFlow);
+			vCZoneListVO.setFlow(Double.parseDouble(df.format(flow/10000/timeNum)));
+			vCZoneListVO.setUseFlow(Double.parseDouble(df.format(useFlow/10000/timeNum)));
+			vCZoneListVO.setLossFlow(Double.parseDouble(df.format(lossFlow/10000/timeNum)));
 			vCZoneListVO.setNrw(nrw);
 			vCZoneListVO.setPerUserLossFlow(Double.parseDouble(df.format(perUserLossFlow/timeNum)));
 			vCZoneListVO.setPerLengthLossFlow(Double.parseDouble(df.format(perLengthLossFlow/timeNum)));

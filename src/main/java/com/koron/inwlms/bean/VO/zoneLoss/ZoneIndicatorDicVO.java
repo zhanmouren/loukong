@@ -14,6 +14,8 @@ public class ZoneIndicatorDicVO {
 	private String itemName;
 	
 	private String itemNameEn;
+	
+	private String unit;
 
 	public String getItemCode() {
 		return itemCode;
@@ -45,6 +47,14 @@ public class ZoneIndicatorDicVO {
 
 	public void setTimeType(Integer timeType) {
 		this.timeType = timeType;
+	}
+
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
 	}
 	
 	

@@ -17,6 +17,7 @@ import com.github.pagehelper.util.StringUtil;
 import com.google.gson.Gson;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALDTO;
 import com.koron.inwlms.bean.DTO.apparentLoss.QueryALListDTO;
+import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALData;
 import com.koron.inwlms.bean.VO.apparentLoss.ALListVO;
 import com.koron.inwlms.bean.VO.apparentLoss.ALMapDataVO;
@@ -67,12 +68,14 @@ import com.koron.inwlms.bean.VO.apparentLoss.TrendAnalysisData;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneDatas;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneInfo;
 import com.koron.inwlms.bean.VO.apparentLoss.ZoneRankData;
+import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.common.PageListVO;
 import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.common.SysConfigVO;
 import com.koron.inwlms.bean.VO.sysManager.UserVO;
 import com.koron.inwlms.bean.VO.zoneLoss.WNWBReportListVO;
 import com.koron.inwlms.mapper.apparentLoss.ApparentLossMapper;
+import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.service.apparentLoss.ApparentLossService;
 import com.koron.inwlms.service.common.impl.CommonServiceImpl;
 import com.koron.inwlms.service.common.impl.GisZoneServiceImpl;
@@ -82,6 +85,7 @@ import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import scala.collection.parallel.ParIterableLike.Foreach;
 
 /**
  * 表观漏损接口实现类
@@ -92,6 +96,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
  */
 @Service
 public class ApparentLossServiceImpl implements ApparentLossService {
+
 
 	@TaskAnnotation("queryDrTotalData")
 	@Override
@@ -106,34 +111,64 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		}	
 		
 		DrTotalVO drTotalVO = new DrTotalVO();
+		long time1 = System.currentTimeMillis();
 		//查询所有水表信息
 		List<MeterInfo> lists = queryMeterInfoByZoneNo(factory,queryALDTO.getZoneNo(),queryALDTO.getZoneRank());
+		long time2 = System.currentTimeMillis();
+		System.out.println("查询所有水表信息:"+(time2-time1)/1000);
 		
 		//查询水表qh信息
 		List<MeterQH> queryMeterQH = mapper.queryMeterQH(queryALDTO, lists);
+		long time3 = System.currentTimeMillis();
+		System.out.println("查询水表qh信息:"+(time3-time2)/1000);
 		
 		//小口径低流量月水量统计情况
 		List<MeterMFlowData> queryMeterMAvgFlow = mapper.queryMeterMAvgFlow(queryALDTO);
+		long time4 = System.currentTimeMillis();
+		System.out.println("小口径低流量月水量统计情况:"+(time4-time3)/1000);
 		
 		// 1、不同口径水表计量统计
 		List<MeterRunAnalysisVO> mralists = queryMeterRunAnalysisList(factory, queryALDTO,lists,queryMeterQH);
+		long time5 = System.currentTimeMillis();
+		System.out.println("不同口径水表计量统计:"+(time5-time4)/1000);
 		
+		//全网测试可用
+//		String result = mapper.getDrReportResult(Constant.RA_RES_CACHE_KEY+tenantID);
+//		if(StringUtil.isEmpty(result)) return null;
+//		Gson jsonValue = new Gson();
+//		MeterRunAnalysisTotalDataVO meterRunAnalysisTotalDataVO = jsonValue.fromJson(result, MeterRunAnalysisTotalDataVO.class);
+//		List<MeterRunAnalysisVO> mralists = meterRunAnalysisTotalDataVO.getLists();
 		//查询总体分析数据
 		DrTotalAnalysisDataVO drTotalAnalysisDataVO = queryDrTotalAnalysisData(factory,queryALDTO,userVO,lists,queryMeterQH,mralists);
+		long time6 = System.currentTimeMillis();
+		System.out.println("查询总体分析数据:"+(time6-time5)/1000);
+		
 		//水表现状数据
 		DrCurrentMeterDataVO drCurrentMeterDataVO = queryDrCurrentMeterData(factory,queryALDTO,lists);
+		long time7 = System.currentTimeMillis();
+		System.out.println("水表现状数据:"+(time7-time6)/1000);
+		
 		//表计管理数据
 		DrMeterManageVO drMeterManageVO = queryDrMeterManageData(factory, queryALDTO,lists);
+		long time8 = System.currentTimeMillis();
+		System.out.println("表计管理数据:"+(time8-time7)/1000);
+		
 		//水表分析数据
 		DrMeterAnaDataVO drMeterAnaDataVO = queryMeterAnaData(factory, queryALDTO,lists,queryMeterMAvgFlow,queryMeterQH,mralists);
+		long time9 = System.currentTimeMillis();
+		System.out.println("水表分析数据:"+(time9-time8)/1000);
+		
 		//报告处理建议
 		DrDealAdviseVO drDealAdviseVO = queryDrDealAdvise(factory, queryALDTO,lists,queryMeterQH,queryMeterMAvgFlow);
+		long time10 = System.currentTimeMillis();
+		System.out.println("报告处理建议:"+(time10-time9)/1000);
+		
 		drTotalVO.setDrTotalAnalysisDataVO(drTotalAnalysisDataVO);
 		drTotalVO.setDrCurrentMeterDataVO(drCurrentMeterDataVO);
 		drTotalVO.setDrMeterManageVO(drMeterManageVO);
 		drTotalVO.setDrMeterAnaDataVO(drMeterAnaDataVO);
 		drTotalVO.setDrDealAdviseVO(drDealAdviseVO);
-//		mapper.addDrReportResult(Constant.DR_RES_CsACHE_KEY+tenantID, JSON.toJSONString(drTotalVO));
+//		mapper.addDrReportResult(Constant.DR_RES_CACHE_KEY+tenantID, JSON.toJSONString(drTotalVO));
 		return drTotalVO;
 	}
 	
@@ -817,6 +852,8 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	public List<ALOverviewDataVO> getIndicatorCurve(ApparentLossMapper mapper, QueryALDTO queryALDTO,
 			List<Integer> timeList) {
 		List<ALOverviewDataVO> lists = new ArrayList<>();
+		Integer startTime = queryALDTO.getStartTime();
+		Integer endTime = queryALDTO.getEndTime();
 		// 计算指标曲线
 		if (Constant.TIME_TYPE_M.equals(queryALDTO.getTimeType())) {
 			// 月指标查询
@@ -864,6 +901,8 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				}
 			}
 		}
+		queryALDTO.setStartTime(startTime);
+		queryALDTO.setEndTime(endTime);
 		return lists;
 	}
 
@@ -1130,6 +1169,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 	 */
 //	@TaskAnnotation("queryDrMeterManageData")
 //	@Override
+	@SuppressWarnings("unlikely-arg-type")
 	public DrMeterManageVO queryDrMeterManageData(SessionFactory factory, QueryALDTO queryALDTO,List<MeterInfo> lists) {
 		DrMeterManageVO drMeterManageVO = new DrMeterManageVO();
 		ApparentLossMapper mapper = factory.getMapper(ApparentLossMapper.class);
@@ -1138,6 +1178,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		//1、抄表数据完整性
 		int fNum = 0;  //大于5个月没数据的水表个数
 		int tfNum = 0; //2-4个月没数据的水表个数
+		int tNum = 0; //2个月没数据的水表个数
 		//获取查询时间的月份差数
 		List<Integer> monthsList =  new ArrayList<>();
 		try {
@@ -1217,10 +1258,63 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				}
 			}
 		}
+		//获取未抄表指标值
+		IndicatorMapper idcMapper = factory.getMapper(IndicatorMapper.class);
+		IndicatorDTO indicatorDTO = new IndicatorDTO();
+		List<IndicatorVO> noReadMeterNumList = new ArrayList<>();
+		if(StringUtil.isEmpty(queryALDTO.getZoneNo())) {
+			//查询全网
+			List<String> codes = new ArrayList<>();
+			codes.add("WNMNMR");
+			codes.add("WNMFNMR");
+			List<String> zoneCodes = new ArrayList<>();
+			indicatorDTO.setCodes(codes);
+			indicatorDTO.setStartTime(queryALDTO.getStartTime());
+			indicatorDTO.setEndTime(queryALDTO.getEndTime());
+			indicatorDTO.setTimeType(queryALDTO.getTimeType());
+			indicatorDTO.setZoneCodes(zoneCodes);
+			noReadMeterNumList = idcMapper.queryCompanyIndicData(indicatorDTO);
+		}else {
+			//查询分区
+			List<String> codes = new ArrayList<>();
+			if("1".equals(queryALDTO.getZoneRank())) {
+				codes.add("FLMNMR");
+				codes.add("FLMFNMR");
+			}else if("2".equals(queryALDTO.getZoneRank())) {
+				codes.add("SLMNMR");
+				codes.add("SLMFNMR");
+			}else if("3".equals(queryALDTO.getZoneRank())) {
+				codes.add("DMMNMR");
+				codes.add("DMMFNMR");
+			}
+			List<String> zoneCodes = new ArrayList<>();
+			zoneCodes.add(queryALDTO.getZoneNo());
+			indicatorDTO.setCodes(codes);
+			indicatorDTO.setStartTime(queryALDTO.getStartTime());
+			indicatorDTO.setEndTime(queryALDTO.getEndTime());
+			indicatorDTO.setTimeType(queryALDTO.getTimeType());
+			indicatorDTO.setZoneCodes(zoneCodes);
+			noReadMeterNumList = idcMapper.queryCompanyIndicData(indicatorDTO);
+		}
+		
+		for (IndicatorVO indicatorVO : noReadMeterNumList) {
+			String code = indicatorVO.getCode().substring(3);
+			if(("NMR").equals(code)) {
+				//未抄表
+				if(tNum == 0 || tNum < indicatorVO.getValue()) {
+					tNum = new Double(indicatorVO.getValue()).intValue();
+				}
+			}else if(("FNMR").equals(code)) {
+				//五年以上未抄表
+				if(fNum == 0 || fNum < indicatorVO.getValue()) {
+					fNum = new Double(indicatorVO.getValue()).intValue();
+				} 
+			}
+		}
 		MeterReadData meterReadData = new MeterReadData();
-		meterReadData.setfMNonMeterReadNum(10431);
-		meterReadData.settFMNonMeterReadNum(7577);
-		meterReadData.setTotalNonMeterReadNum(18008);
+		meterReadData.setfMNonMeterReadNum(fNum);
+		meterReadData.settFMNonMeterReadNum(tNum-fNum);
+		meterReadData.setTotalNonMeterReadNum(tNum);
 		drMeterManageVO.setMeterReadData(meterReadData);
 		
 		//2、基本档案完整性
@@ -1325,20 +1419,23 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		drMeterAnaDataVO.setFsMeterReadData(fsMeterReadData);
 
 		// 4、小口径零用量分析和小口径低流量月水量统计情况
-		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMZeroFlow(queryALDTO);
-		int fNum = 0;  //大于5个月没数据的水表个数
-		int tfNum = 0; //2-4个月没数据的水表个数
-		if(queryMeterMFlow != null && queryMeterMFlow.size() != 0) {
-			List<String> mList = new ArrayList<>();
-			for (MeterMFlowData meterMFlowData : queryMeterMFlow) {
-				mList.add(meterMFlowData.getMonth());
-			}
-			getMeterNoMDataNum(fNum,tfNum,mList,startTime,endTime);	
-		}
+		int tNum = mapper.queryTMonthZeroFlowMeterNum(queryALDTO);
+		int fNum = mapper.queryFMonthZeroFlowMeterNum(queryALDTO);
+		
+//		List<MeterMFlowData> queryMeterMFlow = mapper.queryMeterMZeroFlow(queryALDTO);
+//		int fNum = 0;  //大于5个月没数据的水表个数
+//		int tfNum = 0; //2-4个月没数据的水表个数
+//		if(queryMeterMFlow != null && queryMeterMFlow.size() != 0) {
+//			List<String> mList = new ArrayList<>();
+//			for (MeterMFlowData meterMFlowData : queryMeterMFlow) {
+//				mList.add(meterMFlowData.getMonth());
+//			}
+//			getMeterNoMDataNum(fNum,tfNum,mList,startTime,endTime);	
+//		}
 		DrSmallDnMeterData drSmallDnMeterData = new DrSmallDnMeterData();
 		drSmallDnMeterData.setFmZeroMeterNum(fNum);
-		drSmallDnMeterData.setTfmZeroMeterNum(tfNum);
-		drSmallDnMeterData.setTotalZeroMeterNum(fNum+tfNum);
+		drSmallDnMeterData.setTfmZeroMeterNum(tNum-fNum);
+		drSmallDnMeterData.setTotalZeroMeterNum(tNum);
 		drMeterAnaDataVO.setDrSmallDnMeterData(drSmallDnMeterData);
 		
 		//小口径低流量月水量统计情况
@@ -1522,16 +1619,16 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 		DrBigDnFlowTopTen drBigDnFlowTopTen = new DrBigDnFlowTopTen();
 		List<String> accNos = new ArrayList<>();
 		List<Double> flows =new ArrayList<>();
-		List<Double> flowRates =new ArrayList<>();
+//		List<Double> flowRates =new ArrayList<>();
 		List<BigMeterFlowTopTen> queryBigMeterFlowTopTen = mapper.queryBigMeterFlowTopTen(queryALDTO);
 		for (BigMeterFlowTopTen bigMeterFlowTopTen : queryBigMeterFlowTopTen) {
 			accNos.add(bigMeterFlowTopTen.getAccNo());
 			flows.add(bigMeterFlowTopTen.getFlow());
-			flowRates.add(bigMeterFlowTopTen.getFlow()/(bigDnMFlow == null? 0 : bigDnMFlow));
+//			flowRates.add(bigMeterFlowTopTen.getFlow()/(bigDnMFlow == null? 0 : bigDnMFlow));
 		}
 		drBigDnFlowTopTen.setAccNos(accNos);
 		drBigDnFlowTopTen.setFlows(flows);
-		drBigDnFlowTopTen.setFlowRates(flowRates);
+//		drBigDnFlowTopTen.setFlowRates(flowRates);
 		drDealAdviseVO.setBigDnFlowTopTen(drBigDnFlowTopTen);
 		
 		// 3、诊断报告过载大口径水表统计数据
@@ -1557,6 +1654,7 @@ public class ApparentLossServiceImpl implements ApparentLossService {
 				maxFlowCodeList.add(meterQH.getAccNo());
 				List<Double> maxFList = mapper.queryMeterMMaxFlow(maxFlowCodeList, queryALDTO);
 				maxFlowCodeList.clear();
+				System.out.println("DD995-001-00".equals(meterQH.getAccNo()));
 				//判断是大口径，小口径
 				DrFlowMeterData drFlowMeterData = new DrFlowMeterData();
 				drFlowMeterData.setAddress(meterQH.getAddress());

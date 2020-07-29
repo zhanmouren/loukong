@@ -525,7 +525,7 @@
 		select "CTM_NUM" as accNo,"CTM_NAME" as accName,"TBL_NUM" as meterNo,b."zoneNo",
 		"BORE_VALUE" as meterDn,"CLASS_ID" as meterType,"CTM_ADDR" address,"YS_NAME" as useType,
 		"CB_DAY" mReadDate,DATE_PART('days',now()-to_date((case when "CHANGE_DATE" is null then "KAI_DATE" else "CHANGE_DATE" end),'YYYY-MM-DD'))/356 as useYear 
-		from rw_fct_ctm a inner join gis_zone_meter b on a."BOOK_NUM" = b."meterNo" 
+		from rw_fct_ctm a inner join gis_zone_meter b on a."BOOK_NUM" = b."bookNo" 
 		where 1=1
 		<if test="zoneNo != null and zoneNo !=''">
 			<if test="zoneRank != null and zoneRank !='' and zoneRank == 1">
@@ -826,9 +826,30 @@
 	</select>
 	
 	<select id="queryBigMeterFlowTopTen" resultType="com.koron.inwlms.bean.VO.apparentLoss.BigMeterFlowTopTen">
-	select sum("REAL_NUM") as reaNum,"CTM_NUM" from rw_fct_cb 
+	select sum("REAL_NUM") as flow,"CTM_NUM" as accNo from rw_fct_cb 
 	where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
 	and "CTM_NUM" in (select "CTM_NUM" from rw_fct_ctm where "BORE_VALUE" >= '50') 
-	group by "CTM_NUM" order by reaNum desc limit 10
+	group by "CTM_NUM" order by flow desc limit 10
 	</select>
+	
+	<select id="queryTMonthZeroFlowMeterNum" resultType="java.lang.Integer">
+	select count(*) from (
+		select count(*) as num from (
+		select a."CTM_NUM" as code,b."MONTH_ID" as month,b."REAL_NUM" as flux from rw_fct_ctm a INNER JOIN (
+		select "CTM_NUM","MONTH_ID" ,"REAL_NUM"
+		from rw_fct_cb where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
+		and "REAL_NUM" = 0
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50') a group by code) b where b.num &gt;= 2
+	</select>
+	
+	<select id="queryFMonthZeroFlowMeterNum" resultType="java.lang.Integer">
+		select count(*) from (
+		select count(*) as num from (
+		select a."CTM_NUM" as code,b."MONTH_ID" as month,b."REAL_NUM" as flux from rw_fct_ctm a INNER JOIN (
+		select "CTM_NUM","MONTH_ID" ,"REAL_NUM"
+		from rw_fct_cb where "MONTH_ID" &gt;= #{qaDTO.startTime} and "MONTH_ID"  &lt;= #{qaDTO.endTime}
+		and "REAL_NUM" = 0
+		) b on a."CTM_NUM" = b."CTM_NUM" and a."BORE_VALUE" &lt; '50') a group by code) b where b.num &gt;= 5
+	</select>
+	
 </mapper> 

@@ -321,4 +321,20 @@ public interface ApparentLossMapper {
 	 */
 	List<BigMeterFlowTopTen> queryBigMeterFlowTopTen(@Param("qaDTO") QueryALDTO queryALDTO);
 	
+	/**
+	 * 查询两个月以上水表零水量数量
+	 * @param lists
+	 * @param time
+	 * @return
+	 */
+	Integer queryTMonthZeroFlowMeterNum(@Param("qaDTO") QueryALDTO queryALDTO);
+
+	/**
+	 * 查询五个月以上水表零水量数量
+	 * @param lists
+	 * @param time
+	 * @return
+	 */
+	Integer queryFMonthZeroFlowMeterNum(@Param("qaDTO") QueryALDTO queryALDTO);
+
 }
