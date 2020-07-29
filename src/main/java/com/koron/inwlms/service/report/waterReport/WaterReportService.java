@@ -1,6 +1,8 @@
 package com.koron.inwlms.service.report.waterReport;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.koron.ebs.mybatis.SessionFactory;
 
@@ -15,9 +17,12 @@ public interface WaterReportService {
 	 public List<WB1BalanceVO>  queryPartitionData(SessionFactory factory, IndicatorNewDTO indicatorNewDTO);
 	 
 	 //查询一级分区
-	 List<TreeZoneVO> queryTreeOneZone (SessionFactory factory,int type,String foreignKey);
+	 List<TreeZoneVO> queryTreeOneZone (SessionFactory factory,int type,String foreignKey,int allFlag);
 	 
 	 //一级分区产销差率比较报表
 	 List<WB2OneZoneVO> queryOneZoneCXC(SessionFactory factory, IndicatorNewDTO indicatorNewDTO);
+	 
+	 //WB_03)二级分区水平衡报表
+	 Map<String,Object> queryTwoZoneWater(SessionFactory factory,IndicatorNewDTO indicatorNewDTO);
 	 
 }

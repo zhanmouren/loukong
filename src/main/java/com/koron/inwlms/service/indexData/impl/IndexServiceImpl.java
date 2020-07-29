@@ -12,10 +12,13 @@ import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
 import org.springframework.stereotype.Service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
 import com.koron.indicator.service.ZoneLossIndicatorService;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
+import com.koron.inwlms.bean.DTO.indexData.GisZBDTO;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.indexData.WarningInfoDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
@@ -30,6 +33,7 @@ import com.koron.inwlms.bean.VO.sysManager.TreeMenuVO;
 import com.koron.inwlms.mapper.indexData.IndexMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.indexData.IndexService;
+import com.koron.inwlms.util.InterfaceUtil;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.util.Constant;
 
@@ -1314,7 +1318,22 @@ public class IndexServiceImpl implements IndexService{
 			warningInfoDTO.setSearchTaskEndTime(searchEndTime);
 			//查询报警类型详细信息
 			List<TaskMsgVO>  taskMsgList=indicatorMapper.queryCheckWarningMsg(warningInfoDTO);
-			
+			Gson gson=new Gson();
+//			if(taskMsgList!=null && taskMsgList.size()>0) {
+//				for(int a=0;a<taskMsgList.size();a++) {
+//					//调用gis接口 封装数据
+////					GisZBDTO gisZB=new GisZBDTO();
+////					gisZB.setP_code(taskMsgList.get(a).getObjectCode());					
+////					String jsonData=gson.toJson(gisZB);
+////					JsonObject msg = InterfaceUtil.interfaceOfPostUtil(warningInfoDTO.getGisArrr()+"/"+warningInfoDTO.getEnvName()+"/scada/list.htm",jsonData);
+//					JsonObject msg = InterfaceUtil.interfaceUtil(warningInfoDTO.getGisArrr()+"/"+warningInfoDTO.getEnvName()+"/scada/getDetail.htm/"+taskMsgList.get(a).getObjectCode());
+//					System.out.print(warningInfoDTO.getGisArrr()+"/"+warningInfoDTO.getEnvName()+"/scada/getDetail.htm/"+taskMsgList.get(a).getObjectCode());
+//					if(msg!=null) {
+//						
+//					}
+//					System.out.print(msg);
+//				}
+//			}
 			
 			Integer checkWarningNum=indicatorMapper.queryCheckWarningNum(warningInfoDTO);
 			//查询噪声报警的个数

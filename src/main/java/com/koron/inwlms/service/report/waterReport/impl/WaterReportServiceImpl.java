@@ -6,7 +6,10 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.koron.ebs.mybatis.SessionFactory;
 import org.koron.ebs.mybatis.TaskAnnotation;
@@ -17,6 +20,7 @@ import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.report.waterBalanceReport.WB1BalanceDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
+import com.koron.inwlms.bean.VO.common.PageVO;
 import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.TreefirstVO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB1BalanceVO;
@@ -24,6 +28,7 @@ import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB2OneZoneVO;
 import com.koron.inwlms.mapper.report.waterReport.WaterReportMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.report.waterReport.WaterReportService;
+import com.koron.inwlms.util.PageUtil;
 import com.koron.util.Constant;
 
 
@@ -268,13 +273,13 @@ public  class WaterReportServiceImpl implements WaterReportService{
 			     for(int y=0;y<zoneListCur.size();y++) {																	
 					 //一级分区	
 					//未计量占比
-					if(Constant.ZONE_LOSS_INDIC_FLMUCRFW.equals(zoneListCur.get(y).getCode())) {
-							 wB1BalanceVO.setCurrentW(zoneListCur.get(y).getValue()*100);
+					if(Constant.ZONE_LOSS_INDIC_FLMUCRFW.equals(zoneListCur.get(y).getCode())) {							
+							 wB1BalanceVO.setCurrentW(Math.ceil(zoneListCur.get(y).getValue()*10000)/100);
 							 continue;
 					 }
 					//产销差率
 					else {			
-						wB1BalanceVO.setCurrentC(zoneListCur.get(y).getValue()*100);
+						wB1BalanceVO.setCurrentC(Math.ceil(zoneListCur.get(y).getValue()*10000)/100);
 						continue;
 					 }
 													
@@ -298,13 +303,13 @@ public  class WaterReportServiceImpl implements WaterReportService{
 			     
 			     for(int y=0;y<zoneListLast.size();y++) {		    														
 						//未计量占比 上年本月
-						if(Constant.ZONE_LOSS_INDIC_FLMUCRFW.equals(zoneListLast.get(y).getCode())) {	
-								wB1BalanceVO.setLastW(zoneListLast.get(y).getValue()*100);
+						if(Constant.ZONE_LOSS_INDIC_FLMUCRFW.equals(zoneListLast.get(y).getCode())) {								
+							  wB1BalanceVO.setLastW(Math.ceil(zoneListLast.get(y).getValue()*10000)/100);
 								continue;
 						 }
 						//产销差率 上年本月
 						else {								
-							   wB1BalanceVO.setLastC(zoneListLast.get(y).getValue()*100);
+							   wB1BalanceVO.setLastC(Math.ceil(zoneListLast.get(y).getValue()*10000)/100);
 							   continue;
 						}													
 									 
@@ -512,7 +517,7 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	  */
     @TaskAnnotation("queryTreeOneZone")
 	@Override
-	public List<TreeZoneVO> queryTreeOneZone(SessionFactory factory, int type, String foreignKey) {
+	public List<TreeZoneVO> queryTreeOneZone(SessionFactory factory, int type, String foreignKey,int allFlag) {
     	WaterReportMapper waterReportMapper = factory.getMapper(WaterReportMapper.class);    	
     	TreeMapper mapper = factory.getMapper(TreeMapper.class);	
 		LongTreeBean node=mapper.getBeanByForeignIdType(type,foreignKey);
@@ -521,6 +526,26 @@ public  class WaterReportServiceImpl implements WaterReportService{
 		}
 		else{
 			List<TreeZoneVO> zoneList=waterReportMapper.queryTreeOneZone(node);
+			//是否要包含全网
+			if(zoneList!=null && zoneList.size()>0) {
+				if(allFlag==1) {
+					//查询parentMask为0 的并且type为1 的foreignkey
+					List<TreefirstVO> firstTreeVO=waterReportMapper.getFirstTree(treeType,parentmask);
+					if(firstTreeVO==null || firstTreeVO.size()<1) {
+						return null;
+					}
+					//赋值全网
+					for(int y=0;y<zoneList.size();y++) {
+						if("".equals(zoneList.get(y).getCode())|| zoneList.get(y).getCode()==null) {
+							zoneList.get(y).setCode(firstTreeVO.get(0).getForeignkey());
+							zoneList.get(y).setName("全网");
+						}
+					}
+				}else {
+					//过滤名称为空的
+					zoneList=zoneList.stream().filter(s->(!"".equals(s.getName())&& s.getName()!=null)).collect(Collectors.toList());
+				}
+			}
 			return zoneList;
 		}
 	}
@@ -588,6 +613,11 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	    	indicatorcb.setZoneCodes(finalZoneList);
 	    	
 	   	    List<IndicatorVO> balanceCBList=waterReportMapper.queryWBBaseIndicData(indicatorcb);
+	   	    if(balanceCBList!=null && balanceCBList.size()>0) {
+	   	    	for(int j=0;j<balanceCBList.size();j++) {	   	    		
+	   	    		balanceCBList.get(j).setValue(new BigDecimal(balanceCBList.get(j).getValue()/10000).setScale(2, RoundingMode.UP).doubleValue());
+	   	    	}
+	   	    }
 	   	    wB2OneZoneVO.setCxcList(balanceCBList);
 	   	    
 	       //查询水平衡数据 供水量  
@@ -602,6 +632,11 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	    	indicatorgs.setZoneCodes(finalZoneList);
 	    	
 	   	    List<IndicatorVO> balanceGSList=waterReportMapper.queryWBBaseIndicData(indicatorgs);
+	   	   if(balanceGSList!=null && balanceGSList.size()>0) {
+	   	    	for(int j=0;j<balanceGSList.size();j++) {	   	    		
+	   	    		balanceGSList.get(j).setValue(new BigDecimal(balanceGSList.get(j).getValue()/10000).setScale(2, RoundingMode.UP).doubleValue());
+	   	    	}
+	   	    }
 	   	    wB2OneZoneVO.setGslList(balanceGSList);
 	   	    
 	   	    //查询产销差率
@@ -616,12 +651,217 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	    	indicatorCXC.setZoneCodes(finalZoneList);
 	    	
 	    	List<IndicatorVO> zoneLossCXCList=waterReportMapper.queryZoneLossIndicData(indicatorCXC);
+	    	if(zoneLossCXCList!=null && zoneLossCXCList.size()>0) {
+	   	    	for(int j=0;j<zoneLossCXCList.size();j++) {	   	    		
+	   	    		zoneLossCXCList.get(j).setValue(Math.ceil(zoneLossCXCList.get(j).getValue()*100*100)/100);
+	   	    	}
+	   	    }
 	    	wB2OneZoneVO.setCxcList(zoneLossCXCList);
+	    	 
 	    	
 	    	wB2OneZoneList.add(wB2OneZoneVO);	           	    
 	    }
     	
 		return wB2OneZoneList;
+	}
+
+    //WB_03)二级分区水平衡报表
+    @TaskAnnotation("queryTwoZoneWater")
+	@Override
+	public Map<String, Object> queryTwoZoneWater(SessionFactory factory, IndicatorNewDTO indicatorNewDTO) {
+    	
+    	/**
+		  * BALANCE_INDIC  水平衡基础数据--- 抄表量  WNMBMC
+		         供水（总）量 1     WNMFWSSITDF 
+		  * 							
+		  * ZONE_LOSS_INDIC 分区漏损数据   ---  产销差率1 WNMNRR
+		  * 
+		  */
+    	
+    	WaterReportMapper waterReportMapper = factory.getMapper(WaterReportMapper.class);
+    	TreeMapper mapper = factory.getMapper(TreeMapper.class);
+    	List<Map<String, Object>> finalList=new ArrayList<Map<String, Object>>();  	
+    	Map<String,Object> finalMap=new HashMap<>();   	
+    	//根据一级分区查询是否存在二级分区,如果不存在二级分区的话,报表不显示了
+    	LongTreeBean node=mapper.getBeanByForeignIdType(2,indicatorNewDTO.getZoneCodes().get(0));
+    	//下一级分区集合(二级分区)
+    	List<TreeZoneVO> zoneList=new ArrayList<>();
+    	
+    	//一级分区名称
+    	String oneZoneName="";
+    	if(node == null) {
+			return null;
+		}
+		else{
+			zoneList=waterReportMapper.queryTreeOneZone(node);
+			if(zoneList==null || zoneList.size()<2) {
+				return null;
+			}
+			for(int y=0;y<zoneList.size();y++) {
+				if(zoneList.get(y).getCode().equals(indicatorNewDTO.getZoneCodes().get(0))) {
+					oneZoneName=zoneList.get(y).getName();
+					break;
+				}
+			}
+			zoneList=zoneList.stream().filter(s->(!indicatorNewDTO.getZoneCodes().get(0).equals(s.getCode()))).collect(Collectors.toList());
+		}
+    	
+    	
+    	List<String>  monthList=new ArrayList<>();
+		try {
+			//获取中间月份
+		   monthList=getMonthBetween(indicatorNewDTO.getStartTime().toString(),indicatorNewDTO.getEndTime().toString());
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}		     
+		//遍历月份
+		//for(int i=0;i<monthList.size();i++) {				
+			  //遍历二级分区
+				for(int p=0;p<zoneList.size();p++) {
+				   for(int index=0;index<3;index++) {
+					 Map<String, Object> bean=new HashMap<>();
+					 //设置一级分区名
+					 bean.put("oneZoneName", oneZoneName);
+					 //创建月份
+					 for(int m=0;m<monthList.size();m++) {
+						 bean.put(monthList.get(m),"-");
+					 }
+					//分区编号
+			    	List<String> oneZoneList=new ArrayList<>();
+			    	oneZoneList.add(zoneList.get(p).getCode());	
+			    	//塞二级分区名
+			    	bean.put("secondZoneName",zoneList.get(p).getName());
+			    	//塞二级分区code
+			    	bean.put("secondZoneCode",zoneList.get(p).getCode());
+					if(index==0) {	
+						//塞漏损指标
+						bean.put("zoneLossIndicator",Constant.BALANCE_INDIC_SLMFWSSITDF);
+						//查询水平衡数据 供水量  
+				    	IndicatorNewDTO indicatorgs=new IndicatorNewDTO();
+				    	List<String> balanceGSCodes=new ArrayList<>();	    
+				    	balanceGSCodes.add(Constant.BALANCE_INDIC_SLMFWSSITDF);
+				    	indicatorgs.setCodes(balanceGSCodes);
+				    	indicatorgs.setStartTime(indicatorNewDTO.getStartTime());
+				    	indicatorgs.setEndTime(indicatorNewDTO.getEndTime());
+				    	indicatorgs.setTimeType(timeType);
+				    	
+				    	indicatorgs.setZoneCodes(oneZoneList);				    	
+				    	List<IndicatorVO> balanceGSList=waterReportMapper.queryWBBaseIndicData(indicatorgs);
+						
+				    	 if(balanceGSList!=null && balanceGSList.size()>0) {
+					   	    	for(int j=0;j<balanceGSList.size();j++) {	   	    		
+					   	    		balanceGSList.get(j).setValue(new BigDecimal(balanceGSList.get(j).getValue()/10000).setScale(2, RoundingMode.UP).doubleValue());
+					   	    	}
+					   	    }
+				    	//处理数据 	
+				    	 if(balanceGSList!=null && balanceGSList.size()>0) {
+				    			for(int j=0;j<balanceGSList.size();j++) {				    				
+				    				for(int k=0;k<monthList.size();k++) {
+				    					if(balanceGSList.get(j).getTimeId().toString().equals(monthList.get(k))) {
+				    					    bean.put(monthList.get(k), balanceGSList.get(j).getValue());
+				    						break;
+				    					}
+				    				}
+				    			}
+				    	 }
+					   					 
+					   
+					}else if(index==1) {
+						//塞漏损指标
+						bean.put("zoneLossIndicator",Constant.BALANCE_INDIC_SLMBMC);
+						//查询水平衡数据 抄表量  
+				    	IndicatorNewDTO indicatorcb=new IndicatorNewDTO();
+				    	List<String> balanceCBCodes=new ArrayList<>();
+				    	balanceCBCodes.add(Constant.BALANCE_INDIC_SLMBMC);
+				    	indicatorcb.setCodes(balanceCBCodes);
+				    	indicatorcb.setStartTime(indicatorNewDTO.getStartTime());
+				    	indicatorcb.setEndTime(indicatorNewDTO.getEndTime());
+				    	indicatorcb.setTimeType(timeType);
+				    	
+				    	//添加分区编码
+				    	indicatorcb.setZoneCodes(oneZoneList);
+				   	    List<IndicatorVO> balanceCBList=waterReportMapper.queryWBBaseIndicData(indicatorcb);	
+						
+				    	 if(balanceCBList!=null && balanceCBList.size()>0) {
+				   	    	for(int j=0;j<balanceCBList.size();j++) {	   	    		
+				   	    		balanceCBList.get(j).setValue(new BigDecimal(balanceCBList.get(j).getValue()/10000).setScale(2, RoundingMode.UP).doubleValue());
+				   	    	}
+				   	    }
+				    	 
+				    	//处理数据 	
+				    	 if(balanceCBList!=null && balanceCBList.size()>0) {
+				    			for(int j=0;j<balanceCBList.size();j++) {				    				
+				    				for(int k=0;k<monthList.size();k++) {
+				    					if(balanceCBList.get(j).getTimeId().toString().equals(monthList.get(k))) {
+				    					    bean.put(monthList.get(k), balanceCBList.get(j).getValue());
+				    						break;
+				    					}
+				    				}
+				    			}
+				    	 }
+					 
+					}else {
+						//塞漏损指标
+						bean.put("zoneLossIndicator",Constant.ZONE_LOSS_INDIC_SLMNRR);
+						//查询产销差率
+				   	    IndicatorNewDTO indicatorCXC=new IndicatorNewDTO();
+				    	List<String> zoneCXCCodes=new ArrayList<>();
+				    	zoneCXCCodes.add(Constant.ZONE_LOSS_INDIC_SLMNRR);
+				    	indicatorCXC.setCodes(zoneCXCCodes);
+				    	indicatorCXC.setStartTime(indicatorNewDTO.getStartTime());
+				    	indicatorCXC.setEndTime(indicatorNewDTO.getEndTime());
+				    	indicatorCXC.setTimeType(timeType);
+				    	
+				    	indicatorCXC.setZoneCodes(oneZoneList);
+				    				    	
+				    	List<IndicatorVO> zoneLossCXCList=waterReportMapper.queryZoneLossIndicData(indicatorCXC);
+				    	
+				    	if(zoneLossCXCList!=null && zoneLossCXCList.size()>0) {
+				   	    	for(int j=0;j<zoneLossCXCList.size();j++) {	   	  			   	    		
+				   	    		zoneLossCXCList.get(j).setValue(Math.ceil(zoneLossCXCList.get(j).getValue()*100*100)/100);
+				   	    	}
+				   	    }
+				    	
+				    	//处理数据 	
+				    	 if(zoneLossCXCList!=null && zoneLossCXCList.size()>0) {
+				    			for(int j=0;j<zoneLossCXCList.size();j++) {				    				
+				    				for(int k=0;k<monthList.size();k++) {
+				    					if(zoneLossCXCList.get(j).getTimeId().toString().equals(monthList.get(k))) {
+				    					    bean.put(monthList.get(k), zoneLossCXCList.get(j).getValue());
+				    						break;
+				    					}
+				    				}
+				    			}
+				    	 }
+					  }	
+					  finalList.add(bean);
+					}
+					
+				}
+				
+		//}
+		 finalMap.put("dataSize",finalList);
+		 finalMap.put("totalPage", finalList.size());	
+		 
+		  int startIndex=(indicatorNewDTO.getPage()-1)*indicatorNewDTO.getPageCount();
+		  int listsize=finalList.size();
+		  
+		  //新建一个空的List集合接收它  	
+		  List<Map<String, Object>> copyList=new ArrayList<>();
+		  if(Math.floor(listsize/indicatorNewDTO.getPageCount())>=indicatorNewDTO.getPage()) {
+			  listsize=startIndex+indicatorNewDTO.getPageCount();
+		  }
+		  for(int n=startIndex;n<listsize;n++) {
+			  copyList.add(finalList.get(n));
+		  }
+		 // 插入分页信息
+		  PageVO pageVO = PageUtil.getPageBean(indicatorNewDTO.getPage(), indicatorNewDTO.getPageCount(), listsize);
+		  finalMap.put("pageCount", indicatorNewDTO.getPageCount());
+		  finalMap.put("page", indicatorNewDTO.getPage());
+		  finalMap.put("rowNumber", pageVO.getRowNumber());
+		  
+		  return finalMap;
+		 // return finalList;
 	}
 
 	

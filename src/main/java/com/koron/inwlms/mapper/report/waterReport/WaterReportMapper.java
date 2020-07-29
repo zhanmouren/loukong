@@ -77,7 +77,7 @@ public interface WaterReportMapper {
 		List<IndicatorVO> queryCompanyIndicData(IndicatorNewDTO indicatorDTO);
 		
 		/**
-		 * 查询一级分区
+		 * 查询下一级分区
 		 */
 		 /**
 		  * 获取节点之下所有节点和节点名称(树形目录)

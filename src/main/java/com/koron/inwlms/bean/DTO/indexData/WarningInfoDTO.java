@@ -35,6 +35,26 @@ public class WarningInfoDTO {
    private String state;
    //分区类型
    private Integer areaType;
+   
+   //gis地址
+   private String gisArrr;
+   
+   //名称
+   private String envName;
+   
+   
+public String getEnvName() {
+	return envName;
+}
+public void setEnvName(String envName) {
+	this.envName = envName;
+}
+public String getGisArrr() {
+	return gisArrr;
+}
+public void setGisArrr(String gisArrr) {
+	this.gisArrr = gisArrr;
+}
 public String getState() {
 	return state;
 }

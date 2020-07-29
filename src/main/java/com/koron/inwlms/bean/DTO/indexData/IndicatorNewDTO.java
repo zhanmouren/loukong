@@ -2,12 +2,14 @@ package com.koron.inwlms.bean.DTO.indexData;
 
 import java.util.List;
 
+import com.koron.inwlms.bean.DTO.common.BaseDTO;
+
 /**
  * 指标DTO
  * @author 小詹
  * @Date 2020/04/24
  */
-public class IndicatorNewDTO {
+public class IndicatorNewDTO extends BaseDTO{
 	//代表类型
 	private Integer type;
 	//分区类型（全网、一级、二级、DMA)

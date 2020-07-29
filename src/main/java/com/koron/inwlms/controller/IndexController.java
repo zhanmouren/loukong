@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,6 +55,10 @@ public class IndexController {
 
 	@Autowired
 	private IndexService indexService;
+	
+	//gis地址
+	@Value("${server.gis.address}")
+	private String gis;
      
 	 /*
      * date:2020-04-23
@@ -479,6 +484,7 @@ public class IndexController {
 		 if(warningInfoDTO.getAreaType() == 0){
 			 warningInfoDTO.setAreaZoneList(null);
 		}
+		 
 		 MessageBean<InfoPageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, InfoPageListVO.class);	       
 		  try{
 			  InfoPageListVO infoPageListVO=ADOConnection.runTask(user.getEnv(),indexService, "queryWarningInfo", InfoPageListVO.class, warningInfoDTO);		 
@@ -522,6 +528,9 @@ public class IndexController {
 		 if(warningInfoDTO.getAreaType() == 0){
 			 warningInfoDTO.setAreaZoneList(null);
 		}
+		 String[] envName=user.getEnv().split("_");
+		 warningInfoDTO.setEnvName(envName[0]);
+		 warningInfoDTO.setGisArrr(gis);
 		 MessageBean<InfoPageListVO> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, InfoPageListVO.class);	       
 		  try{
 			  InfoPageListVO infoPageListVO=ADOConnection.runTask(user.getEnv(),indexService, "queryCheckWarningInfo", InfoPageListVO.class, warningInfoDTO);		 

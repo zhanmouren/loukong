@@ -18,8 +18,18 @@ public class TreeDTO {
    private String foreignKey;
   //树的类型
    private Integer type;
+   //是否要包含全网(1代表要包含,2代表不包含)
+   private Integer allFlag;
    
-   public String getOrgCode() {
+   
+   
+   public Integer getAllFlag() {
+	return allFlag;
+}
+public void setAllFlag(Integer allFlag) {
+	this.allFlag = allFlag;
+}
+public String getOrgCode() {
 	return orgCode;
 }
 public void setOrgCode(String orgCode) {

@@ -1,4 +1,7 @@
 package com.koron.inwlms.bean.VO.indexData;
+
+import java.util.List;
+
 /**
  * @date:2020-01-01
  * @author 小詹
@@ -15,6 +18,16 @@ public class TaskMsgVO {
 	public String state;
 	//是否发起
 	public String initiate;
+	
+	//坐标
+	private List<Double> smgeometry;
+	
+	public List<Double> getSmgeometry() {
+		return smgeometry;
+	}
+	public void setSmgeometry(List<Double> smgeometry) {
+		this.smgeometry = smgeometry;
+	}
 	public String getAlarmType() {
 		return alarmType;
 	}

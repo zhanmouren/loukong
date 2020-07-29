@@ -1,6 +1,8 @@
 package com.koron.inwlms.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.koron.ebs.mybatis.ADOConnection;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.swan.bean.MessageBean;
 
+import com.google.gson.Gson;
 import com.koron.common.StaffAttribute;
 import com.koron.common.permission.SPIAccountAnno;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
@@ -56,10 +59,10 @@ public class WaterReportController {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
 		}
 		if(indicatorNewDTO.getZoneCodes()==null) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "指标编码不能为空", Integer.class).toJson();
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson();
 		}
 		if(indicatorNewDTO.getZoneCodes().size()<1) {
-			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "指标编码不能为空", Integer.class).toJson();
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson();
 		}
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       		
 		  try{
@@ -97,10 +100,13 @@ public class WaterReportController {
 		if(treeDTO.getForeignKey()==null || "".equals(treeDTO.getForeignKey())) {
 			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "该树节点外键不能为空", Integer.class).toJson();
 		}
+		if(treeDTO.getAllFlag()==null || "".equals(treeDTO.getAllFlag())) {
+			return  MessageBean.create(Constant.MESSAGE_INT_PARAMS, "是否包含全网不能为空", Integer.class).toJson();
+		}
 		
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
-			  List<TreeDeptVO> zoneBeanList=ADOConnection.runTask(user.getEnv(),waterReportService, "queryTreeOneZone", List.class,treeDTO.getType(),treeDTO.getForeignKey());	
+			  List<TreeDeptVO> zoneBeanList=ADOConnection.runTask(user.getEnv(),waterReportService, "queryTreeOneZone", List.class,treeDTO.getType(),treeDTO.getForeignKey(),treeDTO.getAllFlag());	
 			  if(zoneBeanList == null || zoneBeanList.size()<1) {		
 				  msg.setCode(Constant.MESSAGE_INT_SUCCESS);
 			      msg.setDescription("没有查询到相关分区树结构"); 
@@ -153,5 +159,58 @@ public class WaterReportController {
 	        }
 		
 	     return msg.toJson();
+	}
+	
+	/*
+     * date:2020-07.28
+     * function:报表：(WB_03)二级分区水平衡报表 展示所选区域范围内各食水供水区在指定时间段的漏损分析数据。
+     * author:xiaozhan
+     */
+
+	@RequestMapping(value = "/queryTwoZoneWater.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+    @ApiOperation(value = "二级分区水平衡报表", notes = "二级分区水平衡报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+	public String queryTwoZoneWater(@RequestBody IndicatorNewDTO indicatorNewDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
+		if(indicatorNewDTO.getStartTime()==null || "".equals(indicatorNewDTO.getStartTime())) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
+		}
+		if(indicatorNewDTO.getEndTime()==null || "".equals(indicatorNewDTO.getEndTime())) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
+		}
+		if(indicatorNewDTO.getZoneCodes()==null) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson();
+		}
+		if(indicatorNewDTO.getZoneCodes().size()<1) {
+			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "地区编码不能为空", Integer.class).toJson();
+		}
+		Gson gson=new Gson();
+		  Map<String,Object>    resultMap=new HashMap<>();	
+		 // MessageBean<Map> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Map.class);	       
+		  try{
+			  Map<String, Object> WB2OneZoneVO=ADOConnection.runTask(user.getEnv(),waterReportService, "queryTwoZoneWater", Map.class, indicatorNewDTO);		 
+				  if(WB2OneZoneVO!=null) {		
+					resultMap.put("code", Constant.MESSAGE_INT_SUCCESS);
+					resultMap.put("description", "查询二级分区水平衡报表成功");
+					resultMap.put("data", WB2OneZoneVO);	
+//					    msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+//					    msg.setDescription("查询二级分区水平衡报表成功");
+//					    msg.setData(WB2OneZoneVO);
+				  }
+				  else {	
+					resultMap.put("code", Constant.MESSAGE_INT_SUCCESS);
+					resultMap.put("description", "未查询到二级分区水平衡报表信息");	
+//					   msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+//					   msg.setDescription("未查询到二级分区水平衡报表信息");
+				  }
+			  
+	        }catch(Exception e){
+	        	resultMap.put("code", Constant.MESSAGE_INT_ERROR);
+				resultMap.put("description", "查询失败");
+//	        	msg.setCode(Constant.MESSAGE_INT_ERROR);
+//	            msg.setDescription("查询失败");
+	        }
+		
+	    // return msg.toString();
+		 return gson.toJson(resultMap);
 	}
 }
