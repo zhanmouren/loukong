@@ -340,6 +340,30 @@ public  class WaterReportServiceImpl implements WaterReportService{
 			//end
 		     finalWB1BalanceList.add(wB1BalanceVO);	    	    		  	     	     
 	    }
+	    //分页 action
+	      Map<String,Object> finalMap=new HashMap<>();
+	      
+	      finalMap.put("rowNumber", finalWB1BalanceList.size());
+		 
+		  int startIndex=(indicatorNewDTO.getPage()-1)*indicatorNewDTO.getPageCount();
+		  int listsize=finalWB1BalanceList.size();
+		  
+		  //新建一个空的List集合接收它  	
+		  List<WB1BalanceVO> copyList=new ArrayList<>();
+		  if(Math.floor(listsize/indicatorNewDTO.getPageCount())>=indicatorNewDTO.getPage()) {
+			  listsize=startIndex+indicatorNewDTO.getPageCount();
+		  }
+		  for(int n=startIndex;n<listsize;n++) {
+			  copyList.add(finalWB1BalanceList.get(n));
+		  }
+		 // 插入分页信息
+		  PageVO pageVO = PageUtil.getPageBean(indicatorNewDTO.getPage(), indicatorNewDTO.getPageCount(), listsize);
+		  finalMap.put("pageCount", indicatorNewDTO.getPageCount());
+		  finalMap.put("page", indicatorNewDTO.getPage());
+		  finalMap.put("totalPage", pageVO.getRowNumber());
+		  finalMap.put("dataList",copyList);
+	    //end
+	    
 	    //计算total 那行	
 	     WB1BalanceVO totalVO=new WB1BalanceVO();
 	     totalVO.setMonthId("total");
@@ -618,7 +642,7 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	   	    		balanceCBList.get(j).setValue(new BigDecimal(balanceCBList.get(j).getValue()/10000).setScale(2, RoundingMode.UP).doubleValue());
 	   	    	}
 	   	    }
-	   	    wB2OneZoneVO.setCxcList(balanceCBList);
+	   	    wB2OneZoneVO.setCbList(balanceCBList);
 	   	    
 	       //查询水平衡数据 供水量  
 	    	IndicatorNewDTO indicatorgs=new IndicatorNewDTO();
