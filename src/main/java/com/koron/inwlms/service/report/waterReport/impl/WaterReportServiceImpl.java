@@ -840,7 +840,7 @@ public  class WaterReportServiceImpl implements WaterReportService{
 				}
 				
 		//}
-		 finalMap.put("dataSize",finalList);
+		
 		 finalMap.put("totalPage", finalList.size());	
 		 
 		  int startIndex=(indicatorNewDTO.getPage()-1)*indicatorNewDTO.getPageCount();
@@ -859,6 +859,7 @@ public  class WaterReportServiceImpl implements WaterReportService{
 		  finalMap.put("pageCount", indicatorNewDTO.getPageCount());
 		  finalMap.put("page", indicatorNewDTO.getPage());
 		  finalMap.put("rowNumber", pageVO.getRowNumber());
+		  finalMap.put("dataList",copyList);
 		  
 		  return finalMap;
 		 // return finalList;
