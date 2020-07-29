@@ -50,18 +50,14 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		List<ZoneMnf> dataList = new ArrayList<ZoneMnf>();
 		
 		//查询分区信息
-		ZoneMnfDTO zoneMnfDTO1 = new ZoneMnfDTO();
-		if(zoneMnfDTO.getZoneCode() != null && !zoneMnfDTO.getZoneCode().equals("")) {
-			zoneMnfDTO1.setZoneCode(zoneMnfDTO.getZoneCode());
-		}
 		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
-			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_ONE);
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_ONE);
 		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_SECZONE)) {
-			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_TWO);
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_TWO);
 		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
-			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_THREE);
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_THREE);
 		}
-		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO1);
+		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO);
 		Integer num = anaMapper.queryZoneDataNum(zoneMnfDTO);
 		zoneMnfVO.setPage(zoneMnfDTO.getPage());
 		zoneMnfVO.setPageCount(zoneMnfDTO.getPageCount());
@@ -103,8 +99,7 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			ZoneMnf zoneMnf = new ZoneMnf();
 			zoneMnf.setZoneCode(zoneInfo.getPcode());
 			zoneMnf.setZoneName(zoneInfo.getName());
-			zoneMnf.setZoneGrade(zoneInfo.getRank());
-			
+			String zoneCode = "";
 			//最小夜间流量指标
 			String mnfCode = "";
 			//供水量指标
@@ -113,12 +108,16 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			if(zoneInfo.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
 				mnfCode = "FLDMNF";
 				allFlowCode = "FLDFWSSITDF";
+				zoneCode = Constant.DATADICTIONARY_FIRSTZONE;
 			}else if(zoneInfo.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
 				mnfCode = "SLDMNF";
+				zoneCode = Constant.DATADICTIONARY_SECZONE;
 			}else if(zoneInfo.getRank().equals(Constant.DMAZONELEVEL_THREE)) {
 				mnfCode = "DMDMNF";
 				allFlowCode = "DMDFWSSITDF";
+				zoneCode = Constant.DATADICTIONARY_DPZONE;
 			}
+			zoneMnf.setZoneGrade(zoneCode);
 			
 			IndicatorDTO indicatorDTO = new IndicatorDTO();
 			List<String> codes = new ArrayList<>();
@@ -200,18 +199,14 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		List<ZoneMnfStatistical> dataList = new ArrayList<>();
 		
 		//查询分区信息
-		ZoneMnfDTO zoneMnfDTO1 = new ZoneMnfDTO();
-		if(zoneMnfDTO.getZoneCode() != null && !zoneMnfDTO.getZoneCode().equals("")) {
-			zoneMnfDTO1.setZoneCode(zoneMnfDTO.getZoneCode());
-		}
 		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
-			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_ONE);
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_ONE);
 		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_SECZONE)) {
-			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_TWO);
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_TWO);
 		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
-			zoneMnfDTO1.setZoneGrade(Constant.DMAZONELEVEL_THREE);
+			zoneMnfDTO.setZoneGrade(Constant.DMAZONELEVEL_THREE);
 		}
-		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO1);
+		List<GisExistZoneVO> zoneList = anaMapper.queryZoneData(zoneMnfDTO);
 		Integer num = anaMapper.queryZoneDataNum(zoneMnfDTO);
 		zoneMnfStatisticalVO.setPage(zoneMnfDTO.getPage());
 		zoneMnfStatisticalVO.setPageCount(zoneMnfDTO.getPageCount());
@@ -249,26 +244,30 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			String peoCode = "";
 			
 			ZoneMnfStatistical zoneMnfStatistical = new ZoneMnfStatistical();
-			zoneMnfStatistical.setZoneCode(zoneInf.getPcode());
+			
 			zoneMnfStatistical.setZoneName(zoneInf.getName());
 			zoneMnfStatistical.setZoneGrade(zoneInf.getRank());
-			
+			String zoneCode = "";
 			//判断分区级别
 			if(zoneInf.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
 				mnfCode = "FLDMNF";
 				allFlowCode = "FLDFWSSITDF";
 				lenCode = "FLMFTPL";
 				peoCode = "FLMNOCM";
+				zoneCode = Constant.DATADICTIONARY_FIRSTZONE;
 			}else if(zoneInf.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
 				mnfCode = "SLDMNF";
 				lenCode = "SLMFTPL";
 				peoCode = "SLMNOCM";
+				zoneCode = Constant.DATADICTIONARY_SECZONE;
 			}else if(zoneInf.getRank().equals(Constant.DMAZONELEVEL_THREE)) {
 				mnfCode = "DMDMNF";
 				allFlowCode = "DMDFWSSITDF";
 				lenCode = "DMMFTPL";
 				peoCode = "DMMNOCM";
+				zoneCode = Constant.DATADICTIONARY_DPZONE;
 			}
+			zoneMnfStatistical.setZoneCode(zoneCode);
 			
 			Integer startTimeM = getTimeMonth(startDate,0);
 			Integer timeId = anaMapper.queryMonthId(startTimeM);
