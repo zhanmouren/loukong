@@ -538,10 +538,10 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 					if(flowMeterDataList != null && flowMeterDataList.size() != 0) {
 						for(FlowMeterData flowMeterData : flowMeterDataList) {
 							if(k >= sNum && k <= eNum) {
-								tableData.put("用户编号", flowMeterData.getCtmNum());
-								tableData.put("用水类型", flowMeterData.getYsName());
-								tableData.put("水表编号", flowMeterData.getTblNum());
-								tableData.put("直径", flowMeterData.getBoreValue());
+								tableData.put("spId", flowMeterData.getCtmNum());
+								tableData.put("majorCategory", flowMeterData.getYsName());
+								tableData.put("sicDescription", flowMeterData.getTblNum());
+								tableData.put("meterSize", flowMeterData.getBoreValue());
 								int i = 0;
 								List<Double> flowList = new ArrayList<>();
 								Double avgFlow = 0.0;
@@ -551,6 +551,8 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 										tableData.put(startTime.toString(), value.get(0));
 										avgFlow = avgFlow + value.get(0);
 										flowList.add(value.get(0));
+									}else {
+										tableData.put(startTime.toString(), "-");
 									}
 									
 									i = i + 1;
@@ -569,11 +571,11 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 											standNum = standNum + 1;
 										}
 									}
-									tableData.put("连续零用水量计数", zeroNum);
-									tableData.put("超三倍标准差计数", standNum);
+									tableData.put("noOfConsecutive", zeroNum);
+									tableData.put("noOfConsumption", standNum);
 								}else {
-									tableData.put("连续零用水量计数", 0);
-									tableData.put("超三倍标准差计数", 0);
+									tableData.put("noOfConsecutive", 0);
+									tableData.put("noOfConsumption", 0);
 								}
 								dataList.add(tableData);
 							}
