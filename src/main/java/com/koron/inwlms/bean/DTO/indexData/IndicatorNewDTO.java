@@ -26,7 +26,28 @@ public class IndicatorNewDTO extends BaseDTO{
 	
 	private Integer endTime;
 	
+	private String startDate;
+	
+	private String endDate;
+	
 	private List<String> zoneCodes;
+
+	
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
 
 	public Integer getType() {
 		return type;

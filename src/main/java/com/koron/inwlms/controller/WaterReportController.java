@@ -144,16 +144,16 @@ public class WaterReportController {
     @ApiOperation(value = "一级分区产销差率比较报表", notes = "一级分区产销差率比较报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
     @ResponseBody
 	public String queryOneZoneCXC(@RequestBody IndicatorNewDTO indicatorNewDTO,@SPIAccountAnno @StaffAttribute(Constant.LOGIN_USER)UserVO user) {
-		if(indicatorNewDTO.getStartTime()==null || "".equals(indicatorNewDTO.getStartTime())) {
+		if(indicatorNewDTO.getStartDate() == null || indicatorNewDTO.getStartDate().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "开始时间不能为空", Integer.class).toJson();
 		}
-		if(indicatorNewDTO.getEndTime()==null || "".equals(indicatorNewDTO.getEndTime())) {
+		if(indicatorNewDTO.getEndDate() == null || indicatorNewDTO.getEndDate().equals("")) {
 			return MessageBean.create(Constant.MESSAGE_INT_PARAMS, "结束时间不能为空", Integer.class).toJson();
 		}
 		  Gson gson=new Gson();
 		  Map<String,Object>    resultMap=new HashMap<>();	   		
 		  try{
-			  Map<String,Object>   WB2OneZoneVO=ADOConnection.runTask(user.getEnv(),waterReportService, "queryOneZoneCXC", Map.class, indicatorNewDTO);		 
+			  List<Map<String,Object>>   WB2OneZoneVO=ADOConnection.runTask(user.getEnv(),waterReportService, "queryOneZoneCXC", List.class, indicatorNewDTO);		 
 				  if(WB2OneZoneVO!=null) {							    
 				    resultMap.put("code", Constant.MESSAGE_INT_SUCCESS);
 					resultMap.put("description", "查询一级分区产销差率比较报表成功");

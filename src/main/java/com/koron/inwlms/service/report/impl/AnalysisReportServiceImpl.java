@@ -730,9 +730,18 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 					netFault.setUnitFaultNum(Math.ceil(unit*100)/100);
 				}
 			}
+			dataList.add(netFault);
+		}
+		netFaultVO.setDataList(dataList);
+		
+		return netFaultVO;
+	}
+	
+	public String queryNteFaultAnalysis(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
+		
+		if(zoneMnfDTO.getAnalysisCode().equals("")) {
 			
 		}
-		
 		
 		return null;
 	}

@@ -11,6 +11,30 @@ public class ZoneMnfDTO extends BaseDTO {
 	private String startTime;
 	
 	private String endTime;
+	/**
+	 * 分析项
+	 */
+	private String analysisCode;
+	/**
+	 * 统计类型 0漏点数,1漏水量
+	 */
+	private String stattype;
+
+	public String getAnalysisCode() {
+		return analysisCode;
+	}
+
+	public void setAnalysisCode(String analysisCode) {
+		this.analysisCode = analysisCode;
+	}
+
+	public String getStattype() {
+		return stattype;
+	}
+
+	public void setStattype(String stattype) {
+		this.stattype = stattype;
+	}
 
 	public String getZoneCode() {
 		return zoneCode;

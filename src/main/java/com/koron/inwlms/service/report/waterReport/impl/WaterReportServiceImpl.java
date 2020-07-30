@@ -3,9 +3,11 @@ package com.koron.inwlms.service.report.waterReport.impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
+import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
 import com.koron.inwlms.bean.DTO.indexData.IndicatorNewDTO;
 import com.koron.inwlms.bean.DTO.report.waterBalanceReport.WB1BalanceDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
@@ -25,11 +28,14 @@ import com.koron.inwlms.bean.VO.indexData.TreeZoneVO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.TreefirstVO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB1BalanceVO;
 import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB2OneZoneVO;
+import com.koron.inwlms.mapper.common.IndicatorMapper;
 import com.koron.inwlms.mapper.report.waterReport.WaterReportMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
+import com.koron.inwlms.service.report.impl.AnalysisReportServiceImpl;
 import com.koron.inwlms.service.report.waterReport.WaterReportService;
 import com.koron.inwlms.util.ListSort;
 import com.koron.inwlms.util.PageUtil;
+import com.koron.inwlms.util.TimeUtil;
 import com.koron.util.Constant;
 
 
@@ -581,28 +587,18 @@ public  class WaterReportServiceImpl implements WaterReportService{
     //一级分区产销差率比较报表
     @TaskAnnotation("queryOneZoneCXC")
 	@Override
-	public Map<String,Object> queryOneZoneCXC(SessionFactory factory, IndicatorNewDTO indicatorNewDTO) {
-    	/**
-		  * BALANCE_INDIC  水平衡基础数据--- 抄表量  WNMBMC
-		         供水（总）量 1     WNMFWSSITDF 
-		  * 							
-		  * ZONE_LOSS_INDIC 分区漏损数据   ---  产销差率1 WNMNRR
-		  * 
-		  */
+    public List<Map<String,Object>> queryOneZoneCXC(SessionFactory factory, IndicatorNewDTO indicatorNewDTO) {
     	WaterReportMapper waterReportMapper = factory.getMapper(WaterReportMapper.class);
-    	TreeMapper mapper = factory.getMapper(TreeMapper.class);	
-    	List<String>  monthList=new ArrayList<>();
-		try {
-			//获取中间月份
-		   monthList=getMonthBetween(indicatorNewDTO.getStartTime().toString(),indicatorNewDTO.getEndTime().toString());
-		} catch (Exception e) {			
-			e.printStackTrace();
-		}
-		//返回的数据
-		List<WB2OneZoneVO> wB2OneZoneList=new ArrayList<>();
-		//查询parentMask为0 的并且type为1 的foreignkey
-		List<TreefirstVO> firstTreeVO=waterReportMapper.getFirstTree(treeType,parentmask);
-		LongTreeBean node=null;
+    	IndicatorMapper indMapper = factory.getMapper(IndicatorMapper.class);
+    	
+    	TreeMapper mapper = factory.getMapper(TreeMapper.class);
+    	
+    	List<Map<String,Object>> dataList = new ArrayList<>();
+    	
+    	
+    	//查询parentMask为0 的并且type为1 的foreignkey
+    	List<TreefirstVO> firstTreeVO = waterReportMapper.getFirstTree(treeType,parentmask);
+    	LongTreeBean node=null;
 		List<TreeZoneVO> zoneList=new ArrayList<>();
 		List<String> finalZoneList=new ArrayList<>();
 		if(firstTreeVO!=null  && firstTreeVO.size()>0) {
@@ -624,105 +620,140 @@ public  class WaterReportServiceImpl implements WaterReportService{
 		    	}
 			}
 		}
+		//时间
+		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM");
+		Date startDate = new Date();
+		Date endDate = new Date();
+		try {
+			startDate = form.parse(indicatorNewDTO.getStartDate());
+			endDate = form.parse(indicatorNewDTO.getEndDate());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		AnalysisReportServiceImpl ars = new AnalysisReportServiceImpl();
+		int startTime = ars.getTimeMonth(startDate,0);
+		int endTime = ars.getTimeMonth(endDate,0);
+		int i = 0;
 		
-		//一级分区
-	    for(int i=0;i<monthList.size();i++) {	
-	    	WB2OneZoneVO wB2OneZoneVO=new WB2OneZoneVO();
-	    	wB2OneZoneVO.setMonthId(monthList.get(i));
-	    	//查询水平衡数据 抄表量  
-	    	IndicatorNewDTO indicatorcb=new IndicatorNewDTO();
-	    	List<String> balanceCBCodes=new ArrayList<>();
-	    	balanceCBCodes.add(Constant.BALANCE_INDIC_FLMBMC);
-	    	indicatorcb.setCodes(balanceCBCodes);
-	    	indicatorcb.setStartTime(Integer.valueOf(monthList.get(i)));
-	    	indicatorcb.setEndTime(Integer.valueOf(monthList.get(i)));
-	    	indicatorcb.setTimeType(timeType);
-	    	//添加一级分区
-	    	indicatorcb.setZoneCodes(finalZoneList);
-	    	
-	   	    List<IndicatorVO> balanceCBList=waterReportMapper.queryWBBaseIndicData(indicatorcb);
-	   	    if(balanceCBList!=null && balanceCBList.size()>0) {
-	   	    	for(int j=0;j<balanceCBList.size();j++) {	   	    		
-	   	    		balanceCBList.get(j).setValue(new BigDecimal(balanceCBList.get(j).getValue()/10000).setScale(2, RoundingMode.UP).doubleValue());
-	   	    	}
-	   	    }
-	   	    ListSort listSort=new ListSort();
-	   	    listSort.sort(balanceCBList, "zoneNo", false);
-	   	    wB2OneZoneVO.setCbList(balanceCBList);
-	   	    
-	       //查询水平衡数据 供水量  
-	    	IndicatorNewDTO indicatorgs=new IndicatorNewDTO();
-	    	List<String> balanceGSCodes=new ArrayList<>();	    
-	    	balanceGSCodes.add(Constant.BALANCE_INDIC_FLMFWSSITDF);
-	    	indicatorgs.setCodes(balanceGSCodes);
-	    	indicatorgs.setStartTime(Integer.valueOf(monthList.get(i)));
-	    	indicatorgs.setEndTime(Integer.valueOf(monthList.get(i)));
-	    	indicatorgs.setTimeType(timeType);
-	    	
-	    	indicatorgs.setZoneCodes(finalZoneList);
-	    	
-	   	    List<IndicatorVO> balanceGSList=waterReportMapper.queryWBBaseIndicData(indicatorgs);
-	   	   if(balanceGSList!=null && balanceGSList.size()>0) {
-	   	    	for(int j=0;j<balanceGSList.size();j++) {	   	    		
-	   	    		balanceGSList.get(j).setValue(new BigDecimal(balanceGSList.get(j).getValue()/10000).setScale(2, RoundingMode.UP).doubleValue());
-	   	    	}
-	   	    }
-	   	    
-	   	    listSort.sort(balanceGSList, "zoneNo", false);
-	   	    wB2OneZoneVO.setGslList(balanceGSList);
-	   	    
-	   	    //查询产销差率
-	   	    IndicatorNewDTO indicatorCXC=new IndicatorNewDTO();
-	    	List<String> zoneCXCCodes=new ArrayList<>();
-	    	zoneCXCCodes.add(Constant.ZONE_LOSS_INDIC_FLMNRR);
-	    	indicatorCXC.setCodes(zoneCXCCodes);
-	    	indicatorCXC.setStartTime(Integer.valueOf(monthList.get(i)));
-	    	indicatorCXC.setEndTime(Integer.valueOf(monthList.get(i)));
-	    	indicatorCXC.setTimeType(timeType);
-	    	
-	    	indicatorCXC.setZoneCodes(finalZoneList);
-	    	
-	    	List<IndicatorVO> zoneLossCXCList=waterReportMapper.queryZoneLossIndicData(indicatorCXC);
-	    	if(zoneLossCXCList!=null && zoneLossCXCList.size()>0) {
-	   	    	for(int j=0;j<zoneLossCXCList.size();j++) {	   	    		
-	   	    		zoneLossCXCList.get(j).setValue(Math.ceil(zoneLossCXCList.get(j).getValue()*100*100)/100);
-	   	    	}
-	   	    }
-	    	listSort.sort(zoneLossCXCList, "zoneNo", false);
-	    	wB2OneZoneVO.setCxcList(zoneLossCXCList);
-	    	 
-	    	
-	    	wB2OneZoneList.add(wB2OneZoneVO);	           	    
-	    }
-	    
-	  //分页 action
-	      Map<String,Object> finalMap=new HashMap<>();
-	      
-	      finalMap.put("rowNumber", wB2OneZoneList.size());
-		 
-		  int startIndex=(indicatorNewDTO.getPage()-1)*indicatorNewDTO.getPageCount();
-		  int listsize=wB2OneZoneList.size();
-		  
-		  //新建一个空的List集合接收它  	
-		  List<WB2OneZoneVO> copyList=new ArrayList<>();
-		  if(Math.floor(listsize/indicatorNewDTO.getPageCount())>=indicatorNewDTO.getPage()) {
-			  listsize=startIndex+indicatorNewDTO.getPageCount();
-		  }
-		  for(int n=startIndex;n<listsize;n++) {
-			  copyList.add(wB2OneZoneList.get(n));
-		  }
-		 // 插入分页信息
-		  PageVO pageVO = PageUtil.getPageBean(indicatorNewDTO.getPage(), indicatorNewDTO.getPageCount(), listsize);
-		  finalMap.put("pageCount", indicatorNewDTO.getPageCount());
-		  finalMap.put("page", indicatorNewDTO.getPage());
-		  finalMap.put("totalPage", pageVO.getRowNumber());
-		  finalMap.put("dataList",copyList);
-		  
-	    //end
-    	
-		//return wB2OneZoneList;
-		  return finalMap;
-	}
+		while(startTime <= endTime) {
+			Map<String,Object> data = new HashMap<String, Object>();
+			Date monthDate = TimeUtil.addMonth(startDate, i);
+			String month = form.format(monthDate);
+			data.put("month", month);
+			for(String code : finalZoneList) {
+				List<String> zoneCodes = new ArrayList<>();
+				zoneCodes.add(code);
+				//查询水平衡数据 抄表量  
+				IndicatorDTO indicatorcb=new IndicatorDTO();
+		    	List<String> balanceCBCodes=new ArrayList<>();
+		    	balanceCBCodes.add(Constant.BALANCE_INDIC_FLMBMC);
+		    	indicatorcb.setCodes(balanceCBCodes);
+		    	indicatorcb.setStartTime(startTime);
+		    	indicatorcb.setEndTime(startTime);
+		    	indicatorcb.setTimeType(3);
+		    	indicatorcb.setZoneCodes(zoneCodes);
+		   	    List<IndicatorVO> balanceCBList = indMapper.queryWBBaseIndicData(indicatorcb);
+		   	    if(balanceCBList != null && balanceCBList.size() != 0) {
+		   	    	String nameCode = "CB_" + code;
+		   	    	data.put(nameCode, Math.ceil(balanceCBList.get(0).getValue()*100)/100);
+		   	    }else {
+		   	    	String nameCode = "CB_" + code;
+		   	    	data.put(nameCode, "-");
+		   	    }
+		   	    
+		   	    //供水
+		   	    IndicatorDTO indicatorgs = new IndicatorDTO();
+		    	List<String> balanceGSCodes = new ArrayList<>();	    
+		    	balanceGSCodes.add(Constant.BALANCE_INDIC_FLMFWSSITDF);
+		    	indicatorgs.setCodes(balanceGSCodes);
+		    	indicatorgs.setStartTime(startTime);
+		    	indicatorgs.setEndTime(startTime);
+		    	indicatorgs.setTimeType(3);
+		    	indicatorgs.setZoneCodes(zoneCodes);
+		   	    List<IndicatorVO> balanceGSList = indMapper.queryWBBaseIndicData(indicatorgs);
+		   	    if(balanceGSList != null && balanceGSList.size() != 0) {
+		   	    	String nameCode = "GS_" + code;
+		   	    	data.put(nameCode, Math.ceil(balanceGSList.get(0).getValue()*100)/100);
+		   	    }else {
+		   	    	String nameCode = "GS_" + code;
+		   	    	data.put(nameCode, "-");
+		   	    }
+		   	    
+		   	    //产销差
+		   	    IndicatorDTO indicatorCXC = new IndicatorDTO();
+		    	List<String> zoneCXCCodes = new ArrayList<>();
+		    	zoneCXCCodes.add(Constant.ZONE_LOSS_INDIC_FLMNRR);
+		    	indicatorCXC.setCodes(zoneCXCCodes);
+		    	indicatorCXC.setStartTime(startTime);
+		    	indicatorCXC.setEndTime(startTime);
+		    	indicatorCXC.setTimeType(3);
+		    	indicatorCXC.setZoneCodes(zoneCodes);
+		    	List<IndicatorVO> zoneLossCXCList = indMapper.queryZoneLossIndicData(indicatorCXC);
+		    	if(zoneLossCXCList != null && zoneLossCXCList.size() != 0) {
+		    		String nameCode = "CX_" + code;
+		   	    	data.put(nameCode, Math.ceil(zoneLossCXCList.get(0).getValue()*10000)/100);
+		    	}else {
+		    		String nameCode = "CX_" + code;
+		   	    	data.put(nameCode, "-");
+		    	}
+			}
+			i = i +1;
+	    	startTime = ars.getTimeMonth(startDate,i);
+			dataList.add(data);
+		}
+		Map<String,Object> allData = new HashMap<String, Object>();
+		allData.put("month", "合计");
+		for(String code : finalZoneList) {
+			String key1 = "CB_" + code;
+			String key2 = "GS_" + code;
+			String key3 = "CX_" + code;
+			Double cb = 0.0;
+			Double gs = 0.0;
+			Double cx = 0.0;
+			int cbNum = 0;
+			int gsNum = 0;
+			int cxNum = 0;
+			for(Map<String,Object> map : dataList) {
+				if(!map.get(key1).equals("-")) {
+					Double value = (Double) map.get(key1);
+					cb = cb + value;
+					cbNum = cbNum + 1;
+				}
+				if(!map.get(key2).equals("-")) {
+					Double value = (Double) map.get(key1);
+					gs = gs + value;
+					gsNum = gsNum + 1;
+				}
+				if(!map.get(key3).equals("-")) {
+					Double value = (Double) map.get(key1);
+					cx = cx + value;
+					cxNum = cxNum + 1;
+				}
+			}
+			if(cbNum > 0) {
+				cb = cb/cbNum;
+				allData.put(key1, Math.ceil(cb*100)/100);
+			}else {
+				allData.put(key1, "-");
+			}
+			if(cbNum > 0) {
+				gs = gs/gsNum;
+				allData.put(key2, Math.ceil(gs*100)/100);
+			}else {
+				allData.put(key2, "-");
+			}
+			if(cbNum > 0) {
+				cx = cx/cxNum;
+				allData.put(key3, Math.ceil(cx*100)/100);
+			}else {
+				allData.put(key3, "-");
+			}
+		}
+		dataList.add(allData);
+		
+    	return dataList;
+    }
 
     //WB_03)二级分区水平衡报表
     @TaskAnnotation("queryTwoZoneWater")
