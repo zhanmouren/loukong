@@ -716,36 +716,34 @@ public  class WaterReportServiceImpl implements WaterReportService{
 			int cxNum = 0;
 			for(Map<String,Object> map : dataList) {
 				if(!map.get(key1).equals("-")) {
-					Double value = (Double) map.get(key1);
-					cb = cb + value;
+					Double value1 = (Double) map.get(key1);
+					cb = cb + value1;
 					cbNum = cbNum + 1;
 				}
 				if(!map.get(key2).equals("-")) {
-					Double value = (Double) map.get(key1);
-					gs = gs + value;
+					Double value2 = (Double) map.get(key2);
+					gs = gs + value2;
 					gsNum = gsNum + 1;
 				}
 				if(!map.get(key3).equals("-")) {
-					Double value = (Double) map.get(key1);
-					cx = cx + value;
+					Double value3 = (Double) map.get(key3);
+					cx = cx + value3;
 					cxNum = cxNum + 1;
 				}
 			}
 			if(cbNum > 0) {
-				cb = cb/cbNum;
-				allData.put(key1, Math.ceil(cb*100)/100);
+				allData.put(key1, Math.ceil(cb));
 			}else {
 				allData.put(key1, "-");
 			}
 			if(cbNum > 0) {
-				gs = gs/gsNum;
-				allData.put(key2, Math.ceil(gs*100)/100);
+				allData.put(key2, Math.ceil(gs));
 			}else {
 				allData.put(key2, "-");
 			}
 			if(cbNum > 0) {
 				cx = cx/cxNum;
-				allData.put(key3, Math.ceil(cx*100)/100);
+				allData.put(key3, Math.ceil(cx));
 			}else {
 				allData.put(key3, "-");
 			}

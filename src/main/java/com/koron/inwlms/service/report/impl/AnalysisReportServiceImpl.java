@@ -527,7 +527,7 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		
 		//计算分页展示得编码范围
 		int sNum = zoneMnfDTO.getPageCount()*(zoneMnfDTO.getPage() - 1);
-		int eNum = zoneMnfDTO.getPageCount()*(zoneMnfDTO.getPage() + 1) - 1;
+		int eNum = zoneMnfDTO.getPageCount()*(zoneMnfDTO.getPage()) - 1;
 		
 		int k = 0;
 		for(GisExistZoneVO zoneInf : zoneList) {
