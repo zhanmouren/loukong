@@ -840,15 +840,15 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					if(timeNum == 0) {
 						map.put(code, null);
 					} else{
-						map.put(code, Double.parseDouble(df.format(values/timeNum)));
+						map.put(code, Double.parseDouble(df.format(timeNum==0?0:values/timeNum)));
 					}
 				}else if(code.contains("FTPL") ){
-					map.put(code, Double.parseDouble(df.format(values/timeNum/1000)));
+					map.put(code, Double.parseDouble(df.format(timeNum==0?0:values/timeNum/1000)));
 				}else if(code.contains("NOCM") || code.contains("NPLFW") || code.contains("NBFW")){
-					map.put(code, new Double(values/timeNum).intValue());
+					map.put(code, new Double(timeNum==0?0:values/timeNum).intValue());
 				}else if(code.contains("MC") || code.contains("NRW") || code.contains("WL")  || code.contains("WLR")
 						|| code.contains("BRFW") || code.contains("UCRFW") ){
-					map.put(code, Double.parseDouble(df.format(values/timeNum/10000)));
+					map.put(code, Double.parseDouble(df.format(timeNum==0?0:values/timeNum/10000)));
 				}else {
 					map.put(code,values);
 				}
@@ -1173,6 +1173,16 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			dZidVO8.setItemName("单位管长漏损量");
 			dZidVO8.setTimeType(2);
 			dZidVO8.setUnit("m³/km");
+			ZoneIndicatorDicVO dZidVO9 = new ZoneIndicatorDicVO();
+			dZidVO9.setItemCode("SLDNOCM");
+			dZidVO9.setItemName("用户数");
+			dZidVO9.setTimeType(2);
+			dZidVO9.setUnit("");
+			ZoneIndicatorDicVO dZidVO10 = new ZoneIndicatorDicVO();
+			dZidVO10.setItemCode("SLDFTPL");
+			dZidVO10.setItemName("管长");
+			dZidVO10.setTimeType(2);
+			dZidVO10.setUnit("km");
 			
 			//月指标
 			ZoneIndicatorDicVO mZidVO = new ZoneIndicatorDicVO();
@@ -1240,6 +1250,16 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			mZidVO12.setItemName("DMA/PMA面积覆盖率");
 			mZidVO12.setTimeType(3);
 			mZidVO12.setUnit("%");
+			ZoneIndicatorDicVO mZidVO13 = new ZoneIndicatorDicVO();
+			mZidVO13.setItemCode("SLMNOCM");
+			mZidVO13.setItemName("用户数");
+			mZidVO13.setTimeType(3);
+			mZidVO13.setUnit("");
+			ZoneIndicatorDicVO mZidVO14 = new ZoneIndicatorDicVO();
+			mZidVO14.setItemCode("SLMFTPL");
+			mZidVO14.setItemName("管长");
+			mZidVO14.setTimeType(3);
+			mZidVO14.setUnit("km");
 			
 			//月指标
 			ZoneIndicatorDicVO yZidVO = new ZoneIndicatorDicVO();
@@ -1307,6 +1327,16 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			yZidVO12.setItemName("DMA/PMA面积覆盖率");
 			yZidVO12.setTimeType(4);
 			yZidVO12.setUnit("%");
+			ZoneIndicatorDicVO yZidVO13 = new ZoneIndicatorDicVO();
+			yZidVO13.setItemCode("SLYNOCM");
+			yZidVO13.setItemName("用户数");
+			yZidVO13.setTimeType(4);
+			yZidVO13.setUnit("");
+			ZoneIndicatorDicVO yZidVO14 = new ZoneIndicatorDicVO();
+			yZidVO14.setItemCode("SLYFTPL");
+			yZidVO14.setItemName("管长");
+			yZidVO14.setTimeType(4);
+			yZidVO14.setUnit("km");
 			lists.add(dZidVO);
 			lists.add(dZidVO1);
 			lists.add(dZidVO2);
@@ -1316,6 +1346,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			lists.add(dZidVO6);
 			lists.add(dZidVO7);
 			lists.add(dZidVO8);
+			lists.add(dZidVO9);
+			lists.add(dZidVO10);
 			lists.add(mZidVO);
 			lists.add(mZidVO1);
 			lists.add(mZidVO2);
@@ -1329,6 +1361,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			lists.add(mZidVO10);
 			lists.add(mZidVO11);
 			lists.add(mZidVO12);
+			lists.add(mZidVO13);
+			lists.add(mZidVO14);
 			lists.add(yZidVO);
 			lists.add(yZidVO1);
 			lists.add(yZidVO2);
@@ -1342,6 +1376,8 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 			lists.add(yZidVO10);
 			lists.add(yZidVO11);
 			lists.add(yZidVO12);
+			lists.add(yZidVO13);
+			lists.add(yZidVO14);
 		}else if(Constant.RANK_T.equals(zoneType)) {
 			//DMA分区
 			//日指标
@@ -1610,7 +1646,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					if(timeNum == 0) {
 						map.put(itemCode, null);
 					} else{
-						map.put(itemCode, values/timeNum<0.0001?0:Double.parseDouble(df.format(values/timeNum)));
+						map.put(itemCode, timeNum==0||values/timeNum<0.0001?0:Double.parseDouble(df.format(values/timeNum)));
 					}
 					
 				}else {
@@ -1638,7 +1674,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					}
 				}
 				Map<String,Double> map = new HashMap<String, Double>();
-				map.put(itemCode, values/10000/timeNum<0.0001?0:Double.parseDouble(df.format(values/10000/timeNum)));
+				map.put(itemCode, timeNum == 0 || values/(10000*timeNum)<0.0001?0:Double.parseDouble(df.format(values/(10000*timeNum))));
 				maps.put(zoneNo, map);
 			}
 		}else if(Constant.ZONE_LOSS_INDIC.contains(itemCode)) {
@@ -1661,9 +1697,9 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					map.put(itemCode, null);
 				} else{
 					if(itemCode.contains("WL")) {
-						map.put(itemCode, values/timeNum/10000<0.0001?0:Double.parseDouble(df.format(values/timeNum/10000)));
+						map.put(itemCode, timeNum==0||values/(10000*timeNum)<0.0001?0:Double.parseDouble(df.format(values/(10000*timeNum))));
 					}else{
-						map.put(itemCode, values/timeNum<0.0001?0:Double.parseDouble(df.format(values/timeNum)));
+						map.put(itemCode, timeNum==0||values/timeNum<0.0001?0:Double.parseDouble(df.format(values/timeNum)));
 					}
 				}
 				maps.put(zoneNo, map);
@@ -1691,7 +1727,7 @@ public class ZoneLossAnaServiceImpl implements ZoneLossAnaService {
 					if(timeNum == 0) {
 						map.put(itemCode, null);
 					} else{
-						map.put(itemCode, values/timeNum<0.0001?0:Double.parseDouble(df.format(values/timeNum)));
+						map.put(itemCode, timeNum==0||values/timeNum<0.0001?0:Double.parseDouble(df.format(values/timeNum)));
 					}
 				}else {
 					map.put(itemCode, values);
