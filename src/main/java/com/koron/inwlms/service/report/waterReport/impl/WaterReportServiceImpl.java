@@ -28,6 +28,7 @@ import com.koron.inwlms.bean.VO.report.waterBalanceReport.WB2OneZoneVO;
 import com.koron.inwlms.mapper.report.waterReport.WaterReportMapper;
 import com.koron.inwlms.mapper.sysManager.UserMapper;
 import com.koron.inwlms.service.report.waterReport.WaterReportService;
+import com.koron.inwlms.util.ListSort;
 import com.koron.inwlms.util.PageUtil;
 import com.koron.util.Constant;
 
@@ -645,6 +646,8 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	   	    		balanceCBList.get(j).setValue(new BigDecimal(balanceCBList.get(j).getValue()/10000).setScale(2, RoundingMode.UP).doubleValue());
 	   	    	}
 	   	    }
+	   	    ListSort listSort=new ListSort();
+	   	    listSort.sort(balanceCBList, "zoneNo", false);
 	   	    wB2OneZoneVO.setCbList(balanceCBList);
 	   	    
 	       //查询水平衡数据 供水量  
@@ -664,6 +667,8 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	   	    		balanceGSList.get(j).setValue(new BigDecimal(balanceGSList.get(j).getValue()/10000).setScale(2, RoundingMode.UP).doubleValue());
 	   	    	}
 	   	    }
+	   	    
+	   	    listSort.sort(balanceGSList, "zoneNo", false);
 	   	    wB2OneZoneVO.setGslList(balanceGSList);
 	   	    
 	   	    //查询产销差率
@@ -683,6 +688,7 @@ public  class WaterReportServiceImpl implements WaterReportService{
 	   	    		zoneLossCXCList.get(j).setValue(Math.ceil(zoneLossCXCList.get(j).getValue()*100*100)/100);
 	   	    	}
 	   	    }
+	    	listSort.sort(zoneLossCXCList, "zoneNo", false);
 	    	wB2OneZoneVO.setCxcList(zoneLossCXCList);
 	    	 
 	    	
@@ -917,6 +923,8 @@ public  class WaterReportServiceImpl implements WaterReportService{
 		  return finalMap;
 		 // return finalList;
 	}
+    
+   
 
 	
 	
