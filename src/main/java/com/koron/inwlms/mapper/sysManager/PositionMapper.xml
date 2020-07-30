@@ -7,7 +7,7 @@
 	select *
 	from sm_position as "position"
 	<trim prefix="where" prefixOverrides="and|or">
-		<if test="name != null  and name !='' "> and "position".name like '%'||#{name}||'%',</if>
+		<if test="name != null  and name !='' "> and "position".name like '%'||#{name}||'%' </if>
 		<if test="status != null  and status !='' ">and "position".status = #{status} </if>           
 	</trim>
 	order by "position"."createTime" desc

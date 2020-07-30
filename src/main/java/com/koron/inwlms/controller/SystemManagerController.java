@@ -2632,12 +2632,12 @@ public class SystemManagerController {
 		 MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);	       
 		  try{				
 			  List<PositionVO> positionList=ADOConnection.runTask(user.getEnv(),userService, "queryPosition", List.class,positionDTO);	
-			  if(positionList!=null && positionList.size()>0) {			 
+			  if(positionList!=null) {
 				    msg.setCode(Constant.MESSAGE_INT_SUCCESS); 
 					msg.setDescription("查询职位成功"); 
 					msg.setData(positionList);
-				  }else if(positionList == null){
-			        msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+				  }else{
+			        msg.setCode(Constant.MESSAGE_INT_ERROR);
 			        msg.setDescription("没有查询到相关职位"); 
 			 }		  
 	        }catch(Exception e){
