@@ -438,6 +438,26 @@ public class Constant {
 	 * 分区等级3
 	 */
 	public final static Integer RANK_T = 3;
+	/**
+	 * 分析项-故障类型
+	 */
+	public final static String ANALY_FAULT = "L104000001";
+	/**
+	 * 分析项-材料类型
+	 */
+	public final static String ANALY_MATER = "L104000002";
+	/**
+	 * 分析项-直径
+	 */
+	public final static String ANALY_DIAM = "L104000003";
+	/**
+	 * 分析项-管龄
+	 */
+	public final static String ANALY_AGE = "L104000004";
+	/**
+	 * 分析项-故障原因
+	 */
+	public final static String ANALY_CAUSE = "L104000005";
 	
 	public final static String YUANSHUI = "原水";
 	

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
+import com.koron.inwlms.bean.DTO.report.ZoneHourDTO;
 import com.koron.inwlms.bean.DTO.report.ZoneMnfDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
@@ -22,6 +23,9 @@ import com.koron.inwlms.bean.VO.leakageControl.TreeVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysis;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysisVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterData;
+import com.koron.inwlms.bean.VO.report.statisticalReport.GisLeak;
+import com.koron.inwlms.bean.VO.report.statisticalReport.HourFlowAvg;
+import com.koron.inwlms.bean.VO.report.statisticalReport.HourFlowVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.MeterAbnormalAnalysisVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.NetFault;
 import com.koron.inwlms.bean.VO.report.statisticalReport.NetFaultVO;
@@ -739,13 +743,175 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		return netFaultVO;
 	}
 	
-	public String queryNteFaultAnalysis(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
+	@TaskAnnotation("queryNteFaultAnalysis")
+	@Override
+	public Map<String,Object> queryNteFaultAnalysis(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
+		AnalysisReportMapper anaMapper = factory.getMapper(AnalysisReportMapper.class);
+		//查出分区下所有故障信息
+		//测试-未作分区筛选
+		List<GisLeak> leakList = anaMapper.queryGisLeak();
+		Map<String,Object> data = new HashMap<String, Object>();
 		
-		if(zoneMnfDTO.getAnalysisCode().equals("")) {
+		if(zoneMnfDTO.getAnalysisCode().equals(Constant.ANALY_FAULT)) {
+			List<String> faultTypeList = anaMapper.queryLeakCondType();
+			if(faultTypeList != null && faultTypeList.size() != 0) {
+				for(String faultType : faultTypeList) {
+					int num = 0;
+					Double lossFlow = 0.0;
+					for(GisLeak gisLeak : leakList) {
+						if(gisLeak.getLEAKCOND().equals(faultType)) {
+							num = num + 1;
+							if(gisLeak.getWATERLEAK() != null && !gisLeak.getWATERLEAK().equals("")) {
+								String value = gisLeak.getWATERLEAK();
+								lossFlow = lossFlow + Double.valueOf(value);
+							}
+						}
+					}
+					if(zoneMnfDTO.getStattype() == 0) {
+						data.put(faultType, num);
+					}else {
+						data.put(faultType, lossFlow);
+					}
+				}
+			}
+		}else if(zoneMnfDTO.getAnalysisCode().equals(Constant.ANALY_MATER)) {
+			List<String> materTypeList = anaMapper.queryMaterialType();
+			if(materTypeList != null && materTypeList.size() != 0) {
+				for(String materType : materTypeList) {
+					int num = 0;
+					Double lossFlow = 0.0;
+					for(GisLeak gisLeak : leakList) {
+						if(gisLeak.getMATERIAL().equals(materType)) {
+							num = num + 1;
+							if(gisLeak.getWATERLEAK() != null && !gisLeak.getWATERLEAK().equals("")) {
+								String value = gisLeak.getWATERLEAK();
+								lossFlow = lossFlow + Double.valueOf(value);
+							}
+						}
+					}
+					if(zoneMnfDTO.getStattype() == 0) {
+						data.put(materType, num);
+					}else {
+						data.put(materType, lossFlow);
+					}
+				}
+			}
+		}else if(zoneMnfDTO.getAnalysisCode().equals(Constant.ANALY_DIAM)) {
+			List<Double> diamTypeList = anaMapper.queryDiameterType();
+			if(diamTypeList != null && diamTypeList.size() != 0) {
+				for(Double diamType : diamTypeList) {
+					int num = 0;
+					Double lossFlow = 0.0;
+					for(GisLeak gisLeak : leakList) {
+						if(gisLeak.getDIAMETER().equals(diamType)) {
+							num = num + 1;
+							if(gisLeak.getWATERLEAK() != null && !gisLeak.getWATERLEAK().equals("")) {
+								String value = gisLeak.getWATERLEAK();
+								lossFlow = lossFlow + Double.valueOf(value);
+							}
+						}
+					}
+					if(zoneMnfDTO.getStattype() == 0) {
+						data.put(diamType.toString(), num);
+					}else {
+						data.put(diamType.toString(), lossFlow);
+					}
+				}
+			}
+		}else if(zoneMnfDTO.getAnalysisCode().equals(Constant.ANALY_AGE)) {
+			List<Double> ageTypeList = anaMapper.queryAgeType();
+			if(ageTypeList != null && ageTypeList.size() != 0) {
+				for(Double ageType : ageTypeList) {
+					int num = 0;
+					Double lossFlow = 0.0;
+					for(GisLeak gisLeak : leakList) {
+						if(gisLeak.getYEARPIPE().equals(ageType)) {
+							num = num + 1;
+							if(gisLeak.getWATERLEAK() != null && !gisLeak.getWATERLEAK().equals("")) {
+								String value = gisLeak.getWATERLEAK();
+								lossFlow = lossFlow + Double.valueOf(value);
+							}
+						}
+					}
+					if(zoneMnfDTO.getStattype() == 0) {
+						data.put(ageType.toString(), num);
+					}else {
+						data.put(ageType.toString(), lossFlow);
+					}
+				}
+			}
+		}else if(zoneMnfDTO.getAnalysisCode().equals(Constant.ANALY_CAUSE)) {
 			
 		}
 		
-		return null;
+		return data;
+	}
+	
+	@TaskAnnotation("queryHourFlow")
+	@Override
+	public List<HourFlowAvg> queryHourFlow(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
+		AnalysisReportMapper anaMapper = factory.getMapper(AnalysisReportMapper.class);
+		
+		String indexCode = "";
+		if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_FIRSTZONE)) {
+			indexCode = "FLHROHAF";
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_SECZONE)) {
+			indexCode = "SLHROHAF";
+		}else if(zoneMnfDTO.getZoneGrade().equals(Constant.DATADICTIONARY_DPZONE)) {
+			indexCode = "DMHROHAF";
+		}
+		
+		//时间
+		int day = 0;
+		try {
+			day = TimeUtil.dateBetween(zoneMnfDTO.getStartTime(), zoneMnfDTO.getEndTime()) + 1;
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+		Date startDate = new Date();
+		Date endDate = new Date();
+		try {
+			startDate = form.parse(zoneMnfDTO.getStartTime());
+			endDate = form.parse(zoneMnfDTO.getEndTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<HourFlowAvg> dataList = new ArrayList<>();
+		for(int i = 0;i < 24;i++) {
+			Date timeDate = TimeUtil.addHour(startDate, i);
+			HourFlowAvg hourFlowAvg = new HourFlowAvg();
+			if(i < 10) {
+				hourFlowAvg.setStartTime("0"+i+":00");
+				hourFlowAvg.setEndTime("0"+i+":59");
+			}else {
+				hourFlowAvg.setStartTime(i+":00");
+				hourFlowAvg.setEndTime(i+":59");
+			}
+			
+			Double hourflow = 0.0;
+			for(int j = 0;j < day;j++) {
+				Date startTime = TimeUtil.addDay(timeDate, j);
+				ZoneHourDTO zoneHourDTO = new ZoneHourDTO();
+				zoneHourDTO.setCode(indexCode);
+				zoneHourDTO.setZoneCode(zoneMnfDTO.getZoneCode());
+				zoneHourDTO.setStartTime(startTime);
+				zoneHourDTO.setEndTime(startTime);
+				List<HourFlowVO> hourFlowList = anaMapper.queryHourFlow(zoneHourDTO);
+				if(hourFlowList != null && hourFlowList.size() != 0) {
+					hourflow = hourflow + hourFlowList.get(0).getValue();
+				}
+			}
+			hourflow = hourflow/day;
+			hourFlowAvg.setAvgValue(Math.ceil(hourflow*100)/100);
+			dataList.add(hourFlowAvg);
+		}
+		
+		
+		
+		return dataList;
 	}
 	
 	public Double getMeterFlow(AnalysisReportMapper anaMapper,Integer time,List<GisExistZoneVO> zoneList,String name) {

@@ -1,5 +1,8 @@
 package com.koron.inwlms.controller;
 
+import java.util.List;
+import java.util.Map;
+
 import org.koron.ebs.mybatis.ADOConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +15,7 @@ import org.swan.bean.MessageBean;
 import com.koron.common.StaffAttribute;
 import com.koron.inwlms.bean.DTO.report.ZoneMnfDTO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterAnalysisVO;
+import com.koron.inwlms.bean.VO.report.statisticalReport.HourFlowAvg;
 import com.koron.inwlms.bean.VO.report.statisticalReport.MeterAbnormalAnalysisVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.NetFaultVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.ZoneMnfStatisticalVO;
@@ -172,6 +176,59 @@ public class StatisticalReportController {
 		return msg.toJson();
 	}
 	
+	@RequestMapping(value = "/queryNteFaultAnalysis.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@ApiOperation(value = "分区管网故障分析报表", notes = "分区管网故障分析报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryNteFaultAnalysis(@RequestBody ZoneMnfDTO zoneMnfDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<Map> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, Map.class);
+		if(zoneMnfDTO.getStartTime() == null || zoneMnfDTO.getStartTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!开始时间为空");
+	        return msg.toJson();
+		}
+		if(zoneMnfDTO.getEndTime() == null || zoneMnfDTO.getEndTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!结束时间为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			Map<String,Object> result = ADOConnection.runTask(user.getEnv(),ars, "queryNteFaultAnalysis", Map.class, zoneMnfDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(result);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询报表失败");
+		}
+		
+		return msg.toJson();
+	}
 	
+	@RequestMapping(value = "/queryHourFlow.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@ApiOperation(value = "分区移动时平均流量报表", notes = "分区移动时平均流量报表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryHourFlow(@RequestBody ZoneMnfDTO zoneMnfDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(zoneMnfDTO.getStartTime() == null || zoneMnfDTO.getStartTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!开始时间为空");
+	        return msg.toJson();
+		}
+		if(zoneMnfDTO.getEndTime() == null || zoneMnfDTO.getEndTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!结束时间为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			List<HourFlowAvg> result = ADOConnection.runTask(user.getEnv(),ars, "queryHourFlow", List.class, zoneMnfDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(result);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询报表失败");
+		}
+		return msg.toJson();
+	}
 
 }

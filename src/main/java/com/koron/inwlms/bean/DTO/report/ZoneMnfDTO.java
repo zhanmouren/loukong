@@ -18,7 +18,7 @@ public class ZoneMnfDTO extends BaseDTO {
 	/**
 	 * 统计类型 0漏点数,1漏水量
 	 */
-	private String stattype;
+	private Integer stattype;
 
 	public String getAnalysisCode() {
 		return analysisCode;
@@ -28,11 +28,11 @@ public class ZoneMnfDTO extends BaseDTO {
 		this.analysisCode = analysisCode;
 	}
 
-	public String getStattype() {
+	public Integer getStattype() {
 		return stattype;
 	}
 
-	public void setStattype(String stattype) {
+	public void setStattype(Integer stattype) {
 		this.stattype = stattype;
 	}
 

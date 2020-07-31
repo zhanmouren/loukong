@@ -3,9 +3,11 @@ package com.koron.main;
 import com.koron.common.UserResolver;
 import com.koron.common.stub.ConfigCenter;
 import com.koron.indicator.task.TimeTask;
+import com.koron.inwlms.util.kafka.ZoneKafkaConsumer;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootVersion;
@@ -40,6 +42,8 @@ import java.util.List;
 @ComponentScan(value = {"org.swan", "com.koron", "com.koron.main"})
 @EnableSwagger2
 public class App extends WebMvcConfigurationSupport {
+	
+	
     public static void main(String[] args) throws IOException {
         SpringApplication app = new SpringApplication(App.class);
         if (System.getenv("config_center_url") != null)
@@ -60,6 +64,8 @@ public class App extends WebMvcConfigurationSupport {
         };
         app.setBanner(b);
         app.run(args);
+        ZoneKafkaConsumer kafkacus = new ZoneKafkaConsumer();
+        kafkacus.consume();
     }
 
     /**

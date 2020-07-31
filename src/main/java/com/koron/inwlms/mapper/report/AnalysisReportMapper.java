@@ -5,9 +5,12 @@ import java.util.List;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
+import com.koron.inwlms.bean.DTO.report.ZoneHourDTO;
 import com.koron.inwlms.bean.DTO.report.ZoneMnfDTO;
 import com.koron.inwlms.bean.VO.leakageControl.GisExistZoneVO;
 import com.koron.inwlms.bean.VO.report.statisticalReport.FlowMeterData;
+import com.koron.inwlms.bean.VO.report.statisticalReport.GisLeak;
+import com.koron.inwlms.bean.VO.report.statisticalReport.HourFlowVO;
 
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -41,4 +44,16 @@ public interface AnalysisReportMapper {
 	@Select("select count(*) from (select distinct \"YS_NAME\" from rw_fct_ctm)a")
 	Integer queryMeterTypeNameNum();
 
+	List<GisLeak> queryGisLeak();
+	@Select("select distinct \"DIAMETER\" from gis_leak")
+	List<Double> queryDiameterType();
+	@Select("select distinct \"MATERIAL\" from gis_leak")
+	List<String> queryMaterialType();
+	@Select("select distinct \"YEAR_PIPE\" from gis_leak")
+	List<Double> queryAgeType();
+	@Select("select distinct \"LEAKCOND\" from gis_leak")
+	List<String> queryLeakCondType();
+	
+	List<HourFlowVO> queryHourFlow(ZoneHourDTO zoneHourDTO);
+	
 }

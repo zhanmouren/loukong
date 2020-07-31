@@ -19,7 +19,17 @@
   </trim>
  </select>
  
+ <select id="queryGisLeak" resultType="com.koron.inwlms.bean.VO.report.statisticalReport.GisLeak">
+ select "DIAMETER", "MATERIAL", "LEAK_ID" as "LEAKID", "LEAKCOND", "REP_DATE" as "REPDATE", "P_CODE" as "PCODE", "WATER_LEAK" as "WATERLEAK", "YEAR_PIPE"
+ from gis_leak
+ </select>
  
+ <select id="queryHourFlow" parameterType="com.koron.inwlms.bean.DTO.report.ZoneHourDTO" resultType="com.koron.inwlms.bean.VO.report.statisticalReport.HourFlowVO">
+ select a.code,round( a."analysisValue"/b.precision :: NUMERIC, 2 ) as value,a."analysisDate" as "time",a."zoneNo"
+			from nw_zone_moni_min a left join lc_app_dim_indicator b on a.code = b.code
+			where a.code = #{code} and a."zoneNo" = #{zoneCode} and a."analysisDate" &gt;= #{startTime}
+			and a."analysisDate" &lt;= #{endTime} 
+ </select>
 
  
 	
