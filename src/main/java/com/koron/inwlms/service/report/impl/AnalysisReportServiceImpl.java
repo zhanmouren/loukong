@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.koron.common.web.mapper.LongTreeBean;
 import com.koron.common.web.mapper.TreeMapper;
 import com.koron.inwlms.bean.DTO.common.IndicatorDTO;
+import com.koron.inwlms.bean.DTO.report.LossTableHead;
 import com.koron.inwlms.bean.DTO.report.ZoneHourDTO;
 import com.koron.inwlms.bean.DTO.report.ZoneMnfDTO;
 import com.koron.inwlms.bean.VO.common.IndicatorVO;
@@ -908,10 +909,61 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 			hourFlowAvg.setAvgValue(Math.ceil(hourflow*100)/100);
 			dataList.add(hourFlowAvg);
 		}
-		
-		
-		
 		return dataList;
+	}
+	
+	public String queryLossAnalysis(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
+		
+		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+		Date startDate = new Date();
+		Date endDate = new Date();
+		try {
+			startDate = form.parse(zoneMnfDTO.getStartTime());
+			endDate = form.parse(zoneMnfDTO.getEndTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int startTime = getTimeMonth(startDate,0);
+		int endTime = getTimeMonth(endDate,0);
+		
+		List<LossTableHead> tableHeadList = new ArrayList<>();
+		LossTableHead lossTableHead = new LossTableHead();
+		lossTableHead.setCode("MMNF");
+		lossTableHead.setCompany("m³/h");
+		lossTableHead.setParentName("Bottom up Indicators");
+		lossTableHead.setSubName("MNF");
+		tableHeadList.add(lossTableHead);
+		
+		LossTableHead lossTableHead1 = new LossTableHead();
+		lossTableHead1.setCode("MLA");
+		lossTableHead1.setCompany("m³/d");
+		lossTableHead1.setParentName("Bottom up Indicators");
+		lossTableHead1.setSubName("Leakage");
+		tableHeadList.add(lossTableHead1);
+		
+		LossTableHead lossTableHead2 = new LossTableHead();
+		lossTableHead2.setCode("MLRL");
+		lossTableHead2.setCompany("%");
+		lossTableHead2.setParentName("Bottom up Indicators");
+		lossTableHead2.setSubName("Leakage%");
+		tableHeadList.add(lossTableHead2);
+		
+		LossTableHead lossTableHead3 = new LossTableHead();
+		lossTableHead3.setCode("MFWSSITDF");
+		lossTableHead3.setCompany("m³/d");
+		lossTableHead3.setParentName("Top down Indicators");
+		lossTableHead3.setSubName("Daily Supply");
+		tableHeadList.add(lossTableHead3);
+		
+		LossTableHead lossTableHead4 = new LossTableHead();
+		lossTableHead4.setCode("MFWSSITDF");
+		lossTableHead4.setCompany("m³/d");
+		lossTableHead4.setParentName("Top down Indicators");
+		lossTableHead4.setSubName("Daily Supply");
+		tableHeadList.add(lossTableHead4);
+		
+		return null;
 	}
 	
 	public Double getMeterFlow(AnalysisReportMapper anaMapper,Integer time,List<GisExistZoneVO> zoneList,String name) {
