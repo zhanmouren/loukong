@@ -30,6 +30,7 @@
 			where a.code = #{code} and a."zoneNo" = #{zoneCode} and a."analysisDate" &gt;= #{startTime}
 			and a."analysisDate" &lt;= #{endTime} 
  </select>
+ 
 
  
 	

@@ -230,5 +230,32 @@ public class StatisticalReportController {
 		}
 		return msg.toJson();
 	}
+	
+	@RequestMapping(value = "/queryLossAnalysis.htm", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8" })
+	@ApiOperation(value = "分区漏损与漏失对照表", notes = "分区漏损与漏失对照表", httpMethod = "POST", response = MessageBean.class, consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String queryLossAnalysis(@RequestBody ZoneMnfDTO zoneMnfDTO,@StaffAttribute(Constant.LOGIN_USER) UserVO user) {
+		MessageBean<List> msg = MessageBean.create(Constant.MESSAGE_INT_SUCCESS, Constant.MESSAGE_STRING_SUCCESS, List.class);
+		if(zoneMnfDTO.getStartTime() == null || zoneMnfDTO.getStartTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!开始时间为空");
+	        return msg.toJson();
+		}
+		if(zoneMnfDTO.getEndTime() == null || zoneMnfDTO.getEndTime().equals("")) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("参数错误!结束时间为空");
+	        return msg.toJson();
+		}
+		
+		try {
+			List<Map<String,Object>> result = ADOConnection.runTask(user.getEnv(),ars, "queryLossAnalysis", List.class, zoneMnfDTO);
+			msg.setCode(Constant.MESSAGE_INT_SUCCESS);
+			msg.setData(result);
+		}catch(Exception e) {
+			msg.setCode(Constant.MESSAGE_INT_ERROR);
+	        msg.setDescription("查询报表失败");
+		}
+		return msg.toJson();
+	}
 
 }

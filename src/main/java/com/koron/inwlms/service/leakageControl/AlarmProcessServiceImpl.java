@@ -58,6 +58,18 @@ public class AlarmProcessServiceImpl implements AlarmProcessService {
 	public AlarmProcessReturnVO queryAlarmProcess(SessionFactory factory,AlarmProcessDTO alarmProcessDTO){
 		AlarmProcessMapper mapper = factory.getMapper(AlarmProcessMapper.class);
 		AlarmProcessReturnVO alarmProcessReturnVO = new AlarmProcessReturnVO();
+		
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date endTime = new Date();
+		try {
+			endTime = sf.parse(alarmProcessDTO.getEndTime());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		endTime = TimeUtil.addDay(endTime, 1);
+		alarmProcessDTO.setEndTime(sf.format(endTime));
+		
 		List<AlarmProcessVO> reList = new ArrayList<>();
 		//查询工单信息
 		List<AlarmProcessVO> list = mapper.queryAlarmProcess(alarmProcessDTO);

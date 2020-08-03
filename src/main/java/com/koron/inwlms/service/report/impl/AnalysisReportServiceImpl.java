@@ -912,9 +912,24 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		return dataList;
 	}
 	
-	public String queryLossAnalysis(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
+	@TaskAnnotation("queryLossAnalysis")
+	@Override
+	public List<Map<String,Object>> queryLossAnalysis(SessionFactory factory,ZoneMnfDTO zoneMnfDTO) {
+		AnalysisReportMapper anaMapper = factory.getMapper(AnalysisReportMapper.class);
+		IndicatorMapper indicMapper = factory.getMapper(IndicatorMapper.class);
+		TreeMapper mapper = factory.getMapper(TreeMapper.class);
+		WarningSchemeMapper warningMapper = factory.getMapper(WarningSchemeMapper.class);
 		
-		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd");
+		List<Map<String,Object>> mapList = new ArrayList<>();
+		List<TreeVO> zoneList = new ArrayList<>();
+		LongTreeBean node = mapper.getBeanByForeignIdType(2,zoneMnfDTO.getZoneCode());
+		if(node == null) {  
+			return mapList;
+		}else {
+			zoneList = warningMapper.queryTree(node.getSeq(),node.getType(),node.getMask(),node.getParentMask());
+		}
+		
+		SimpleDateFormat form = new SimpleDateFormat("yyyy-MM");
 		Date startDate = new Date();
 		Date endDate = new Date();
 		try {
@@ -957,13 +972,118 @@ public class AnalysisReportServiceImpl implements AnalysisReportService {
 		tableHeadList.add(lossTableHead3);
 		
 		LossTableHead lossTableHead4 = new LossTableHead();
-		lossTableHead4.setCode("MFWSSITDF");
+		lossTableHead4.setCode("MBC");
 		lossTableHead4.setCompany("m³/d");
 		lossTableHead4.setParentName("Top down Indicators");
-		lossTableHead4.setSubName("Daily Supply");
+		lossTableHead4.setSubName("Metered Consumption");
 		tableHeadList.add(lossTableHead4);
 		
-		return null;
+		LossTableHead lossTableHead5 = new LossTableHead();
+		lossTableHead5.setCode("MWL");
+		lossTableHead5.setCompany("m³/d");
+		lossTableHead5.setParentName("Top down Indicators");
+		lossTableHead5.setSubName("Loss");
+		tableHeadList.add(lossTableHead5);
+		
+		LossTableHead lossTableHead6 = new LossTableHead();
+		lossTableHead6.setCode("MMNFTDF");
+		lossTableHead6.setCompany("%");
+		lossTableHead6.setParentName("Top down Indicators");
+		lossTableHead6.setSubName("Loss%");
+		tableHeadList.add(lossTableHead6);
+		
+		
+		for(LossTableHead lossTableHeadData : tableHeadList) {
+			Map<String,Object> map = new HashMap<String, Object>();
+			map.put("Reference", lossTableHeadData.getParentName());
+			map.put("Indicator", lossTableHeadData.getSubName());
+			map.put("Units", lossTableHeadData.getCompany());
+			
+			List<IndicatorVO> nowList = new ArrayList<>();
+			List<IndicatorVO> oldList = new ArrayList<>();
+			for(TreeVO zoneInf : zoneList) {
+				String indexCode = "";
+				if(zoneInf.getRank().equals(Constant.DMAZONELEVEL_ONE)) {
+					indexCode = "FL" + lossTableHeadData.getCode();
+				}else if(zoneInf.getRank().equals(Constant.DMAZONELEVEL_TWO)) {
+					indexCode = "SL" + lossTableHeadData.getCode();
+				}else if(zoneInf.getRank().equals(Constant.DMAZONELEVEL_THREE)) {
+					indexCode = "DM" + lossTableHeadData.getCode();
+				}
+				IndicatorDTO indicatorDTO = new IndicatorDTO();
+				List<String> codes = new ArrayList<>();
+				codes.add(indexCode);
+				indicatorDTO.setCodes(codes);
+				List<String> zoneCodes = new ArrayList<>();
+				zoneCodes.add(zoneInf.getCode());
+				indicatorDTO.setZoneCodes(zoneCodes);
+				indicatorDTO.setStartTime(startTime);
+				indicatorDTO.setEndTime(endTime);
+				indicatorDTO.setTimeType(3);
+				List<IndicatorVO> lossList = indicMapper.queryZoneLossIndicData(indicatorDTO);
+				if(lossList != null && lossList.size() != 0) {
+					nowList.addAll(lossList);
+				}else {
+					List<IndicatorVO> flowList = indicMapper.queryWBBaseIndicData(indicatorDTO);
+					if(flowList != null && flowList.size() != 0) {
+						nowList.addAll(flowList);
+					}
+				}
+				
+				indicatorDTO.setStartTime(startTime - 100);
+				indicatorDTO.setEndTime(endTime - 100);
+				List<IndicatorVO> lossList1 = indicMapper.queryZoneLossIndicData(indicatorDTO);
+				if(lossList1 != null && lossList1.size() != 0) {
+					oldList.addAll(lossList1);
+				}else {
+					List<IndicatorVO> flowList1 = indicMapper.queryWBBaseIndicData(indicatorDTO);
+					if(flowList1 != null && flowList1.size() != 0) {
+						oldList.addAll(flowList1);
+					}
+				}
+			}
+			int i = 0;
+			while(startTime <= endTime) {
+				startTime = getTimeMonth(startDate,i);
+				Double value = 0.0;
+				Double oldValue = 0.0;
+				String name = "value" + startTime;
+				String name1 = "change" + startTime;
+				if(nowList != null && nowList.size() != 0) {
+					for(IndicatorVO indic : nowList) {
+						if(indic.getValue() != null) {
+							if(indic.getTimeId() == startTime) {
+								value = value + indic.getValue();
+							}
+						}
+					}
+					if(oldList != null && oldList.size() != 0) {
+						for(IndicatorVO indic : oldList) {
+							if(indic.getValue() != null) {
+								int oldTime = startTime-100;
+								if(indic.getTimeId() == oldTime) {
+									oldValue = oldValue + indic.getValue();
+								}
+							}
+						}
+					}
+					map.put(name, Math.ceil(value));
+					if(oldValue != 0.0) {
+						Double tonbi = (value - oldValue)/oldValue;
+						map.put(name1, Math.ceil(tonbi));
+					}else {
+						map.put(name1, "-");
+					}
+				}else {
+					map.put(name, "-");
+					map.put(name1, "-");
+				}
+				i = i + 1;
+			}
+			mapList.add(map);
+		}
+		
+		return mapList;
 	}
 	
 	public Double getMeterFlow(AnalysisReportMapper anaMapper,Integer time,List<GisExistZoneVO> zoneList,String name) {

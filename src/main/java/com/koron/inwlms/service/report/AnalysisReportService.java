@@ -28,6 +28,8 @@ public interface AnalysisReportService {
 	Map<String, Object> queryNteFaultAnalysis(SessionFactory factory, ZoneMnfDTO zoneMnfDTO);
 
 	List<HourFlowAvg> queryHourFlow(SessionFactory factory, ZoneMnfDTO zoneMnfDTO);
+
+	List<Map<String, Object>> queryLossAnalysis(SessionFactory factory, ZoneMnfDTO zoneMnfDTO);
 	
 	
 
