@@ -30,6 +30,6 @@ public class KafkaProducer {
         builder.setDateFormat("yyyy-MM-dd HH:mm:ss");
         String message = builder.create().toJson(user);
         kafkaTemplate.send(topicUser, message);
-        System.out.print("\n生产消息至Kafka\n" + message);
+        System.out.print("\n生产消息      至Kafka\n" + message);
     }
 }

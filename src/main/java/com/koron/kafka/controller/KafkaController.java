@@ -35,7 +35,7 @@ public class KafkaController {
 		     User user=new User();
 		     user.setAge(1);
 		     user.setName("xiaozhanq");
-		     user.setPassword("123456q");
+		     user.setPassword("123456qff");
 	        kafkaProducer.sendUserMessage(user);
 	  } 
 	 
